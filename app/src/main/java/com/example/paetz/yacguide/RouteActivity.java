@@ -1,27 +1,18 @@
 package com.example.paetz.yacguide;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
-import com.google.common.primitives.Ints;
-
-import org.w3c.dom.Text;
-
-import java.util.Arrays;
 
 public class RouteActivity extends TableActivity {
 

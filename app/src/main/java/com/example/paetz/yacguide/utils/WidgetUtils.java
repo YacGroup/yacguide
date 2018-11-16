@@ -1,15 +1,11 @@
 package com.example.paetz.yacguide.utils;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
-import android.text.style.TextAppearanceSpan;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 public class WidgetUtils {
