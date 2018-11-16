@@ -41,7 +41,7 @@ public class CountryActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     countryName,
                     "",
-                    18,
+                    20,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));
