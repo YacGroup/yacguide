@@ -8,9 +8,7 @@ import android.content.Context;
 
 import com.example.paetz.yacguide.utils.Converters;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.HashMap;

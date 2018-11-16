@@ -7,7 +7,6 @@ import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Converters {
     @TypeConverter

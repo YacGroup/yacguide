@@ -4,7 +4,6 @@ import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.HtmlUtils;
-import com.example.paetz.yacguide.utils.IntentConstants;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,8 +17,6 @@ public class RouteParser extends HTMLParser implements NetworkListener, UpdateLi
     private int _rockId;
     private int _routeCount;
     private int _resolvedRouteCount;
-
-    private HTMLParser _descriptionParser;
 
     public RouteParser(AppDatabase db, int rockId, UpdateListener listener) {
         super(db, listener);
