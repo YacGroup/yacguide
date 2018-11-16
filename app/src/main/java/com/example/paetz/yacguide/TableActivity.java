@@ -16,7 +16,7 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
 
     protected AppDatabase db;
     protected HTMLParser htmlParser;
-    protected boolean updateInProgress;
+    protected Dialog updateDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,37 +26,26 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
     protected void initialize(int layoutNumber) {
         setContentView(layoutNumber);
         db = MainActivity.database;
-        updateInProgress = false;
         displayContent();
     }
 
     // UpdateListener
     @Override
     public void onEvent(boolean state) {
-        findViewById(R.id.updateButton).setEnabled(true);
-        findViewById(R.id.deleteButton).setEnabled(true);
-        String stateStr = "Aktualisierung erfolgreich";
-        if (!state) {
-            stateStr = "Fehler bei Aktualisierung";
+        if (updateDialog != null) {
+            updateDialog.dismiss();
         }
-        Toast.makeText(this, stateStr, Toast.LENGTH_SHORT).show();
-        updateInProgress = false;
+        Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show();
         displayContent();
     }
 
     public void home(View v) {
-        if (updateInProgress) {
-            Toast.makeText(getApplicationContext(), "Aktualisierung in den Hintergrund verschoben", Toast.LENGTH_SHORT).show();
-        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
     public void back(View v) {
-        if (updateInProgress) {
-            Toast.makeText(getApplicationContext(), "Aktualisierung in den Hintergrund verschoben", Toast.LENGTH_SHORT).show();
-        }
         finish();
     }
 
@@ -66,11 +55,26 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
             return;
         }
         if (htmlParser != null) {
-            updateInProgress = true;
-            htmlParser.parse();
-            findViewById(R.id.updateButton).setEnabled(false);
-            findViewById(R.id.deleteButton).setEnabled(false);
-            Toast.makeText(this, "Aktualisierung gestartet", Toast.LENGTH_SHORT).show();
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog);
+            ((TextView) dialog.findViewById(R.id.dialogText)).setText("Diesen Bereich aktualisieren?");
+            dialog.findViewById(R.id.yesButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    htmlParser.parse();
+                    showUpdateDialog();
+                    dialog.dismiss();
+                }
+            });
+            dialog.findViewById(R.id.noButton).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
         }
     }
 
@@ -96,6 +100,14 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+
+    protected void showUpdateDialog() {
+        updateDialog = new Dialog(this);
+        updateDialog.setContentView(R.layout.info_dialog);
+        updateDialog.setCancelable(false);
+        updateDialog.setCanceledOnTouchOutside(false);
+        updateDialog.show();
     }
 
     protected abstract void displayContent();
