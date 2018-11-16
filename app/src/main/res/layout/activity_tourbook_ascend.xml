@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/baseLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="#bbbbbb">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/homeButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:onClick="home"
+            app:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/homeButton"
+            android:onClick="back"
+            app:srcCompat="@android:drawable/ic_menu_revert" />
+
+        <ImageButton
+            android:id="@+id/prevAscendButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/backButton"
+            android:visibility="invisible"
+            android:onClick="goToPreviousAscend"
+            app:srcCompat="@android:drawable/ic_media_rew" />
+
+        <ImageButton
+            android:id="@+id/nextAscendButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/editButton"
+            android:visibility="invisible"
+            android:onClick="goToNextAscend"
+            app:srcCompat="@android:drawable/ic_media_ff" />
+
+        <ImageButton
+            android:id="@+id/editButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/deleteButton"
+            android:onClick="edit"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
+
+        <ImageButton
+            android:id="@+id/deleteButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:onClick="delete"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    </RelativeLayout>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
