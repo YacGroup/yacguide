@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.network.RockParser;
 import com.example.paetz.yacguide.utils.IntentConstants;
@@ -43,9 +42,9 @@ public class RockActivity extends TableActivity implements ProgressListener {
     // ProgressListener
     @Override
     public void onProgress(int sent, int received) {
-        if (sent != 0) {
+        if (updateDialog != null && sent != 0) {
             int percent = 100 * received / sent;
-            ((TextView) findViewById(R.id.updateTextView)).setText(percent + "%");
+            ((TextView) updateDialog.findViewById(R.id.dialogText)).setText(percent + "%");
         }
     }
 
@@ -66,7 +65,6 @@ public class RockActivity extends TableActivity implements ProgressListener {
     private void _displayInner(boolean onlySummits) {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
-        Ascend[] ascends = db.ascendDao().getAll();
         this.setTitle(_sectorName);
         for (final Rock rock : db.rockDao().getAll(_sectorId)) {
             int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
