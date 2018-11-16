@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
@@ -42,9 +41,6 @@ public class RouteActivity extends TableActivity {
 
     @Override
     public void back(View v) {
-        if (updateInProgress) {
-            Toast.makeText(getApplicationContext(), "Aktualisierung in den Hintergrund verschoben", Toast.LENGTH_SHORT).show();
-        }
         Intent resultIntent = new Intent();
         setResult(_resultUpdated, resultIntent);
         finish();
