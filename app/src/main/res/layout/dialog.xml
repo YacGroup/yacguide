@@ -7,10 +7,11 @@
     android:id="@+id/dialogLayout">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:id="@+id/dialogText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:id="@+id/dialogText"
     />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
