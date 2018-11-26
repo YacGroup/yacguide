@@ -128,7 +128,7 @@ public class AscendActivity extends AppCompatActivity {
 
     private void _displayContent() {
         final Route route = _db.routeDao().getRoute(_routeId);
-        setTitle(route != null ? route.getName() : "???");
+        setTitle(route != null ? route.getName() + "   " + route.getGrade() : "???");
 
         Spinner spinner = findViewById(R.id.styleSpinner);
         String[] climbing_styles = _db.CLIMBING_STYLES.values().toArray(new String[0]);
