@@ -15,11 +15,11 @@ public class WidgetUtils {
         layout.setBackgroundColor(bgColor);
         layout.setOnClickListener(onClickListener);
 
-        TextView textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, 10, 10, 10, 10);
+        TextView textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewLeft);
         textViewLeft.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
-        TextView textViewRight = createTextView(context, textRight, textSizeDp, typeFace, 10, 10, 10, 10);
+        TextView textViewRight = createTextView(context, textRight, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewRight);
         textViewRight.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 

@@ -95,7 +95,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getNr() + "  " + rockName + typeAdd,
                     String.valueOf(status),
-                    20,
+                    16,
                     onClickListener,
                     bgColor,
                     typeFace));

@@ -173,7 +173,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 14,
                 null,
                 0xFFBBBBBB,
-                Typeface.BOLD));
+                Typeface.BOLD,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Teilgebiet",
@@ -189,7 +190,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Felsen",
@@ -205,7 +207,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Weg",
@@ -221,7 +224,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Stil",
@@ -237,7 +241,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Seilpartner",
@@ -253,7 +258,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "Bemerkungen",
@@ -269,7 +275,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 16,
                 null,
                 Color.WHITE,
-                Typeface.NORMAL));
+                Typeface.NORMAL,
+                10,10,10,10));
         layout.addView(WidgetUtils.createHorizontalLine(this, 1));
     }
 

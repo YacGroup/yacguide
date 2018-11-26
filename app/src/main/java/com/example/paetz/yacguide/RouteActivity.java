@@ -82,7 +82,7 @@ public class RouteActivity extends TableActivity {
             ll.addView(WidgetUtils.createCommonRowLayout(this,
                     route.getName() + commentCountAddon,
                     route.getGrade(),
-                    20,
+                    16,
                     onCLickListener,
                     ascendCount > 0 ? Color.GREEN : Color.WHITE,
                     Typeface.BOLD));
