@@ -43,7 +43,7 @@ public class RegionActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     regionName,
                     "",
-                    20,
+                    16,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));

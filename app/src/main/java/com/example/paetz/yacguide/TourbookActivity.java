@@ -126,7 +126,7 @@ public class TourbookActivity extends AppCompatActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getName() + " - " + route.getName(),
                     route.getGrade(),
-                    20,
+                    16,
                     onClickListener,
                     Color.WHITE,
                     Typeface.NORMAL));

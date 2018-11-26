@@ -46,7 +46,7 @@ public class SectorActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     sectorName,
                     "",
-                    20,
+                    16,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));
