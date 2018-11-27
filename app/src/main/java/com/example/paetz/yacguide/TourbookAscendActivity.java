@@ -21,6 +21,7 @@ import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -160,10 +161,10 @@ public class TourbookAscendActivity extends AppCompatActivity {
         }
 
         final List<Integer> partnerIds = ascend.getPartnerIds();
-        String[] partners = new String[partnerIds.size()];
-        int i = 0;
+        ArrayList<String> partners = new ArrayList<String>();
         for (Integer id : partnerIds) {
-            partners[i++] = _db.partnerDao().getName(id);
+            String name = _db.partnerDao().getName(id);
+            partners.add(name == null ? _db._UNKNOWN_NAME : name);
         }
         final String partnersString = TextUtils.join(", ",  partners);
 
