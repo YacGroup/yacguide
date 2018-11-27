@@ -153,7 +153,8 @@ public class AscendActivity extends AppCompatActivity {
         if (_partnerIds != null) {
             ArrayList<String> partners = new ArrayList<String>();
             for (Integer id : _partnerIds) {
-                partners.add(_db.partnerDao().getName(id));
+                String name = _db.partnerDao().getName(id);
+                partners.add(name == null ? "???" : name);
             }
             ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
         } else {
