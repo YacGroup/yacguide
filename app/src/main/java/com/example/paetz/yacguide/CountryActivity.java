@@ -21,6 +21,8 @@ public class CountryActivity extends TableActivity {
 
         super.initialize(R.layout.activity_country);
         htmlParser = new CountryParser(db, this);
+
+        displayContent();
     }
 
     @Override

@@ -15,21 +15,18 @@ import com.example.paetz.yacguide.utils.WidgetUtils;
 
 public class RouteActivity extends TableActivity {
 
-    private int _rockId;
-    private float _rockNr;
-    private String _rockName;
+    private Rock _rock;
     private int _resultUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, -1);
-        _rockNr = getIntent().getFloatExtra(IntentConstants.ROCK_NR, 0);
-        _rockName = getIntent().getStringExtra(IntentConstants.ROCK_NAME);
-        char rockStatus = getIntent().getCharExtra(IntentConstants.ROCK_STATUS, Character.MIN_VALUE);
-        _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
+        int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_route);
+
+        _rock = db.rockDao().getRock(rockId);
+        char rockStatus = _rock.getStatus();
         if (rockStatus == Rock.statusProhibited) {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist komplett gesperrt.");
         } else if (rockStatus == Rock.statusTemporarilyProhibited) {
@@ -37,6 +34,9 @@ public class RouteActivity extends TableActivity {
         } else if (rockStatus == Rock.statusUnofficial) {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist nicht anerkannt.");
         }
+        _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
+
+        displayContent();
     }
 
     @Override
@@ -58,24 +58,19 @@ public class RouteActivity extends TableActivity {
     protected void displayContent() {
         LinearLayout ll = findViewById(R.id.tableLayout);
         ll.removeAllViews();
-        this.setTitle(_rockNr + " " + _rockName);
+        this.setTitle(_rock.getNr() + " " + _rock.getName());
 
-        for (final Route route : db.routeDao().getAll(_rockId)) {
+        for (final Route route : db.routeDao().getAll(_rock.getId())) {
             int commentCount = db.commentDao().getCommentCount(route.getId());
             String commentCountAddon = "";
             if (commentCount > 0) {
                 commentCountAddon = "   [" + commentCount + "]";
             }
-            final int ascendCount = route.getAscendCount();
             View.OnClickListener onCLickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(RouteActivity.this, DescriptionActivity.class);
                     intent.putExtra(IntentConstants.ROUTE_KEY, route.getId());
-                    intent.putExtra(IntentConstants.ROUTE_NAME, route.getName());
-                    intent.putExtra(IntentConstants.ROUTE_GRADE, route.getGrade());
-                    intent.putExtra(IntentConstants.ROUTE_DESCRIPTION, route.getDescription());
-                    intent.putExtra(IntentConstants.ASCEND_COUNT, ascendCount);
                     startActivityForResult(intent, 0);
                 }
             };
@@ -84,7 +79,7 @@ public class RouteActivity extends TableActivity {
                     route.getGrade(),
                     16,
                     onCLickListener,
-                    ascendCount > 0 ? Color.GREEN : Color.WHITE,
+                    route.getAscendCount() > 0 ? Color.GREEN : Color.WHITE,
                     Typeface.BOLD));
             ll.addView(WidgetUtils.createHorizontalLine(this, 1));
         }

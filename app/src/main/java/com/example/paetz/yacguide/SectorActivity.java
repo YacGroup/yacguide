@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.network.SectorParser;
 import com.example.paetz.yacguide.utils.IntentConstants;
@@ -14,32 +15,33 @@ import com.example.paetz.yacguide.utils.WidgetUtils;
 
 public class SectorActivity extends TableActivity {
 
-    private int _regionId;
-    private String _regionName;
+    private Region _region;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _regionId = getIntent().getIntExtra(IntentConstants.REGION_KEY, -1);
-        _regionName = getIntent().getStringExtra(IntentConstants.REGION_NAME);
+        int regionId = getIntent().getIntExtra(IntentConstants.REGION_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_sector);
-        htmlParser = new SectorParser(db, _regionId, this);
+
+        htmlParser = new SectorParser(db, regionId, this);
+        _region = db.regionDao().getRegion(regionId);
+
+        displayContent();
     }
 
     @Override
     protected void displayContent() {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
-        this.setTitle(_regionName);
-        for (final Sector sector : db.sectorDao().getAll(_regionId)) {
+        this.setTitle(_region.getName());
+        for (final Sector sector : db.sectorDao().getAll(_region.getId())) {
             final String sectorName = sector.getName();
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SectorActivity.this, RockActivity.class);
                     intent.putExtra(IntentConstants.SECTOR_KEY, sector.getId());
-                    intent.putExtra(IntentConstants.SECTOR_NAME, sectorName);
                     startActivity(intent);
                 }
             };
@@ -56,6 +58,6 @@ public class SectorActivity extends TableActivity {
 
     @Override
     protected void deleteContent() {
-        db.deleteSectors(_regionId);
+        db.deleteSectors(_region.getId());
     }
 }

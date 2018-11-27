@@ -22,7 +22,10 @@ public class RegionActivity extends TableActivity {
 
         _countryName = getIntent().getStringExtra(IntentConstants.COUNTRY_KEY);
         super.initialize(R.layout.activity_region);
+
         htmlParser = new RegionParser(db, _countryName, this);
+
+        displayContent();
     }
 
     protected void displayContent() {
@@ -36,7 +39,6 @@ public class RegionActivity extends TableActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(RegionActivity.this, SectorActivity.class);
                     intent.putExtra(IntentConstants.REGION_KEY, region.getId());
-                    intent.putExtra(IntentConstants.REGION_NAME, regionName);
                     startActivity(intent);
                 }
             };

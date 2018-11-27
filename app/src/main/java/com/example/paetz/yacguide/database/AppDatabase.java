@@ -19,8 +19,8 @@ import java.util.Map;
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase _instance;
-    public static final String _UNKNOWN_NAME = "???";
 
+    public static final String UNKNOWN_NAME = "???";
     public static final int INVALID_ID = -1;
 
     public abstract CountryDao countryDao();
@@ -97,23 +97,23 @@ public abstract class AppDatabase extends RoomDatabase {
     // been deleted from the database
     public Route createUnknownRoute() {
         Route route = new Route();
-        route.setName(_UNKNOWN_NAME);
-        route.setGrade(_UNKNOWN_NAME);
+        route.setName(UNKNOWN_NAME);
+        route.setGrade(UNKNOWN_NAME);
         return route;
     }
     public Rock createUnknownRock() {
         Rock rock = new Rock();
-        rock.setName(_UNKNOWN_NAME);
+        rock.setName(UNKNOWN_NAME);
         return rock;
     }
     public Sector createUnknownSector() {
         Sector sector = new Sector();
-        sector.setName(_UNKNOWN_NAME);
+        sector.setName(UNKNOWN_NAME);
         return sector;
     }
     public Region createUnknownRegion() {
         Region region = new Region();
-        region.setName(_UNKNOWN_NAME);
+        region.setName(UNKNOWN_NAME);
         return region;
     }
 }
