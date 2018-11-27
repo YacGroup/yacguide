@@ -22,7 +22,7 @@ public class RouteActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, 0);
+        int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_route);
 
         _rock = db.rockDao().getRock(rockId);

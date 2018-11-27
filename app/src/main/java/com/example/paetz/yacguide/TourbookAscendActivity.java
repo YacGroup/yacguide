@@ -99,13 +99,6 @@ public class TourbookAscendActivity extends AppCompatActivity {
         Intent intent = new Intent(TourbookAscendActivity.this, AscendActivity.class);
         Ascend ascend = _ascends[_currentAscendIdx];
         intent.putExtra(IntentConstants.ASCEND_KEY, ascend.getId());
-        intent.putExtra(IntentConstants.ROUTE_KEY, ascend.getRouteId());
-        intent.putExtra(IntentConstants.ASCEND_STYLE_KEY, ascend.getStyleId());
-        intent.putExtra(IntentConstants.ASCEND_YEAR, ascend.getYear());
-        intent.putExtra(IntentConstants.ASCEND_MONTH, ascend.getMonth());
-        intent.putExtra(IntentConstants.ASCEND_DAY, ascend.getDay());
-        intent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, ascend.getPartnerIds());
-        intent.putExtra(IntentConstants.ASCEND_NOTES, ascend.getNotes());
         startActivityForResult(intent, 0);
     }
 
@@ -164,7 +157,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         ArrayList<String> partners = new ArrayList<String>();
         for (Integer id : partnerIds) {
             String name = _db.partnerDao().getName(id);
-            partners.add(name == null ? _db._UNKNOWN_NAME : name);
+            partners.add(name == null ? _db.UNKNOWN_NAME : name);
         }
         final String partnersString = TextUtils.join(", ",  partners);
 

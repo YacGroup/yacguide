@@ -25,7 +25,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, 0);
+        int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_rock);
 
         htmlParser = new RockParser(db, sectorId, this, this);
