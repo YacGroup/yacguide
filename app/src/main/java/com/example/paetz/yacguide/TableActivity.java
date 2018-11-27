@@ -26,7 +26,6 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
     protected void initialize(int layoutNumber) {
         setContentView(layoutNumber);
         db = MainActivity.database;
-        displayContent();
     }
 
     // UpdateListener
