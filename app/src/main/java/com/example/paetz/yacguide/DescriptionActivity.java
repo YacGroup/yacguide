@@ -11,29 +11,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Comment;
+import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
 public class DescriptionActivity extends TableActivity {
 
-    private int _routeId;
-    private String _routeName;
-    private String _routeGrade;
-    private String _routeDescription;
-    private int _ascendCount;
+    private Route _route;
     private int _resultUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, -1);
-        _routeName = getIntent().getStringExtra(IntentConstants.ROUTE_NAME);
-        _routeGrade = getIntent().getStringExtra(IntentConstants.ROUTE_GRADE);
-        _routeDescription = getIntent().getStringExtra(IntentConstants.ROUTE_DESCRIPTION);
-        _ascendCount = getIntent().getIntExtra(IntentConstants.ASCEND_COUNT, 0);
-        _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
+        int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, 0);
         super.initialize(R.layout.activity_description);
+
+        _route = db.routeDao().getRoute(routeId);
+        _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
+
+        displayContent();
     }
 
     @Override
@@ -41,10 +38,10 @@ public class DescriptionActivity extends TableActivity {
         // Note: Once reset, _resultUpdated may not be set back to RESULT_NO_UPDATE again!
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             _resultUpdated = resultCode;
-            _ascendCount = db.ascendDao().getAscendsForRoute(_routeId).length;
+            _route = db.routeDao().getRoute(_route.getId());
             Button ascendsButton = findViewById(R.id.ascendsButton);
-            ascendsButton.setText(_ascendCount + " Begehung(en)");
-            ascendsButton.setVisibility(_ascendCount > 0 ? View.VISIBLE : View.INVISIBLE);
+            ascendsButton.setText(_route.getAscendCount() + " Begehung(en)");
+            ascendsButton.setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
             Toast.makeText(this, "Begehungen aktualisiert", Toast.LENGTH_SHORT).show();
         }
     }
@@ -58,33 +55,33 @@ public class DescriptionActivity extends TableActivity {
 
     public void enterAscend(View v) {
         Intent intent = new Intent(DescriptionActivity.this, AscendActivity.class);
-        intent.putExtra(IntentConstants.ROUTE_KEY, _routeId);
+        intent.putExtra(IntentConstants.ROUTE_KEY, _route.getId());
         startActivityForResult(intent, 0);
     }
 
     public void goToAscends(View v) {
         Intent intent = new Intent(DescriptionActivity.this, TourbookAscendActivity.class);
-        intent.putExtra(IntentConstants.ROUTE_KEY, _routeId);
+        intent.putExtra(IntentConstants.ROUTE_KEY, _route.getId());
         startActivityForResult(intent, 0);
     }
 
     @Override
     protected void displayContent() {
         Button ascendsButton = findViewById(R.id.ascendsButton);
-        ascendsButton.setText(_ascendCount + " Begehung(en)");
-        ascendsButton.setVisibility(_ascendCount > 0 ? View.VISIBLE : View.INVISIBLE);
+        ascendsButton.setText(_route.getAscendCount() + " Begehung(en)");
+        ascendsButton.setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
 
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
-        this.setTitle(_routeName + "   " + _routeGrade);
+        this.setTitle(_route.getName() + "   " + _route.getGrade());
         TextView descView = new TextView(this);
-        descView.setText(_routeDescription);
+        descView.setText(_route.getDescription());
         descView.setTypeface(null, Typeface.BOLD);
         descView.setBackgroundColor(Color.WHITE);
         descView.setPadding(20,20,20,20);
         layout.addView(descView);
 
-        for (final Comment comment : db.commentDao().getAll(_routeId)) {
+        for (final Comment comment : db.commentDao().getAll(_route.getId())) {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
 
             TextView assessView = new TextView(this);

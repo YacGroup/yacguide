@@ -11,25 +11,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Rock;
+import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.network.RockParser;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
 public class RockActivity extends TableActivity implements ProgressListener {
 
-    private int _sectorId;
-    private String _sectorName;
+    private Sector _sector;
     private boolean _onlySummits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, -1);
-        _sectorName = getIntent().getStringExtra(IntentConstants.SECTOR_NAME);
-        _onlySummits = false;
+        int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, 0);
         super.initialize(R.layout.activity_rock);
-        htmlParser = new RockParser(db, _sectorId, this, this);
+
+        htmlParser = new RockParser(db, sectorId, this, this);
+        _sector = db.sectorDao().getSector(sectorId);
+        _onlySummits = false;
+
+        displayContent();
     }
 
     @Override
@@ -65,8 +68,8 @@ public class RockActivity extends TableActivity implements ProgressListener {
     private void _displayInner(boolean onlySummits) {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
-        this.setTitle(_sectorName);
-        for (final Rock rock : db.rockDao().getAll(_sectorId)) {
+        this.setTitle(_sector.getName());
+        for (final Rock rock : db.rockDao().getAll(_sector.getId())) {
             int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             final String rockName = rock.getName();
             final String type = rock.getType();
@@ -85,9 +88,6 @@ public class RockActivity extends TableActivity implements ProgressListener {
                 public void onClick(View v) {
                     Intent intent = new Intent(RockActivity.this, RouteActivity.class);
                     intent.putExtra(IntentConstants.ROCK_KEY, rock.getId());
-                    intent.putExtra(IntentConstants.ROCK_NR, rock.getNr());
-                    intent.putExtra(IntentConstants.ROCK_NAME, rockName);
-                    intent.putExtra(IntentConstants.ROCK_STATUS, rock.getStatus());
                     startActivityForResult(intent, 0);
                 }
             };
@@ -105,6 +105,6 @@ public class RockActivity extends TableActivity implements ProgressListener {
 
     @Override
     protected void deleteContent() {
-        db.deleteRocks(_sectorId);
+        db.deleteRocks(_sector.getId());
     }
 }
