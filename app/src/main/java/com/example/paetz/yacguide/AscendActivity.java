@@ -128,7 +128,7 @@ public class AscendActivity extends AppCompatActivity {
 
     private void _displayContent() {
         final Route route = _db.routeDao().getRoute(_routeId);
-        setTitle(route != null ? route.getName() + "   " + route.getGrade() : "???");
+        setTitle(route != null ? route.getName() + "   " + route.getGrade() : _db._UNKNOWN_NAME);
 
         Spinner spinner = findViewById(R.id.styleSpinner);
         String[] climbing_styles = _db.CLIMBING_STYLES.values().toArray(new String[0]);
@@ -154,7 +154,7 @@ public class AscendActivity extends AppCompatActivity {
             ArrayList<String> partners = new ArrayList<String>();
             for (Integer id : _partnerIds) {
                 String name = _db.partnerDao().getName(id);
-                partners.add(name == null ? "???" : name);
+                partners.add(name == null ? _db._UNKNOWN_NAME : name);
             }
             ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
         } else {

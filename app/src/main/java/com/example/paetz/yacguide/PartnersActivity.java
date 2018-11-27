@@ -183,7 +183,7 @@ public class PartnersActivity extends AppCompatActivity {
             RelativeLayout.LayoutParams paramsEdit = (RelativeLayout.LayoutParams) editButton.getLayoutParams();
             paramsEdit.addRule(RelativeLayout.LEFT_OF, deleteButton.getId());
             paramsEdit.width = paramsEdit.height = buttonWidthPx;
-            
+
             layout.addView(innerLayout);
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
