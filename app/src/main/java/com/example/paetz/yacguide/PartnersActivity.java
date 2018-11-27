@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -109,15 +110,48 @@ public class PartnersActivity extends AppCompatActivity {
             _checkboxMap.put(partner.getId(), checkBox);
             innerLayout.addView(checkBox);
 
+            ImageButton editButton = new ImageButton(this);
+            editButton.setId(View.generateViewId());
+            editButton.setImageResource(android.R.drawable.ic_menu_edit);
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Dialog dialog = new Dialog(PartnersActivity.this);
+                    dialog.setContentView(R.layout.dialog_add_partner);
+                    ((EditText) dialog.findViewById(R.id.addPartnerEditText)).setText(partner.getName());
+                    Button okButton = dialog.findViewById(R.id.okButton);
+                    okButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            partner.setName(((EditText) dialog.findViewById(R.id.addPartnerEditText)).getText().toString());
+                            _db.partnerDao().insert(partner);
+                            dialog.dismiss();
+                            _displayContent();
+                        }
+                    });
+                    Button cancelButton = dialog.findViewById(R.id.cancelButton);
+                    cancelButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.setCancelable(false);
+                    dialog.show();
+                }
+            });
+            innerLayout.addView(editButton);
+
             ImageButton deleteButton = new ImageButton(this);
+            deleteButton.setId(View.generateViewId());
             deleteButton.setImageResource(android.R.drawable.ic_delete);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Dialog dialog = new Dialog(PartnersActivity.this);
                     dialog.setContentView(R.layout.dialog);
-                    TextView textView = dialog.findViewById(R.id.dialogText);
-                    textView.setText("Kletterpartner löschen?");
+                    ((TextView) dialog.findViewById(R.id.dialogText)).setText("Kletterpartner löschen?");
                     Button okButton = dialog.findViewById(R.id.yesButton);
                     okButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -140,10 +174,16 @@ public class PartnersActivity extends AppCompatActivity {
                 }
             });
             innerLayout.addView(deleteButton);
+
+            int buttonWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
             RelativeLayout.LayoutParams paramsDelete = (RelativeLayout.LayoutParams) deleteButton.getLayoutParams();
             paramsDelete.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-            paramsDelete.width = paramsDelete.height = 70;
+            paramsDelete.width = paramsDelete.height = buttonWidthPx;
 
+            RelativeLayout.LayoutParams paramsEdit = (RelativeLayout.LayoutParams) editButton.getLayoutParams();
+            paramsEdit.addRule(RelativeLayout.LEFT_OF, deleteButton.getId());
+            paramsEdit.width = paramsEdit.height = buttonWidthPx;
+            
             layout.addView(innerLayout);
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
