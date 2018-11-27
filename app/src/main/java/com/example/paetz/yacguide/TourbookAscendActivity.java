@@ -164,7 +164,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         ArrayList<String> partners = new ArrayList<String>();
         for (Integer id : partnerIds) {
             String name = _db.partnerDao().getName(id);
-            partners.add(name == null ? "???" : name);
+            partners.add(name == null ? _db._UNKNOWN_NAME : name);
         }
         final String partnersString = TextUtils.join(", ",  partners);
 

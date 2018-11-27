@@ -19,7 +19,7 @@ import java.util.Map;
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase _instance;
-    private static final String _UNKNOWN_NAME = "???";
+    public static final String _UNKNOWN_NAME = "???";
 
     public static final int INVALID_ID = -1;
 
