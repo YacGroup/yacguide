@@ -26,15 +26,14 @@ import java.util.Calendar;
 public class AscendActivity extends AppCompatActivity {
 
     private AppDatabase _db;
+    private Ascend _ascend;
+    private Route _route;
+    private ArrayList<Integer> _partnerIds;
     private int _resultUpdated;
-    private int _ascendId;
-    private int _routeId;
     private int _styleId;
     private int _year;
     private int _month;
     private int _day;
-    private ArrayList<Integer> _partnerIds;
-    private String _notes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,37 +49,38 @@ public class AscendActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
-        _ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID);
-        _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
-        _styleId = getIntent().getIntExtra(IntentConstants.ASCEND_STYLE_KEY, 0);
-        _year = getIntent().getIntExtra(IntentConstants.ASCEND_YEAR, 0);
-        _month = getIntent().getIntExtra(IntentConstants.ASCEND_MONTH, 0);
-        _day = getIntent().getIntExtra(IntentConstants.ASCEND_DAY, 0);
-        _partnerIds = getPartnerIds(getIntent());
-        _notes = getIntent().getStringExtra(IntentConstants.ASCEND_NOTES);
+        _ascend = _db.ascendDao().getAscend(getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID));
+        int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
+        _route = _db.routeDao().getRoute(routeId == _db.INVALID_ID ? _ascend.getRouteId() : routeId);
+        // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
+        _partnerIds = getIntent().getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
+        if (_partnerIds == null) {
+            _partnerIds = (_ascend == null) ? new ArrayList<Integer>() : _ascend.getPartnerIds();
+        }
+        _styleId = _year = _month = _day = 0;
+
         _displayContent();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            _partnerIds = getPartnerIds(data);
+            _partnerIds = data.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
             _displayContent();
         }
     }
 
     public void enter(View v) {
         Ascend ascend = new Ascend();
-        if (_ascendId != _db.INVALID_ID) {
-            ascend.setId(_ascendId);
+        if (_ascend != null) {
+            ascend.setId(_ascend.getId());
         } else {
-            _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(_routeId) + 1, _routeId);
-            _db.rockDao().updateAscended(true, _db.routeDao().getRoute(_routeId).getParentId());
+            _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(_route.getId()) + 1, _route.getId());
+            _db.rockDao().updateAscended(true, _db.routeDao().getRoute(_route.getId()).getParentId());
             _resultUpdated = IntentConstants.RESULT_UPDATED;
         }
-        ascend.setRouteId(_routeId);
-        int styleId = _db.CLIMBING_STYLES.inverse().get(((Spinner) findViewById(R.id.styleSpinner)).getSelectedItem().toString());
-        ascend.setStyleId(styleId);
+        ascend.setRouteId(_route == null ? _ascend.getRouteId() : _route.getId());
+        ascend.setStyleId(_styleId);
         ascend.setYear(_year);
         ascend.setMonth(_month);
         ascend.setDay(_day);
@@ -127,15 +127,13 @@ public class AscendActivity extends AppCompatActivity {
     }
 
     private void _displayContent() {
-        final Route route = _db.routeDao().getRoute(_routeId);
-        setTitle(route != null ? route.getName() + "   " + route.getGrade() : _db._UNKNOWN_NAME);
+        setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : _db.UNKNOWN_NAME);
 
         Spinner spinner = findViewById(R.id.styleSpinner);
         String[] climbing_styles = _db.CLIMBING_STYLES.values().toArray(new String[0]);
         ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, climbing_styles);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setSelection(_styleId != 0 ? adapter.getPosition(_db.CLIMBING_STYLES.get(_styleId)) : 0);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -148,24 +146,19 @@ public class AscendActivity extends AppCompatActivity {
             }
         });
 
-        ((EditText) findViewById(R.id.dateEditText)).setText(_day + "." + _month + "." + _year);
-
-        if (_partnerIds != null) {
-            ArrayList<String> partners = new ArrayList<String>();
-            for (Integer id : _partnerIds) {
-                String name = _db.partnerDao().getName(id);
-                partners.add(name == null ? _db._UNKNOWN_NAME : name);
-            }
-            ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
+        if (_ascend != null) {
+            ((EditText) findViewById(R.id.dateEditText)).setText(_ascend.getDay() + "." + _ascend.getMonth() + "." + _ascend.getYear());
+            ((EditText) findViewById(R.id.notesEditText)).setText(_ascend.getNotes());
+            spinner.setSelection(adapter.getPosition(_db.CLIMBING_STYLES.get(_styleId == 0 ? _ascend.getStyleId() : _styleId)));
         } else {
-            ((EditText) findViewById(R.id.partnersEditText)).setText("");
+            spinner.setSelection(_styleId != 0 ? adapter.getPosition(_db.CLIMBING_STYLES.get(_styleId)) : 0);
         }
 
-        ((EditText) findViewById(R.id.notesEditText)).setText(_notes);
-    }
-
-    private ArrayList<Integer> getPartnerIds(Intent intent) {
-        _partnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
-        return _partnerIds == null ? new ArrayList<Integer>() : _partnerIds;
+        ArrayList<String> partners = new ArrayList<String>();
+        for (Integer id : _partnerIds) {
+            String name = _db.partnerDao().getName(id);
+            partners.add(name == null ? _db.UNKNOWN_NAME : name);
+        }
+        ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
     }
 }
