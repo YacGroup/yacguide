@@ -11,14 +11,17 @@ public interface PartnerDao {
     @Query("SELECT * FROM Partner")
     Partner[] getAll();
 
+    @Query("SELECT id FROM Partner")
+    int[] getAllIds();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Partner partner);
 
     @Query("SELECT Id FROM Partner WHERE Name = :name")
     int getId(String name);
 
-    @Query("SELECT Name FROM Partner WHERE Id = :id")
-    String getName(int id);
+    @Query("SELECT * FROM Partner WHERE Id = :id")
+    Partner getPartner(int id);
 
     @Delete
     void delete(Partner partner);
