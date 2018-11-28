@@ -2,10 +2,6 @@ package com.example.paetz.yacguide.utils;
 
 import android.arch.persistence.room.TypeConverter;
 import android.text.TextUtils;
-
-import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 
 public class Converters {

@@ -11,9 +11,6 @@ public interface PartnerDao {
     @Query("SELECT * FROM Partner")
     Partner[] getAll();
 
-    @Query("SELECT id FROM Partner")
-    int[] getAllIds();
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Partner partner);
 
