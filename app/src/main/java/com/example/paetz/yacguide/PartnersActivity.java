@@ -18,11 +18,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Partner;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,8 +99,30 @@ public class PartnersActivity extends AppCompatActivity {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         _checkboxMap.clear();
-        Partner[] partners = _db.partnerDao().getAll();
-        for (final Partner partner : partners) {
+        final Partner[] partners = _db.partnerDao().getAll();
+        final Ascend[] ascends = _db.ascendDao().getAll();
+
+        // We need to sort the partners according to the number of ascends you have done with them
+        ArrayList<Integer> ascendPartnerIds = new ArrayList<Integer>();
+        for (final Ascend ascend : ascends) {
+            ascendPartnerIds.addAll(ascend.getPartnerIds());
+        }
+        ArrayList<Partner> sortedPartners = new ArrayList<Partner>();
+        ArrayList<Integer> partnerIdOccurences = new ArrayList<Integer>();
+        for (int i = 0; i < partners.length; i++) {
+            int occurences = Collections.frequency(ascendPartnerIds, partners[i].getId());
+            int index = i;
+            for (int j = 0; j < i; j++) {
+                if (occurences > partnerIdOccurences.get(j)) {
+                    index = j;
+                    break;
+                }
+            }
+            sortedPartners.add(index, partners[i]);
+            partnerIdOccurences.add(index, occurences);
+        }
+
+        for (final Partner partner : sortedPartners) {
             RelativeLayout innerLayout = new RelativeLayout(this);
             innerLayout.setBackgroundColor(Color.WHITE);
 
@@ -145,7 +169,7 @@ public class PartnersActivity extends AppCompatActivity {
 
             ImageButton deleteButton = new ImageButton(this);
             deleteButton.setId(View.generateViewId());
-            deleteButton.setImageResource(android.R.drawable.ic_delete);
+            deleteButton.setImageResource(android.R.drawable.ic_menu_delete);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

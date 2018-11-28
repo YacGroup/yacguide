@@ -23,7 +23,7 @@ public class Converters {
 
     @TypeConverter
     public static String fromIntList(ArrayList<Integer> intList) {
-        return TextUtils.join(",", Lists.transform(intList, Functions.toStringFunction()));
+        return TextUtils.join(",", intList);
     }
 
 }

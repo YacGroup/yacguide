@@ -17,6 +17,7 @@ import android.widget.Spinner;
 
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Ascend;
+import com.example.paetz.yacguide.database.Partner;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.IntentConstants;
 
@@ -156,8 +157,8 @@ public class AscendActivity extends AppCompatActivity {
 
         ArrayList<String> partners = new ArrayList<String>();
         for (Integer id : _partnerIds) {
-            String name = _db.partnerDao().getName(id);
-            partners.add(name == null ? _db.UNKNOWN_NAME : name);
+            Partner partner = _db.partnerDao().getPartner(id);
+            partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
         }
         ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
     }

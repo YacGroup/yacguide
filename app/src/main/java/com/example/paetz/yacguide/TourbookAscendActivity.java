@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Ascend;
+import com.example.paetz.yacguide.database.Partner;
 import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
@@ -156,8 +157,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
         final List<Integer> partnerIds = ascend.getPartnerIds();
         ArrayList<String> partners = new ArrayList<String>();
         for (Integer id : partnerIds) {
-            String name = _db.partnerDao().getName(id);
-            partners.add(name == null ? _db.UNKNOWN_NAME : name);
+            Partner partner = _db.partnerDao().getPartner(id);
+            partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
         }
         final String partnersString = TextUtils.join(", ",  partners);
 
