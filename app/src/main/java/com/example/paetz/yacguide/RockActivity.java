@@ -31,7 +31,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, db.INVALID_ID);
+        final int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_rock);
 
         htmlParser = new RockParser(db, sectorId, this, this);
@@ -43,7 +43,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
         searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                final InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
@@ -75,7 +75,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
     @Override
     public void onProgress(int sent, int received) {
         if (updateDialog != null && sent != 0) {
-            int percent = 100 * received / sent;
+            final int percent = 100 * received / sent;
             ((TextView) updateDialog.findViewById(R.id.dialogText)).setText(percent + "%");
         }
     }
@@ -94,7 +94,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
         _displayInner(_onlySummits, _rockNamePrefix);
     }
 
-    private void _displayInner(boolean onlySummits, final String rockNamePrefix) {
+    private void _displayInner(boolean onlySummits, String rockNamePrefix) {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         this.setTitle(_sector.getName());
@@ -104,7 +104,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
                 continue;
             }
             final String type = rock.getType();
-            int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
+            final int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             String typeAdd = "";
             int typeFace = Typeface.NORMAL;
             if (!type.equals(Rock.typeSummit)) {
@@ -123,10 +123,9 @@ public class RockActivity extends TableActivity implements ProgressListener {
                     startActivityForResult(intent, 0);
                 }
             };
-            char status = rock.getStatus();
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getNr() + "  " + rockName + typeAdd,
-                    String.valueOf(status),
+                    String.valueOf(rock.getStatus()),
                     16,
                     onClickListener,
                     bgColor,

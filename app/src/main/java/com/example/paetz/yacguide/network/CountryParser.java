@@ -28,7 +28,7 @@ public class CountryParser extends HTMLParser implements NetworkListener {
 
     private void _processCountries(Elements elements) {
         db.countryDao().deleteAll();
-        for (Element e : elements) {
+        for (final Element e : elements) {
             Country c = new Country();
             c.setName(e.text());
             db.countryDao().insert(c);

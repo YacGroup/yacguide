@@ -28,7 +28,7 @@ public class SectorParser extends HTMLParser implements NetworkListener {
 
     @Override
     public void onNetworkTaskResolved(Document document) {
-        Elements tableElements = HtmlUtils.getTableElements(document);
+        final Elements tableElements = HtmlUtils.getTableElements(document);
         _processSectors(tableElements);
         listener.onEvent(tableElements.size() > 2); // mind one heading and one sum element
     }
@@ -37,10 +37,10 @@ public class SectorParser extends HTMLParser implements NetworkListener {
         db.sectorDao().deleteAll(_regionId);
         for (int i = 1; i < elements.size() - 1; i++) { // index 0 is the table header, last index is the sum row
             Sector s = new Sector();
-            Elements data = elements.get(i).select("td");
-            Element link = data.get(1).select("a").get(0);
-            Pattern p = Pattern.compile("(.*)sektorid=([0-9]+)(.*)");
-            Matcher m = p.matcher(link.attr("href").toString());
+            final Elements data = elements.get(i).select("td");
+            final Element link = data.get(1).select("a").get(0);
+            final Pattern p = Pattern.compile("(.*)sektorid=([0-9]+)(.*)");
+            final Matcher m = p.matcher(link.attr("href").toString());
             if (m.find()) {
                 s.setId(Integer.parseInt(m.group(2)));
                 s.setName(link.text());

@@ -44,7 +44,7 @@ public class AscendActivity extends AppCompatActivity {
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
         _ascend = _db.ascendDao().getAscend(getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID));
-        int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
+        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
         _route = _db.routeDao().getRoute(routeId == _db.INVALID_ID ? _ascend.getRouteId() : routeId);
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
         _partnerIds = getIntent().getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
@@ -56,7 +56,7 @@ public class AscendActivity extends AppCompatActivity {
         findViewById(R.id.notesEditText).setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                final InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
@@ -102,9 +102,9 @@ public class AscendActivity extends AppCompatActivity {
 
     public void enterDate(View v) {
         final Calendar calendar = Calendar.getInstance();
-        int yy = calendar.get(Calendar.YEAR);
-        int mm = calendar.get(Calendar.MONTH);
-        int dd = calendar.get(Calendar.DAY_OF_MONTH);
+        final int yy = calendar.get(Calendar.YEAR);
+        final int mm = calendar.get(Calendar.MONTH);
+        final int dd = calendar.get(Calendar.DAY_OF_MONTH);
         DatePickerDialog datePicker = new DatePickerDialog(AscendActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -118,7 +118,7 @@ public class AscendActivity extends AppCompatActivity {
     }
 
     public void selectPartners(View v) {
-        String[] partners = ((EditText) findViewById(R.id.partnersEditText)).getText().toString().split(", ");
+        final String[] partners = ((EditText) findViewById(R.id.partnersEditText)).getText().toString().split(", ");
         ArrayList<Integer> partnerIds = new ArrayList<Integer>();
         for (int i = 0; i < partners.length; i++) {
             partnerIds.add(_db.partnerDao().getId(partners[i]));
@@ -132,8 +132,7 @@ public class AscendActivity extends AppCompatActivity {
         setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : _db.UNKNOWN_NAME);
 
         Spinner spinner = findViewById(R.id.styleSpinner);
-        String[] climbing_styles = _db.CLIMBING_STYLES.values().toArray(new String[0]);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, climbing_styles);
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, _db.CLIMBING_STYLES.values().toArray(new String[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -157,8 +156,8 @@ public class AscendActivity extends AppCompatActivity {
         }
 
         ArrayList<String> partners = new ArrayList<String>();
-        for (Integer id : _partnerIds) {
-            Partner partner = _db.partnerDao().getPartner(id);
+        for (final Integer id : _partnerIds) {
+            final Partner partner = _db.partnerDao().getPartner(id);
             partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
         }
         ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));

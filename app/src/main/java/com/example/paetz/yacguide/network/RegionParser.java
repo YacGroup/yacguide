@@ -28,7 +28,7 @@ public class RegionParser extends HTMLParser implements NetworkListener {
 
     @Override
     public void onNetworkTaskResolved(Document document) {
-        Elements tableElements = HtmlUtils.getTableElements(document);
+        final Elements tableElements = HtmlUtils.getTableElements(document);
         _processRegions(tableElements);
         listener.onEvent(tableElements.size() > 1); // mind one heading element
     }
@@ -37,10 +37,10 @@ public class RegionParser extends HTMLParser implements NetworkListener {
         db.regionDao().deleteAll(_countryName);
         for (int i = 1; i < elements.size(); i++) { // index 0 is the table header
             Region r = new Region();
-            Elements data = elements.get(i).select("td");
-            Element link = data.get(0).select("a").get(0);
-            Pattern p = Pattern.compile("(.*)gebietid=([0-9]+)(.*)");
-            Matcher m = p.matcher(link.attr("href").toString());
+            final Elements data = elements.get(i).select("td");
+            final Element link = data.get(0).select("a").get(0);
+            final Pattern p = Pattern.compile("(.*)gebietid=([0-9]+)(.*)");
+            final Matcher m = p.matcher(link.attr("href").toString());
             if (m.find()) {
                 r.setId(Integer.parseInt(m.group(2)));
                 r.setName(link.text());
