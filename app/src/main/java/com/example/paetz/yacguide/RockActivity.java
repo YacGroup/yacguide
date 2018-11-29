@@ -1,11 +1,16 @@
 package com.example.paetz.yacguide;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +25,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
 
     private Sector _sector;
     private boolean _onlySummits;
+    private String _rockNamePrefix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,29 @@ public class RockActivity extends TableActivity implements ProgressListener {
         htmlParser = new RockParser(db, sectorId, this, this);
         _sector = db.sectorDao().getSector(sectorId);
         _onlySummits = false;
+        _rockNamePrefix = "";
+
+        final EditText searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                _rockNamePrefix = searchEditText.getText().toString();
+                displayContent();
+            }
+        });
 
         displayContent();
     }
@@ -57,22 +86,25 @@ public class RockActivity extends TableActivity implements ProgressListener {
 
     public void onlySummitsCheck(View v) {
         _onlySummits = ((CheckBox) findViewById(R.id.onlySummitsCheckBox)).isChecked();
-        _displayInner(_onlySummits);
+        displayContent();
     }
 
     @Override
     protected void displayContent() {
-        _displayInner(_onlySummits);
+        _displayInner(_onlySummits, _rockNamePrefix);
     }
 
-    private void _displayInner(boolean onlySummits) {
+    private void _displayInner(boolean onlySummits, final String rockNamePrefix) {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         this.setTitle(_sector.getName());
         for (final Rock rock : db.rockDao().getAll(_sector.getId())) {
-            int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             final String rockName = rock.getName();
+            if (!rockName.toLowerCase().startsWith(rockNamePrefix.toLowerCase())) {
+                continue;
+            }
             final String type = rock.getType();
+            int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             String typeAdd = "";
             int typeFace = Typeface.NORMAL;
             if (!type.equals(Rock.typeSummit)) {
