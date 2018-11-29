@@ -58,34 +58,34 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // Helpers to avoid code duplications
     public void deleteCountries() {
-        Country[] countries = countryDao().getAll();
-        for (Country country : countries) {
+        final Country[] countries = countryDao().getAll();
+        for (final Country country : countries) {
             deleteRegions(country.getName());
         }
         countryDao().deleteAll();
     }
 
     public void deleteRegions(String countryName) {
-        Region[] regions = regionDao().getAll(countryName);
-        for (Region region : regions) {
+        final Region[] regions = regionDao().getAll(countryName);
+        for (final Region region : regions) {
             deleteSectors(region.getId());
         }
         regionDao().deleteAll(countryName);
     }
 
     public void deleteSectors(int regionId) {
-        Sector[] sectors = sectorDao().getAll(regionId);
-        for (Sector sector : sectors) {
+        final Sector[] sectors = sectorDao().getAll(regionId);
+        for (final Sector sector : sectors) {
             deleteRocks(sector.getId());
         }
         sectorDao().deleteAll(regionId);
     }
 
     public void deleteRocks(int sectorId) {
-        Rock[] rocks = rockDao().getAll(sectorId);
-        for (Rock rock : rocks) {
-            Route[] routes = routeDao().getAll(rock.getId());
-            for (Route route : routes) {
+        final Rock[] rocks = rockDao().getAll(sectorId);
+        for (final Rock rock : rocks) {
+            final Route[] routes = routeDao().getAll(rock.getId());
+            for (final Route route : routes) {
                 commentDao().deleteAll(route.getId());
             }
             routeDao().deleteAll(rock.getId());

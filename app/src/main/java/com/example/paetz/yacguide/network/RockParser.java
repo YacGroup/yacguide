@@ -36,7 +36,7 @@ public class RockParser extends HTMLParser implements NetworkListener, UpdateLis
     // NetworkListener
     @Override
     public void onNetworkTaskResolved(Document document) {
-        Elements tableElements = HtmlUtils.getTableElements(document);
+        final Elements tableElements = HtmlUtils.getTableElements(document);
         _rockCount = tableElements.size() - 1; // mind one heading element
         _processRocks(tableElements);
         if (_rockCount <= 0) {
@@ -62,14 +62,14 @@ public class RockParser extends HTMLParser implements NetworkListener, UpdateLis
         db.rockDao().deleteAll(_sectorId);
         for (int i = 1; i < elements.size(); i++) { // index 0 is the table header
             Rock r = new Rock();
-            Elements data = elements.get(i).select("td");
-            Element link = data.get(1).select("a").get(0);
-            Pattern p = Pattern.compile("(.*)gipfelid=([0-9]+)(.*)");
-            Matcher m = p.matcher(link.attr("href").toString());
+            final Elements data = elements.get(i).select("td");
+            final Element link = data.get(1).select("a").get(0);
+            final Pattern p = Pattern.compile("(.*)gipfelid=([0-9]+)(.*)");
+            final Matcher m = p.matcher(link.attr("href").toString());
             if (m.find()) {
                 r.setId(Integer.parseInt(m.group(2)));
-                Pattern pNr = Pattern.compile("([0-9]+\\.?[0-9]*)([GMBH])([ZXNT])?");
-                Matcher mNr = pNr.matcher(data.get(0).select("font").get(0).text());
+                final Pattern pNr = Pattern.compile("([0-9]+\\.?[0-9]*)([GMBH])([ZXNT])?");
+                final Matcher mNr = pNr.matcher(data.get(0).select("font").get(0).text());
                 if (mNr.find()) {
                     r.setNr(Float.parseFloat(mNr.group(1)));
                     r.setType(mNr.group(2));

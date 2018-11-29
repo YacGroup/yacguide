@@ -76,7 +76,7 @@ public class TourbookActivity extends AppCompatActivity {
     }
 
     private void _displayContent(int year) {
-        Ascend[] ascends = _db.ascendDao().getAll(year);
+        final Ascend[] ascends = _db.ascendDao().getAll(year);
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         ((TextView) findViewById(R.id.yearTextView)).setText(String.valueOf(year));
@@ -84,8 +84,8 @@ public class TourbookActivity extends AppCompatActivity {
         int currentMonth, currentDay, currentRegionId;
         currentMonth = currentDay = currentRegionId = -1;
         for (final Ascend ascend : ascends) {
-            int month = ascend.getMonth();
-            int day = ascend.getDay();
+            final int month = ascend.getMonth();
+            final int day = ascend.getDay();
 
             Route route = _db.routeDao().getRoute(ascend.getRouteId());
             Rock rock; Sector sector; Region region;
