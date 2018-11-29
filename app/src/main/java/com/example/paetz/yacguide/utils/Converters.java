@@ -9,7 +9,7 @@ public class Converters {
     public static ArrayList<Integer> fromString(String intListAsString) {
         ArrayList<Integer> intList = new ArrayList<Integer>();
         if (!intListAsString.isEmpty()) {
-            String[] strList = intListAsString.split(",");
+            final String[] strList = intListAsString.split(",");
             for (String str : strList) {
                 intList.add(Integer.parseInt(str.trim()));
             }

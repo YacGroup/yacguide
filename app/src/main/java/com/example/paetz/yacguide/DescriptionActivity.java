@@ -24,7 +24,7 @@ public class DescriptionActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, 0);
+        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_description);
 
         _route = db.routeDao().getRoute(routeId);

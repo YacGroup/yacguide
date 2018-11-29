@@ -82,8 +82,8 @@ public class PartnersActivity extends AppCompatActivity {
 
     public void enter(View v) {
         ArrayList<Integer> selectedIds = new ArrayList<Integer>();
-        for (Map.Entry<Integer, CheckBox> entry : _checkboxMap.entrySet()) {
-            CheckBox cb = entry.getValue();
+        for (final Map.Entry<Integer, CheckBox> entry : _checkboxMap.entrySet()) {
+            final CheckBox cb = entry.getValue();
             if (cb.isChecked()) {
                 selectedIds.add(entry.getKey());
             }
@@ -110,16 +110,16 @@ public class PartnersActivity extends AppCompatActivity {
         ArrayList<Partner> sortedPartners = new ArrayList<Partner>();
         ArrayList<Integer> partnerIdOccurences = new ArrayList<Integer>();
         for (int i = 0; i < partners.length; i++) {
-            int occurences = Collections.frequency(ascendPartnerIds, partners[i].getId());
+            final int occurenceCount = Collections.frequency(ascendPartnerIds, partners[i].getId());
             int index = i;
             for (int j = 0; j < i; j++) {
-                if (occurences > partnerIdOccurences.get(j)) {
+                if (occurenceCount > partnerIdOccurences.get(j)) {
                     index = j;
                     break;
                 }
             }
             sortedPartners.add(index, partners[i]);
-            partnerIdOccurences.add(index, occurences);
+            partnerIdOccurences.add(index, occurenceCount);
         }
 
         for (final Partner partner : sortedPartners) {
@@ -199,7 +199,7 @@ public class PartnersActivity extends AppCompatActivity {
             });
             innerLayout.addView(deleteButton);
 
-            int buttonWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+            final int buttonWidthPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
             RelativeLayout.LayoutParams paramsDelete = (RelativeLayout.LayoutParams) deleteButton.getLayoutParams();
             paramsDelete.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             paramsDelete.width = paramsDelete.height = buttonWidthPx;
