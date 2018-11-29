@@ -22,11 +22,11 @@ public class RouteActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, db.INVALID_ID);
+        final int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_route);
 
         _rock = db.rockDao().getRock(rockId);
-        char rockStatus = _rock.getStatus();
+        final char rockStatus = _rock.getStatus();
         if (rockStatus == Rock.statusProhibited) {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist komplett gesperrt.");
         } else if (rockStatus == Rock.statusTemporarilyProhibited) {
@@ -61,7 +61,7 @@ public class RouteActivity extends TableActivity {
         this.setTitle(_rock.getNr() + " " + _rock.getName());
 
         for (final Route route : db.routeDao().getAll(_rock.getId())) {
-            int commentCount = db.commentDao().getCommentCount(route.getId());
+            final int commentCount = db.commentDao().getCommentCount(route.getId());
             String commentCountAddon = "";
             if (commentCount > 0) {
                 commentCountAddon = "   [" + commentCount + "]";

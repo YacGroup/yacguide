@@ -34,21 +34,21 @@ public class DescriptionParser extends HTMLParser implements NetworkListener {
 
     private void _processDescription(Elements elements, Document document) {
         db.commentDao().deleteAll(_routeId);
-        Elements accElements = document.body().getElementsContainingOwnText("Unfälle am Weg");
-        String desc = document.body().ownText();
+        final Elements accElements = document.body().getElementsContainingOwnText("Unfälle am Weg");
         final String marker = "###MARK###"; // We need this to remove accidents
+        String desc = document.body().ownText();
         if (!accElements.isEmpty()) {
-            Element accidentsHeaderElement = accElements.get(0);
+            final Element accidentsHeaderElement = accElements.get(0);
             accidentsHeaderElement.before(marker); // This changes the doc variable!
             desc = document.body().ownText().replaceAll(marker + ".*", "");
         }
         db.routeDao().updateDescription(desc, _routeId);
-        for (Element element : elements) {
+        for (final Element element : elements) {
             Comment c = new Comment();
-            Elements data = element.select("td");
-            Element link = data.get(2).select("a").get(0);
-            Pattern p = Pattern.compile("(.*)kommentid=([0-9]+)(.*)");
-            Matcher m = p.matcher(link.attr("href").toString());
+            final Elements data = element.select("td");
+            final Element link = data.get(2).select("a").get(0);
+            final Pattern p = Pattern.compile("(.*)kommentid=([0-9]+)(.*)");
+            final Matcher m = p.matcher(link.attr("href").toString());
             if (m.find()) {
                 c.setId(Integer.parseInt(m.group(2)));
                 c.setAssessment(data.get(1).select("font").get(0).text());

@@ -31,7 +31,7 @@ public class RouteParser extends HTMLParser implements NetworkListener, UpdateLi
 
     @Override
     public void onNetworkTaskResolved(Document document) {
-        Elements tableElements = HtmlUtils.getTableElements(document);
+        final Elements tableElements = HtmlUtils.getTableElements(document);
         _routeCount = tableElements.size() - 1; // mind one heading element
         _processRoutes(tableElements);
         if (_routeCount <= 0) {
@@ -52,17 +52,17 @@ public class RouteParser extends HTMLParser implements NetworkListener, UpdateLi
         boolean ascended = false;
         for (int i = 1; i < elements.size(); i++) { // index 0 is the table header
             Route r = new Route();
-            Elements data = elements.get(i).select("td");
-            Element link = data.get(1).select("a").get(0);
-            Pattern p = Pattern.compile("(.*)wegid=([0-9]+)(.*)");
-            Matcher m = p.matcher(link.attr("href").toString());
+            final Elements data = elements.get(i).select("td");
+            final Element link = data.get(1).select("a").get(0);
+            final Pattern p = Pattern.compile("(.*)wegid=([0-9]+)(.*)");
+            final Matcher m = p.matcher(link.attr("href").toString());
             if (m.find()) {
-                int routeId = Integer.parseInt(m.group(2));
+                final int routeId = Integer.parseInt(m.group(2));
                 r.setId(routeId);
                 r.setNr(Float.parseFloat(HtmlUtils.htmlTrim(data.get(0).text())));
                 r.setName(link.text());
                 r.setGrade(HtmlUtils.htmlTrim(data.get(3).text()));
-                int currentAscendCount = db.ascendDao().getAscendsForRoute(routeId).length;
+                final int currentAscendCount = db.ascendDao().getAscendsForRoute(routeId).length;
                 r.setAscendCount(currentAscendCount); // if we re-add a route that has already been marked as ascended in the past
                 ascended |= (currentAscendCount > 0);
                 r.setParentId(_rockId);

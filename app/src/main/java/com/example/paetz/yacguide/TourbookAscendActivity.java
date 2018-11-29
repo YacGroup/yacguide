@@ -43,7 +43,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
-        int ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID);
+        final int ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID);
         _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
         _currentAscendIdx = 0;
         if (ascendId != _db.INVALID_ID) {
@@ -98,7 +98,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
 
     public void edit(View v) {
         Intent intent = new Intent(TourbookAscendActivity.this, AscendActivity.class);
-        Ascend ascend = _ascends[_currentAscendIdx];
+        final Ascend ascend = _ascends[_currentAscendIdx];
         intent.putExtra(IntentConstants.ASCEND_KEY, ascend.getId());
         startActivityForResult(intent, 0);
     }
@@ -111,7 +111,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 _db.ascendDao().delete(_ascends[_currentAscendIdx]);
-                int ascendedCount = _db.routeDao().getAscendCount(_routeId) - 1;
+                final int ascendedCount = _db.routeDao().getAscendCount(_routeId) - 1;
                 _db.routeDao().updateAscendCount(ascendedCount, _routeId);
                 if (ascendedCount == 0) {
                     _db.rockDao().updateAscended(false, _db.routeDao().getRoute(_routeId).getParentId());
@@ -156,8 +156,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
 
         final List<Integer> partnerIds = ascend.getPartnerIds();
         ArrayList<String> partners = new ArrayList<String>();
-        for (Integer id : partnerIds) {
-            Partner partner = _db.partnerDao().getPartner(id);
+        for (final Integer id : partnerIds) {
+            final Partner partner = _db.partnerDao().getPartner(id);
             partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
         }
         final String partnersString = TextUtils.join(", ",  partners);
