@@ -40,13 +40,6 @@ public class AscendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ascend);
-        findViewById(R.id.notesEditText).setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            }
-        });
 
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
@@ -59,6 +52,14 @@ public class AscendActivity extends AppCompatActivity {
             _partnerIds = (_ascend == null) ? new ArrayList<Integer>() : _ascend.getPartnerIds();
         }
         _styleId = _year = _month = _day = 0;
+
+        findViewById(R.id.notesEditText).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
 
         _displayContent();
     }
