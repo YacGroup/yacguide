@@ -14,31 +14,37 @@ public abstract class JSONWebParser implements NetworkListener {
     protected AppDatabase db;
     protected UpdateListener listener;
     protected LinkedList<NetworkRequest> networkRequests;
+    private boolean _success;
+    private int _processedRequestsCount;
 
     public JSONWebParser(AppDatabase db, UpdateListener listener) {
         this.db = db;
         this.listener = listener;
         networkRequests = new LinkedList<NetworkRequest>(); // filled in subclasses
+        _success = true;
     }
 
     @Override
     public void onNetworkTaskResolved(int requestId, String result) {
-        boolean success = true;
-        try {
-            if (result == null) {
-                throw new JSONException("");
+        if (_success) {
+            try {
+                if (result == null) {
+                    throw new JSONException("");
+                }
+                parseData(requestId, result);
+            } catch (JSONException e) {
+                _success = false;
             }
-            parseData(requestId, result);
-        } catch (JSONException e) {
-            success = false;
-        } finally {
-            listener.onEvent(success, "");
+        }
+        if (++_processedRequestsCount == networkRequests.size()) {
+            listener.onEvent(_success);
+            _success = true;
         }
     }
 
     public void fetchData() {
+        _processedRequestsCount = 0;
         for (NetworkRequest request : networkRequests) {
-            listener.onEvent(true, request.infoMessage);
             (new NetworkTask(request.requestId, this)).execute(request.url);
         }
     }

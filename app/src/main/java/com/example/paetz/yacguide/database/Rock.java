@@ -20,7 +20,7 @@ public class Rock {
     private int id;
 
     private float nr;
-    private char type;   // 'G' = Rock, 'M' = Massif, 'H' = Cage, 'N' = unofficial
+    private char type;   // 'G' = Rock, 'M' = Massif, 'H' = Cage, 'B' = Boulder, 'N' = unofficial
     private char status; // 'X' = prohibited, 'Z' = temporarily prohibited, 'T' = partly prohibited
     private String name;
     private float longitude;

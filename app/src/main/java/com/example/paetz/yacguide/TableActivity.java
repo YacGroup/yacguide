@@ -30,20 +30,16 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
 
     // UpdateListener
     @Override
-    public void onEvent(boolean success, String eventMessage) {
+    public void onEvent(boolean success) {
         if (updateDialog != null) {
-            if (eventMessage.isEmpty()) {
-                updateDialog.dismiss();
-                if (success) {
-                    Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Fehler bei Aktualisierung", Toast.LENGTH_SHORT).show();
-                }
-                displayContent();
-            } else {
-                ((TextView) updateDialog.findViewById(R.id.dialogText)).setText(eventMessage);
-            }
+            updateDialog.dismiss();
         }
+        if (success) {
+            Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Fehler bei Aktualisierung", Toast.LENGTH_SHORT).show();
+        }
+        displayContent();
     }
 
     public void home(View v) {
