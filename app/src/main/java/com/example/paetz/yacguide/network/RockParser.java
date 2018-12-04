@@ -27,17 +27,14 @@ public class RockParser extends JSONWebParser {
         _sectorId = sectorId;
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.DATA_REQUEST_ID,
-                "Lade Gipfeldaten...",
                 baseUrl + "jsongipfel.php?app=yacguide&sektorid=" + _sectorId
         ));
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.SUBDATA_REQUEST_ID,
-                "Lade Wegdaten...",
                 baseUrl + "jsonwege.php?app=yacguide&sektorid=" + _sectorId
         ));
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.COMMENTS_REQUEST_ID,
-                "Lade Kommentare",
                 baseUrl + "jsonkomment.php?app=yacguide&sektorid=" + _sectorId
         ));
     }

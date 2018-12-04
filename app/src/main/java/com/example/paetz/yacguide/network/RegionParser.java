@@ -17,7 +17,6 @@ public class RegionParser extends JSONWebParser {
         _countryName = countryName;
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.DATA_REQUEST_ID,
-                "Lade Gebietsdaten...",
                 baseUrl + "jsongebiet.php?app=yacguide&land=" + countryName.replace(" ", "%20")));
     }
 

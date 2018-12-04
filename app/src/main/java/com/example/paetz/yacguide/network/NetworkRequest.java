@@ -7,12 +7,10 @@ public class NetworkRequest {
     public static final int COMMENTS_REQUEST_ID = 3;
 
     public int requestId;
-    public String infoMessage;
     public String url;
 
-    public NetworkRequest(int requestId, String infoMessage, String url) {
+    public NetworkRequest(int requestId, String url) {
         this.requestId = requestId;
-        this.infoMessage = infoMessage;
         this.url = url;
     }
 }
