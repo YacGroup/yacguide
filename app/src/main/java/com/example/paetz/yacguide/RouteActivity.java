@@ -31,7 +31,9 @@ public class RouteActivity extends TableActivity {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist komplett gesperrt.");
         } else if (rockStatus == Rock.statusTemporarilyProhibited) {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist zeitweise gesperrt.");
-        } else if (rockStatus == Rock.statusUnofficial) {
+        } else if (rockStatus == Rock.statusPartlyProhibited) {
+            ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist teilweise gesperrt.");
+        } else if (_rock.getType() == Rock.typeUnofficial) {
             ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Felsen ist nicht anerkannt.");
         }
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
