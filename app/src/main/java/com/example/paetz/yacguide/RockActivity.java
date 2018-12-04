@@ -86,7 +86,7 @@ public class RockActivity extends TableActivity {
         this.setTitle(_sector.getName());
         for (final Rock rock : db.rockDao().getAll(_sector.getId())) {
             final String rockName = rock.getName();
-            if (!rockName.toLowerCase().startsWith(_rockNamePrefix.toLowerCase())) {
+            if (!rockName.toLowerCase().contains(_rockNamePrefix.toLowerCase())) {
                 continue;
             }
             final char type = rock.getType();
