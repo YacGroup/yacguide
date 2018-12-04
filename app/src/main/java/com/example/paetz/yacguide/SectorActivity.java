@@ -24,7 +24,7 @@ public class SectorActivity extends TableActivity {
         final int regionId = getIntent().getIntExtra(IntentConstants.REGION_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_sector);
 
-        htmlParser = new SectorParser(db, regionId, this);
+        jsonParser = new SectorParser(db, this, regionId);
         _region = db.regionDao().getRegion(regionId);
 
         displayContent();

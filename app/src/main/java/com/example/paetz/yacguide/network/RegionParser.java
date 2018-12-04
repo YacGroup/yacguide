@@ -3,50 +3,36 @@ package com.example.paetz.yacguide.network;
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Region;
-import com.example.paetz.yacguide.utils.HtmlUtils;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class RegionParser extends HTMLParser implements NetworkListener {
+public class RegionParser extends JSONWebParser {
 
     private String _countryName;
 
-    public RegionParser(AppDatabase db, String countryName, UpdateListener listener) {
+    public RegionParser(AppDatabase db, UpdateListener listener, String countryName) {
         super(db, listener);
         _countryName = countryName;
+        networkRequests.add(new NetworkRequest(
+                NetworkRequest.DATA_REQUEST_ID,
+                "Lade Gebietsdaten...",
+                baseUrl + "jsongebiet.php?app=yacguide&land=" + countryName));
     }
 
     @Override
-    public void parse() {
-        new NetworkTask(this).execute(HtmlUtils.concat(baseUrl, "boehmen.php?land=" + _countryName));
-    }
-
-    @Override
-    public void onNetworkTaskResolved(Document document) {
-        final Elements tableElements = HtmlUtils.getTableElements(document);
-        _processRegions(tableElements);
-        listener.onEvent(tableElements.size() > 1); // mind one heading element
-    }
-
-    private void _processRegions(Elements elements) {
+    protected void parseData(int requestId, String json) throws JSONException {
+        // We don't need to care about requestId here; we only have one
         db.regionDao().deleteAll(_countryName);
-        for (int i = 1; i < elements.size(); i++) { // index 0 is the table header
+        final JSONArray jsonRegions = new JSONArray(json);
+        for (int i = 0; i < jsonRegions.length(); i++) {
+            final JSONObject jsonRegion = jsonRegions.getJSONObject(i);
             Region r = new Region();
-            final Elements data = elements.get(i).select("td");
-            final Element link = data.get(0).select("a").get(0);
-            final Pattern p = Pattern.compile("(.*)gebietid=([0-9]+)(.*)");
-            final Matcher m = p.matcher(link.attr("href").toString());
-            if (m.find()) {
-                r.setId(Integer.parseInt(m.group(2)));
-                r.setName(link.text());
-                r.setCountry(_countryName);
-                db.regionDao().insert(r);
-            }
+            r.setId(Integer.parseInt(jsonRegion.getString("gebiet_ID")));
+            r.setName(jsonRegion.getString("gebiet"));
+            r.setCountry(_countryName);
+            db.regionDao().insert(r);
         }
     }
 }
