@@ -8,15 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Map;
-
 public class CountryParser extends JSONWebParser {
 
     public CountryParser(AppDatabase db, UpdateListener listener) {
         super(db, listener);
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.DATA_REQUEST_ID,
-                "Lade Länderdaten...",
                 baseUrl + "jsonland.php?app=yacguide"));
     }
 

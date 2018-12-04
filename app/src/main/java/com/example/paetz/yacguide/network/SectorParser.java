@@ -17,12 +17,10 @@ public class SectorParser extends JSONWebParser {
         _regionId = regionId;
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.DATA_REQUEST_ID,
-                "Lade Sektordaten...",
                 baseUrl + "jsonteilgebiet.php?app=yacguide&gebietid=" + _regionId
         ));
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.COMMENTS_REQUEST_ID,
-                "Lade Kommentare...",
                 baseUrl + "jsonkomment.php?app=yacguide&gebietid=" + _regionId
         ));
     }
