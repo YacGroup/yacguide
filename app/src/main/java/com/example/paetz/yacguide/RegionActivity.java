@@ -23,7 +23,7 @@ public class RegionActivity extends TableActivity {
         _countryName = getIntent().getStringExtra(IntentConstants.COUNTRY_KEY);
         super.initialize(R.layout.activity_region);
 
-        htmlParser = new RegionParser(db, _countryName, this);
+        jsonParser = new RegionParser(db, this, _countryName);
 
         displayContent();
     }

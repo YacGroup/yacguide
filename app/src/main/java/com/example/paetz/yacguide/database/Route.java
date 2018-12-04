@@ -10,8 +10,13 @@ public class Route {
     private int id;
 
     private float nr;
+    private int status;
     private String name;
     private String grade;
+    private String firstAscendLeader;
+    private String firstAscendFollower;
+    private String firstAscendDate;
+    private String typeOfClimbing;
     private String description;
     private int ascendCount;
     private int parentId;
@@ -32,6 +37,14 @@ public class Route {
         this.nr = nr;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getName() {
         return name;
     }
@@ -46,6 +59,38 @@ public class Route {
 
     public void setGrade(String grade) {
         this.grade = grade;
+    }
+
+    public String getFirstAscendLeader() {
+        return firstAscendLeader;
+    }
+
+    public void setFirstAscendLeader(String firstAscendLeader) {
+        this.firstAscendLeader = firstAscendLeader;
+    }
+
+    public String getFirstAscendFollower() {
+        return firstAscendFollower;
+    }
+
+    public void setFirstAscendFollower(String firstAscendFollower) {
+        this.firstAscendFollower = firstAscendFollower;
+    }
+
+    public String getFirstAscendDate() {
+        return firstAscendDate;
+    }
+
+    public void setFirstAscendDate(String firstAscendDate) {
+        this.firstAscendDate = firstAscendDate;
+    }
+
+    public String getTypeOfClimbing() {
+        return typeOfClimbing;
+    }
+
+    public void setTypeOfClimbing(String typeOfClimbing) {
+        this.typeOfClimbing = typeOfClimbing;
     }
 
     public String getDescription() {

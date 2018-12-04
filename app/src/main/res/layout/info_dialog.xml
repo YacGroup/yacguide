@@ -12,8 +12,7 @@
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:textStyle="bold"
-        android:textSize="30dp"
-        android:text="Laden"
+        android:textSize="20dp"
         android:id="@+id/dialogText"
     />
 

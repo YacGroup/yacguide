@@ -20,7 +20,7 @@ public class CountryActivity extends TableActivity {
         super.onCreate(savedInstanceState);
 
         super.initialize(R.layout.activity_country);
-        htmlParser = new CountryParser(db, this);
+        jsonParser = new CountryParser(db, this);
 
         displayContent();
     }
