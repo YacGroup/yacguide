@@ -2,5 +2,5 @@ package com.example.paetz.yacguide;
 
 public interface UpdateListener {
 
-    void onEvent(boolean state);
+    void onEvent(boolean success);
 }

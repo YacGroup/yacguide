@@ -9,13 +9,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.AppDatabase;
-import com.example.paetz.yacguide.network.HTMLParser;
+import com.example.paetz.yacguide.network.JSONWebParser;
 import com.example.paetz.yacguide.network.NetworkUtils;
 
 public abstract class TableActivity extends AppCompatActivity implements UpdateListener {
 
     protected AppDatabase db;
-    protected HTMLParser htmlParser;
+    protected JSONWebParser jsonParser;
     protected Dialog updateDialog;
 
     @Override
@@ -30,11 +30,15 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
 
     // UpdateListener
     @Override
-    public void onEvent(boolean state) {
+    public void onEvent(boolean success) {
         if (updateDialog != null) {
             updateDialog.dismiss();
         }
-        Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show();
+        if (success) {
+            Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Fehler bei Aktualisierung", Toast.LENGTH_SHORT).show();
+        }
         displayContent();
     }
 
@@ -53,14 +57,14 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
             Toast.makeText(this, "Keine Internetverbindung", Toast.LENGTH_LONG).show();
             return;
         }
-        if (htmlParser != null) {
+        if (jsonParser != null) {
             final Dialog dialog = new Dialog(this);
             dialog.setContentView(R.layout.dialog);
             ((TextView) dialog.findViewById(R.id.dialogText)).setText("Diesen Bereich aktualisieren?");
             dialog.findViewById(R.id.yesButton).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    htmlParser.parse();
+                    jsonParser.fetchData();
                     showUpdateDialog();
                     dialog.dismiss();
                 }

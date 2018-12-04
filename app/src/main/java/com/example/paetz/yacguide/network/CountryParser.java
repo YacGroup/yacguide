@@ -3,34 +3,29 @@ package com.example.paetz.yacguide.network;
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Country;
-import com.example.paetz.yacguide.utils.HtmlUtils;
 
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class CountryParser extends HTMLParser implements NetworkListener {
+public class CountryParser extends JSONWebParser {
 
     public CountryParser(AppDatabase db, UpdateListener listener) {
         super(db, listener);
+        networkRequests.add(new NetworkRequest(
+                NetworkRequest.DATA_REQUEST_ID,
+                baseUrl + "jsonland.php?app=yacguide"));
     }
 
     @Override
-    public void parse() {
-        new NetworkTask(this).execute(HtmlUtils.concat(baseUrl, "adr.php"));
-    }
-
-    @Override
-    public void onNetworkTaskResolved(Document document) {
-        _processCountries(document.select("ul").get(0).select("li"));
-        listener.onEvent(true);
-    }
-
-    private void _processCountries(Elements elements) {
+    protected void parseData(int requestId, String json) throws JSONException {
+        // We don't need to care about requestId here; we only have one
         db.countryDao().deleteAll();
-        for (final Element e : elements) {
+        final JSONArray jsonCountries = new JSONArray(json);
+        for (int i = 0; i < jsonCountries.length(); i++) {
+            final JSONObject jsonCountry = jsonCountries.getJSONObject(i);
             Country c = new Country();
-            c.setName(e.text());
+            c.setName(jsonCountry.getString("land"));
             db.countryDao().insert(c);
         }
     }

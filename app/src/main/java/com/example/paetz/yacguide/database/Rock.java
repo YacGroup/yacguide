@@ -6,21 +6,22 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Rock {
 
-    public static final String typeSummit = "G";
-    public static final String typeMassif = "M";
-    public static final String typeBoulder = "B";
-    public static final String typeCave = "H";
+    public static final char typeSummit = 'G';
+    public static final char typeMassif = 'M';
+    public static final char typeBoulder = 'B';
+    public static final char typeCave = 'H';
+    public static final char typeUnofficial = 'N';
 
     public static final char statusTemporarilyProhibited = 'Z';
     public static final char statusProhibited = 'X';
-    public static final char statusUnofficial = 'N';
+    public static final char statusPartlyProhibited = 'T';
 
     @PrimaryKey
     private int id;
 
     private float nr;
-    private String type;
-    private char status; // 'X' = prohibited, 'Z' = temporarily prohibited, 'N' = unofficial, 'T' = partly prohibited
+    private char type;   // 'G' = Rock, 'M' = Massif, 'H' = Cage, 'B' = Boulder, 'N' = unofficial
+    private char status; // 'X' = prohibited, 'Z' = temporarily prohibited, 'T' = partly prohibited
     private String name;
     private float longitude;
     private float latitude;
@@ -43,11 +44,11 @@ public class Rock {
         this.nr = nr;
     }
 
-    public String getType() {
+    public char getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(char type) {
         this.type = type;
     }
 

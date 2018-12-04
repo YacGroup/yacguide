@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Rock;
@@ -21,7 +20,7 @@ import com.example.paetz.yacguide.network.RockParser;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
-public class RockActivity extends TableActivity implements ProgressListener {
+public class RockActivity extends TableActivity {
 
     private Sector _sector;
     private boolean _onlySummits;
@@ -34,7 +33,7 @@ public class RockActivity extends TableActivity implements ProgressListener {
         final int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, db.INVALID_ID);
         super.initialize(R.layout.activity_rock);
 
-        htmlParser = new RockParser(db, sectorId, this, this);
+        jsonParser = new RockParser(db, this, sectorId);
         _sector = db.sectorDao().getSector(sectorId);
         _onlySummits = false;
         _rockNamePrefix = "";
@@ -71,15 +70,6 @@ public class RockActivity extends TableActivity implements ProgressListener {
         }
     }
 
-    // ProgressListener
-    @Override
-    public void onProgress(int sent, int received) {
-        if (updateDialog != null && sent != 0) {
-            final int percent = 100 * received / sent;
-            ((TextView) updateDialog.findViewById(R.id.dialogText)).setText(percent + "%");
-        }
-    }
-
     public void map(View v) {
         Toast.makeText(this, "Noch nicht implementiert", Toast.LENGTH_SHORT).show();
     }
@@ -91,24 +81,20 @@ public class RockActivity extends TableActivity implements ProgressListener {
 
     @Override
     protected void displayContent() {
-        _displayInner(_onlySummits, _rockNamePrefix);
-    }
-
-    private void _displayInner(boolean onlySummits, String rockNamePrefix) {
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         this.setTitle(_sector.getName());
         for (final Rock rock : db.rockDao().getAll(_sector.getId())) {
             final String rockName = rock.getName();
-            if (!rockName.toLowerCase().startsWith(rockNamePrefix.toLowerCase())) {
+            if (!rockName.toLowerCase().contains(_rockNamePrefix.toLowerCase())) {
                 continue;
             }
-            final String type = rock.getType();
+            final char type = rock.getType();
             final int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             String typeAdd = "";
             int typeFace = Typeface.NORMAL;
-            if (!type.equals(Rock.typeSummit)) {
-                if (onlySummits) {
+            if (type != Rock.typeSummit) {
+                if (_onlySummits) {
                     continue;
                 }
                 typeAdd = "  (" + type + ")";
