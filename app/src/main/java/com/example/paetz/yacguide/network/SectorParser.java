@@ -2,6 +2,7 @@ package com.example.paetz.yacguide.network;
 
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.database.Comment.RegionComment;
 import com.example.paetz.yacguide.database.Sector;
 
 import org.json.JSONArray;
@@ -30,7 +31,7 @@ public class SectorParser extends JSONWebParser {
         if (requestId == NetworkRequest.DATA_REQUEST_ID) {
             parseSectors(json);
         } else {
-            parseComments(json);
+            parseRegionComments(json);
         }
     }
 
@@ -40,10 +41,24 @@ public class SectorParser extends JSONWebParser {
         for (int i = 0; i < jsonSectors.length(); i++) {
             final JSONObject jsonSector = jsonSectors.getJSONObject(i);
             Sector s = new Sector();
-            s.setId(Integer.parseInt(jsonSector.getString("sektor_ID")));
+            s.setId(jsonField2Int(jsonSector, "sektor_ID"));
             s.setName(jsonSector.getString("sektorname_d"));
             s.setParentId(_regionId);
             db.sectorDao().insert(s);
+        }
+    }
+
+    private void parseRegionComments(String json) throws JSONException {
+        db.regionCommentDao().deleteAll(_regionId);
+        final JSONArray jsonComments = new JSONArray(json);
+        for (int i = 0; i < jsonComments.length(); i++) {
+            final JSONObject jsonComment = jsonComments.getJSONObject(i);
+            RegionComment comment = new RegionComment();
+            comment.setId(jsonField2Int(jsonComment, "komment_ID"));
+            comment.setQualityId(jsonField2Int(jsonComment, "qual"));
+            comment.setText(jsonComment.getString("kommentar"));
+            comment.setRegionId(_regionId);
+            db.regionCommentDao().insert(comment);
         }
     }
 }

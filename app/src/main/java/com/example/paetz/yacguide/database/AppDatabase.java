@@ -6,6 +6,14 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import com.example.paetz.yacguide.database.Comment.RegionComment;
+import com.example.paetz.yacguide.database.Comment.RegionCommentDao;
+import com.example.paetz.yacguide.database.Comment.RockComment;
+import com.example.paetz.yacguide.database.Comment.RockCommentDao;
+import com.example.paetz.yacguide.database.Comment.RouteComment;
+import com.example.paetz.yacguide.database.Comment.RouteCommentDao;
+import com.example.paetz.yacguide.database.Comment.SectorComment;
+import com.example.paetz.yacguide.database.Comment.SectorCommentDao;
 import com.example.paetz.yacguide.utils.Converters;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -14,7 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@Database(entities = {Country.class, Region.class, Sector.class, Rock.class, Route.class, Comment.class, Ascend.class, Partner.class}, version = 1)
+@Database(entities = {Country.class, Region.class, Sector.class, Rock.class, Route.class, Ascend.class, Partner.class,
+        RegionComment.class, SectorComment.class, RockComment.class, RouteComment.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -28,9 +37,12 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SectorDao sectorDao();
     public abstract RockDao rockDao();
     public abstract RouteDao routeDao();
-    public abstract CommentDao commentDao();
     public abstract AscendDao ascendDao();
     public abstract PartnerDao partnerDao();
+    public abstract RegionCommentDao regionCommentDao();
+    public abstract SectorCommentDao sectorCommentDao();
+    public abstract RockCommentDao rockCommentDao();
+    public abstract RouteCommentDao routeCommentDao();
 
     public final static BiMap<Integer, String> CLIMBING_STYLES;
     static {
@@ -79,6 +91,7 @@ public abstract class AppDatabase extends RoomDatabase {
             deleteRocks(sector.getId());
         }
         sectorDao().deleteAll(regionId);
+        regionCommentDao().deleteAll(regionId);
     }
 
     public void deleteRocks(int sectorId) {
@@ -86,11 +99,13 @@ public abstract class AppDatabase extends RoomDatabase {
         for (final Rock rock : rocks) {
             final Route[] routes = routeDao().getAll(rock.getId());
             for (final Route route : routes) {
-                commentDao().deleteAll(route.getId());
+                routeCommentDao().deleteAll(route.getId());
             }
             routeDao().deleteAll(rock.getId());
+            rockCommentDao().deleteAll(rock.getId());
         }
         rockDao().deleteAll(sectorId);
+        sectorCommentDao().deleteAll(sectorId);
     }
 
     // Some default stuff necessary for tourbook if according objects have

@@ -28,7 +28,7 @@ public class RegionParser extends JSONWebParser {
         for (int i = 0; i < jsonRegions.length(); i++) {
             final JSONObject jsonRegion = jsonRegions.getJSONObject(i);
             Region r = new Region();
-            r.setId(Integer.parseInt(jsonRegion.getString("gebiet_ID")));
+            r.setId(jsonField2Int(jsonRegion, "gebiet_ID"));
             r.setName(jsonRegion.getString("gebiet"));
             r.setCountry(_countryName);
             db.regionDao().insert(r);

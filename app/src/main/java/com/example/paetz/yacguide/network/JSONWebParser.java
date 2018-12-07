@@ -4,6 +4,7 @@ import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 
@@ -49,9 +50,29 @@ public abstract class JSONWebParser implements NetworkListener {
         }
     }
 
-    protected void parseComments(String json) {
+    protected abstract void parseData(int requestId, String json) throws JSONException;
 
+    protected int jsonField2Int(JSONObject jsonObject, String fieldName) throws JSONException {
+        try {
+            return Integer.parseInt(jsonObject.getString(fieldName));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
-    protected abstract void parseData(int requestId, String json) throws JSONException;
+    protected float jsonField2Float(JSONObject jsonObject, String fieldName) throws JSONException {
+        try {
+            return Float.parseFloat(jsonObject.getString(fieldName));
+        } catch (NumberFormatException e) {
+            return 0.f;
+        }
+    }
+
+    protected char jsonField2Char(JSONObject jsonObject, String fieldName) throws JSONException {
+        try {
+            return jsonObject.getString(fieldName).charAt(0);
+        } catch (IndexOutOfBoundsException e) {
+            return ' ';
+        }
+    }
 }
