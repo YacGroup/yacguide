@@ -115,9 +115,9 @@ public class RockParser extends JSONWebParser {
         final JSONArray jsonComments = new JSONArray(json);
         for (int i = 0; i < jsonComments.length(); i++) {
             final JSONObject jsonComment = jsonComments.getJSONObject(i);
-            int routeId = jsonField2Int(jsonComment, "wegid");
-            int rockId = jsonField2Int(jsonComment,"gipfelid");
-            int sectorId = jsonField2Int(jsonComment, "sektorid");
+            final int routeId = jsonField2Int(jsonComment, "wegid");
+            final int rockId = jsonField2Int(jsonComment,"gipfelid");
+            final int sectorId = jsonField2Int(jsonComment, "sektorid");
             if (routeId != 0) {
                 RouteComment comment = new RouteComment();
                 comment.setId(jsonField2Int(jsonComment, "komment_ID"));

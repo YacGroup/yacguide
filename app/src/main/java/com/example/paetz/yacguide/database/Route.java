@@ -61,7 +61,7 @@ public class Route {
         return statusId;
     }
 
-    public void setStatusId(int status) {
+    public void setStatusId(int statusId) {
         this.statusId = statusId;
     }
 

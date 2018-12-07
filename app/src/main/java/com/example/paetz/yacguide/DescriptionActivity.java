@@ -58,11 +58,11 @@ public class DescriptionActivity extends TableActivity {
 
         LinearLayout layout = dialog.findViewById(R.id.commentLayout);
         for (final RouteComment comment : db.routeCommentDao().getAll(_route.getId())) {
-            int qualityId = comment.getQualityId();
-            int gradeId = comment.getGradeId();
-            int securityId = comment.getSecurityId();
-            int wetnessId = comment.getWetnessId();
-            String text = comment.getText();
+            final int qualityId = comment.getQualityId();
+            final int gradeId = comment.getGradeId();
+            final int securityId = comment.getSecurityId();
+            final int wetnessId = comment.getWetnessId();
+            final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
             if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
@@ -131,8 +131,7 @@ public class DescriptionActivity extends TableActivity {
 
     @Override
     protected void displayContent() {
-        ImageButton ascendsButton = findViewById(R.id.ascendsButton);
-        ascendsButton.setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
+        findViewById(R.id.ascendsButton).setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
 
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
@@ -143,7 +142,7 @@ public class DescriptionActivity extends TableActivity {
         firstAscendClimbers += _route.getFirstAscendFollower().isEmpty()
                 ? ""
                 : ", " + _route.getFirstAscendFollower();
-        String firstAscendDate = _route.getFirstAscendDate().equals(DateUtils.UNKNOWN_DATE)
+        final String firstAscendDate = _route.getFirstAscendDate().equals(DateUtils.UNKNOWN_DATE)
                 ? "Datum unbekannt"
                 : DateUtils.formatDate(_route.getFirstAscendDate());
         layout.addView(WidgetUtils.createCommonRowLayout(this,
@@ -161,65 +160,6 @@ public class DescriptionActivity extends TableActivity {
                 null,
                 Color.WHITE,
                 Typeface.BOLD));
-
-        /*for (final RouteComment comment : db.routeCommentDao().getAll(_route.getId())) {
-            int qualityId = comment.getQualityId();
-            int gradeId = comment.getGradeId();
-            int securityId = comment.getSecurityId();
-            int wetnessId = comment.getWetnessId();
-            String text = comment.getText();
-
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
-            if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Wegqualität:",
-                        RouteComment.QUALITY_MAP.get(qualityId),
-                        12,
-                        null,
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0));
-            }
-            if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Schwierigkeit:",
-                        RouteComment.GRADE_MAP.get(gradeId),
-                        12,
-                        null,
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0));
-            }
-            if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Absicherung:",
-                        RouteComment.SECURITY_MAP.get(securityId),
-                        12,
-                        null,
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0));
-            }
-            if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Abtrocknung:",
-                        RouteComment.WETNESS_MAP.get(wetnessId),
-                        12,
-                        null,
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0));
-            }
-
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text,
-                    "",
-                    12,
-                    null,
-                    Color.WHITE,
-                    Typeface.NORMAL,
-                    10, 10, 10, 10));
-        }*/
     }
 
     @Override
