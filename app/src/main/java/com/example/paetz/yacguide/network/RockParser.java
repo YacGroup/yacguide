@@ -2,6 +2,9 @@ package com.example.paetz.yacguide.network;
 
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.database.Comment.RockComment;
+import com.example.paetz.yacguide.database.Comment.RouteComment;
+import com.example.paetz.yacguide.database.Comment.SectorComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.google.common.collect.ImmutableSet;
@@ -55,22 +58,18 @@ public class RockParser extends JSONWebParser {
         final JSONArray jsonRocks = new JSONArray(json);
         for (int i = 0; i < jsonRocks.length(); i++) {
             final JSONObject jsonRock = jsonRocks.getJSONObject(i);
-            final char type = jsonRock.getString("typ").charAt(0);
+            final char type = jsonField2Char(jsonRock, "typ");
             if (!_climbingObjectTypes.contains(type)) {
                 continue;
-            }
-            String status = jsonRock.getString("status");
-            if (status.isEmpty()) {
-                status = " ";
             }
             Rock r = new Rock();
             r.setId(Integer.parseInt(jsonRock.getString("gipfel_ID")));
             r.setNr(Float.parseFloat(jsonRock.getString("gipfelnr")));
             r.setName(jsonRock.getString("gipfelname_d"));
             r.setType(type);
-            r.setStatus(status.charAt(0));
-            r.setLongitude(Float.parseFloat(jsonRock.getString("vgrd")));
-            r.setLatitude(Float.parseFloat(jsonRock.getString("ngrd")));
+            r.setStatus(jsonField2Char(jsonRock, "status"));
+            r.setLongitude(jsonField2Float(jsonRock, "vgrd"));
+            r.setLatitude(jsonField2Float(jsonRock, "ngrd"));
             r.setAscended(false);
             r.setParentId(_sectorId);
             db.rockDao().insert(r);
@@ -87,8 +86,8 @@ public class RockParser extends JSONWebParser {
             Route r = new Route();
             int routeId = Integer.parseInt(jsonRoute.getString("weg_ID"));
             r.setId(routeId);
-            r.setNr(Float.parseFloat(jsonRoute.getString("wegnr")));
-            r.setStatus(Integer.parseInt(jsonRoute.getString("wegstatus")));
+            r.setNr(jsonField2Float(jsonRoute, "wegnr"));
+            r.setStatusId(jsonField2Int(jsonRoute, "wegstatus"));
             r.setName(jsonRoute.getString("wegname_d"));
             r.setGrade(jsonRoute.getString("schwierigkeit"));
             r.setFirstAscendLeader(jsonRoute.getString("erstbegvorstieg"));
@@ -97,7 +96,7 @@ public class RockParser extends JSONWebParser {
             r.setTypeOfClimbing(jsonRoute.getString("kletterei"));
             r.setDescription(jsonRoute.getString("wegbeschr_d"));
             r.setAscendCount(db.ascendDao().getAscendsForRoute(routeId).length); // if we re-add a route that has already been marked as ascended in the past
-            r.setParentId(Integer.parseInt(jsonRoute.getString("gipfelid")));
+            r.setParentId(jsonField2Int(jsonRoute, "gipfelid"));
             db.routeDao().insert(r);
         }
 
@@ -108,6 +107,54 @@ public class RockParser extends JSONWebParser {
                 ascended |= (route.getAscendCount() > 0);
             }
             db.rockDao().updateAscended(ascended, rock.getId());
+        }
+    }
+
+    private void parseComments(String json) throws JSONException {
+        deleteComments();
+        final JSONArray jsonComments = new JSONArray(json);
+        for (int i = 0; i < jsonComments.length(); i++) {
+            final JSONObject jsonComment = jsonComments.getJSONObject(i);
+            final int routeId = jsonField2Int(jsonComment, "wegid");
+            final int rockId = jsonField2Int(jsonComment,"gipfelid");
+            final int sectorId = jsonField2Int(jsonComment, "sektorid");
+            if (routeId != 0) {
+                RouteComment comment = new RouteComment();
+                comment.setId(jsonField2Int(jsonComment, "komment_ID"));
+                comment.setQualityId(jsonField2Int(jsonComment, "qual"));
+                comment.setGradeId(jsonField2Int(jsonComment, "schwer"));
+                comment.setSecurityId(jsonField2Int(jsonComment, "sicher"));
+                comment.setWetnessId(jsonField2Int(jsonComment, "nass"));
+                comment.setText(jsonComment.getString("kommentar"));
+                comment.setRouteId(routeId);
+                db.routeCommentDao().insert(comment);
+            } else if (rockId != 0) {
+                RockComment comment = new RockComment();
+                comment.setId(jsonField2Int(jsonComment, "komment_ID"));
+                comment.setQualityId(jsonField2Int(jsonComment, "qual"));
+                comment.setText(jsonComment.getString("kommentar"));
+                comment.setRockId(rockId);
+                db.rockCommentDao().insert(comment);
+            } else if (sectorId != 0) {
+                SectorComment comment = new SectorComment();
+                comment.setId(jsonField2Int(jsonComment, "komment_ID"));
+                comment.setQualityId(jsonField2Int(jsonComment, "qual"));
+                comment.setText(jsonComment.getString("kommentar"));
+                comment.setSectorId(sectorId);
+                db.sectorCommentDao().insert(comment);
+            } else {
+                throw new JSONException("Unknown comment origin");
+            }
+        }
+    }
+
+    private void deleteComments() {
+        db.sectorCommentDao().deleteAll(_sectorId);
+        for (Rock rock : db.rockDao().getAll(_sectorId)) {
+            db.rockCommentDao().deleteAll(rock.getId());
+            for (Route route : db.routeDao().getAll(rock.getId())) {
+                db.routeCommentDao().deleteAll(route.getId());
+            }
         }
     }
 }

@@ -12,7 +12,6 @@ import com.example.paetz.yacguide.network.CountryParser;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
-
 public class CountryActivity extends TableActivity {
 
     @Override

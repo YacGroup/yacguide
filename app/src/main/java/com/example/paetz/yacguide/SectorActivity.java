@@ -1,5 +1,6 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.example.paetz.yacguide.database.Comment.RegionComment;
 import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.network.SectorParser;
@@ -28,6 +30,36 @@ public class SectorActivity extends TableActivity {
         _region = db.regionDao().getRegion(regionId);
 
         displayContent();
+    }
+
+    public void showComments(View v) {
+        final Dialog dialog = prepareCommentDialog();
+
+        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        for (final RegionComment comment : db.regionCommentDao().getAll(_region.getId())) {
+            final int qualityId = comment.getQualityId();
+            final String text = comment.getText();
+
+            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Bedeutung:",
+                        RegionComment.QUALITY_MAP.get(qualityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    text,
+                    "",
+                    12,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    10, 10, 10, 10));
+        }
     }
 
     @Override
