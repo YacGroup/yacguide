@@ -55,8 +55,8 @@ public class RouteActivity extends TableActivity {
 
         LinearLayout layout = dialog.findViewById(R.id.commentLayout);
         for (final RockComment comment : db.rockCommentDao().getAll(_rock.getId())) {
-            int qualityId = comment.getQualityId();
-            String text = comment.getText();
+            final int qualityId = comment.getQualityId();
+            final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
             if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
@@ -95,7 +95,7 @@ public class RouteActivity extends TableActivity {
         this.setTitle(_rock.getNr() + " " + _rock.getName());
 
         for (final Route route : db.routeDao().getAll(_rock.getId())) {
-            final int commentCount = db.routeCommentDao()   .getCommentCount(route.getId());
+            final int commentCount = db.routeCommentDao().getCommentCount(route.getId());
             String commentCountAddon = "";
             if (commentCount > 0) {
                 commentCountAddon = "   [" + commentCount + "]";

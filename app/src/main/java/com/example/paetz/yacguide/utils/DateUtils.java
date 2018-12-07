@@ -12,7 +12,7 @@ public class DateUtils {
     public static String formatDate(String date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            Date formattedDate = format.parse(date);
+            final Date formattedDate = format.parse(date);
             Calendar cal = Calendar.getInstance();
             cal.setTime(formattedDate);
             return cal.get(Calendar.DAY_OF_MONTH) + "." + (cal.get(Calendar.MONTH) + 1) + "." + cal.get(Calendar.YEAR);

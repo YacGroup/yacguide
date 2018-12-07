@@ -37,8 +37,8 @@ public class SectorActivity extends TableActivity {
 
         LinearLayout layout = dialog.findViewById(R.id.commentLayout);
         for (final RegionComment comment : db.regionCommentDao().getAll(_region.getId())) {
-            int qualityId = comment.getQualityId();
-            String text = comment.getText();
+            final int qualityId = comment.getQualityId();
+            final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
             if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
