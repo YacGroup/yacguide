@@ -113,6 +113,22 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
         updateDialog.show();
     }
 
+    protected Dialog prepareCommentDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.comment_dialog);
+        dialog.findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
+
+        return dialog;
+    }
+
     protected abstract void displayContent();
 
     protected abstract void deleteContent();

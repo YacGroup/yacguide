@@ -29,6 +29,15 @@
             android:layout_toRightOf="@+id/homeButton"
             android:onClick="back"
             app:srcCompat="@android:drawable/ic_menu_revert" />
+
+        <ImageButton
+            android:id="@+id/commentButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/backButton"
+            android:onClick="showComments"
+            app:srcCompat="@android:drawable/ic_menu_info_details" />
     </RelativeLayout>
 
     <TextView

@@ -1,17 +1,18 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.paetz.yacguide.database.Comment;
+import com.example.paetz.yacguide.database.Comment.RouteComment;
 import com.example.paetz.yacguide.database.Route;
+import com.example.paetz.yacguide.utils.DateUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
@@ -38,9 +39,8 @@ public class DescriptionActivity extends TableActivity {
         // Note: Once reset, _resultUpdated may not be set back to RESULT_NO_UPDATE again!
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             _resultUpdated = resultCode;
-            _route = db.routeDao().getRoute(_route.getId());
-            Button ascendsButton = findViewById(R.id.ascendsButton);
-            ascendsButton.setText(_route.getAscendCount() + " Begehung(en)");
+            _route = db.routeDao().getRoute(_route.getId()); // update route instance
+            ImageButton ascendsButton = findViewById(R.id.ascendsButton);
             ascendsButton.setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
             Toast.makeText(this, "Begehungen aktualisiert", Toast.LENGTH_SHORT).show();
         }
@@ -51,6 +51,70 @@ public class DescriptionActivity extends TableActivity {
         Intent resultIntent = new Intent();
         setResult(_resultUpdated, resultIntent);
         finish();
+    }
+
+    public void showComments(View v) {
+        final Dialog dialog = prepareCommentDialog();
+
+        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        for (final RouteComment comment : db.routeCommentDao().getAll(_route.getId())) {
+            int qualityId = comment.getQualityId();
+            int gradeId = comment.getGradeId();
+            int securityId = comment.getSecurityId();
+            int wetnessId = comment.getWetnessId();
+            String text = comment.getText();
+
+            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Wegqualität:",
+                        RouteComment.QUALITY_MAP.get(qualityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Schwierigkeit:",
+                        RouteComment.GRADE_MAP.get(gradeId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Absicherung:",
+                        RouteComment.SECURITY_MAP.get(securityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Abtrocknung:",
+                        RouteComment.WETNESS_MAP.get(wetnessId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    text,
+                    "",
+                    12,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    10, 10, 10, 10));
+        }
     }
 
     public void enterAscend(View v) {
@@ -67,35 +131,95 @@ public class DescriptionActivity extends TableActivity {
 
     @Override
     protected void displayContent() {
-        Button ascendsButton = findViewById(R.id.ascendsButton);
-        ascendsButton.setText(_route.getAscendCount() + " Begehung(en)");
+        ImageButton ascendsButton = findViewById(R.id.ascendsButton);
         ascendsButton.setVisibility(_route.getAscendCount() > 0 ? View.VISIBLE : View.INVISIBLE);
 
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         this.setTitle(_route.getName() + "   " + _route.getGrade());
-        TextView descView = new TextView(this);
-        descView.setText(_route.getDescription());
-        descView.setTypeface(null, Typeface.BOLD);
-        descView.setBackgroundColor(Color.WHITE);
-        descView.setPadding(20,20,20,20);
-        layout.addView(descView);
+        String firstAscendClimbers = _route.getFirstAscendLeader().isEmpty()
+                ? "Erstbegeher unbekannt"
+                : _route.getFirstAscendLeader();
+        firstAscendClimbers += _route.getFirstAscendFollower().isEmpty()
+                ? ""
+                : ", " + _route.getFirstAscendFollower();
+        String firstAscendDate = _route.getFirstAscendDate().equals(DateUtils.UNKNOWN_DATE)
+                ? "Datum unbekannt"
+                : DateUtils.formatDate(_route.getFirstAscendDate());
+        layout.addView(WidgetUtils.createCommonRowLayout(this,
+                firstAscendClimbers,
+                firstAscendDate,
+                14,
+                null,
+                Color.WHITE,
+                Typeface.BOLD,
+                20, 20, 20, 0));
+        layout.addView(WidgetUtils.createCommonRowLayout(this,
+                _route.getDescription(),
+                "",
+                16,
+                null,
+                Color.WHITE,
+                Typeface.BOLD));
 
-        for (final Comment comment : db.commentDao().getAll(_route.getId())) {
+        /*for (final RouteComment comment : db.routeCommentDao().getAll(_route.getId())) {
+            int qualityId = comment.getQualityId();
+            int gradeId = comment.getGradeId();
+            int securityId = comment.getSecurityId();
+            int wetnessId = comment.getWetnessId();
+            String text = comment.getText();
+
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Wegqualität:",
+                        RouteComment.QUALITY_MAP.get(qualityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Schwierigkeit:",
+                        RouteComment.GRADE_MAP.get(gradeId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Absicherung:",
+                        RouteComment.SECURITY_MAP.get(securityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Abtrocknung:",
+                        RouteComment.WETNESS_MAP.get(wetnessId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
 
-            TextView assessView = new TextView(this);
-            assessView.setText(comment.getAssessment());
-            assessView.setTypeface(null, Typeface.ITALIC);
-            assessView.setBackgroundColor(Color.WHITE);
-            assessView.setPadding(10, 10, 10, 10);
-            layout.addView(assessView);
-            TextView commentView = new TextView(this);
-            commentView.setText(comment.getText());
-            commentView.setBackgroundColor(Color.WHITE);
-            commentView.setPadding(10, 10, 10, 10);
-            layout.addView(commentView);
-        }
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    text,
+                    "",
+                    12,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    10, 10, 10, 10));
+        }*/
     }
 
     @Override
