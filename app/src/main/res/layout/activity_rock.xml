@@ -34,24 +34,13 @@
             app:srcCompat="@android:drawable/ic_menu_revert" />
 
         <ImageButton
-            android:id="@+id/mapButton"
+            android:id="@+id/commentButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/backButton"
-            android:onClick="map"
-            app:srcCompat="@android:drawable/ic_menu_mapmode" />
-
-        <TextView
-            android:id="@+id/updateTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="100dp"
-            android:textStyle="bold"
-            android:text="" />
+            android:onClick="showComments"
+            app:srcCompat="@android:drawable/ic_menu_info_details" />
 
         <ImageButton
             android:id="@+id/updateButton"

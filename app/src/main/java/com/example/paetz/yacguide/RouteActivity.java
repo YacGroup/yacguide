@@ -1,5 +1,6 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.paetz.yacguide.database.Comment.RockComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.IntentConstants;
@@ -48,6 +50,36 @@ public class RouteActivity extends TableActivity {
         finish();
     }
 
+    public void showComments(View v) {
+        final Dialog dialog = prepareCommentDialog();
+
+        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        for (final RockComment comment : db.rockCommentDao().getAll(_rock.getId())) {
+            int qualityId = comment.getQualityId();
+            String text = comment.getText();
+
+            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Charakter:",
+                        RockComment.QUALITY_MAP.get(qualityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    text,
+                    "",
+                    12,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    10, 10, 10, 10));
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
@@ -58,12 +90,12 @@ public class RouteActivity extends TableActivity {
 
     @Override
     protected void displayContent() {
-        LinearLayout ll = findViewById(R.id.tableLayout);
-        ll.removeAllViews();
+        LinearLayout layout = findViewById(R.id.tableLayout);
+        layout.removeAllViews();
         this.setTitle(_rock.getNr() + " " + _rock.getName());
 
         for (final Route route : db.routeDao().getAll(_rock.getId())) {
-            final int commentCount = db.commentDao().getCommentCount(route.getId());
+            final int commentCount = db.routeCommentDao()   .getCommentCount(route.getId());
             String commentCountAddon = "";
             if (commentCount > 0) {
                 commentCountAddon = "   [" + commentCount + "]";
@@ -76,14 +108,14 @@ public class RouteActivity extends TableActivity {
                     startActivityForResult(intent, 0);
                 }
             };
-            ll.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
                     route.getName() + commentCountAddon,
                     route.getGrade(),
                     16,
                     onCLickListener,
                     route.getAscendCount() > 0 ? Color.GREEN : Color.WHITE,
                     Typeface.BOLD));
-            ll.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
     }
 

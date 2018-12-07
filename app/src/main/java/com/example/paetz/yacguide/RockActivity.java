@@ -1,5 +1,6 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,8 +13,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.example.paetz.yacguide.database.Comment.SectorComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.network.RockParser;
@@ -70,8 +71,34 @@ public class RockActivity extends TableActivity {
         }
     }
 
-    public void map(View v) {
-        Toast.makeText(this, "Noch nicht implementiert", Toast.LENGTH_SHORT).show();
+    public void showComments(View v) {
+        final Dialog dialog = prepareCommentDialog();
+
+        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        for (final SectorComment comment : db.sectorCommentDao().getAll(_sector.getId())) {
+            int qualityId = comment.getQualityId();
+            String text = comment.getText();
+
+            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
+                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                        "Bedeutung:",
+                        SectorComment.QUALITY_MAP.get(qualityId),
+                        12,
+                        null,
+                        Color.WHITE,
+                        Typeface.NORMAL,
+                        10, 10, 10, 0));
+            }
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    text,
+                    "",
+                    12,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    10, 10, 10, 10));
+        }
     }
 
     public void onlySummitsCheck(View v) {
