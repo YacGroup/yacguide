@@ -17,8 +17,6 @@ import com.example.paetz.yacguide.utils.DateUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
-import java.util.Collections;
-
 public class DescriptionActivity extends TableActivity {
 
     private Route _route;
