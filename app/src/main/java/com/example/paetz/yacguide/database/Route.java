@@ -19,7 +19,7 @@ public class Route {
         styles.put(1, "anerkannt");
         styles.put(2, "zeitlich gesperrt");
         styles.put(3, "voll gesperrt");
-        styles.put(4, "Erstbegehung");
+        styles.put(4, "eine Erstbegehung");
         styles.put(5, "nicht anerkannt");
         styles.put(6, "nur eine Erwähnung");
         styles.put(7, "ein Projekt");
