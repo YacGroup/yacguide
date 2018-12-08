@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Comment.RouteComment;
@@ -15,6 +16,8 @@ import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.DateUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
+
+import java.util.Collections;
 
 public class DescriptionActivity extends TableActivity {
 
@@ -29,6 +32,10 @@ public class DescriptionActivity extends TableActivity {
         super.initialize(R.layout.activity_description);
 
         _route = db.routeDao().getRoute(routeId);
+        final int routeStatusId = _route.getStatusId();
+        if (routeStatusId > 1) {
+            ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Weg ist " + _route.STATUS.get(routeStatusId));
+        }
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
 
         displayContent();
@@ -153,6 +160,17 @@ public class DescriptionActivity extends TableActivity {
                 Color.WHITE,
                 Typeface.BOLD,
                 20, 20, 20, 0));
+        final String climbingType = _route.getTypeOfClimbing();
+        if (!climbingType.isEmpty()) {
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    "Kletterei:",
+                    climbingType,
+                    14,
+                    null,
+                    Color.WHITE,
+                    Typeface.NORMAL,
+                    20, 20, 20, 0));
+        }
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 _route.getDescription(),
                 "",
