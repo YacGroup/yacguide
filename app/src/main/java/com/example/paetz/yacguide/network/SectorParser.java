@@ -4,6 +4,7 @@ import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Comment.RegionComment;
 import com.example.paetz.yacguide.database.Sector;
+import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class SectorParser extends JSONWebParser {
         for (int i = 0; i < jsonSectors.length(); i++) {
             final JSONObject jsonSector = jsonSectors.getJSONObject(i);
             Sector s = new Sector();
-            s.setId(jsonField2Int(jsonSector, "sektor_ID"));
+            s.setId(ParserUtils.jsonField2Int(jsonSector, "sektor_ID"));
             s.setName(jsonSector.getString("sektorname_d"));
             s.setParentId(_regionId);
             db.sectorDao().insert(s);
@@ -54,8 +55,8 @@ public class SectorParser extends JSONWebParser {
         for (int i = 0; i < jsonComments.length(); i++) {
             final JSONObject jsonComment = jsonComments.getJSONObject(i);
             RegionComment comment = new RegionComment();
-            comment.setId(jsonField2Int(jsonComment, "komment_ID"));
-            comment.setQualityId(jsonField2Int(jsonComment, "qual"));
+            comment.setId(ParserUtils.jsonField2Int(jsonComment, "komment_ID"));
+            comment.setQualityId(ParserUtils.jsonField2Int(jsonComment, "qual"));
             comment.setText(jsonComment.getString("kommentar"));
             comment.setRegionId(_regionId);
             db.regionCommentDao().insert(comment);

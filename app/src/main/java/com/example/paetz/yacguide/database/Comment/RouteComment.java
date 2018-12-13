@@ -3,79 +3,63 @@ package com.example.paetz.yacguide.database.Comment;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 public class RouteComment {
 
-    public final static BiMap<Integer, String> QUALITY_MAP;
-    static {
-        final Map<Integer, String> types = new HashMap<Integer, String>();
-        types.put(1, "sehr lohnend");
-        types.put(2, "lohnend");
-        types.put(3, "ok");
-        types.put(4, "Geschmackssache");
-        types.put(5, "Müll");
-        QUALITY_MAP = ImmutableBiMap.copyOf(Collections.unmodifiableMap(types));
-    }
+    public final static Map<Integer, String> QUALITY_MAP = new HashMap<Integer, String>() {{
+        put(1, "sehr lohnend");
+        put(2, "lohnend");
+        put(3, "ok");
+        put(4, "Geschmackssache");
+        put(5, "Müll");
+    }};
 
-    public final static BiMap<Integer, String> GRADE_MAP;
-    static {
-        final Map<Integer, String> types = new HashMap<Integer, String>();
-        types.put(1, "I");
-        types.put(2, "II");
-        types.put(3, "III");
-        types.put(4, "IV");
-        types.put(5, "V");
-        types.put(6, "VI");
-        types.put(7, "VIIa");
-        types.put(8, "VIIb");
-        types.put(9, "VIIc");
-        types.put(10, "VIIIa");
-        types.put(11, "VIIIb");
-        types.put(12, "VIIIc");
-        types.put(13, "IXa");
-        types.put(14, "IXb");
-        types.put(15, "IXc");
-        types.put(16, "Xa");
-        types.put(17, "Xb");
-        types.put(18, "Xc");
-        types.put(19, "XIa");
-        types.put(20, "XIb");
-        types.put(21, "XIc");
-        types.put(22, "XIIa");
-        types.put(23, "XIIb");
-        types.put(24, "XIIc");
-        GRADE_MAP = ImmutableBiMap.copyOf(Collections.unmodifiableMap(types));
-    }
+    public final static Map<Integer, String> GRADE_MAP = new HashMap<Integer, String>() {{
+        put(1, "I");
+        put(2, "II");
+        put(3, "III");
+        put(4, "IV");
+        put(5, "V");
+        put(6, "VI");
+        put(7, "VIIa");
+        put(8, "VIIb");
+        put(9, "VIIc");
+        put(10, "VIIIa");
+        put(11, "VIIIb");
+        put(12, "VIIIc");
+        put(13, "IXa");
+        put(14, "IXb");
+        put(15, "IXc");
+        put(16, "Xa");
+        put(17, "Xb");
+        put(18, "Xc");
+        put(19, "XIa");
+        put(20, "XIb");
+        put(21, "XIc");
+        put(22, "XIIa");
+        put(23, "XIIb");
+        put(24, "XIIc");
+    }};
 
-    public final static BiMap<Integer, String> SECURITY_MAP;
-    static {
-        final Map<Integer, String> types = new HashMap<Integer, String>();
-        types.put(1, "übersichert");
-        types.put(2, "gut");
-        types.put(3, "ausreichend");
-        types.put(4, "kompliziert");
-        types.put(5, "ungenügend");
-        types.put(6, "kamikaze");
-        SECURITY_MAP = ImmutableBiMap.copyOf(Collections.unmodifiableMap(types));
-    }
+    public final static Map<Integer, String> SECURITY_MAP = new HashMap<Integer, String>() {{
+        put(1, "übersichert");
+        put(2, "gut");
+        put(3, "ausreichend");
+        put(4, "kompliziert");
+        put(5, "ungenügend");
+        put(6, "kamikaze");
+    }};
 
-    public final static BiMap<Integer, String> WETNESS_MAP;
-    static {
-        final Map<Integer, String> types = new HashMap<Integer, String>();
-        types.put(1, "Regenweg");
-        types.put(2, "schnellabtrocknend");
-        types.put(3, "normal abtrocknend");
-        types.put(4, "oft feucht");
-        types.put(5, "immer nass");
-        WETNESS_MAP = ImmutableBiMap.copyOf(Collections.unmodifiableMap(types));
-    }
+    public final static Map<Integer, String> WETNESS_MAP = new HashMap<Integer, String>() {{
+        put(1, "Regenweg");
+        put(2, "schnellabtrocknend");
+        put(3, "normal abtrocknend");
+        put(4, "oft feucht");
+        put(5, "immer nass");
+    }};
 
     @PrimaryKey
     private int id;
