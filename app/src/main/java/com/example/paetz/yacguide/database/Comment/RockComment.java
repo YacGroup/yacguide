@@ -3,26 +3,19 @@ package com.example.paetz.yacguide.database.Comment;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 public class RockComment {
 
-    public final static BiMap<Integer, String> QUALITY_MAP;
-    static {
-        final Map<Integer, String> types = new HashMap<Integer, String>();
-        types.put(1, "Hauptgipfel");
-        types.put(2, "lohnender Gipfel");
-        types.put(3, "Durchschnittsgipfel");
-        types.put(4, "Quacke");
-        types.put(5, "Dreckhaufen");
-        QUALITY_MAP = ImmutableBiMap.copyOf(Collections.unmodifiableMap(types));
-    }
+    public final static Map<Integer, String> QUALITY_MAP = new HashMap<Integer, String>() {{
+        put(1, "Hauptgipfel");
+        put(2, "lohnender Gipfel");
+        put(3, "Durchschnittsgipfel");
+        put(4, "Quacke");
+        put(5, "Dreckhaufen");
+    }};
 
     @PrimaryKey
     private int id;

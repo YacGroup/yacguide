@@ -3,6 +3,7 @@ package com.example.paetz.yacguide.network;
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Region;
+import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,7 @@ public class RegionParser extends JSONWebParser {
         for (int i = 0; i < jsonRegions.length(); i++) {
             final JSONObject jsonRegion = jsonRegions.getJSONObject(i);
             Region r = new Region();
-            r.setId(jsonField2Int(jsonRegion, "gebiet_ID"));
+            r.setId(ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID"));
             r.setName(jsonRegion.getString("gebiet"));
             r.setCountry(_countryName);
             db.regionDao().insert(r);
