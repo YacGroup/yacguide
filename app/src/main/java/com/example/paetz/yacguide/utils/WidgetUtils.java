@@ -15,11 +15,11 @@ public class WidgetUtils {
         layout.setBackgroundColor(bgColor);
         layout.setOnClickListener(onClickListener);
 
-        TextView textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
+        TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewLeft);
         textViewLeft.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
-        TextView textViewRight = createTextView(context, textRight, textSizeDp, typeFace, 20, 20, 20, 20);
+        TextView textViewRight = _createTextView(context, textRight, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewRight);
         textViewRight.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
@@ -40,11 +40,11 @@ public class WidgetUtils {
             return layout;
         }
 
-        TextView textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3]);
+        TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3]);
         layout.addView(textViewLeft);
         textViewLeft.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
-        TextView textViewRight = createTextView(context, textRight, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3]);
+        TextView textViewRight = _createTextView(context, textRight, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3]);
         layout.addView(textViewRight);
         textViewRight.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
@@ -64,7 +64,7 @@ public class WidgetUtils {
         return lineView;
     }
 
-    private static TextView createTextView(Context context, String text, int textSizeDp, int typeFace, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+    private static TextView _createTextView(Context context, String text, int textSizeDp, int typeFace, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
         TextView textView = new TextView(context);
         textView.setId(View.generateViewId());
         textView.setText(text);
