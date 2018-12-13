@@ -2,9 +2,9 @@ package com.example.paetz.yacguide.network;
 
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 
@@ -32,6 +32,8 @@ public abstract class JSONWebParser implements NetworkListener {
                 if (result == null) {
                     throw new JSONException("");
                 }
+                // remove HTML-encoded characters
+                result = ParserUtils.resolveToUtf8(result);
                 parseData(requestId, result);
             } catch (JSONException e) {
                 _success = false;
@@ -52,27 +54,4 @@ public abstract class JSONWebParser implements NetworkListener {
 
     protected abstract void parseData(int requestId, String json) throws JSONException;
 
-    protected int jsonField2Int(JSONObject jsonObject, String fieldName) throws JSONException {
-        try {
-            return Integer.parseInt(jsonObject.getString(fieldName));
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
-
-    protected float jsonField2Float(JSONObject jsonObject, String fieldName) throws JSONException {
-        try {
-            return Float.parseFloat(jsonObject.getString(fieldName));
-        } catch (NumberFormatException e) {
-            return 0.f;
-        }
-    }
-
-    protected char jsonField2Char(JSONObject jsonObject, String fieldName) throws JSONException {
-        try {
-            return jsonObject.getString(fieldName).charAt(0);
-        } catch (IndexOutOfBoundsException e) {
-            return ' ';
-        }
-    }
 }
