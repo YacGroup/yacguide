@@ -19,7 +19,7 @@ public class WidgetUtils {
         layout.setBackgroundColor(bgColor);
         layout.setOnClickListener(onClickListener);
 
-        final TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
+        TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewLeft);
         textViewLeft.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 
