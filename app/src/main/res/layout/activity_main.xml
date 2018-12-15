@@ -41,9 +41,9 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentBottom="true"
-        android:textSize="14dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         android:textAlignment="center"
-        android:text="Quelle der Daten: www.sandsteinklettern.de" />
+        android:text="Quelle der Daten:\nwww.sandsteinklettern.de" />
 
 </RelativeLayout>

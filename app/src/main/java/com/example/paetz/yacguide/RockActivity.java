@@ -84,7 +84,7 @@ public class RockActivity extends TableActivity {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Bedeutung:",
                         SectorComment.QUALITY_MAP.get(qualityId),
-                        12,
+                        WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
                         Typeface.NORMAL,
@@ -93,7 +93,7 @@ public class RockActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     text,
                     "",
-                    12,
+                    WidgetUtils.textFontSizeDp,
                     null,
                     Color.WHITE,
                     Typeface.NORMAL,
@@ -117,13 +117,14 @@ public class RockActivity extends TableActivity {
                 continue;
             }
             final char type = rock.getType();
+            final char status = rock.getStatus();
+            if (_onlySummits && (type != Rock.typeSummit || status == Rock.statusProhibited)) {
+                continue;
+            }
             final int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
             String typeAdd = "";
             int typeFace = Typeface.NORMAL;
             if (type != Rock.typeSummit) {
-                if (_onlySummits) {
-                    continue;
-                }
                 typeAdd = "  (" + type + ")";
             } else {
                 typeFace = Typeface.BOLD;
@@ -139,7 +140,7 @@ public class RockActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getNr() + "  " + rockName + typeAdd,
                     String.valueOf(rock.getStatus()),
-                    16,
+                    WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     bgColor,
                     typeFace));

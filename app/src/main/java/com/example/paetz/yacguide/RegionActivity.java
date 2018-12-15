@@ -45,7 +45,7 @@ public class RegionActivity extends TableActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     regionName,
                     "",
-                    16,
+                    WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));
