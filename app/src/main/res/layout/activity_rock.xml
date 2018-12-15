@@ -75,7 +75,7 @@
             android:layout_gravity="center"
             android:layout_centerVertical="true"
             android:onClick="onlySummitsCheck"
-            android:text="Nur Gipfel anzeigen" />
+            android:text="Nur offizielle Gipfel" />
 
         <EditText
             android:id="@+id/searchEditText"
