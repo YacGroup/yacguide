@@ -10,12 +10,16 @@ import android.widget.TextView;
 
 public class WidgetUtils {
 
+    public static final int tableFontSizeDp = 18;
+    public static final int infoFontSizeDp = 16;
+    public static final int textFontSizeDp = 14;
+
     public static RelativeLayout createCommonRowLayout(Context context, String textLeft, String textRight, int textSizeDp, View.OnClickListener onClickListener, int bgColor, int typeFace) {
         RelativeLayout layout = new RelativeLayout(context);
         layout.setBackgroundColor(bgColor);
         layout.setOnClickListener(onClickListener);
 
-        TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
+        final TextView textViewLeft = _createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20);
         layout.addView(textViewLeft);
         textViewLeft.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
 

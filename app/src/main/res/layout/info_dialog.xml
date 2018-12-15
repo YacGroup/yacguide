@@ -6,13 +6,6 @@
     android:layout_gravity="center"
     android:id="@+id/dialogLayout">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
-
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,7 +13,7 @@
         android:layout_margin="10dp"
         android:textStyle="bold"
         android:textSize="20dp"
-        android:text="Lade..."
+        android:text="Lädt..."
         android:id="@+id/dialogText"
     />
 

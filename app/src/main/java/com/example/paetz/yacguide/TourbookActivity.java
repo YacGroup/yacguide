@@ -105,7 +105,7 @@ public class TourbookActivity extends AppCompatActivity {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         day + "." + month + "." + year,
                         region.getName(),
-                        14,
+                        WidgetUtils.infoFontSizeDp,
                         null,
                         0xFFBBBBBB,
                         Typeface.BOLD,
@@ -126,7 +126,7 @@ public class TourbookActivity extends AppCompatActivity {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getName() + " - " + route.getName(),
                     route.getGrade(),
-                    16,
+                    WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.NORMAL));
