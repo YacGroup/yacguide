@@ -66,9 +66,9 @@ public class RockParser extends JSONWebParser {
                 continue;
             }
             Rock r = new Rock();
-            r.setId(Integer.parseInt(jsonRock.getString("gipfel_ID")));
-            r.setNr(Float.parseFloat(jsonRock.getString("gipfelnr")));
-            r.setName(jsonRock.getString("gipfelname_d"));
+            r.setId(ParserUtils.jsonField2Int(jsonRock,"gipfel_ID"));
+            r.setNr(ParserUtils.jsonField2Float(jsonRock,"gipfelnr"));
+            r.setName(ParserUtils.jsonField2String(jsonRock,"gipfelname_d", "gipfelname_cz"));
             r.setType(type);
             r.setStatus(ParserUtils.jsonField2Char(jsonRock, "status"));
             r.setLongitude(ParserUtils.jsonField2Float(jsonRock, "vgrd"));
@@ -87,17 +87,17 @@ public class RockParser extends JSONWebParser {
         for (int i = 0; i < jsonRoutes.length(); i++) {
             final JSONObject jsonRoute = jsonRoutes.getJSONObject(i);
             Route r = new Route();
-            int routeId = Integer.parseInt(jsonRoute.getString("weg_ID"));
+            final int routeId = ParserUtils.jsonField2Int(jsonRoute,"weg_ID");
             r.setId(routeId);
             r.setNr(ParserUtils.jsonField2Float(jsonRoute, "wegnr"));
             r.setStatusId(ParserUtils.jsonField2Int(jsonRoute, "wegstatus"));
-            r.setName(jsonRoute.getString("wegname_d"));
+            r.setName(ParserUtils.jsonField2String(jsonRoute,"wegname_d", "wegname_cz"));
             r.setGrade(jsonRoute.getString("schwierigkeit"));
             r.setFirstAscendLeader(jsonRoute.getString("erstbegvorstieg"));
             r.setFirstAscendFollower(jsonRoute.getString("erstbegnachstieg"));
             r.setFirstAscendDate(jsonRoute.getString("erstbegdatum"));
             r.setTypeOfClimbing(jsonRoute.getString("kletterei"));
-            r.setDescription(jsonRoute.getString("wegbeschr_d"));
+            r.setDescription(ParserUtils.jsonField2String(jsonRoute,"wegbeschr_d", "wegbeschr_cz"));
             r.setAscendCount(db.ascendDao().getAscendsForRoute(routeId).length); // if we re-add a route that has already been marked as ascended in the past
             r.setParentId(ParserUtils.jsonField2Int(jsonRoute, "gipfelid"));
             db.routeDao().insert(r);

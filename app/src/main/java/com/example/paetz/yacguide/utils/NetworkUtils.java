@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.network;
+package com.example.paetz.yacguide.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
