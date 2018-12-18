@@ -63,4 +63,9 @@ public class ParserUtils {
             return ' ';
         }
     }
+
+    public static String jsonField2String(JSONObject jsonObject, String fieldName, String defaultFieldName) throws JSONException {
+        final String value = jsonObject.getString(fieldName);
+        return (value.isEmpty() ? jsonObject.getString(defaultFieldName) : value);
+    }
 }

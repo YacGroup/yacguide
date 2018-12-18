@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.network.JSONWebParser;
-import com.example.paetz.yacguide.network.NetworkUtils;
+import com.example.paetz.yacguide.utils.NetworkUtils;
 
 public abstract class TableActivity extends AppCompatActivity implements UpdateListener {
 
