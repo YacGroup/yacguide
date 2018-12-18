@@ -43,7 +43,8 @@ public class SectorParser extends JSONWebParser {
             final JSONObject jsonSector = jsonSectors.getJSONObject(i);
             Sector s = new Sector();
             s.setId(ParserUtils.jsonField2Int(jsonSector, "sektor_ID"));
-            s.setName(jsonSector.getString("sektorname_d"));
+            s.setName(ParserUtils.jsonField2String(jsonSector, "sektorname_d", "sektorname_cz"));
+            s.setNr(ParserUtils.jsonField2Float(jsonSector, "sektornr"));
             s.setParentId(_regionId);
             db.sectorDao().insert(s);
         }

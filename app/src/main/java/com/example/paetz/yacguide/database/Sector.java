@@ -9,7 +9,7 @@ public class Sector {
     @PrimaryKey
     private int id;
 
-    private int nr;
+    private float nr;
     private String name;
     private int parentId;
 
@@ -21,11 +21,11 @@ public class Sector {
         this.id = id;
     }
 
-    public int getNr() {
+    public float getNr() {
         return nr;
     }
 
-    public void setNr(int nr) {
+    public void setNr(float nr) {
         this.nr = nr;
     }
 
