@@ -9,6 +9,7 @@ import java.util.Map;
 @Entity
 public class RegionComment {
 
+    // This needs to be in sync with sandsteinklettern.de!
     public static final Map<Integer, String> QUALITY_MAP = new HashMap<Integer, String>() {{
         put(1, "international bedeutend");
         put(2, "national bedeutend");

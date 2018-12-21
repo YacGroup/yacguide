@@ -118,7 +118,7 @@ public class RockActivity extends TableActivity {
             }
             final char type = rock.getType();
             final char status = rock.getStatus();
-            if (_onlySummits && (type != Rock.typeSummit || status == Rock.statusProhibited)) {
+            if (_onlySummits && !rockIsAnOfficialSummit(rock)) {
                 continue;
             }
             final int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
@@ -151,5 +151,10 @@ public class RockActivity extends TableActivity {
     @Override
     protected void deleteContent() {
         db.deleteRocks(_sector.getId());
+    }
+
+    private boolean rockIsAnOfficialSummit(Rock rock) {
+        return (rock.getType() == Rock.typeSummit || rock.getType() == Rock.typeAlpine)
+                && rock.getStatus() != Rock.statusProhibited;
     }
 }

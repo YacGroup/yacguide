@@ -22,6 +22,8 @@ public class RockParser extends JSONWebParser {
         add(Rock.typeSummit);
         add(Rock.typeMassif);
         add(Rock.typeBoulder);
+        add(Rock.typeStonePit);
+        add(Rock.typeAlpine);
         add(Rock.typeCave);
         add(Rock.typeUnofficial);
     }};

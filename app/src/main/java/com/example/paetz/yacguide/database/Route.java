@@ -9,6 +9,7 @@ import java.util.Map;
 @Entity
 public class Route {
 
+    // This needs to be in sync with sandsteinklettern.de!
     public static final Map<Integer, String> STATUS = new HashMap<Integer, String>() {{
         put(1, "anerkannt");
         put(2, "zeitlich gesperrt");

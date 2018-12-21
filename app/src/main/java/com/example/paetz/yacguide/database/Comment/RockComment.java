@@ -9,6 +9,7 @@ import java.util.Map;
 @Entity
 public class RockComment {
 
+    // This needs to be in sync with sandsteinklettern.de!
     public final static Map<Integer, String> QUALITY_MAP = new HashMap<Integer, String>() {{
         put(1, "Hauptgipfel");
         put(2, "lohnender Gipfel");
