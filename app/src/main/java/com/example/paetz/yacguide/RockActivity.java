@@ -155,7 +155,6 @@ public class RockActivity extends TableActivity {
 
     private boolean rockIsAnOfficialSummit(Rock rock) {
         return (rock.getType() == Rock.typeSummit || rock.getType() == Rock.typeAlpine)
-                && rock.getStatus() != Rock.statusProhibited
-                && rock.getStatus() != Rock.typeUnofficial;
+                && rock.getStatus() != Rock.statusProhibited;
     }
 }

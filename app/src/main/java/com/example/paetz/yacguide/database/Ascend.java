@@ -18,14 +18,15 @@ public class Ascend {
     public final static BiMap<Integer, String> CLIMBING_STYLES;
     static {
         final Map<Integer, String> styles = new HashMap<Integer, String>();
-        styles.put(1, "solo");
-        styles.put(2, "onsight");
-        styles.put(4, "alles frei");
-        styles.put(5, "irgendwie hochgeschleudert");
-        styles.put(6, "geteilte Führung");
+        styles.put(1, "Solo");
+        styles.put(2, "Onsight");
+        styles.put(3, "Rotpunkt");
+        styles.put(4, "Alles frei");
+        styles.put(5, "Irgendwie hochgeschleudert");
+        styles.put(6, "Wechselführung");
         styles.put(7, "Nachstieg");
-        styles.put(8, "hinterhergehampelt");
-        styles.put(9, "gesackt");
+        styles.put(8, "Hinterhergehampelt");
+        styles.put(9, "Gesackt");
         CLIMBING_STYLES = ImmutableBiMap.copyOf(Collections.unmodifiableMap(styles));
     }
 
