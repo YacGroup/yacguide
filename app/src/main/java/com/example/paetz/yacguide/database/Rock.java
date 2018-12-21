@@ -6,9 +6,12 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Rock {
 
+    // This needs to be in sync with sandsteinklettern.de!
     public static final char typeSummit = 'G';
     public static final char typeMassif = 'M';
     public static final char typeBoulder = 'B';
+    public static final char typeStonePit = 'S';
+    public static final char typeAlpine = 'A';
     public static final char typeCave = 'H';
     public static final char typeUnofficial = 'N';
 

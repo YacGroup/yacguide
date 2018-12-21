@@ -3,10 +3,31 @@ package com.example.paetz.yacguide.database;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class Ascend {
+
+    // This needs to be in sync with sandsteinklettern.de!
+    public final static BiMap<Integer, String> CLIMBING_STYLES;
+    static {
+        final Map<Integer, String> styles = new HashMap<Integer, String>();
+        styles.put(1, "solo");
+        styles.put(2, "onsight");
+        styles.put(4, "alles frei");
+        styles.put(5, "irgendwie hochgeschleudert");
+        styles.put(6, "geteilte Führung");
+        styles.put(7, "Nachstieg");
+        styles.put(8, "hinterhergehampelt");
+        styles.put(9, "gesackt");
+        CLIMBING_STYLES = ImmutableBiMap.copyOf(Collections.unmodifiableMap(styles));
+    }
 
     @PrimaryKey(autoGenerate = true)
     private int id;

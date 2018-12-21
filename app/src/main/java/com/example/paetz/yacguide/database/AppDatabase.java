@@ -15,12 +15,6 @@ import com.example.paetz.yacguide.database.Comment.RouteCommentDao;
 import com.example.paetz.yacguide.database.Comment.SectorComment;
 import com.example.paetz.yacguide.database.Comment.SectorCommentDao;
 import com.example.paetz.yacguide.utils.Converters;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @Database(entities = {Country.class, Region.class, Sector.class, Rock.class, Route.class, Ascend.class, Partner.class,
         RegionComment.class, SectorComment.class, RockComment.class, RouteComment.class}, version = 1)
@@ -43,18 +37,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SectorCommentDao sectorCommentDao();
     public abstract RockCommentDao rockCommentDao();
     public abstract RouteCommentDao routeCommentDao();
-
-    public final static BiMap<Integer, String> CLIMBING_STYLES;
-    static {
-        final Map<Integer, String> styles = new HashMap<Integer, String>();
-        styles.put(1, "Onsight");
-        styles.put(2, "Rotpunkt");
-        styles.put(3, "Alles frei");
-        styles.put(4, "Solo");
-        styles.put(5, "Wechselführung");
-        styles.put(6, "Nachstieg");
-        CLIMBING_STYLES = ImmutableBiMap.copyOf(Collections.unmodifiableMap(styles));
-    }
 
     public static AppDatabase getAppDatabase(Context context) {
         if (_instance == null) {
