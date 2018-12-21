@@ -132,13 +132,13 @@ public class AscendActivity extends AppCompatActivity {
         setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : _db.UNKNOWN_NAME);
 
         Spinner spinner = findViewById(R.id.styleSpinner);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, _db.CLIMBING_STYLES.values().toArray(new String[0]));
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, Ascend.CLIMBING_STYLES.values().toArray(new String[0]));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                _styleId = _db.CLIMBING_STYLES.inverse().get(parent.getItemAtPosition(position).toString());
+                _styleId = Ascend.CLIMBING_STYLES.inverse().get(parent.getItemAtPosition(position).toString());
             }
 
             @Override
@@ -150,9 +150,9 @@ public class AscendActivity extends AppCompatActivity {
         if (_ascend != null) {
             ((EditText) findViewById(R.id.dateEditText)).setText(_ascend.getDay() + "." + _ascend.getMonth() + "." + _ascend.getYear());
             ((EditText) findViewById(R.id.notesEditText)).setText(_ascend.getNotes());
-            spinner.setSelection(adapter.getPosition(_db.CLIMBING_STYLES.get(_styleId == 0 ? _ascend.getStyleId() : _styleId)));
+            spinner.setSelection(adapter.getPosition(Ascend.CLIMBING_STYLES.get(_styleId == 0 ? _ascend.getStyleId() : _styleId)));
         } else {
-            spinner.setSelection(_styleId != 0 ? adapter.getPosition(_db.CLIMBING_STYLES.get(_styleId)) : 0);
+            spinner.setSelection(_styleId != 0 ? adapter.getPosition(Ascend.CLIMBING_STYLES.get(_styleId)) : 0);
         }
 
         ArrayList<String> partners = new ArrayList<String>();
