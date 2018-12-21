@@ -231,7 +231,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Typeface.NORMAL,
                 10, 10, 0, 0));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                _db.CLIMBING_STYLES.get(ascend.getStyleId()),
+                Ascend.CLIMBING_STYLES.get(ascend.getStyleId()),
                 "",
                 WidgetUtils.tableFontSizeDp,
                 null,

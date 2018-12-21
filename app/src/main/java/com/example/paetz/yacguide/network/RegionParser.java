@@ -3,6 +3,7 @@ package com.example.paetz.yacguide.network;
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Region;
+import com.example.paetz.yacguide.utils.NetworkUtils;
 import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONArray;
@@ -18,7 +19,7 @@ public class RegionParser extends JSONWebParser {
         _countryName = countryName;
         networkRequests.add(new NetworkRequest(
                 NetworkRequest.DATA_REQUEST_ID,
-                baseUrl + "jsongebiet.php?app=yacguide&land=" + countryName.replace(" ", "%20")));
+                baseUrl + "jsongebiet.php?app=yacguide&land=" + NetworkUtils.encodeString2Url(countryName)));
     }
 
     @Override

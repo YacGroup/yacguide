@@ -9,6 +9,7 @@ import java.util.Map;
 @Entity
 public class RouteComment {
 
+    // This needs to be in sync with sandsteinklettern.de!
     public final static Map<Integer, String> QUALITY_MAP = new HashMap<Integer, String>() {{
         put(1, "sehr lohnend");
         put(2, "lohnend");
@@ -17,6 +18,7 @@ public class RouteComment {
         put(5, "Müll");
     }};
 
+    // This needs to be in sync with sandsteinklettern.de!
     public final static Map<Integer, String> GRADE_MAP = new HashMap<Integer, String>() {{
         put(1, "I");
         put(2, "II");
@@ -44,6 +46,7 @@ public class RouteComment {
         put(24, "XIIc");
     }};
 
+    // This needs to be in sync with sandsteinklettern.de!
     public final static Map<Integer, String> SECURITY_MAP = new HashMap<Integer, String>() {{
         put(1, "übersichert");
         put(2, "gut");
@@ -53,6 +56,7 @@ public class RouteComment {
         put(6, "kamikaze");
     }};
 
+    // This needs to be in sync with sandsteinklettern.de!
     public final static Map<Integer, String> WETNESS_MAP = new HashMap<Integer, String>() {{
         put(1, "Regenweg");
         put(2, "schnellabtrocknend");
