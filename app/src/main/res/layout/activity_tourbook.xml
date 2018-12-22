@@ -44,10 +44,19 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/exportButton"
             android:visibility="invisible"
             android:onClick="goToNextYear"
             app:srcCompat="@android:drawable/ic_media_ff" />
+
+        <ImageButton
+            android:id="@+id/exportButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:onClick="export"
+            app:srcCompat="@android:drawable/ic_menu_upload" />
 
     </RelativeLayout>
 
