@@ -25,7 +25,6 @@ import com.example.paetz.yacguide.utils.WidgetUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TourbookAscendActivity extends AppCompatActivity {
 
     private AppDatabase _db;

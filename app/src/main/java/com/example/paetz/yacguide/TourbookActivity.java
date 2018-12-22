@@ -1,12 +1,16 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,18 +20,27 @@ import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.database.Sector;
+import com.example.paetz.yacguide.database.TourbookExporter;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-
 public class TourbookActivity extends AppCompatActivity {
+
+    private final String _FILE_NAME = "yacguide_tourbook.json";
 
     private AppDatabase _db;
     private int[] _availableYears;
     private int _currentYearIdx;
     private int _maxYearIdx;
+    private TourbookExporter _exporter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +56,7 @@ public class TourbookActivity extends AppCompatActivity {
             findViewById(R.id.prevYearButton).setVisibility(_availableYears.length > 1 ? View.VISIBLE : View.INVISIBLE);
             _displayContent(_availableYears[_currentYearIdx]);
         }
+        _exporter = new TourbookExporter(_db);
     }
 
     @Override
@@ -73,6 +87,60 @@ public class TourbookActivity extends AppCompatActivity {
             findViewById(R.id.prevYearButton).setVisibility(_currentYearIdx == 0 ? View.INVISIBLE : View.VISIBLE);
             _displayContent(_availableYears[_currentYearIdx]);
         }
+    }
+
+    public void export(View v) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.export_dialog);
+        dialog.findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog confirmDialog = new Dialog(TourbookActivity.this);
+                confirmDialog.setContentView(R.layout.dialog);
+                String dialogText = "";
+                if (((RadioButton) dialog.findViewById(R.id.exportRadioButton)).isChecked()) {
+                    dialogText = "Wirklich exportieren?\nDie angegebene Datei wird überschrieben, falls sie bereits existiert.";
+                } else if (((RadioButton) dialog.findViewById(R.id.importRadioButton)).isChecked()) {
+                    dialogText = "Wirklich importieren?\nDies überschreibt das gesamte Tourenbuch.";
+                } else {
+                    return;
+                }
+                ((TextView) confirmDialog.findViewById(R.id.dialogText)).setText(dialogText);
+                final String filename = ((EditText) dialog.findViewById(R.id.filenameEditText)).getText().toString();
+                confirmDialog.findViewById(R.id.yesButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            _exportDataToFile(filename);
+                            Toast.makeText(TourbookActivity.this, "Tourenbuch erfolgreich exportiert", Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            Toast.makeText(TourbookActivity.this, "Fehler beim Exportieren", Toast.LENGTH_SHORT).show();
+                        }
+                        confirmDialog.dismiss();
+                        dialog.dismiss();
+                    }
+                });
+                confirmDialog.findViewById(R.id.noButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        confirmDialog.dismiss();
+                    }
+                });
+                confirmDialog.setCanceledOnTouchOutside(false);
+                confirmDialog.setCancelable(false);
+                confirmDialog.show();
+            }
+        });
+        ((EditText) dialog.findViewById(R.id.filenameEditText)).setText(_FILE_NAME);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
     }
 
     private void _displayContent(int year) {
@@ -132,6 +200,14 @@ public class TourbookActivity extends AppCompatActivity {
                     Typeface.NORMAL));
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
+    }
+
+    private void _exportDataToFile(String filename) throws JSONException {
+        _exporter.exportTourbook(filename);
+    }
+
+    private void _importDataFromFile(String filename) {
+
     }
 
 }
