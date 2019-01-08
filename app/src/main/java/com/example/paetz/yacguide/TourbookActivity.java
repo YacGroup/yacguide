@@ -1,5 +1,7 @@
 package com.example.paetz.yacguide;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,18 +19,26 @@ import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.database.Sector;
+import com.example.paetz.yacguide.database.TourbookExporter;
+import com.example.paetz.yacguide.utils.FileChooser;
+import com.example.paetz.yacguide.utils.FilesystemUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
+import org.json.JSONException;
+
+import java.io.File;
 import java.util.Arrays;
 
-
 public class TourbookActivity extends AppCompatActivity {
+
+    private final String _FILE_NAME = "yacguide_tourbook.json";
 
     private AppDatabase _db;
     private int[] _availableYears;
     private int _currentYearIdx;
     private int _maxYearIdx;
+    private TourbookExporter _exporter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +47,8 @@ public class TourbookActivity extends AppCompatActivity {
         this.setTitle("Tourenbuch");
 
         _db = MainActivity.database;
-        _availableYears = _db.ascendDao().getYears();
-        Arrays.sort(_availableYears);
-        _currentYearIdx = _maxYearIdx = _availableYears.length - 1;
-        if (_currentYearIdx >= 0) {
-            findViewById(R.id.prevYearButton).setVisibility(_availableYears.length > 1 ? View.VISIBLE : View.INVISIBLE);
-            _displayContent(_availableYears[_currentYearIdx]);
-        }
+        _exporter = new TourbookExporter(_db);
+        _initYears();
     }
 
     @Override
@@ -73,6 +79,91 @@ public class TourbookActivity extends AppCompatActivity {
             findViewById(R.id.prevYearButton).setVisibility(_currentYearIdx == 0 ? View.INVISIBLE : View.VISIBLE);
             _displayContent(_availableYears[_currentYearIdx]);
         }
+    }
+
+    public void export(View v) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.export_dialog);
+
+        final RadioButton exportRadioButton = (RadioButton) dialog.findViewById(R.id.exportRadioButton);
+        final RadioButton importRadioButton = (RadioButton) dialog.findViewById(R.id.importRadioButton);
+        final TextView filePathTextView = (TextView) dialog.findViewById(R.id.filePathTextView);
+        exportRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportRadioButton.setChecked(true);
+                importRadioButton.setChecked(false);
+                _radioButtonChecked(dialog.getContext(), filePathTextView);
+            }
+        });
+        importRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportRadioButton.setChecked(false);
+                importRadioButton.setChecked(true);
+                _radioButtonChecked(dialog.getContext(), filePathTextView);
+            }
+        });
+        dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String filePath = filePathTextView.getText().toString();
+                if (filePath.isEmpty()) {
+                    Toast.makeText(dialog.getContext(), "Kein Dateipfad angegeben", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                final Dialog confirmDialog = new Dialog(TourbookActivity.this);
+                confirmDialog.setContentView(R.layout.dialog);
+                ((TextView) confirmDialog.findViewById(R.id.dialogText)).setText("Achtung:\n" +
+                        "Export überschreibt die angegebene Datei;\n" +
+                        "Import überschreibt das Tourenbuch.\n" +
+                        "Trotzdem ausführen?");
+                confirmDialog.findViewById(R.id.yesButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            String successMsg;
+                            if (exportRadioButton.isChecked()) {
+                                _exporter.exportTourbook();
+                                successMsg = "Tourenbuch erfolgreich exportiert";
+                            } else if (importRadioButton.isChecked()) {
+                                _exporter.importTourbook();
+                                successMsg = "Tourenbuch erfolgreich importiert";
+                            } else {
+                                Toast.makeText(dialog.getContext(), "Keine Option gewählt", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Toast.makeText(TourbookActivity.this, successMsg, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            Toast.makeText(TourbookActivity.this, "Fehler beim Exportieren", Toast.LENGTH_SHORT).show();
+                        }
+                        confirmDialog.dismiss();
+                        dialog.dismiss();
+                        _initYears();
+                    }
+                });
+                confirmDialog.findViewById(R.id.noButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        confirmDialog.dismiss();
+                    }
+                });
+                confirmDialog.setCanceledOnTouchOutside(false);
+                confirmDialog.setCancelable(false);
+                confirmDialog.show();
+
+            }
+        });
+        dialog.findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        dialog.show();
     }
 
     private void _displayContent(int year) {
@@ -134,4 +225,33 @@ public class TourbookActivity extends AppCompatActivity {
         }
     }
 
+    private void _radioButtonChecked(Context context, final TextView filePathTextView) {
+        if (!FilesystemUtils.isExternalStorageWritable()) {
+            Toast.makeText(context, "Externe SD Karte nicht verfügbar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new FileChooser(TourbookActivity.this).setFileListener(new FileChooser.FileSelectedListener() {
+            @Override public void fileSelected(final File file) {
+                String filePath = file.getAbsolutePath();
+                String fileName = file.getName();
+                if (file.isDirectory()) {
+                    fileName = _FILE_NAME;
+                    filePath += "/" + _FILE_NAME;
+                }
+                _exporter.setFilePath(filePath);
+                filePathTextView.setText(fileName);
+            }
+        }).showDialog();
+    }
+
+    private void _initYears() {
+        _availableYears = _db.ascendDao().getYears();
+        Arrays.sort(_availableYears);
+        _currentYearIdx = _maxYearIdx = _availableYears.length - 1;
+        if (_currentYearIdx >= 0) {
+            findViewById(R.id.nextYearButton).setVisibility(View.INVISIBLE);
+            findViewById(R.id.prevYearButton).setVisibility(_availableYears.length > 1 ? View.VISIBLE : View.INVISIBLE);
+            _displayContent(_availableYears[_currentYearIdx]);
+        }
+    }
 }
