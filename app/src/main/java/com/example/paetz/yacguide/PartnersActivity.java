@@ -54,18 +54,9 @@ public class PartnersActivity extends AppCompatActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = ((EditText) dialog.findViewById(R.id.addPartnerEditText)).getText().toString();
-                if (name.equals("")) {
-                    Toast.makeText(dialog.getContext(), "Kein Name eingegeben", Toast.LENGTH_SHORT).show();
-                } else if (_db.partnerDao().getId(name) > 0) {
-                    Toast.makeText(dialog.getContext(), "Name bereits vergeben", Toast.LENGTH_SHORT).show();
-                } else {
-                    Partner partner = new Partner();
-                    partner.setName(name);
-                    _db.partnerDao().insert(partner);
-                    dialog.dismiss();
-                    _displayContent();
-                }
+                Partner partner = new Partner();
+                final String newName = ((EditText) dialog.findViewById(R.id.addPartnerEditText)).getText().toString().trim();
+                _updatePartner(dialog, partner, newName);
             }
         });
         Button cancelButton = dialog.findViewById(R.id.cancelButton);
@@ -143,17 +134,15 @@ public class PartnersActivity extends AppCompatActivity {
                     final Dialog dialog = new Dialog(PartnersActivity.this);
                     dialog.setContentView(R.layout.add_partner_dialog);
                     ((EditText) dialog.findViewById(R.id.addPartnerEditText)).setText(partner.getName());
-                    Button okButton = dialog.findViewById(R.id.okButton);
+                    Button okButton = (Button) dialog.findViewById(R.id.okButton);
                     okButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            partner.setName(((EditText) dialog.findViewById(R.id.addPartnerEditText)).getText().toString());
-                            _db.partnerDao().insert(partner);
-                            dialog.dismiss();
-                            _displayContent();
+                            final String newName = ((EditText) dialog.findViewById(R.id.addPartnerEditText)).getText().toString().trim();
+                            _updatePartner(dialog, partner, newName);
                         }
                     });
-                    Button cancelButton = dialog.findViewById(R.id.cancelButton);
+                    Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
                     cancelButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -210,6 +199,19 @@ public class PartnersActivity extends AppCompatActivity {
 
             layout.addView(innerLayout);
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+        }
+    }
+
+    private void _updatePartner(Dialog dialog, Partner partner, String newName) {
+        if (newName.equals("")) {
+            Toast.makeText(dialog.getContext(), "Kein Name eingegeben", Toast.LENGTH_SHORT).show();
+        } else if (_db.partnerDao().getId(newName) > 0) {
+            Toast.makeText(dialog.getContext(), "Name bereits vergeben", Toast.LENGTH_SHORT).show();
+        } else {
+            partner.setName(newName);
+            _db.partnerDao().insert(partner);
+            dialog.dismiss();
+            _displayContent();
         }
     }
 }
