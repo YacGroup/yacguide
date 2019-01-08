@@ -41,8 +41,6 @@ public class Ascend {
     private ArrayList<Integer> partnerIds;
     private String notes;
 
-    public Ascend() {}
-
     public int getId() {
         return id;
     }
