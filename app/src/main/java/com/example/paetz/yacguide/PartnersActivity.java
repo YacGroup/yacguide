@@ -49,7 +49,7 @@ public class PartnersActivity extends AppCompatActivity {
     public void addPartner(View v) {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle("Kletterpartner hinzufügen");
-        dialog.setContentView(R.layout.dialog_add_partner);
+        dialog.setContentView(R.layout.add_partner_dialog);
         Button okButton = dialog.findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +141,7 @@ public class PartnersActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     final Dialog dialog = new Dialog(PartnersActivity.this);
-                    dialog.setContentView(R.layout.dialog_add_partner);
+                    dialog.setContentView(R.layout.add_partner_dialog);
                     ((EditText) dialog.findViewById(R.id.addPartnerEditText)).setText(partner.getName());
                     Button okButton = dialog.findViewById(R.id.okButton);
                     okButton.setOnClickListener(new View.OnClickListener() {

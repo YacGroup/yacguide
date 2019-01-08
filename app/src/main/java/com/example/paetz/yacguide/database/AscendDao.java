@@ -28,4 +28,7 @@ public interface AscendDao {
 
     @Delete
     void delete(Ascend ascend);
+
+    @Query("DELETE FROM Ascend")
+    void deleteAll();
 }

@@ -109,12 +109,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         dialog.findViewById(R.id.yesButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _db.ascendDao().delete(_ascends[_currentAscendIdx]);
-                final int ascendedCount = _db.routeDao().getAscendCount(_routeId) - 1;
-                _db.routeDao().updateAscendCount(ascendedCount, _routeId);
-                if (ascendedCount == 0) {
-                    _db.rockDao().updateAscended(false, _db.routeDao().getRoute(_routeId).getParentId());
-                }
+                _db.deleteAscend(_ascends[_currentAscendIdx]);
                 dialog.dismiss();
                 Intent resultIntent = new Intent();
                 setResult(IntentConstants.RESULT_UPDATED, resultIntent);
