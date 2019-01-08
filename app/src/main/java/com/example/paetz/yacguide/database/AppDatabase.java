@@ -90,6 +90,16 @@ public abstract class AppDatabase extends RoomDatabase {
         sectorCommentDao().deleteAll(sectorId);
     }
 
+    public void deleteAscend(Ascend ascend) {
+        final int routeId = ascend.getRouteId();
+        final int ascendedCount = routeDao().getAscendCount(routeId) - 1;
+        routeDao().updateAscendCount(ascendedCount, routeId);
+        if (ascendedCount == 0) {
+            rockDao().updateAscended(false, routeDao().getRoute(routeId).getParentId());
+        }
+        ascendDao().delete(ascend);
+    }
+
     // Some default stuff necessary for tourbook if according objects have
     // been deleted from the database
     public Route createUnknownRoute() {

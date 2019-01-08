@@ -6,33 +6,36 @@
     android:layout_gravity="center"
     android:id="@+id/dialogLayout">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16dp"
+        android:text="Tourenbuch als json ..."/>
 
     <RadioGroup
-        android:id="@+id/exportImportRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <RadioButton
             android:id="@+id/exportRadioButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Export"/>
+            android:text="exportieren"/>
 
         <RadioButton
             android:id="@+id/importRadioButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Import"/>
+            android:text="importieren"/>
 
     </RadioGroup>
 
-
-    <EditText
-        android:id="@+id/filenameEditText"
+    <TextView
+        android:id="@+id/filePathTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14dp"
-        android:hint="Dateiname"/>
+        android:layout_gravity="center"
+        android:textSize="16dp" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
@@ -41,7 +44,7 @@
         android:layout_gravity="center"
         android:id="@+id/yesNoLayout">
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -49,12 +52,12 @@
             android:text="OK"
             />
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/cancelButton"
-        android:text="Abbrechen"
+        <Button xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/cancelButton"
+            android:text="Abbrechen"
         />
     </LinearLayout>
 

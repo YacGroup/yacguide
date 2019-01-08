@@ -22,4 +22,7 @@ public interface PartnerDao {
 
     @Delete
     void delete(Partner partner);
+
+    @Query("DELETE FROM Partner")
+    void deleteAll();
 }
