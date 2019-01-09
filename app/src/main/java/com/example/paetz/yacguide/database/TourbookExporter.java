@@ -25,23 +25,18 @@ public class TourbookExporter {
     private final String _notesKey = "notes";
 
     private AppDatabase _db;
-    private String _filePath;
 
     public TourbookExporter(AppDatabase db) {
         _db = db;
     }
 
-    public void setFilePath(String filePath) {
-        _filePath = filePath;
-    }
-
-    public void exportTourbook() throws JSONException {
+    public void exportTourbook(String filePath) throws JSONException {
         final Ascend[] ascends = _db.ascendDao().getAll();
         JSONArray jsonAscends = new JSONArray();
         for (Ascend ascend : ascends) {
             jsonAscends.put(ascend2Json(ascend));
         }
-        File file = new File(_filePath);
+        File file = new File(filePath);
         try {
             FileOutputStream outStream = new FileOutputStream(file);
             outStream.write(jsonAscends.toString().getBytes(StandardCharsets.UTF_8));
@@ -51,8 +46,8 @@ public class TourbookExporter {
         }
     }
 
-    public void importTourbook() throws JSONException {
-        File file = new File(_filePath);
+    public void importTourbook(String filePath) throws JSONException {
+        File file = new File(filePath);
         String jsonString = "";
         try {
             FileInputStream inStream = new FileInputStream(file);

@@ -9,56 +9,62 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Tourenbuch-"
         android:textSize="16dp"
-        android:text="Tourenbuch als json ..."/>
+        android:layout_gravity="center"/>
 
     <RadioGroup
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/exportRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="exportieren"/>
+            android:text="Export"
+            android:checked="true"/>
 
         <RadioButton
             android:id="@+id/importRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="importieren"/>
+            android:text="Import"
+            android:checked="false"/>
 
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/filePathTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="16dp" />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:id="@+id/yesNoLayout">
+        android:id="@+id/externInternLayout">
 
         <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/okButton"
-            android:text="OK"
+            android:id="@+id/externButton"
+            android:text="SD Karte"
             />
 
         <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/cancelButton"
-            android:text="Abbrechen"
-        />
+            android:id="@+id/internButton"
+            android:text="Telefonspeicher"
+            />
     </LinearLayout>
+
+
+    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/cancelButton"
+        android:text="Abbrechen" />
 
 </LinearLayout>
