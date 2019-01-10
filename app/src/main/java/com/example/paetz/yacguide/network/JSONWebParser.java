@@ -31,13 +31,16 @@ public abstract class JSONWebParser implements NetworkListener {
             try {
                 if (result == null) {
                     throw new JSONException("");
+                } else if (result.equalsIgnoreCase("null")) {
+                    // sandsteinklettern.de returns "null" string if there are no elements
+                    throw new IllegalArgumentException("");
                 }
                 // remove HTML-encoded characters
                 result = ParserUtils.resolveToUtf8(result);
                 parseData(requestId, result);
             } catch (JSONException e) {
                 _success = false;
-            }
+            } catch (IllegalArgumentException e) {}
         }
         if (++_processedRequestsCount == networkRequests.size()) {
             listener.onEvent(_success);
