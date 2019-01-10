@@ -123,7 +123,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: com.android.support:documentfile-28.0.0-rc01" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:print-28.0.0-rc01" level="project" />
@@ -187,6 +187,6 @@
     <orderEntry type="library" name="Gradle: android.arch.lifecycle:livedata-core-1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:23.6-android@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.android.support:support-vector-drawable-28.0.0-rc01" level="project" />
-    <orderEntry type="library" name="Gradle: android-android-23" level="project" />
+    <orderEntry type="library" name="Gradle: android-android-22" level="project" />
   </component>
 </module>
