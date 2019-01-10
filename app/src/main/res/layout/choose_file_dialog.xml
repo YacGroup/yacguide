@@ -6,17 +6,6 @@
     android:layout_gravity="center"
     android:id="@+id/dialogLayout">
 
-    <TextView
-        android:id="@+id/currentPathTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14dp"/>
-
-    <ListView
-        android:id="@+id/filesListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -24,7 +13,7 @@
         android:layout_gravity="center"
         android:id="@+id/yesNoLayout">
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -32,13 +21,25 @@
             android:text="OK"
             />
 
-    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        <Button xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/cancelButton"
+            android:text="Abbrechen"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/currentPathTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/cancelButton"
-        android:text="Abbrechen"
-        />
-    </LinearLayout>
+        android:textSize="14dp"/>
+
+        <ListView
+            android:id="@+id/filesListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 
 </LinearLayout>
