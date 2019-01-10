@@ -29,17 +29,37 @@
             android:text="Abbrechen"
             />
     </LinearLayout>
-
     <TextView
         android:id="@+id/currentPathTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14dp"/>
+        android:textSize="16dp"
+        android:layout_margin="10dp"/>
 
-        <ListView
-            android:id="@+id/filesListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="16dp"
+            android:text="Datei: "
+            android:layout_margin="10dp"/>
+
+        <EditText
+            android:id="@+id/fileNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tourenbuch.json"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/filesListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
