@@ -25,7 +25,7 @@ public class RockActivity extends TableActivity {
 
     private Sector _sector;
     private boolean _onlySummits;
-    private String _rockNamePrefix;
+    private String _rockNamePart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class RockActivity extends TableActivity {
         jsonParser = new RockParser(db, this, sectorId);
         _sector = db.sectorDao().getSector(sectorId);
         _onlySummits = false;
-        _rockNamePrefix = "";
+        _rockNamePart = "";
 
         final EditText searchEditText = findViewById(R.id.searchEditText);
         searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -56,7 +56,7 @@ public class RockActivity extends TableActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                _rockNamePrefix = searchEditText.getText().toString();
+                _rockNamePart = searchEditText.getText().toString();
                 displayContent();
             }
         });
@@ -74,7 +74,7 @@ public class RockActivity extends TableActivity {
     public void showComments(View v) {
         final Dialog dialog = prepareCommentDialog();
 
-        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.commentLayout);
         for (final SectorComment comment : db.sectorCommentDao().getAll(_sector.getId())) {
             final int qualityId = comment.getQualityId();
             final String text = comment.getText();
@@ -113,7 +113,7 @@ public class RockActivity extends TableActivity {
         this.setTitle(_sector.getName());
         for (final Rock rock : db.rockDao().getAll(_sector.getId())) {
             final String rockName = rock.getName();
-            if (!rockName.toLowerCase().contains(_rockNamePrefix.toLowerCase())) {
+            if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {
                 continue;
             }
             final char type = rock.getType();
