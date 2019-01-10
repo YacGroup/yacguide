@@ -36,7 +36,7 @@ public class TourbookActivity extends AppCompatActivity {
         eImport
     }
 
-    private final String _FILE_NAME = "yacguide_tourbook.json";
+    private final String _FILE_NAME = "tourbook.json";
 
     private AppDatabase _db;
     private int[] _availableYears;
@@ -91,8 +91,8 @@ public class TourbookActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.export_dialog);
         _ioOption = IOOption.eExport;
 
-        final RadioButton exportRadioButton = dialog.findViewById(R.id.exportRadioButton);
-        final RadioButton importRadioButton = dialog.findViewById(R.id.importRadioButton);
+        final RadioButton exportRadioButton = (RadioButton) dialog.findViewById(R.id.exportRadioButton);
+        final RadioButton importRadioButton = (RadioButton) dialog.findViewById(R.id.importRadioButton);
         exportRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,24 +109,14 @@ public class TourbookActivity extends AppCompatActivity {
                 _ioOption = IOOption.eImport;
             }
         });
-        dialog.findViewById(R.id.externButton).setOnClickListener(new View.OnClickListener() {
+        dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (_ioOption == IOOption.eExport && !FilesystemUtils.isExternalStorageWritable()) {
-                    Toast.makeText(dialog.getContext(), "SD Karte nicht schreibbar", Toast.LENGTH_SHORT).show();
+                if (!FilesystemUtils.isExternalStorageAvailable()) {
+                    Toast.makeText(dialog.getContext(), "SD Karte nicht verfügbar", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (_ioOption == IOOption.eImport && !FilesystemUtils.isExternalStorageReadable()) {
-                    Toast.makeText(dialog.getContext(), "SD Karte nicht lesbar", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                _showFileChooser(dialog, true);
-            }
-        });
-        dialog.findViewById(R.id.internButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                _showFileChooser(dialog, false);
+                _showFileChooser(dialog);
             }
         });
         dialog.findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
@@ -201,16 +191,20 @@ public class TourbookActivity extends AppCompatActivity {
         }
     }
 
-    private void _showFileChooser(final Dialog dialog, boolean external) {
-        new FileChooser(dialog.getContext(), external).setFileListener(new FileChooser.FileSelectedListener() {
+    private void _showFileChooser(final Dialog dialog) {
+        final String defaultFileName = (_ioOption == IOOption.eExport)
+                ? _FILE_NAME
+                : "";
+        new FileChooser(dialog.getContext(), defaultFileName).setFileListener(new FileChooser.FileSelectedListener() {
             @Override public void fileSelected(final File file) {
                 String filePath = file.getAbsolutePath();
                 if (file.isDirectory()) {
-                    if (_ioOption == IOOption.eImport) {
-                        Toast.makeText(dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    filePath += "/" + _FILE_NAME;
+                    Toast.makeText(dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (_ioOption == IOOption.eImport && !file.exists()) {
+                    Toast.makeText(dialog.getContext(), "Datei existiert nicht", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 _showConfirmDialog(dialog, filePath);
             }
@@ -228,13 +222,13 @@ public class TourbookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    String successMsg;
+                    String successMsg = filePath;
                     if (_ioOption == IOOption.eExport) {
                         _exporter.exportTourbook(filePath);
-                        successMsg = "Tourenbuch erfolgreich exportiert";
+                        successMsg += " erfolgreich exportiert";
                     } else {
                         _exporter.importTourbook(filePath);
-                        successMsg = "Tourenbuch erfolgreich importiert";
+                        successMsg += " erfolgreich importiert";
                     }
                     Toast.makeText(TourbookActivity.this, successMsg, Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
