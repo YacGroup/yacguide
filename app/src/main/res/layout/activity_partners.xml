@@ -5,7 +5,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="#bbbbbb">
+    android:background="#bbbbbb"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/buttonLayout"
@@ -29,6 +32,23 @@
             android:layout_alignParentRight="true"
             android:onClick="addPartner"
             app:srcCompat="@android:drawable/ic_input_add" />
+
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:hint="Partner suchen" />
 
     </RelativeLayout>
 

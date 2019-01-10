@@ -2,12 +2,16 @@ package com.example.paetz.yacguide;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -33,6 +37,7 @@ public class PartnersActivity extends AppCompatActivity {
     private AppDatabase _db;
     private Map<Integer, CheckBox> _checkboxMap;
     private ArrayList<Integer> _selectedPartnerIds;
+    private String _partnerNamePart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +46,30 @@ public class PartnersActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _checkboxMap = new HashMap<Integer, CheckBox>();
-
         _selectedPartnerIds = getIntent().getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
+        _partnerNamePart = "";
+
+        final EditText searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                final InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+        });
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                _partnerNamePart = searchEditText.getText().toString();
+                _displayContent();
+            }
+        });
         _displayContent();
     }
 
@@ -113,11 +140,15 @@ public class PartnersActivity extends AppCompatActivity {
         }
 
         for (final Partner partner : sortedPartners) {
+            final String partnerName = partner.getName();
+            if (!partnerName.toLowerCase().contains(_partnerNamePart.toLowerCase())) {
+                continue;
+            }
             RelativeLayout innerLayout = new RelativeLayout(this);
             innerLayout.setBackgroundColor(Color.WHITE);
 
             CheckBox checkBox = new CheckBox(this);
-            checkBox.setText(partner.getName());
+            checkBox.setText(partnerName);
             if (_selectedPartnerIds.contains(partner.getId())) {
                 checkBox.setChecked(true);
             }
@@ -132,7 +163,7 @@ public class PartnersActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     final Dialog dialog = new Dialog(PartnersActivity.this);
                     dialog.setContentView(R.layout.add_partner_dialog);
-                    ((EditText) dialog.findViewById(R.id.addPartnerEditText)).setText(partner.getName());
+                    ((EditText) dialog.findViewById(R.id.addPartnerEditText)).setText(partnerName);
                     Button okButton = (Button) dialog.findViewById(R.id.okButton);
                     okButton.setOnClickListener(new View.OnClickListener() {
                         @Override
