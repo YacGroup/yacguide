@@ -41,19 +41,24 @@ public class FileChooser {
         _storagePath = Environment.getExternalStoragePublicDirectory("YACguide");
         _dialog = new Dialog(context);
         _dialog.setContentView(R.layout.choose_file_dialog);
+
+        final EditText fileNameEditText = (EditText) _dialog.findViewById(R.id.fileNameEditText);
         _list = (ListView) _dialog.findViewById(R.id.filesListView);
         _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
-                final String fileChosen = (String) _list.getItemAtPosition(which);
-                ((EditText) _dialog.findViewById(R.id.fileNameEditText)).setText(fileChosen);
+                fileNameEditText.setText((String) _list.getItemAtPosition(which));
             }
         });
         _dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final File chosenFilePath = new File(_storagePath, ((EditText) _dialog.findViewById(R.id.fileNameEditText)).getText().toString());
+                final String fileName = fileNameEditText.getText().toString();
+                if (fileName.isEmpty()) {
+                    Toast.makeText(_dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (_fileListener != null) {
-                    _fileListener.fileSelected(chosenFilePath);
+                    _fileListener.fileSelected(new File(_storagePath, fileName));
                 }
                 _dialog.dismiss();
             }
@@ -65,12 +70,12 @@ public class FileChooser {
             }
         });
         ((TextView) _dialog.findViewById(R.id.currentPathTextView)).setText("Pfad: " + _storagePath.getAbsolutePath());
-        ((EditText) _dialog.findViewById(R.id.fileNameEditText)).setText(defaultFileName);
+        fileNameEditText.setText(defaultFileName);
     }
 
     public void showDialog() {
         if (!_storagePath.canWrite()) {
-            Toast.makeText(_context, "SD Karte nicht beschreibbar.\nBitte Speicherberechtigung zulassen", Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context, "SD Karte nicht beschreibbar.\nBitte Speicherberechtigung in den Einstellungen zulassen", Toast.LENGTH_SHORT).show();
             return;
         }
         _displayContent();
