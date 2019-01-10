@@ -36,7 +36,7 @@ public class TourbookActivity extends AppCompatActivity {
         eImport
     }
 
-    private final String _FILE_NAME = "tourbook.json";
+    private final String _FILE_NAME = "Tourenbuch.json";
 
     private AppDatabase _db;
     private int[] _availableYears;
@@ -198,10 +198,6 @@ public class TourbookActivity extends AppCompatActivity {
         new FileChooser(dialog.getContext(), defaultFileName).setFileListener(new FileChooser.FileSelectedListener() {
             @Override public void fileSelected(final File file) {
                 String filePath = file.getAbsolutePath();
-                if (file.isDirectory()) {
-                    Toast.makeText(dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 if (_ioOption == IOOption.eImport && !file.exists()) {
                     Toast.makeText(dialog.getContext(), "Datei existiert nicht", Toast.LENGTH_SHORT).show();
                     return;
