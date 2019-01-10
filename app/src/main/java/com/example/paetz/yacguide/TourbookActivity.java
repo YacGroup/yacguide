@@ -91,8 +91,8 @@ public class TourbookActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.export_dialog);
         _ioOption = IOOption.eExport;
 
-        final RadioButton exportRadioButton = (RadioButton) dialog.findViewById(R.id.exportRadioButton);
-        final RadioButton importRadioButton = (RadioButton) dialog.findViewById(R.id.importRadioButton);
+        final RadioButton exportRadioButton = dialog.findViewById(R.id.exportRadioButton);
+        final RadioButton importRadioButton = dialog.findViewById(R.id.importRadioButton);
         exportRadioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

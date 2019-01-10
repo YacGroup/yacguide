@@ -2,6 +2,7 @@ package com.example.paetz.yacguide.utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -70,9 +71,9 @@ public class FileChooser {
             }
         });
         if (external) {
-            _refresh(_dialog.getContext().getExternalFilesDir(null));
+            _refresh(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
         } else {
-            _refresh(_dialog.getContext().getFilesDir());
+            _refresh(Environment.getDataDirectory());
         }
     }
 
