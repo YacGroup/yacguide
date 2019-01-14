@@ -125,8 +125,11 @@ public class TourbookExporter {
             }
             ascend.setPartnerIds(partnerIds);
             _db.ascendDao().insert(ascend);
-            _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(routeId) + 1, routeId);
-            _db.rockDao().updateAscended(true, _db.routeDao().getRoute(routeId).getParentId());
+            if (_db.routeDao().getRoute(routeId) != null) {
+                // route may not exist in database anymore
+                _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(routeId) + 1, routeId);
+                _db.rockDao().updateAscended(true, _db.routeDao().getRoute(routeId).getParentId());
+            }
         }
     }
 }
