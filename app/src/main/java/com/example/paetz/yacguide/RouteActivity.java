@@ -53,7 +53,7 @@ public class RouteActivity extends TableActivity {
     public void showComments(View v) {
         final Dialog dialog = prepareCommentDialog();
 
-        LinearLayout layout = dialog.findViewById(R.id.commentLayout);
+        LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.commentLayout);
         for (final RockComment comment : db.rockCommentDao().getAll(_rock.getId())) {
             final int qualityId = comment.getQualityId();
             final String text = comment.getText();

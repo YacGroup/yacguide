@@ -43,7 +43,7 @@ public class FileChooser {
         _dialog.setContentView(R.layout.choose_file_dialog);
 
         final EditText fileNameEditText = (EditText) _dialog.findViewById(R.id.fileNameEditText);
-        _list = (ListView) _dialog.findViewById(R.id.filesListView);
+        _list = (ListView)  _dialog.findViewById(R.id.filesListView);
         _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
                 fileNameEditText.setText((String) _list.getItemAtPosition(which));
@@ -52,10 +52,13 @@ public class FileChooser {
         _dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String fileName = fileNameEditText.getText().toString();
+                String fileName = fileNameEditText.getText().toString();
                 if (fileName.isEmpty()) {
                     Toast.makeText(_dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
                     return;
+                } else if (!fileName.endsWith(".json")) {
+                    fileName += ".json";
+                    Toast.makeText(_context, "Dateisuffix \".json\" automatisch angefügt", Toast.LENGTH_SHORT).show();
                 }
                 if (_fileListener != null) {
                     _fileListener.fileSelected(new File(_storagePath, fileName));
@@ -74,10 +77,6 @@ public class FileChooser {
     }
 
     public void showDialog() {
-        if (!_storagePath.canWrite()) {
-            Toast.makeText(_context, "SD Karte nicht beschreibbar.\nBitte Speicherberechtigung in den Einstellungen zulassen", Toast.LENGTH_SHORT).show();
-            return;
-        }
         _displayContent();
         _dialog.show();
     }

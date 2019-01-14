@@ -1,10 +1,12 @@
 package com.example.paetz.yacguide;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -44,6 +46,7 @@ public class TourbookActivity extends AppCompatActivity {
     private int _maxYearIdx;
     private TourbookExporter _exporter;
     private IOOption _ioOption;
+    private Dialog _exportDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class TourbookActivity extends AppCompatActivity {
         _db = MainActivity.database;
         _exporter = new TourbookExporter(_db);
         _initYears();
+        _prepareExportDialog();
     }
 
     @Override
@@ -61,6 +65,15 @@ public class TourbookActivity extends AppCompatActivity {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, "Begehung gelöscht", Toast.LENGTH_SHORT).show();
             _displayContent(_availableYears[_currentYearIdx]);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (FilesystemUtils.permissionGranted(grantResults)) {
+            _exportDialog.show();
+        } else {
+            Toast.makeText(this, "Export/Import nicht möglich ohne Schreibrechte", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -87,47 +100,15 @@ public class TourbookActivity extends AppCompatActivity {
     }
 
     public void export(View v) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.export_dialog);
-        _ioOption = IOOption.eExport;
-
-        final RadioButton exportRadioButton = (RadioButton) dialog.findViewById(R.id.exportRadioButton);
-        final RadioButton importRadioButton = (RadioButton) dialog.findViewById(R.id.importRadioButton);
-        exportRadioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                exportRadioButton.setChecked(true);
-                importRadioButton.setChecked(false);
-                _ioOption = IOOption.eExport;
-            }
-        });
-        importRadioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                exportRadioButton.setChecked(false);
-                importRadioButton.setChecked(true);
-                _ioOption = IOOption.eImport;
-            }
-        });
-        dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!FilesystemUtils.isExternalStorageAvailable()) {
-                    Toast.makeText(dialog.getContext(), "SD Karte nicht verfügbar", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                _showFileChooser(dialog);
-            }
-        });
-        dialog.findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
+        if (!FilesystemUtils.isExternalStorageAvailable()) {
+            Toast.makeText(_exportDialog.getContext(), "SD Karte nicht verfügbar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!FilesystemUtils.hasPermissionToWriteToExternalStorage(TourbookActivity.this)) {
+            ActivityCompat.requestPermissions(TourbookActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            return;
+        }
+        _exportDialog.show();
     }
 
     private void _displayContent(int year) {
@@ -191,24 +172,24 @@ public class TourbookActivity extends AppCompatActivity {
         }
     }
 
-    private void _showFileChooser(final Dialog dialog) {
+    private void _showFileChooser() {
         final String defaultFileName = (_ioOption == IOOption.eExport)
                 ? _FILE_NAME
                 : "";
-        new FileChooser(dialog.getContext(), defaultFileName).setFileListener(new FileChooser.FileSelectedListener() {
+        new FileChooser(_exportDialog.getContext(), defaultFileName).setFileListener(new FileChooser.FileSelectedListener() {
             @Override public void fileSelected(final File file) {
                 String filePath = file.getAbsolutePath();
                 if (_ioOption == IOOption.eImport && !file.exists()) {
-                    Toast.makeText(dialog.getContext(), "Datei existiert nicht", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(_exportDialog.getContext(), "Datei existiert nicht", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                _showConfirmDialog(dialog, filePath);
+                _showConfirmDialog(filePath);
             }
         }).showDialog();
     }
 
-    private void _showConfirmDialog(final Dialog dialog, final String filePath) {
-        final Dialog confirmDialog = new Dialog(dialog.getContext());
+    private void _showConfirmDialog(final String filePath) {
+        final Dialog confirmDialog = new Dialog(_exportDialog.getContext());
         confirmDialog.setContentView(R.layout.dialog);
         final String infoText = (_ioOption == IOOption.eExport)
                 ? "Dies überschreibt eine bereits vorhandene Datei gleichen Namens.\nTrotzdem exportieren?"
@@ -231,7 +212,7 @@ public class TourbookActivity extends AppCompatActivity {
                     Toast.makeText(TourbookActivity.this, "Fehler beim Exportieren", Toast.LENGTH_SHORT).show();
                 }
                 confirmDialog.dismiss();
-                dialog.dismiss();
+                _exportDialog.dismiss();
                 _initYears();
             }
         });
@@ -255,5 +236,44 @@ public class TourbookActivity extends AppCompatActivity {
             findViewById(R.id.prevYearButton).setVisibility(_availableYears.length > 1 ? View.VISIBLE : View.INVISIBLE);
             _displayContent(_availableYears[_currentYearIdx]);
         }
+    }
+
+    private void _prepareExportDialog() {
+        _exportDialog = new Dialog(this);
+        _exportDialog.setContentView(R.layout.export_dialog);
+        _ioOption = IOOption.eExport;
+
+        final RadioButton exportRadioButton = (RadioButton) _exportDialog.findViewById(R.id.exportRadioButton);
+        final RadioButton importRadioButton = (RadioButton) _exportDialog.findViewById(R.id.importRadioButton);
+        exportRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportRadioButton.setChecked(true);
+                importRadioButton.setChecked(false);
+                _ioOption = IOOption.eExport;
+            }
+        });
+        importRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportRadioButton.setChecked(false);
+                importRadioButton.setChecked(true);
+                _ioOption = IOOption.eImport;
+            }
+        });
+        _exportDialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _showFileChooser();
+            }
+        });
+        _exportDialog.findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                _exportDialog.dismiss();
+            }
+        });
+        _exportDialog.setCanceledOnTouchOutside(false);
+        _exportDialog.setCancelable(false);
     }
 }
