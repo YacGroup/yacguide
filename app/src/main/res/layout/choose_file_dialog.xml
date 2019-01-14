@@ -57,6 +57,13 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/chooseFileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Durchsuchen (*.json)"/>
+
     <ListView
         android:id="@+id/filesListView"
         android:layout_width="match_parent"

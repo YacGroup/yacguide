@@ -20,33 +20,39 @@ import java.util.Arrays;
 
 public class FileChooser {
 
+    private final String _PARENT_DIR = "..";
+
     private final Context _context;
     private ListView _list;
     private Dialog _dialog;
-    private File _storagePath;
+    private File _currentPath;
 
     public interface FileSelectedListener {
         void fileSelected(File file);
     }
+    private FileSelectedListener _fileListener;
 
     public FileChooser setFileListener(FileSelectedListener fileListener) {
         _fileListener = fileListener;
         return this;
     }
 
-    private FileSelectedListener _fileListener;
-
     public FileChooser(Context context, String defaultFileName) {
         _context = context;
-        _storagePath = Environment.getExternalStoragePublicDirectory("YACguide");
+        _currentPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         _dialog = new Dialog(context);
         _dialog.setContentView(R.layout.choose_file_dialog);
 
         final EditText fileNameEditText = (EditText) _dialog.findViewById(R.id.fileNameEditText);
-        _list = (ListView)  _dialog.findViewById(R.id.filesListView);
+        _list = (ListView) _dialog.findViewById(R.id.filesListView);
         _list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
-                fileNameEditText.setText((String) _list.getItemAtPosition(which));
+                final File chosenFile = _getChosenFile((String) _list.getItemAtPosition(which));
+                if (chosenFile.isDirectory()) {
+                    _displayContent(chosenFile);
+                } else {
+                    fileNameEditText.setText(chosenFile.getName());
+                }
             }
         });
         _dialog.findViewById(R.id.okButton).setOnClickListener(new View.OnClickListener() {
@@ -56,12 +62,12 @@ public class FileChooser {
                 if (fileName.isEmpty()) {
                     Toast.makeText(_dialog.getContext(), "Keine Datei ausgewählt", Toast.LENGTH_SHORT).show();
                     return;
-                } else if (!fileName.endsWith(".json")) {
+                } else if (!fileName.toLowerCase().endsWith(".json")) {
                     fileName += ".json";
-                    Toast.makeText(_context, "Dateisuffix \".json\" automatisch angefügt", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(_dialog.getContext(), "Dateisuffix \".json\" automatisch angefügt", Toast.LENGTH_SHORT).show();
                 }
                 if (_fileListener != null) {
-                    _fileListener.fileSelected(new File(_storagePath, fileName));
+                    _fileListener.fileSelected(new File(_currentPath, fileName));
                 }
                 _dialog.dismiss();
             }
@@ -72,32 +78,56 @@ public class FileChooser {
                 _dialog.dismiss();
             }
         });
-        ((TextView) _dialog.findViewById(R.id.currentPathTextView)).setText("Pfad: " + _storagePath.getAbsolutePath());
+        _dialog.findViewById(R.id.chooseFileButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                _displayContent(_currentPath);
+            }
+        });
+
+        ((TextView) _dialog.findViewById(R.id.currentPathTextView)).setText("Pfad: " + _currentPath.getAbsolutePath());
         fileNameEditText.setText(defaultFileName);
     }
 
     public void showDialog() {
-        _displayContent();
         _dialog.show();
     }
 
-    private void _displayContent() {
-        if (!_storagePath.exists()) {
-            _storagePath.mkdirs();
+    private void _displayContent(File path) {
+        _currentPath = path;
+        if (!_currentPath.exists()) {
+            _currentPath.mkdirs();
         }
-        File[] files = _storagePath.listFiles(new FileFilter() {
+        File[] dirs = _currentPath.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return (file.canRead() && file.isDirectory());
+            }
+        });
+        File[] files = _currentPath.listFiles(new FileFilter() {
             @Override public boolean accept(File file) {
-                return (file.canRead() && !file.isDirectory() && file.getName().endsWith(".json"));
+                return (file.canRead() && !file.isDirectory() && file.getName().toLowerCase().endsWith(".json"));
             }
         });
 
-        String[] fileList = new String[files.length];
-        Arrays.sort(files);
         int i = 0;
+        String[] fileList;
+        if (_currentPath.getParentFile() == null || _currentPath.getParentFile().listFiles() == null) {
+            fileList = new String[dirs.length + files.length];
+        } else {
+            fileList = new String[dirs.length + files.length + 1];
+            fileList[i++] = _PARENT_DIR;
+        }
+        Arrays.sort(dirs);
+        Arrays.sort(files);
+        for (final File dir : dirs ) {
+            fileList[i++] = dir.getName();
+        }
         for (final File file : files ) {
             fileList[i++] = file.getName();
         }
 
+        ((TextView) _dialog.findViewById(R.id.currentPathTextView)).setText("Pfad: " + _currentPath.getAbsolutePath());
         _list.setAdapter(new ArrayAdapter(_context,
                 android.R.layout.simple_list_item_1, fileList) {
             @Override public View getView(int pos, View view, ViewGroup parent) {
@@ -106,5 +136,13 @@ public class FileChooser {
                 return view;
             }
         });
+    }
+
+    private File _getChosenFile(String fileName) {
+        if (fileName.equals(_PARENT_DIR)) {
+            return _currentPath.getParentFile();
+        } else {
+            return new File(_currentPath, fileName);
+        }
     }
 }

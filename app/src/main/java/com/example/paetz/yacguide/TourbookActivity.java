@@ -101,7 +101,7 @@ public class TourbookActivity extends AppCompatActivity {
 
     public void export(View v) {
         if (!FilesystemUtils.isExternalStorageAvailable()) {
-            Toast.makeText(_exportDialog.getContext(), "SD Karte nicht verfügbar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(_exportDialog.getContext(), "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!FilesystemUtils.hasPermissionToWriteToExternalStorage(TourbookActivity.this)) {
