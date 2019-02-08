@@ -148,7 +148,7 @@ public class AscendActivity extends AppCompatActivity {
         });
 
         if (_ascend != null) {
-            ((EditText) findViewById(R.id.dateEditText)).setText(_ascend.getDay() + "." + _ascend.getMonth() + "." + _ascend.getYear());
+            ((EditText) findViewById(R.id.dateEditText)).setText((_day =_ascend.getDay()) + "." + (_month = _ascend.getMonth()) + "." + (_year = _ascend.getYear()));
             ((EditText) findViewById(R.id.notesEditText)).setText(_ascend.getNotes());
             spinner.setSelection(adapter.getPosition(Ascend.CLIMBING_STYLES.get(_styleId == 0 ? _ascend.getStyleId() : _styleId)));
         } else {
