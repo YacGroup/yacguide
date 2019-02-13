@@ -209,7 +209,7 @@ public class TourbookActivity extends AppCompatActivity {
                     }
                     Toast.makeText(TourbookActivity.this, successMsg, Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
-                    Toast.makeText(TourbookActivity.this, "Fehler beim Exportieren", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TourbookActivity.this, "Fehler beim Export/Import", Toast.LENGTH_SHORT).show();
                 }
                 confirmDialog.dismiss();
                 _exportDialog.dismiss();

@@ -90,7 +90,7 @@ public class TourbookExporter {
         }
         _db.partnerDao().deleteAll();
         int ascendId = 1;
-
+        int partnerId = 1;
         for (int i = 0; i < jsonAscends.length(); i++) {
             JSONObject jsonAscend = jsonAscends.getJSONObject(i);
             final int routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey);
@@ -104,7 +104,6 @@ public class TourbookExporter {
             ascend.setNotes(jsonAscend.getString(_notesKey));
             JSONArray partnerNames = jsonAscend.getJSONArray(_partnersKey);
             ArrayList<Integer> partnerIds = new ArrayList<Integer>();
-            int partnerId = 1;
             for (int j = 0; j < partnerNames.length(); j++) {
                 String name = partnerNames.getString(j).trim();
                 boolean partnerAvailable = false;
