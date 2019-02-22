@@ -51,7 +51,7 @@ public class TourbookExporter {
         String jsonString = "";
         try {
             FileInputStream inStream = new FileInputStream(file);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.ISO_8859_1));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inStream, StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
