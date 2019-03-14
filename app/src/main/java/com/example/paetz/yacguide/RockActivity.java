@@ -121,13 +121,16 @@ public class RockActivity extends TableActivity {
             if (_onlySummits && !rockIsAnOfficialSummit(rock)) {
                 continue;
             }
-            final int bgColor = rock.getAscended() ? Color.GREEN : Color.WHITE;
+            int bgColor = Color.WHITE;
+            int typeface = Typeface.BOLD;
             String typeAdd = "";
-            int typeFace = Typeface.NORMAL;
             if (type != Rock.typeSummit) {
+                typeface = Typeface.NORMAL;
                 typeAdd = "  (" + type + ")";
-            } else {
-                typeFace = Typeface.BOLD;
+            }
+            if (status == Rock.statusProhibited) {
+                typeface = Typeface.ITALIC;
+                bgColor = Color.LTGRAY;
             }
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
@@ -139,11 +142,11 @@ public class RockActivity extends TableActivity {
             };
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     rock.getNr() + "  " + rockName + typeAdd,
-                    String.valueOf(rock.getStatus()),
+                    String.valueOf(status),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
-                    bgColor,
-                    typeFace));
+                    rock.getAscended() ? Color.GREEN : bgColor,
+                    typeface));
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
     }

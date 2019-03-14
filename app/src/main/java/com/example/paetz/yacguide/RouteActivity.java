@@ -108,13 +108,20 @@ public class RouteActivity extends TableActivity {
                     startActivityForResult(intent, 0);
                 }
             };
+            int statusId = route.getStatusId();
+            int typeface = Typeface.BOLD;
+            int bgColor = Color.WHITE;
+            if (statusId == 3) { // prohibited
+                typeface = Typeface.ITALIC;
+                bgColor = Color.LTGRAY;
+            }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     route.getName() + commentCountAddon,
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
-                    route.getAscendCount() > 0 ? Color.GREEN : Color.WHITE,
-                    Typeface.BOLD));
+                    route.getAscendCount() > 0 ? Color.GREEN : bgColor,
+                    typeface));
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }
     }

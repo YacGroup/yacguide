@@ -11,13 +11,13 @@ public class Route {
 
     // This needs to be in sync with sandsteinklettern.de!
     public static final Map<Integer, String> STATUS = new HashMap<Integer, String>() {{
-        put(1, "anerkannt");
-        put(2, "zeitlich gesperrt");
-        put(3, "voll gesperrt");
-        put(4, "eine Erstbegehung");
-        put(5, "nicht anerkannt");
-        put(6, "nur eine Erwähnung");
-        put(7, "ein Projekt");
+        put(1, "anerkannt.");
+        put(2, "zeitlich gesperrt.");
+        put(3, "voll gesperrt.");
+        put(4, "eine Erstbegehung.");
+        put(5, "nicht anerkannt.");
+        put(6, "nur eine Erwähnung.");
+        put(7, "ein Projekt.");
     }};
 
     @PrimaryKey
