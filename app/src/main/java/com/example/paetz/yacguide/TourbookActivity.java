@@ -161,8 +161,9 @@ public class TourbookActivity extends AppCompatActivity {
                     startActivityForResult(intent, 0);
                 }
             };
+
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    rock.getName() + " - " + route.getName(),
+                    WidgetUtils.getAscendSymbol(ascend.getStyleId()) + " " + rock.getName() + " - " + route.getName(),
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
