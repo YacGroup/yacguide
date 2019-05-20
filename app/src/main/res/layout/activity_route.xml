@@ -38,6 +38,15 @@
             android:layout_toRightOf="@+id/backButton"
             android:onClick="showComments"
             app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+        <ImageButton
+            android:id="@+id/mapButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/commentButton"
+            android:onClick="showMap"
+            app:srcCompat="@android:drawable/ic_menu_mapmode" />
     </RelativeLayout>
 
     <TextView
