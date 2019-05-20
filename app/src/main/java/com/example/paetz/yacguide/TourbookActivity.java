@@ -21,6 +21,7 @@ import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.database.TourbookExporter;
+import com.example.paetz.yacguide.utils.AscendTypes;
 import com.example.paetz.yacguide.utils.FileChooser;
 import com.example.paetz.yacguide.utils.FilesystemUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
@@ -48,6 +49,8 @@ public class TourbookActivity extends AppCompatActivity {
     private IOOption _ioOption;
     private Dialog _exportDialog;
 
+    private boolean _isTicklist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +59,8 @@ public class TourbookActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _exporter = new TourbookExporter(_db);
+        _isTicklist = getIntent().getBooleanExtra(IntentConstants.IS_TICKLIST_KEY, false);
+
         _initYears();
         _prepareExportDialog();
     }
@@ -113,6 +118,7 @@ public class TourbookActivity extends AppCompatActivity {
 
     private void _displayContent(int year) {
         final Ascend[] ascends = _db.ascendDao().getAll(year);
+
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
         ((TextView) findViewById(R.id.yearTextView)).setText(String.valueOf(year));
@@ -120,6 +126,10 @@ public class TourbookActivity extends AppCompatActivity {
         int currentMonth, currentDay, currentRegionId;
         currentMonth = currentDay = currentRegionId = -1;
         for (final Ascend ascend : ascends) {
+            if (_isTicklist && ascend.getStyleId() <= AscendTypes.BAILED || !_isTicklist && ascend.getStyleId() > AscendTypes.BAILED) {
+                continue;
+            }
+
             final int month = ascend.getMonth();
             final int day = ascend.getDay();
 
