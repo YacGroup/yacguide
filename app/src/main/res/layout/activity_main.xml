@@ -35,6 +35,15 @@
         android:text="Tourenbuch"
         android:onClick="enterTourbook"/>
 
+    <Button
+        android:id="@+id/ticklistButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tourbookButton"
+        android:layout_centerInParent="true"
+        android:onClick="enterTicklist"
+        android:text="Merkliste" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
