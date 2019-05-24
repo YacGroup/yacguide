@@ -9,11 +9,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Comment.RockComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
+
+import java.util.HashSet;
+
+import static java.lang.Math.min;
 
 public class RouteActivity extends TableActivity {
 
@@ -115,12 +120,17 @@ public class RouteActivity extends TableActivity {
                 typeface = Typeface.ITALIC;
                 bgColor = Color.LTGRAY;
             }
+
+            final Ascend[] ascends = db.ascendDao().getAscendsForRoute(route.getId());
+
+            String ascendSymbols = WidgetUtils.getAscendSymbols(ascends);
+
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    route.getName() + commentCountAddon,
+                    ascendSymbols + " " + route.getName() + commentCountAddon,
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
-                    route.getAscendCount() > 0 ? Color.GREEN : bgColor,
+                    bgColor,
                     typeface));
             layout.addView(WidgetUtils.createHorizontalLine(this, 1));
         }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.utils.IntentConstants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void enterTourbook(View v) {
         Intent intent = new Intent(this, TourbookActivity.class);
+        startActivity(intent);
+    }
+
+    public void enterTicklist(View v) {
+        Intent intent = new Intent(this, TourbookActivity.class);
+        intent.putExtra(IntentConstants.IS_TICKLIST_KEY, true);
         startActivity(intent);
     }
 }

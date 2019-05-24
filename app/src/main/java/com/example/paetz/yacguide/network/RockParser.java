@@ -2,11 +2,13 @@ package com.example.paetz.yacguide.network;
 
 import com.example.paetz.yacguide.UpdateListener;
 import com.example.paetz.yacguide.database.AppDatabase;
+import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Comment.RockComment;
 import com.example.paetz.yacguide.database.Comment.RouteComment;
 import com.example.paetz.yacguide.database.Comment.SectorComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
+import com.example.paetz.yacguide.utils.AscendTypes;
 import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONArray;
@@ -109,7 +111,9 @@ public class RockParser extends JSONWebParser {
         for (final Rock rock : db.rockDao().getAll(_sectorId)) {
             boolean ascended = false;
             for (final Route route : db.routeDao().getAll(rock.getId())) {
-                ascended |= (route.getAscendCount() > 0);
+                for (final Ascend ascend : db.ascendDao().getAscendsForRoute(route.getId())) {
+                    ascended |= (ascend.getStyleId() < AscendTypes.BAILED);
+                }
             }
             db.rockDao().updateAscended(ascended, rock.getId());
         }
