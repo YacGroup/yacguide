@@ -83,33 +83,4 @@ public class WidgetUtils {
 
         return textView;
     }
-
-    public static String getAscendSymbols(Ascend[] ascends) {
-        Set<String> symbols = new HashSet<>();
-
-        for (Ascend ascend: ascends) {
-            symbols.add(getAscendSymbol(ascend.getStyleId()));
-        }
-
-        StringBuilder result = new StringBuilder();
-        for (String symbol: symbols) {
-            result.append(symbol);
-        }
-        return result.toString();
-    }
-
-    public static String getAscendSymbol(int styleId) {
-        String symbol = " ";
-
-        if (styleId < AscendTypes.BAILED) {
-            symbol = "✓";
-        } else if (styleId == AscendTypes.BAILED) {
-            symbol = "✗";
-        } else if (styleId < AscendTypes.PROJECT) {
-            symbol = "\uD83D\uDC41";
-        } else if (styleId == AscendTypes.PROJECT) {
-            symbol = "☝";
-        }
-        return symbol;
-    }
 }

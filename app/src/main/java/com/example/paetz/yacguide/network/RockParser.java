@@ -8,7 +8,7 @@ import com.example.paetz.yacguide.database.Comment.RouteComment;
 import com.example.paetz.yacguide.database.Comment.SectorComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
-import com.example.paetz.yacguide.utils.AscendTypes;
+import com.example.paetz.yacguide.utils.AscendStyle;
 import com.example.paetz.yacguide.utils.ParserUtils;
 
 import org.json.JSONArray;
@@ -112,7 +112,7 @@ public class RockParser extends JSONWebParser {
             boolean ascended = false;
             for (final Route route : db.routeDao().getAll(rock.getId())) {
                 for (final Ascend ascend : db.ascendDao().getAscendsForRoute(route.getId())) {
-                    ascended |= (ascend.getStyleId() < AscendTypes.BAILED);
+                    ascended |= (ascend.getStyleId() < AscendStyle.eBOTCHED.id);
                 }
             }
             db.rockDao().updateAscended(ascended, rock.getId());

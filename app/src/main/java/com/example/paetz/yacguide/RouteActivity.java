@@ -13,12 +13,12 @@ import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Comment.RockComment;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
+import com.example.paetz.yacguide.utils.AscendStyle;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
 import java.util.HashSet;
-
-import static java.lang.Math.min;
+import java.util.Set;
 
 public class RouteActivity extends TableActivity {
 
@@ -122,11 +122,16 @@ public class RouteActivity extends TableActivity {
             }
 
             final Ascend[] ascends = db.ascendDao().getAscendsForRoute(route.getId());
-
-            String ascendSymbols = WidgetUtils.getAscendSymbols(ascends);
+            if (ascends.length > 0) {
+                Set<Integer> rowColors = new HashSet<>();
+                for (final Ascend ascend : ascends) {
+                    rowColors.add(AscendStyle.fromId(ascend.getStyleId()).color);
+                }
+                bgColor = AscendStyle.getPreferredColor(rowColors);
+            }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    ascendSymbols + " " + route.getName() + commentCountAddon,
+                    route.getName() + commentCountAddon,
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,

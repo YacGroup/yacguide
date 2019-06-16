@@ -30,10 +30,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TourbookActivity.class);
         startActivity(intent);
     }
-
-    public void enterTicklist(View v) {
-        Intent intent = new Intent(this, TourbookActivity.class);
-        intent.putExtra(IntentConstants.IS_TICKLIST_KEY, true);
-        startActivity(intent);
-    }
 }
