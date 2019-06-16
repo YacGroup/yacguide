@@ -3,38 +3,10 @@ package com.example.paetz.yacguide.database;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.example.paetz.yacguide.utils.AscendTypes;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 public class Ascend {
-
-    // This needs to be in sync with sandsteinklettern.de!
-    public final static BiMap<Integer, String> CLIMBING_STYLES;
-
-    static {
-        final Map<Integer, String> styles = new HashMap<Integer, String>();
-        styles.put(AscendTypes.SOLO, "Solo");
-        styles.put(AscendTypes.ONSIGHT, "Onsight");
-        styles.put(AscendTypes.REDPOINT, "Rotpunkt");
-        styles.put(AscendTypes.ALLFREE, "Alles frei");
-        styles.put(AscendTypes.HOCHGESCHLEUDERT, "Irgendwie hochgeschleudert");
-        styles.put(AscendTypes.ALTERNATING_LEADS, "Wechselführung");
-        styles.put(AscendTypes.FOLLOW, "Nachstieg");
-        styles.put(AscendTypes.HINTERHERGEHAMPELT, "Hinterhergehampelt");
-        styles.put(AscendTypes.BAILED, "Gesackt");
-        styles.put(AscendTypes.SEEN, "Zugesehen");
-        styles.put(AscendTypes.VISITED, "An den Einstieg gepinkelt");
-        styles.put(AscendTypes.HEARD_ABOUT_IT, "Von gehört");
-        styles.put(AscendTypes.PROJECT, "Will ich klettern");
-        CLIMBING_STYLES = ImmutableBiMap.copyOf(Collections.unmodifiableMap(styles));
-    }
 
     @PrimaryKey(autoGenerate = true)
     private int id;

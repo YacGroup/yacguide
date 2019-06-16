@@ -21,7 +21,7 @@ import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.database.Sector;
 import com.example.paetz.yacguide.database.TourbookExporter;
-import com.example.paetz.yacguide.utils.AscendTypes;
+import com.example.paetz.yacguide.utils.AscendStyle;
 import com.example.paetz.yacguide.utils.FileChooser;
 import com.example.paetz.yacguide.utils.FilesystemUtils;
 import com.example.paetz.yacguide.utils.IntentConstants;
@@ -39,12 +39,19 @@ public class TourbookActivity extends AppCompatActivity {
         eImport
     }
 
+    private enum TourbookType {
+        eAscends,
+        eBotches,
+        eProjects
+    }
+
     private final String _FILE_NAME = "Tourenbuch.json";
 
     private AppDatabase _db;
     private int[] _availableYears;
     private int _currentYearIdx;
     private int _maxYearIdx;
+    private TourbookType _tourbookType;
     private TourbookExporter _exporter;
     private IOOption _ioOption;
     private Dialog _exportDialog;
@@ -55,11 +62,11 @@ public class TourbookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tourbook);
-        this.setTitle("Tourenbuch");
+        this.setTitle("Begehungen");
 
         _db = MainActivity.database;
         _exporter = new TourbookExporter(_db);
-        _isTicklist = getIntent().getBooleanExtra(IntentConstants.IS_TICKLIST_KEY, false);
+        _tourbookType = TourbookType.eAscends;
 
         _initYears();
         _prepareExportDialog();
@@ -116,8 +123,30 @@ public class TourbookActivity extends AppCompatActivity {
         _exportDialog.show();
     }
 
+    public void showAscends(View v) {
+        setTitle("Begehungen");
+        _tourbookType = TourbookType.eAscends;
+        _initYears();
+    }
+
+    public void showBotches(View v) {
+        setTitle("Säcke");
+        _tourbookType = TourbookType.eBotches;
+        _initYears();
+    }
+
+    public void showProjects(View v) {
+        setTitle("Projekte");
+        _tourbookType = TourbookType.eProjects;
+        _initYears();
+    }
+
     private void _displayContent(int year) {
-        final Ascend[] ascends = _db.ascendDao().getAll(year);
+        final Ascend[] ascends = (_tourbookType == TourbookType.eAscends)
+                ? _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
+                : (_tourbookType == TourbookType.eBotches)
+                    ? _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
+                    : _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id);
 
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
@@ -126,10 +155,6 @@ public class TourbookActivity extends AppCompatActivity {
         int currentMonth, currentDay, currentRegionId;
         currentMonth = currentDay = currentRegionId = -1;
         for (final Ascend ascend : ascends) {
-            if (_isTicklist && ascend.getStyleId() <= AscendTypes.BAILED || !_isTicklist && ascend.getStyleId() > AscendTypes.BAILED) {
-                continue;
-            }
-
             final int month = ascend.getMonth();
             final int day = ascend.getDay();
 
@@ -173,7 +198,7 @@ public class TourbookActivity extends AppCompatActivity {
             };
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    WidgetUtils.getAscendSymbol(ascend.getStyleId()) + " " + rock.getName() + " - " + route.getName(),
+                    rock.getName() + " - " + route.getName(),
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
@@ -239,7 +264,12 @@ public class TourbookActivity extends AppCompatActivity {
     }
 
     private void _initYears() {
-        _availableYears = _db.ascendDao().getYears();
+        _availableYears = (_tourbookType == TourbookType.eAscends)
+            ? _db.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
+            : (_tourbookType == TourbookType.eBotches)
+                ? _db.ascendDao().getYears(AscendStyle.eBOTCHED.id)
+                : _db.ascendDao().getYears(AscendStyle.ePROJECT.id);
+
         Arrays.sort(_availableYears);
         _currentYearIdx = _maxYearIdx = _availableYears.length - 1;
         if (_currentYearIdx >= 0) {

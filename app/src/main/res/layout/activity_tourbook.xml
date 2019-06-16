@@ -60,6 +60,43 @@
 
     </RelativeLayout>
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/ascendsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#ff00ff00"
+            android:buttonTint="@android:color/black"
+            android:checked="true"
+            android:onClick="showAscends"
+            android:text="Begehungen" />
+
+        <RadioButton
+            android:id="@+id/sackingsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#ffff0000"
+            android:buttonTint="@android:color/black"
+            android:onClick="showBotches"
+            android:text="Säcke" />
+
+        <RadioButton
+            android:id="@+id/projectsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#ffffff00"
+            android:buttonTint="@android:color/black"
+            android:onClick="showProjects"
+            android:text="Projekte" />
+    </RadioGroup>
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
