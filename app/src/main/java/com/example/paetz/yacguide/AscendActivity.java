@@ -19,6 +19,7 @@ import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Partner;
 import com.example.paetz.yacguide.database.Route;
+import com.example.paetz.yacguide.utils.AscendStyle;
 import com.example.paetz.yacguide.utils.IntentConstants;
 
 import java.util.ArrayList;
@@ -131,14 +132,15 @@ public class AscendActivity extends AppCompatActivity {
     private void _displayContent() {
         setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : _db.UNKNOWN_NAME);
 
+
         Spinner spinner = findViewById(R.id.styleSpinner);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, Ascend.CLIMBING_STYLES.values().toArray(new String[0]));
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.getNames());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                _styleId = Ascend.CLIMBING_STYLES.inverse().get(parent.getItemAtPosition(position).toString());
+                _styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString()).id;
             }
 
             @Override
@@ -150,9 +152,9 @@ public class AscendActivity extends AppCompatActivity {
         if (_ascend != null) {
             ((EditText) findViewById(R.id.dateEditText)).setText((_day =_ascend.getDay()) + "." + (_month = _ascend.getMonth()) + "." + (_year = _ascend.getYear()));
             ((EditText) findViewById(R.id.notesEditText)).setText(_ascend.getNotes());
-            spinner.setSelection(adapter.getPosition(Ascend.CLIMBING_STYLES.get(_styleId == 0 ? _ascend.getStyleId() : _styleId)));
+            spinner.setSelection(adapter.getPosition(AscendStyle.fromId(_styleId == 0 ? _ascend.getStyleId() : _styleId).name));
         } else {
-            spinner.setSelection(_styleId != 0 ? adapter.getPosition(Ascend.CLIMBING_STYLES.get(_styleId)) : 0);
+            spinner.setSelection(_styleId != 0 ? adapter.getPosition(AscendStyle.fromId(_styleId).name) : 0);
         }
 
         ArrayList<String> partners = new ArrayList<String>();
