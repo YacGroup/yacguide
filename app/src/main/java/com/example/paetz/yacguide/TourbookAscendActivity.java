@@ -19,6 +19,7 @@ import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Rock;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.database.Sector;
+import com.example.paetz.yacguide.utils.AscendStyle;
 import com.example.paetz.yacguide.utils.IntentConstants;
 import com.example.paetz.yacguide.utils.WidgetUtils;
 
@@ -225,7 +226,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Typeface.NORMAL,
                 10, 10, 0, 0));
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                Ascend.CLIMBING_STYLES.get(ascend.getStyleId()),
+                AscendStyle.fromId(ascend.getStyleId()).name,
                 "",
                 WidgetUtils.tableFontSizeDp,
                 null,
