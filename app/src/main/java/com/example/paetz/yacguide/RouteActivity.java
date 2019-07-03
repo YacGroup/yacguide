@@ -4,10 +4,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Comment.RockComment;
@@ -54,6 +56,18 @@ public class RouteActivity extends TableActivity {
         setResult(_resultUpdated, resultIntent);
         finish();
     }
+
+    public void showMap(View v) {
+        final Uri gmmIntentUri = Uri.parse("geo:" + _rock.getLatitude() + "," + _rock.getLongitude());
+        final Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+        if (mapIntent.resolveActivity(getPackageManager()) == null) {
+            Toast.makeText(this, "Keine Karten-App verfügbar", Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(mapIntent);
+        }
+    }
+
 
     public void showComments(View v) {
         final Dialog dialog = prepareCommentDialog();
