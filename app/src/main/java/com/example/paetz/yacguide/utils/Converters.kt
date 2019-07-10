@@ -8,7 +8,7 @@ class Converters {
     @TypeConverter
     fun fromString(intListAsString: String): ArrayList<Int> {
         val intList = ArrayList<Int>()
-        if (!intListAsString.isEmpty()) {
+        if (intListAsString.isNotEmpty()) {
             val strList = intListAsString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             for (str in strList) {
                 intList.add(Integer.parseInt(str.trim { it <= ' ' }))

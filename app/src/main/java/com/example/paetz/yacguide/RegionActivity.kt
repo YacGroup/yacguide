@@ -17,20 +17,23 @@ class RegionActivity : TableActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY)
-        super.initialize(R.layout.activity_region)
-
         jsonParser = RegionParser(db, this, _countryName!!)
 
         displayContent()
     }
 
+    override fun getLayoutId(): Int {
+        return R.layout.activity_table
+    }
+
     override fun displayContent() {
-        this.title = _countryName
+        this.title = _countryName.orEmpty()
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        for (region in db.regionDao().getAll(_countryName!!)) {
+
+        val regions = _countryName?.let { db.regionDao().getAll(it) } ?: emptyArray()
+        for (region in regions) {
             val regionName = region.name
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@RegionActivity, SectorActivity::class.java)
@@ -49,6 +52,8 @@ class RegionActivity : TableActivity() {
     }
 
     override fun deleteContent() {
-        db.deleteRegions(_countryName!!)
+        _countryName?.let {
+            db.deleteRegions(it)
+        }
     }
 }

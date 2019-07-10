@@ -1,10 +1,9 @@
 package com.example.paetz.yacguide
 
 import android.app.Dialog
-import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -13,24 +12,39 @@ import com.example.paetz.yacguide.database.AppDatabase
 import com.example.paetz.yacguide.network.JSONWebParser
 import com.example.paetz.yacguide.utils.NetworkUtils
 
-abstract class TableActivity : AppCompatActivity(), UpdateListener {
-
+abstract class TableActivity : BaseNavigationActivity(), UpdateListener {
     protected lateinit var db: AppDatabase
     protected var jsonParser: JSONWebParser? = null
-    protected var updateDialog: Dialog? = null
+    private var _updateDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppDatabase.getAppDatabase(this)
     }
 
-    protected fun initialize(layoutNumber: Int) {
-        setContentView(layoutNumber)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.table, menu)
+        return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.action_download -> update()
+            R.id.action_delete -> delete()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+    open fun showComments(v: View) {}
 
     // UpdateListener
     override fun onEvent(success: Boolean) {
-        updateDialog?.dismiss()
+        _updateDialog?.dismiss()
 
         if (success) {
             Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show()
@@ -40,17 +54,7 @@ abstract class TableActivity : AppCompatActivity(), UpdateListener {
         displayContent()
     }
 
-    fun home(v: View) {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
-    open fun back(v: View) {
-        finish()
-    }
-
-    fun update(v: View) {
+    private fun update() {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             Toast.makeText(this, "Keine Internetverbindung", Toast.LENGTH_LONG).show()
             return
@@ -58,9 +62,9 @@ abstract class TableActivity : AppCompatActivity(), UpdateListener {
         if (jsonParser != null) {
             val dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog)
-            (dialog.findViewById<View>(R.id.dialogText) as TextView).text = "Diesen Bereich aktualisieren?"
+            (dialog.findViewById<View>(R.id.dialogText) as TextView).text = getString(R.string.dialog_question_update)
             dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
-                jsonParser!!.fetchData()
+                jsonParser?.fetchData()
                 showUpdateDialog()
                 dialog.dismiss()
             }
@@ -71,10 +75,10 @@ abstract class TableActivity : AppCompatActivity(), UpdateListener {
         }
     }
 
-    fun delete(v: View) {
+    fun delete() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog)
-        (dialog.findViewById<View>(R.id.dialogText) as TextView).text = "Diesen Bereich löschen?"
+        (dialog.findViewById<View>(R.id.dialogText) as TextView).text = getString(R.string.dialog_question_delete)
         dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             deleteContent()
             dialog.dismiss()
@@ -88,11 +92,11 @@ abstract class TableActivity : AppCompatActivity(), UpdateListener {
     }
 
     private fun showUpdateDialog() {
-        updateDialog = Dialog(this)
-        updateDialog!!.setContentView(R.layout.info_dialog)
-        updateDialog!!.setCancelable(false)
-        updateDialog!!.setCanceledOnTouchOutside(false)
-        updateDialog!!.show()
+        _updateDialog = Dialog(this)
+        _updateDialog?.setContentView(R.layout.info_dialog)
+        _updateDialog?.setCancelable(false)
+        _updateDialog?.setCanceledOnTouchOutside(false)
+        _updateDialog?.show()
     }
 
     protected fun prepareCommentDialog(): Dialog {

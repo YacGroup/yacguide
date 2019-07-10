@@ -246,7 +246,7 @@ class TourbookAscendActivity : AppCompatActivity() {
                 Typeface.NORMAL,
                 10, 10, 0, 0))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                ascend.notes?.takeUnless { it.isEmpty() } ?: " - ",
+                ascend.notes?.takeUnless { it.isBlank() } ?: " - ",
                 "",
                 WidgetUtils.tableFontSizeDp,
                 View.OnClickListener { },

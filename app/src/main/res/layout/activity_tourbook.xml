@@ -1,113 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/baseLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="#bbbbbb">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/buttonLayout"
+    <include
+        layout="@layout/app_bar_tourbook"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"/>
 
-        <ImageButton
-            android:id="@+id/homeButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:onClick="home"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer"/>
 
-        <ImageButton
-            android:id="@+id/prevYearButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/homeButton"
-            android:visibility="invisible"
-            android:onClick="goToPreviousYear"
-            app:srcCompat="@android:drawable/ic_media_rew" />
-
-        <TextView
-            android:id="@+id/yearTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textStyle="bold"
-            android:textSize="20dp"/>
-
-        <ImageButton
-            android:id="@+id/nextYearButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/exportButton"
-            android:visibility="invisible"
-            android:onClick="goToNextYear"
-            app:srcCompat="@android:drawable/ic_media_ff" />
-
-        <ImageButton
-            android:id="@+id/exportButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:onClick="export"
-            app:srcCompat="@android:drawable/ic_menu_upload" />
-
-    </RelativeLayout>
-
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/ascendsRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#ff00ff00"
-            android:buttonTint="@android:color/black"
-            android:checked="true"
-            android:onClick="showAscends"
-            android:text="Begehungen" />
-
-        <RadioButton
-            android:id="@+id/sackingsRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#ffff0000"
-            android:buttonTint="@android:color/black"
-            android:onClick="showBotches"
-            android:text="Säcke" />
-
-        <RadioButton
-            android:id="@+id/projectsRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#ffffff00"
-            android:buttonTint="@android:color/black"
-            android:onClick="showProjects"
-            android:text="Projekte" />
-    </RadioGroup>
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/tableLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>

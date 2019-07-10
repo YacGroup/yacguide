@@ -7,7 +7,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.RadioButton
@@ -17,6 +18,7 @@ import android.widget.Toast
 import com.example.paetz.yacguide.database.AppDatabase
 import com.example.paetz.yacguide.database.Region
 import com.example.paetz.yacguide.database.Rock
+import com.example.paetz.yacguide.database.Route
 import com.example.paetz.yacguide.database.Sector
 import com.example.paetz.yacguide.database.TourbookExporter
 import com.example.paetz.yacguide.utils.AscendStyle
@@ -26,22 +28,24 @@ import com.example.paetz.yacguide.utils.IntentConstants
 import com.example.paetz.yacguide.utils.WidgetUtils
 
 import org.json.JSONException
-
 import java.io.File
+
 import java.util.Arrays
 
-class TourbookActivity : AppCompatActivity() {
+class TourbookActivity : BaseNavigationActivity() {
 
     private val _FILE_NAME = "Tourenbuch.json"
 
     private lateinit var _db: AppDatabase
     private lateinit var _availableYears: IntArray
     private var _currentYearIdx: Int = 0
-    private var _maxYearIdx: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
-    private var _exporter: TourbookExporter? = null
     private var _ioOption: IOOption? = null
     private lateinit var _exportDialog: Dialog
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_tourbook
+    }
 
     private enum class IOOption {
         eExport,
@@ -54,13 +58,29 @@ class TourbookActivity : AppCompatActivity() {
         eProjects
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.tourbook, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        when (item.itemId) {
+            R.id.action_export -> export()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tourbook)
         this.title = "Begehungen"
 
         _db = AppDatabase.getAppDatabase(this)
-        _exporter = TourbookExporter(_db)
 
         _initYears()
         prepareExportDialog()
@@ -88,9 +108,9 @@ class TourbookActivity : AppCompatActivity() {
     }
 
     fun goToNextYear(v: View) {
-        if (++_currentYearIdx <= _maxYearIdx) {
+        if (++_currentYearIdx <= _availableYears.size) {
             findViewById<View>(R.id.prevYearButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.nextYearButton).visibility = if (_currentYearIdx == _maxYearIdx) View.INVISIBLE else View.VISIBLE
+            findViewById<View>(R.id.nextYearButton).visibility = if (_currentYearIdx == _availableYears.size - 1) View.INVISIBLE else View.VISIBLE
             _displayContent(_availableYears[_currentYearIdx])
         }
     }
@@ -103,7 +123,7 @@ class TourbookActivity : AppCompatActivity() {
         }
     }
 
-    fun export(v: View) {
+    private fun export() {
         if (!FilesystemUtils.isExternalStorageAvailable) {
             Toast.makeText(_exportDialog.context, "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show()
             return
@@ -225,13 +245,14 @@ class TourbookActivity : AppCompatActivity() {
         confirmDialog.findViewById<TextView>(R.id.dialogText).text = infoText
         confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             try {
+                val exporter = TourbookExporter(_db)
                 var successMsg = filePath
-                if (_ioOption == IOOption.eExport) {
-                    _exporter!!.exportTourbook(filePath)
-                    successMsg += " erfolgreich exportiert"
+                successMsg += if (_ioOption == IOOption.eExport) {
+                    exporter.exportTourbook(filePath)
+                    " erfolgreich exportiert"
                 } else {
-                    _exporter!!.importTourbook(filePath)
-                    successMsg += " erfolgreich importiert"
+                    exporter.importTourbook(filePath)
+                    " erfolgreich importiert"
                 }
                 Toast.makeText(this@TourbookActivity, successMsg, Toast.LENGTH_SHORT).show()
             } catch (e: JSONException) {
@@ -256,8 +277,7 @@ class TourbookActivity : AppCompatActivity() {
         }
 
         Arrays.sort(_availableYears)
-        _maxYearIdx = _availableYears.size - 1
-        _currentYearIdx = _maxYearIdx
+        _currentYearIdx = _availableYears.size - 1
         if (_currentYearIdx >= 0) {
             findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
             findViewById<View>(R.id.prevYearButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
