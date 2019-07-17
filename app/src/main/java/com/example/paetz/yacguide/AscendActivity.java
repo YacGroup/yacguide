@@ -44,9 +44,9 @@ public class AscendActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
-        _ascend = _db.ascendDao().getAscend(getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID));
-        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
-        _route = _db.routeDao().getRoute(routeId == _db.INVALID_ID ? _ascend.getRouteId() : routeId);
+        _ascend = _db.ascendDao().getAscend(getIntent().getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID));
+        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID);
+        _route = _db.routeDao().getRoute(routeId == AppDatabase.INVALID_ID ? _ascend.getRouteId() : routeId);
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
         _partnerIds = getIntent().getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
         if (_partnerIds == null) {
@@ -130,7 +130,7 @@ public class AscendActivity extends AppCompatActivity {
     }
 
     private void _displayContent() {
-        setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : _db.UNKNOWN_NAME);
+        setTitle(_route != null ? _route.getName() + "   " + _route.getGrade() : AppDatabase.UNKNOWN_NAME);
 
 
         Spinner spinner = findViewById(R.id.styleSpinner);
@@ -160,7 +160,7 @@ public class AscendActivity extends AppCompatActivity {
         ArrayList<String> partners = new ArrayList<String>();
         for (final Integer id : _partnerIds) {
             final Partner partner = _db.partnerDao().getPartner(id);
-            partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
+            partners.add(partner == null ? AppDatabase.UNKNOWN_NAME : partner.getName());
         }
         ((EditText) findViewById(R.id.partnersEditText)).setText(TextUtils.join(", ", partners));
     }

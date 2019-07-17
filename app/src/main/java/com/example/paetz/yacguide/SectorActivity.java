@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Comment.RegionComment;
 import com.example.paetz.yacguide.database.Region;
 import com.example.paetz.yacguide.database.Sector;
@@ -23,7 +24,7 @@ public class SectorActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final int regionId = getIntent().getIntExtra(IntentConstants.REGION_KEY, db.INVALID_ID);
+        final int regionId = getIntent().getIntExtra(IntentConstants.REGION_KEY, AppDatabase.INVALID_ID);
         super.initialize(R.layout.activity_sector);
 
         jsonParser = new SectorParser(db, this, regionId);

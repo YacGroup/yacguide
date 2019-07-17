@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("YACguide");
 
-        database = AppDatabase.getAppDatabase(this);
+        database = AppDatabase.Companion.getAppDatabase(this);
     }
 
     public void enterDatabase (View v) {
