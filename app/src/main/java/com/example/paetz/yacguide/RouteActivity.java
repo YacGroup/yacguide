@@ -140,9 +140,9 @@ public class RouteActivity extends TableActivity {
             if (ascends.length > 0) {
                 Set<Integer> rowColors = new HashSet<>();
                 for (final Ascend ascend : ascends) {
-                    rowColors.add(AscendStyle.fromId(ascend.getStyleId()).color);
+                    rowColors.add(AscendStyle.Companion.fromId(ascend.getStyleId()).getColor());
                 }
-                bgColor = AscendStyle.getPreferredColor(rowColors);
+                bgColor = AscendStyle.Companion.getPreferredColor(rowColors);
             }
 
             layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,

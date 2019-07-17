@@ -134,13 +134,13 @@ public class AscendActivity extends AppCompatActivity {
 
 
         Spinner spinner = findViewById(R.id.styleSpinner);
-        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.getNames());
+        ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.Companion.getNames());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                _styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString()).id;
+                _styleId = AscendStyle.Companion.fromName(parent.getItemAtPosition(position).toString()).getId();
             }
 
             @Override
@@ -152,9 +152,9 @@ public class AscendActivity extends AppCompatActivity {
         if (_ascend != null) {
             ((EditText) findViewById(R.id.dateEditText)).setText((_day =_ascend.getDay()) + "." + (_month = _ascend.getMonth()) + "." + (_year = _ascend.getYear()));
             ((EditText) findViewById(R.id.notesEditText)).setText(_ascend.getNotes());
-            spinner.setSelection(adapter.getPosition(AscendStyle.fromId(_styleId == 0 ? _ascend.getStyleId() : _styleId).name));
+            spinner.setSelection(adapter.getPosition(AscendStyle.Companion.fromId(_styleId == 0 ? _ascend.getStyleId() : _styleId).getStyleName()));
         } else {
-            spinner.setSelection(_styleId != 0 ? adapter.getPosition(AscendStyle.fromId(_styleId).name) : 0);
+            spinner.setSelection(_styleId != 0 ? adapter.getPosition(AscendStyle.Companion.fromId(_styleId).getStyleName()) : 0);
         }
 
         ArrayList<String> partners = new ArrayList<String>();

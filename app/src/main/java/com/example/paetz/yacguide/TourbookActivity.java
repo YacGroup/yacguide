@@ -143,10 +143,10 @@ public class TourbookActivity extends AppCompatActivity {
 
     private void _displayContent(int year) {
         final Ascend[] ascends = (_tourbookType == TourbookType.eAscends)
-                ? _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
+                ? _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.getId())
                 : (_tourbookType == TourbookType.eBotches)
-                    ? _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
-                    : _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id);
+                    ? _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.getId())
+                    : _db.ascendDao().getAll(year, AscendStyle.ePROJECT.getId());
 
         LinearLayout layout = findViewById(R.id.tableLayout);
         layout.removeAllViews();
@@ -265,10 +265,10 @@ public class TourbookActivity extends AppCompatActivity {
 
     private void _initYears() {
         _availableYears = (_tourbookType == TourbookType.eAscends)
-            ? _db.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
+            ? _db.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.getId())
             : (_tourbookType == TourbookType.eBotches)
-                ? _db.ascendDao().getYears(AscendStyle.eBOTCHED.id)
-                : _db.ascendDao().getYears(AscendStyle.ePROJECT.id);
+                ? _db.ascendDao().getYears(AscendStyle.eBOTCHED.getId())
+                : _db.ascendDao().getYears(AscendStyle.ePROJECT.getId());
 
         Arrays.sort(_availableYears);
         _currentYearIdx = _maxYearIdx = _availableYears.length - 1;
