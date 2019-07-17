@@ -18,12 +18,12 @@ public class RegionParser extends JSONWebParser {
         super(db, listener);
         _countryName = countryName;
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.DATA_REQUEST_ID,
+                NetworkRequestType.DATA_REQUEST_ID,
                 baseUrl + "jsongebiet.php?app=yacguide&land=" + NetworkUtils.encodeString2Url(countryName)));
     }
 
     @Override
-    protected void parseData(int requestId, String json) throws JSONException {
+    protected void parseData(NetworkRequestType requestId, String json) throws JSONException {
         // We don't need to care about requestId here; we only have one
         db.regionDao().deleteAll(_countryName);
         final JSONArray jsonRegions = new JSONArray(json);

@@ -36,24 +36,24 @@ public class RockParser extends JSONWebParser {
         super(db, listener);
         _sectorId = sectorId;
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.DATA_REQUEST_ID,
+                NetworkRequestType.DATA_REQUEST_ID,
                 baseUrl + "jsongipfel.php?app=yacguide&sektorid=" + _sectorId
         ));
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.SUBDATA_REQUEST_ID,
+                NetworkRequestType.SUBDATA_REQUEST_ID,
                 baseUrl + "jsonwege.php?app=yacguide&sektorid=" + _sectorId
         ));
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.COMMENTS_REQUEST_ID,
+                NetworkRequestType.COMMENTS_REQUEST_ID,
                 baseUrl + "jsonkomment.php?app=yacguide&sektorid=" + _sectorId
         ));
     }
 
     @Override
-    protected void parseData(int requestId, String json) throws JSONException {
-        if (requestId == NetworkRequest.DATA_REQUEST_ID) {
+    protected void parseData(NetworkRequestType requestId, String json) throws JSONException {
+        if (requestId == NetworkRequestType.DATA_REQUEST_ID) {
             parseRocks(json);
-        } else if (requestId == NetworkRequest.SUBDATA_REQUEST_ID) {
+        } else if (requestId == NetworkRequestType.SUBDATA_REQUEST_ID) {
             parseRoutes(json);
         } else {
             parseComments(json);

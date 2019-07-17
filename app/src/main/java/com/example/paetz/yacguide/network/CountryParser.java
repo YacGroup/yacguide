@@ -13,12 +13,12 @@ public class CountryParser extends JSONWebParser {
     public CountryParser(AppDatabase db, UpdateListener listener) {
         super(db, listener);
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.DATA_REQUEST_ID,
+                NetworkRequestType.DATA_REQUEST_ID,
                 baseUrl + "jsonland.php?app=yacguide"));
     }
 
     @Override
-    protected void parseData(int requestId, String json) throws JSONException {
+    protected void parseData(NetworkRequestType requestId, String json) throws JSONException {
         // We don't need to care about requestId here; we only have one
         db.countryDao().deleteAll();
         final JSONArray jsonCountries = new JSONArray(json);
