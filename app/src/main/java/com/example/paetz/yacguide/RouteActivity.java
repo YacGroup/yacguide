@@ -78,9 +78,9 @@ public class RouteActivity extends TableActivity {
             final int qualityId = comment.getQualityId();
             final String text = comment.getText();
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 5));
             if (RockComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Charakter:",
                         RockComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
@@ -89,7 +89,7 @@ public class RouteActivity extends TableActivity {
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     text,
                     "",
                     WidgetUtils.textFontSizeDp,
@@ -145,14 +145,14 @@ public class RouteActivity extends TableActivity {
                 bgColor = AscendStyle.getPreferredColor(rowColors);
             }
 
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     route.getName() + commentCountAddon,
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
                     bgColor,
                     typeface));
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 

@@ -228,7 +228,7 @@ public class PartnersActivity extends AppCompatActivity {
             paramsEdit.width = paramsEdit.height = buttonWidthPx;
 
             layout.addView(innerLayout);
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 

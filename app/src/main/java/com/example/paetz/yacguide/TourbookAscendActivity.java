@@ -157,7 +157,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         }
         final String partnersString = TextUtils.join(", ",  partners);
 
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 ascend.getDay() + "." + ascend.getMonth() + "." + ascend.getYear(),
                 region.getName(),
                 WidgetUtils.infoFontSizeDp,
@@ -165,8 +165,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 0xFFBBBBBB,
                 Typeface.BOLD,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Teilgebiet",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -174,7 +174,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 sector.getName(),
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -182,8 +182,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Felsen",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -191,7 +191,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 rock.getName(),
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -199,8 +199,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Weg",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -208,7 +208,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 route.getName() + "   " + route.getGrade(),
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -216,8 +216,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Stil",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -225,7 +225,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 AscendStyle.fromId(ascend.getStyleId()).name,
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -233,8 +233,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Seilpartner",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -242,7 +242,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 partnersString.isEmpty() ? " - " : partnersString,
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -250,8 +250,8 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 "Bemerkungen",
                 "",
                 WidgetUtils.textFontSizeDp,
@@ -259,7 +259,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10, 10, 0, 0));
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 ascend.getNotes().isEmpty() ? " - " : ascend.getNotes(),
                 "",
                 WidgetUtils.tableFontSizeDp,
@@ -267,7 +267,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
                 Color.WHITE,
                 Typeface.NORMAL,
                 10,10,10,10));
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+        layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
     }
 
 }

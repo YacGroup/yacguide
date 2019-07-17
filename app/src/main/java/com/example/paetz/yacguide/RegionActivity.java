@@ -42,14 +42,14 @@ public class RegionActivity extends TableActivity {
                     startActivity(intent);
                 }
             };
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     regionName,
                     "",
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 

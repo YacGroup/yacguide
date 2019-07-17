@@ -41,9 +41,9 @@ public class SectorActivity extends TableActivity {
             final int qualityId = comment.getQualityId();
             final String text = comment.getText();
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 5));
             if (RegionComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Bedeutung:",
                         RegionComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
@@ -52,7 +52,7 @@ public class SectorActivity extends TableActivity {
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     text,
                     "",
                     WidgetUtils.textFontSizeDp,
@@ -78,14 +78,14 @@ public class SectorActivity extends TableActivity {
                     startActivity(intent);
                 }
             };
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     sectorName,
                     "",
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD));
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 

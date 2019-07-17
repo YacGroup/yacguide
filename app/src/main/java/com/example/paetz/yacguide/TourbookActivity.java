@@ -175,7 +175,7 @@ public class TourbookActivity extends AppCompatActivity {
             }
 
             if (month != currentMonth || day != currentDay || region.getId() != currentRegionId) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         day + "." + month + "." + year,
                         region.getName(),
                         WidgetUtils.infoFontSizeDp,
@@ -183,7 +183,7 @@ public class TourbookActivity extends AppCompatActivity {
                         0xFFBBBBBB,
                         Typeface.BOLD,
                         5, 10, 5, 0));
-                layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+                layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 5));
                 currentMonth = month;
                 currentDay = day;
                 currentRegionId = region.getId();
@@ -197,14 +197,14 @@ public class TourbookActivity extends AppCompatActivity {
                 }
             };
 
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     rock.getName() + " - " + route.getName(),
                     route.getGrade(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.NORMAL));
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 
