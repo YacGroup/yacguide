@@ -77,7 +77,7 @@ abstract class AppDatabase : RoomDatabase() {
         val ascendedCount = routeDao().getAscendCount(routeId) - 1
         routeDao().updateAscendCount(ascendedCount, routeId)
         if (ascendedCount == 0) {
-            rockDao().updateAscended(false, routeDao().getRoute(routeId).parentId)
+            rockDao().updateAscended(false, routeDao().getRoute(routeId)!!.parentId)
         }
         ascendDao().delete(ascend)
     }

@@ -11,7 +11,7 @@ interface RouteDao {
     fun getAll(parentId: Int): Array<Route>
 
     @Query("SELECT * FROM Route WHERE id = :id")
-    fun getRoute(id: Int): Route
+    fun getRoute(id: Int): Route?
 
     @Query("SELECT ascendCount FROM Route WHERE id = :id")
     fun getAscendCount(id: Int): Int
