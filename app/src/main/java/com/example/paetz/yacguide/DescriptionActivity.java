@@ -150,7 +150,7 @@ public class DescriptionActivity extends TableActivity {
                 : ", " + _route.getFirstAscendFollower();
         final String firstAscendDate = _route.getFirstAscendDate().equals(DateUtils.UNKNOWN_DATE)
                 ? "Datum unbekannt"
-                : DateUtils.formatDate(_route.getFirstAscendDate());
+                : DateUtils.INSTANCE.formatDate(_route.getFirstAscendDate());
         layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 firstAscendClimbers,
                 firstAscendDate,
