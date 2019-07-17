@@ -62,7 +62,10 @@ class TourbookExporter(private val db: AppDatabase) {
         jsonAscend.put(_dayKey, ascend.day.toString())
         val partnerList = JSONArray()
         for (id in ascend.partnerIds!!) {
-            partnerList.put(db.partnerDao().getPartner(id).name)
+            val partner = db.partnerDao().getPartner(id)
+            if (partner != null) {
+                partnerList.put(partner.name)
+            }
         }
         jsonAscend.put(_partnersKey, partnerList)
         jsonAscend.put(_notesKey, ascend.notes)

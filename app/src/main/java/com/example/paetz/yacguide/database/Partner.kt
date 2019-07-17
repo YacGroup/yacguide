@@ -9,6 +9,6 @@ class Partner {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    var name: String? = null
+    var name: String = ""
 
 }

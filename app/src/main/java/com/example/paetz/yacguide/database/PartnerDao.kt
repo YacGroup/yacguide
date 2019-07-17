@@ -18,7 +18,7 @@ interface PartnerDao {
     fun getId(name: String): Int
 
     @Query("SELECT * FROM Partner WHERE Id = :id")
-    fun getPartner(id: Int): Partner
+    fun getPartner(id: Int): Partner?
 
     @Delete
     fun delete(partner: Partner)
