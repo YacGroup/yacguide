@@ -42,10 +42,10 @@ object WidgetUtils {
     }
 
     fun createCommonRowLayout(context: Context,
-                              textLeft: String,
-                              textRight: String,
+                              textLeft: String?,
+                              textRight: String?,
                               textSizeDp: Int,
-                              onClickListener: View.OnClickListener,
+                              onClickListener: View.OnClickListener?,
                               bgColor: Int,
                               typeFace: Int,
                               vararg padding: Int): RelativeLayout {
@@ -82,7 +82,7 @@ object WidgetUtils {
     }
 
     private fun createTextView(context: Context,
-                               text: String,
+                               text: String?,
                                textSizeDp: Int,
                                typeFace: Int,
                                paddingLeft: Int,

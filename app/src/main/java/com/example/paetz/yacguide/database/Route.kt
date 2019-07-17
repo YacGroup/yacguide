@@ -15,7 +15,7 @@ class Route {
     var statusId: Int = 0
     var name: String? = null
     var grade: String? = null
-    var firstAscendLeader: String? = null
+    var firstAscendLeader: String = ""
     var firstAscendFollower: String? = null
     var firstAscendDate: String? = null
     var typeOfClimbing: String? = null
