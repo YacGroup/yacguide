@@ -41,10 +41,10 @@ public class SectorActivity extends TableActivity {
             final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
-            if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
+            if (RegionComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Bedeutung:",
-                        RegionComment.QUALITY_MAP.get(qualityId),
+                        RegionComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,

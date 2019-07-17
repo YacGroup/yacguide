@@ -78,10 +78,10 @@ public class RouteActivity extends TableActivity {
             final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
-            if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
+            if (RockComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Charakter:",
-                        RockComment.QUALITY_MAP.get(qualityId),
+                        RockComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
