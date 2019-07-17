@@ -31,7 +31,7 @@ public class RockActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, db.INVALID_ID);
+        final int sectorId = getIntent().getIntExtra(IntentConstants.SECTOR_KEY, com.example.paetz.yacguide.database.AppDatabase.INVALID_ID);
         super.initialize(R.layout.activity_rock);
 
         jsonParser = new RockParser(db, this, sectorId);

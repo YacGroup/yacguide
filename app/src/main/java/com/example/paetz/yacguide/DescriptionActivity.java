@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Comment.RouteComment;
 import com.example.paetz.yacguide.database.Route;
 import com.example.paetz.yacguide.utils.DateUtils;
@@ -26,7 +27,7 @@ public class DescriptionActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, db.INVALID_ID);
+        final int routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID);
         super.initialize(R.layout.activity_description);
 
         _route = db.routeDao().getRoute(routeId);

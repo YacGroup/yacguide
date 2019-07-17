@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.paetz.yacguide.database.AppDatabase;
 import com.example.paetz.yacguide.database.Ascend;
 import com.example.paetz.yacguide.database.Comment.RockComment;
 import com.example.paetz.yacguide.database.Rock;
@@ -31,7 +32,7 @@ public class RouteActivity extends TableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, db.INVALID_ID);
+        final int rockId = getIntent().getIntExtra(IntentConstants.ROCK_KEY, AppDatabase.INVALID_ID);
         super.initialize(R.layout.activity_route);
 
         _rock = db.rockDao().getRock(rockId);

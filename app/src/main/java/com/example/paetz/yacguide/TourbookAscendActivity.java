@@ -43,14 +43,14 @@ public class TourbookAscendActivity extends AppCompatActivity {
 
         _db = MainActivity.database;
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
-        final int ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, _db.INVALID_ID);
-        _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, _db.INVALID_ID);
+        final int ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID);
+        _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID);
         _currentAscendIdx = 0;
-        if (ascendId != _db.INVALID_ID) {
+        if (ascendId != AppDatabase.INVALID_ID) {
             _ascends = new Ascend[1];
             _ascends[0] = _db.ascendDao().getAscend(ascendId);
             _routeId = _ascends[0].getRouteId();
-        } else if (_routeId != _db.INVALID_ID) {
+        } else if (_routeId != AppDatabase.INVALID_ID) {
             _ascends = _db.ascendDao().getAscendsForRoute(_routeId);
             findViewById(R.id.nextAscendButton).setVisibility(_ascends.length > 1 ? View.VISIBLE : View.INVISIBLE);
         }
@@ -153,7 +153,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         ArrayList<String> partners = new ArrayList<String>();
         for (final Integer id : partnerIds) {
             final Partner partner = _db.partnerDao().getPartner(id);
-            partners.add(partner == null ? _db.UNKNOWN_NAME : partner.getName());
+            partners.add(partner == null ? AppDatabase.UNKNOWN_NAME : partner.getName());
         }
         final String partnersString = TextUtils.join(", ",  partners);
 
