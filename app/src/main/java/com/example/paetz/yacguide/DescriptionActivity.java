@@ -32,7 +32,7 @@ public class DescriptionActivity extends TableActivity {
         _route = db.routeDao().getRoute(routeId);
         final int routeStatusId = _route.getStatusId();
         if (routeStatusId > 1) {
-            ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Weg ist " + _route.STATUS.get(routeStatusId));
+            ((TextView) findViewById(R.id.infoTextView)).setText("Achtung: Der Weg ist " + _route.Companion.getSTATUS().get(routeStatusId));
         }
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
 
