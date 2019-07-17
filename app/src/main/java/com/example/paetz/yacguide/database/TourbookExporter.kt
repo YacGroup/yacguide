@@ -116,9 +116,11 @@ class TourbookExporter(private val db: AppDatabase) {
             }
             ascend.partnerIds = partnerIds
             db.ascendDao().insert(ascend)
-
-            db.routeDao().updateAscendCount(db.routeDao().getAscendCount(routeId) + 1, routeId)
-            db.rockDao().updateAscended(true, db.routeDao().getRoute(routeId).parentId)
+            val route = db.routeDao().getRoute(routeId)
+            if (route != null) {
+                db.routeDao().updateAscendCount(db.routeDao().getAscendCount(routeId) + 1, routeId)
+                db.rockDao().updateAscended(true, route.parentId)
+            }
         }
     }
 }
