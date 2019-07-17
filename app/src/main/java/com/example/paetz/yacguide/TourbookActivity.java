@@ -64,7 +64,7 @@ public class TourbookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tourbook);
         this.setTitle("Begehungen");
 
-        _db = MainActivity.database;
+        _db = AppDatabase.Companion.getAppDatabase(this);
         _exporter = new TourbookExporter(_db);
         _tourbookType = TourbookType.eAscends;
 

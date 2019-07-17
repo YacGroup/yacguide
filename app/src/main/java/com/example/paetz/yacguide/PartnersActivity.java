@@ -44,7 +44,7 @@ public class PartnersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partners);
 
-        _db = MainActivity.database;
+        _db = AppDatabase.Companion.getAppDatabase(this);
         _checkboxMap = new HashMap<Integer, CheckBox>();
         _selectedPartnerIds = getIntent().getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS);
         _partnerNamePart = "";

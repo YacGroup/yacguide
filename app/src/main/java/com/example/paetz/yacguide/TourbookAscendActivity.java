@@ -41,7 +41,7 @@ public class TourbookAscendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tourbook_ascend);
         this.setTitle("Tourenbuch");
 
-        _db = MainActivity.database;
+        _db = AppDatabase.Companion.getAppDatabase(this);
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE;
         final int ascendId = getIntent().getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID);
         _routeId = getIntent().getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID);
