@@ -82,7 +82,7 @@ public class TourbookActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (FilesystemUtils.permissionGranted(grantResults)) {
+        if (FilesystemUtils.INSTANCE.permissionGranted(grantResults)) {
             _exportDialog.show();
         } else {
             Toast.makeText(this, "Export/Import nicht möglich ohne Schreibrechte", Toast.LENGTH_SHORT).show();
@@ -112,11 +112,11 @@ public class TourbookActivity extends AppCompatActivity {
     }
 
     public void export(View v) {
-        if (!FilesystemUtils.isExternalStorageAvailable()) {
+        if (!FilesystemUtils.INSTANCE.isExternalStorageAvailable()) {
             Toast.makeText(_exportDialog.getContext(), "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!FilesystemUtils.hasPermissionToWriteToExternalStorage(TourbookActivity.this)) {
+        if (!FilesystemUtils.INSTANCE.hasPermissionToWriteToExternalStorage(TourbookActivity.this)) {
             ActivityCompat.requestPermissions(TourbookActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
             return;
         }
