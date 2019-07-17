@@ -80,10 +80,10 @@ public class RockActivity extends TableActivity {
             final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
-            if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
+            if (SectorComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Bedeutung:",
-                        SectorComment.QUALITY_MAP.get(qualityId),
+                        SectorComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,

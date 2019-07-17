@@ -70,40 +70,40 @@ public class DescriptionActivity extends TableActivity {
             final String text = comment.getText();
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5));
-            if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
+            if (RouteComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Wegqualität:",
-                        RouteComment.QUALITY_MAP.get(qualityId),
+                        RouteComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
+            if (RouteComment.Companion.getGRADE_MAP().containsKey(gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Schwierigkeit:",
-                        RouteComment.GRADE_MAP.get(gradeId),
+                        RouteComment.Companion.getGRADE_MAP().get(gradeId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
+            if (RouteComment.Companion.getSECURITY_MAP().containsKey(securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Absicherung:",
-                        RouteComment.SECURITY_MAP.get(securityId),
+                        RouteComment.Companion.getSECURITY_MAP().get(securityId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
+            if (RouteComment.Companion.getWETNESS_MAP().containsKey(wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Abtrocknung:",
-                        RouteComment.WETNESS_MAP.get(wetnessId),
+                        RouteComment.Companion.getWETNESS_MAP().get(wetnessId),
                         WidgetUtils.textFontSizeDp,
                         null,
                         Color.WHITE,
