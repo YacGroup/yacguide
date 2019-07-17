@@ -53,7 +53,7 @@ public abstract class TableActivity extends AppCompatActivity implements UpdateL
     }
 
     public void update(View v) {
-        if (!NetworkUtils.isNetworkAvailable(this)) {
+        if (!NetworkUtils.INSTANCE.isNetworkAvailable(this)) {
             Toast.makeText(this, "Keine Internetverbindung", Toast.LENGTH_LONG).show();
             return;
         }
