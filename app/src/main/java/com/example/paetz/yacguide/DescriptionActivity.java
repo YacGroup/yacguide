@@ -70,9 +70,9 @@ public class DescriptionActivity extends TableActivity {
             final int wetnessId = comment.getWetnessId();
             final String text = comment.getText();
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 5));
             if (RouteComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Wegqualität:",
                         RouteComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
@@ -82,7 +82,7 @@ public class DescriptionActivity extends TableActivity {
                         10, 10, 10, 0));
             }
             if (RouteComment.Companion.getGRADE_MAP().containsKey(gradeId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Schwierigkeit:",
                         RouteComment.Companion.getGRADE_MAP().get(gradeId),
                         WidgetUtils.textFontSizeDp,
@@ -92,7 +92,7 @@ public class DescriptionActivity extends TableActivity {
                         10, 10, 10, 0));
             }
             if (RouteComment.Companion.getSECURITY_MAP().containsKey(securityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Absicherung:",
                         RouteComment.Companion.getSECURITY_MAP().get(securityId),
                         WidgetUtils.textFontSizeDp,
@@ -102,7 +102,7 @@ public class DescriptionActivity extends TableActivity {
                         10, 10, 10, 0));
             }
             if (RouteComment.Companion.getWETNESS_MAP().containsKey(wetnessId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Abtrocknung:",
                         RouteComment.Companion.getWETNESS_MAP().get(wetnessId),
                         WidgetUtils.textFontSizeDp,
@@ -112,7 +112,7 @@ public class DescriptionActivity extends TableActivity {
                         10, 10, 10, 0));
             }
 
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     text,
                     "",
                     WidgetUtils.textFontSizeDp,
@@ -151,7 +151,7 @@ public class DescriptionActivity extends TableActivity {
         final String firstAscendDate = _route.getFirstAscendDate().equals(DateUtils.UNKNOWN_DATE)
                 ? "Datum unbekannt"
                 : DateUtils.formatDate(_route.getFirstAscendDate());
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 firstAscendClimbers,
                 firstAscendDate,
                 WidgetUtils.infoFontSizeDp,
@@ -161,7 +161,7 @@ public class DescriptionActivity extends TableActivity {
                 20, 20, 20, 0));
         final String climbingType = _route.getTypeOfClimbing();
         if (!climbingType.isEmpty()) {
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     "Kletterei:",
                     climbingType,
                     WidgetUtils.infoFontSizeDp,
@@ -170,7 +170,7 @@ public class DescriptionActivity extends TableActivity {
                     Typeface.NORMAL,
                     20, 20, 20, 0));
         }
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
+        layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                 _route.getDescription(),
                 "",
                 WidgetUtils.tableFontSizeDp,

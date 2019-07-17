@@ -79,9 +79,9 @@ public class RockActivity extends TableActivity {
             final int qualityId = comment.getQualityId();
             final String text = comment.getText();
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 5));
             if (SectorComment.Companion.getQUALITY_MAP().containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
+                layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                         "Bedeutung:",
                         SectorComment.Companion.getQUALITY_MAP().get(qualityId),
                         WidgetUtils.textFontSizeDp,
@@ -90,7 +90,7 @@ public class RockActivity extends TableActivity {
                         Typeface.NORMAL,
                         10, 10, 10, 0));
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     text,
                     "",
                     WidgetUtils.textFontSizeDp,
@@ -140,14 +140,14 @@ public class RockActivity extends TableActivity {
                     startActivityForResult(intent, 0);
                 }
             };
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(WidgetUtils.INSTANCE.createCommonRowLayout(this,
                     rock.getNr() + "  " + rockName + typeAdd,
                     String.valueOf(status),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     rock.getAscended() ? Color.GREEN : bgColor,
                     typeface));
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1));
+            layout.addView(WidgetUtils.INSTANCE.createHorizontalLine(this, 1));
         }
     }
 
