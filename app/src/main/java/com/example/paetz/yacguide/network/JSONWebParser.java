@@ -26,7 +26,7 @@ public abstract class JSONWebParser implements NetworkListener {
     }
 
     @Override
-    public void onNetworkTaskResolved(int requestId, String result) {
+    public void onNetworkTaskResolved(NetworkRequestType requestId, String result) {
         if (_success) {
             try {
                 if (result == null) {
@@ -55,6 +55,6 @@ public abstract class JSONWebParser implements NetworkListener {
         }
     }
 
-    protected abstract void parseData(int requestId, String json) throws JSONException;
+    protected abstract void parseData(NetworkRequestType requestId, String json) throws JSONException;
 
 }

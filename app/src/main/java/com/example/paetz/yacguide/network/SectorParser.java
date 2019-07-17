@@ -18,18 +18,18 @@ public class SectorParser extends JSONWebParser {
         super(db, listener);
         _regionId = regionId;
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.DATA_REQUEST_ID,
+                NetworkRequestType.DATA_REQUEST_ID,
                 baseUrl + "jsonteilgebiet.php?app=yacguide&gebietid=" + _regionId
         ));
         networkRequests.add(new NetworkRequest(
-                NetworkRequest.COMMENTS_REQUEST_ID,
+                NetworkRequestType.COMMENTS_REQUEST_ID,
                 baseUrl + "jsonkomment.php?app=yacguide&gebietid=" + _regionId
         ));
     }
 
     @Override
-    protected void parseData(int requestId, String json) throws JSONException {
-        if (requestId == NetworkRequest.DATA_REQUEST_ID) {
+    protected void parseData(NetworkRequestType requestId, String json) throws JSONException {
+        if (requestId == NetworkRequestType.DATA_REQUEST_ID) {
             parseSectors(json);
         } else {
             parseRegionComments(json);

@@ -11,10 +11,10 @@ import java.net.URL;
 
 public class NetworkTask extends AsyncTask<String, Void, String> {
 
-    private int _requestId;
+    private NetworkRequestType _requestId;
     private NetworkListener _listener;
 
-    public NetworkTask(int requestId, NetworkListener listener) {
+    public NetworkTask(NetworkRequestType requestId, NetworkListener listener) {
         _requestId = requestId;
         _listener = listener;
     }
