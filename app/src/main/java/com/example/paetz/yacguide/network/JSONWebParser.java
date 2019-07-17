@@ -51,7 +51,7 @@ public abstract class JSONWebParser implements NetworkListener {
     public void fetchData() {
         _processedRequestsCount = 0;
         for (NetworkRequest request : networkRequests) {
-            (new NetworkTask(request.requestId, this)).execute(request.url);
+            (new NetworkTask(request.getRequestId(), this)).execute(request.getUrl());
         }
     }
 
