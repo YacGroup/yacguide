@@ -11,7 +11,7 @@ interface RockDao {
     fun getAll(parentId: Int): Array<Rock>
 
     @Query("SELECT * FROM Rock WHERE id = :id")
-    fun getRock(id: Int): Rock
+    fun getRock(id: Int): Rock?
 
     @Query("UPDATE Rock SET ascended = :ascended WHERE id = :id")
     fun updateAscended(ascended: Boolean, id: Int)
