@@ -15,10 +15,10 @@ object WidgetUtils {
     const val textFontSizeDp = 14
 
     fun createCommonRowLayout(context: Context,
-                              textLeft: String,
-                              textRight: String,
+                              textLeft: String?,
+                              textRight: String?,
                               textSizeDp: Int,
-                              onClickListener: View.OnClickListener,
+                              onClickListener: View.OnClickListener?,
                               bgColor: Int,
                               typeFace: Int): RelativeLayout {
         val layout = RelativeLayout(context)
