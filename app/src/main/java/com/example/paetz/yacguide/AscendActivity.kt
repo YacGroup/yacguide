@@ -26,11 +26,11 @@ import java.util.Calendar
 
 class AscendActivity : AppCompatActivity() {
 
-    private var _db: AppDatabase? = null
+    private lateinit var _db: AppDatabase
     private var _ascend: Ascend? = null
     private var _route: Route? = null
     private var _partnerIds: ArrayList<Int>? = null
-    private var _resultUpdated: Int = 0
+    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
     private var _styleId: Int = 0
     private var _year: Int = 0
     private var _month: Int = 0
@@ -41,25 +41,19 @@ class AscendActivity : AppCompatActivity() {
         setContentView(R.layout.activity_ascend)
 
         _db = AppDatabase.getAppDatabase(this)
-        _resultUpdated = IntentConstants.RESULT_NO_UPDATE
-        _ascend = _db!!.ascendDao().getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID))
+
+        _ascend = _db.ascendDao().getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID))
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
 
-        _route = _db!!.routeDao().getRoute(routeId.takeUnless { it == AppDatabase.INVALID_ID }
+        _route = _db.routeDao().getRoute(routeId.takeUnless { it == AppDatabase.INVALID_ID }
                 ?: _ascend?.routeId ?: AppDatabase.INVALID_ID)
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
         _partnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
-        if (_partnerIds == null) {
-            _partnerIds = if (_ascend == null) ArrayList() else _ascend!!.partnerIds
-        }
-        _day = 0
-        _month = _day
-        _year = _month
-        _styleId = _year
+                ?: _ascend?.partnerIds ?: ArrayList()
 
-        findViewById<View>(R.id.notesEditText).onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
-            val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(v.windowToken, 0)
+        findViewById<View>(R.id.notesEditText).onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
         displayContent()
@@ -67,7 +61,7 @@ class AscendActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            _partnerIds = data!!.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
+            _partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS) ?: ArrayList()
             displayContent()
         }
     }
@@ -75,22 +69,26 @@ class AscendActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun enter(v: View) {
         val ascend = Ascend()
-        if (_ascend != null) {
-            ascend.id = _ascend!!.id
+
+        val existingAscend = _ascend
+        if (existingAscend != null) {
+            ascend.id = existingAscend.id
         } else {
-            _db!!.routeDao().updateAscendCount(_db!!.routeDao().getAscendCount(_route!!.id) + 1, _route!!.id)
-            _db!!.rockDao().updateAscended(true, _db!!.routeDao().getRoute(_route!!.id)!!.parentId)
-            _resultUpdated = IntentConstants.RESULT_UPDATED
+            _route?.let {
+                _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(it.id) + 1, it.id)
+                _db.rockDao().updateAscended(true, it.parentId)
+                _resultUpdated = IntentConstants.RESULT_UPDATED
+            }
         }
 
-        ascend.routeId = _route?.id ?: _ascend?.routeId ?: AppDatabase.INVALID_ID
+        ascend.routeId = _route?.id ?: existingAscend?.routeId ?: AppDatabase.INVALID_ID
         ascend.styleId = _styleId
         ascend.year = _year
         ascend.month = _month
         ascend.day = _day
         ascend.partnerIds = _partnerIds
-        ascend.notes = (findViewById<View>(R.id.notesEditText) as EditText).text.toString()
-        _db!!.ascendDao().insert(ascend)
+        ascend.notes = findViewById<EditText>(R.id.notesEditText).text.toString()
+        _db.ascendDao().insert(ascend)
         val resultIntent = Intent()
         setResult(_resultUpdated, resultIntent)
         finish()
@@ -123,8 +121,8 @@ class AscendActivity : AppCompatActivity() {
     fun selectPartners(v: View) {
         val partners = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val partnerIds = ArrayList<Int>()
-        for (i in partners.indices) {
-            partnerIds.add(_db!!.partnerDao().getId(partners[i]))
+        for (partner in partners) {
+            partnerIds.add(_db.partnerDao().getId(partner))
         }
         val intent = Intent(this@AscendActivity, PartnersActivity::class.java)
         intent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
@@ -133,8 +131,7 @@ class AscendActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun displayContent() {
-        title = if (_route != null) _route!!.name + "   " + _route!!.grade else AppDatabase.UNKNOWN_NAME
-
+        title = _route?.let { "${it.name}   ${it.grade}" } ?: AppDatabase.UNKNOWN_NAME
 
         val spinner = findViewById<Spinner>(R.id.styleSpinner)
         val adapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.names)
@@ -142,7 +139,7 @@ class AscendActivity : AppCompatActivity() {
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                _styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())!!.id
+                _styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: 0
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -150,20 +147,21 @@ class AscendActivity : AppCompatActivity() {
             }
         }
 
-        if (_ascend != null) {
-            _day = _ascend!!.day
-            _month = _ascend!!.month
-            _year = _ascend!!.year
+        val existingAscend = _ascend
+        if (existingAscend != null) {
+            _day = existingAscend.day
+            _month = existingAscend.month
+            _year = existingAscend.year
             findViewById<EditText>(R.id.dateEditText).setText("$_day.$_month.$_year")
-            findViewById<EditText>(R.id.notesEditText).setText(_ascend!!.notes)
-            spinner.setSelection(adapter.getPosition(AscendStyle.fromId(if (_styleId == 0) _ascend!!.styleId else _styleId)!!.styleName))
+            findViewById<EditText>(R.id.notesEditText).setText(existingAscend.notes)
+            spinner.setSelection(adapter.getPosition(AscendStyle.fromId(if (_styleId == 0) existingAscend.styleId else _styleId)?.styleName))
         } else {
-            spinner.setSelection(if (_styleId != 0) adapter.getPosition(AscendStyle.fromId(_styleId)!!.styleName) else 0)
+            spinner.setSelection(if (_styleId != 0) adapter.getPosition(AscendStyle.fromId(_styleId)?.styleName) else 0)
         }
 
         val partners = ArrayList<String>()
-        for (id in _partnerIds!!) {
-            val partner = _db!!.partnerDao().getPartner(id)
+        for (id in _partnerIds.orEmpty()) {
+            val partner = _db.partnerDao().getPartner(id)
             partners.add(partner?.name ?: AppDatabase.UNKNOWN_NAME)
         }
         findViewById<EditText>(R.id.partnersEditText).setText(TextUtils.join(", ", partners))
