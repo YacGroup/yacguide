@@ -23,7 +23,6 @@ enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
     eHEARD(12, "Von gehört", Color.CYAN),
     ePROJECT(13, "Will ich klettern", Color.YELLOW);
 
-
     companion object {
 
         private val _BY_ID = HashMap<Int, AscendStyle>()
@@ -46,7 +45,7 @@ enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
             return _BY_ID[id]
         }
 
-        // We need to preserve order given be IDs
+        // We need to preserve order given by IDs
         val names: Array<String>
             get() {
                 val ids = TreeSet(_BY_ID.keys)
@@ -58,16 +57,12 @@ enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
             }
 
         fun getPreferredColor(colors: Set<Int>): Int {
-            return if (colors.contains(Color.GREEN)) {
-                Color.GREEN
-            } else if (colors.contains(Color.RED)) {
-                Color.RED
-            } else if (colors.contains(Color.YELLOW)) {
-                Color.YELLOW
-            } else if (colors.contains(Color.CYAN)) {
-                Color.CYAN
-            } else {
-                Color.WHITE
+            return when {
+                colors.contains(Color.GREEN) -> Color.GREEN
+                colors.contains(Color.RED) -> Color.RED
+                colors.contains(Color.YELLOW) -> Color.YELLOW
+                colors.contains(Color.CYAN) -> Color.CYAN
+                else -> Color.WHITE
             }
         }
     }
