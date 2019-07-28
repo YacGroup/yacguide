@@ -34,14 +34,14 @@ class TourbookActivity : AppCompatActivity() {
 
     private val _FILE_NAME = "Tourenbuch.json"
 
-    private var _db: AppDatabase? = null
-    private var _availableYears: IntArray? = null
+    private lateinit var _db: AppDatabase
+    private lateinit var _availableYears: IntArray
     private var _currentYearIdx: Int = 0
     private var _maxYearIdx: Int = 0
-    private var _tourbookType: TourbookType? = null
+    private var _tourbookType: TourbookType = TourbookType.eAscends
     private var _exporter: TourbookExporter? = null
     private var _ioOption: IOOption? = null
-    private var _exportDialog: Dialog? = null
+    private lateinit var _exportDialog: Dialog
 
     private enum class IOOption {
         eExport,
@@ -60,8 +60,7 @@ class TourbookActivity : AppCompatActivity() {
         this.title = "Begehungen"
 
         _db = AppDatabase.getAppDatabase(this)
-        _exporter = TourbookExporter(_db!!)
-        _tourbookType = TourbookType.eAscends
+        _exporter = TourbookExporter(_db)
 
         _initYears()
         prepareExportDialog()
@@ -70,13 +69,13 @@ class TourbookActivity : AppCompatActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, "Begehung gelöscht", Toast.LENGTH_SHORT).show()
-            _displayContent(_availableYears!![_currentYearIdx])
+            _displayContent(_availableYears[_currentYearIdx])
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (FilesystemUtils.permissionGranted(grantResults)) {
-            _exportDialog!!.show()
+            _exportDialog.show()
         } else {
             Toast.makeText(this, "Export/Import nicht möglich ohne Schreibrechte", Toast.LENGTH_SHORT).show()
         }
@@ -92,7 +91,7 @@ class TourbookActivity : AppCompatActivity() {
         if (++_currentYearIdx <= _maxYearIdx) {
             findViewById<View>(R.id.prevYearButton).visibility = View.VISIBLE
             findViewById<View>(R.id.nextYearButton).visibility = if (_currentYearIdx == _maxYearIdx) View.INVISIBLE else View.VISIBLE
-            _displayContent(_availableYears!![_currentYearIdx])
+            _displayContent(_availableYears[_currentYearIdx])
         }
     }
 
@@ -100,20 +99,20 @@ class TourbookActivity : AppCompatActivity() {
         if (--_currentYearIdx >= 0) {
             findViewById<View>(R.id.nextYearButton).visibility = View.VISIBLE
             findViewById<View>(R.id.prevYearButton).visibility = if (_currentYearIdx == 0) View.INVISIBLE else View.VISIBLE
-            _displayContent(_availableYears!![_currentYearIdx])
+            _displayContent(_availableYears[_currentYearIdx])
         }
     }
 
     fun export(v: View) {
         if (!FilesystemUtils.isExternalStorageAvailable) {
-            Toast.makeText(_exportDialog!!.context, "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show()
+            Toast.makeText(_exportDialog.context, "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show()
             return
         }
         if (!FilesystemUtils.hasPermissionToWriteToExternalStorage(this@TourbookActivity)) {
             ActivityCompat.requestPermissions(this@TourbookActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
             return
         }
-        _exportDialog!!.show()
+        _exportDialog.show()
     }
 
     fun showAscends(v: View) {
@@ -135,41 +134,37 @@ class TourbookActivity : AppCompatActivity() {
     }
 
     private fun _displayContent(year: Int) {
-        val ascends = if (_tourbookType == TourbookType.eAscends)
-            _db!!.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
-        else if (_tourbookType == TourbookType.eBotches)
-            _db!!.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
-        else
-            _db!!.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
+        val ascends = when (_tourbookType) {
+            TourbookType.eAscends -> _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
+            else -> _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
+        }
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         (findViewById<View>(R.id.yearTextView) as TextView).text = year.toString()
 
-        var currentMonth: Int
-        var currentDay: Int
-        var currentRegionId: Int
-        currentRegionId = -1
-        currentDay = currentRegionId
-        currentMonth = currentDay
+        var currentMonth = -1
+        var currentDay = -1
+        var currentRegionId = -1
+
         for (ascend in ascends) {
             val month = ascend.month
             val day = ascend.day
 
-            var route = _db!!.routeDao().getRoute(ascend.routeId)
-            val rock: Rock?
+            var route = _db.routeDao().getRoute(ascend.routeId)
+            val rock: Rock
             val sector: Sector
             val region: Region
             if (route == null) {
                 // The database entry has been deleted
-                route = _db!!.createUnknownRoute()
-                rock = _db!!.createUnknownRock()
-                sector = _db!!.createUnknownSector()
-                region = _db!!.createUnknownRegion()
+                route = _db.createUnknownRoute()
+                rock = _db.createUnknownRock()
+                region = _db.createUnknownRegion()
             } else {
-                rock = _db!!.rockDao().getRock(route.parentId)
-                sector = _db!!.sectorDao().getSector(rock!!.parentId)
-                region = _db!!.regionDao().getRegion(sector.parentId)
+                rock = _db.rockDao().getRock(route.parentId)!!
+                sector = _db.sectorDao().getSector(rock.parentId)!!
+                region = _db.regionDao().getRegion(sector.parentId)!!
             }
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
@@ -208,11 +203,11 @@ class TourbookActivity : AppCompatActivity() {
             _FILE_NAME
         else
             ""
-        FileChooser(_exportDialog!!.context, defaultFileName).setFileListener(object : FileChooser.FileSelectedListener {
+        FileChooser(_exportDialog.context, defaultFileName).setFileListener(object : FileChooser.FileSelectedListener {
             override fun fileSelected(file: File) {
                 val filePath = file.absolutePath
                 if (_ioOption == IOOption.eImport && !file.exists()) {
-                    Toast.makeText(_exportDialog!!.context, "Datei existiert nicht", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(_exportDialog.context, "Datei existiert nicht", Toast.LENGTH_SHORT).show()
                     return
                 }
                 _showConfirmDialog(filePath)
@@ -221,13 +216,13 @@ class TourbookActivity : AppCompatActivity() {
     }
 
     private fun _showConfirmDialog(filePath: String) {
-        val confirmDialog = Dialog(_exportDialog!!.context)
+        val confirmDialog = Dialog(_exportDialog.context)
         confirmDialog.setContentView(R.layout.dialog)
         val infoText = if (_ioOption == IOOption.eExport)
             "Dies überschreibt eine bereits vorhandene Datei gleichen Namens.\nTrotzdem exportieren?"
         else
             "Dies überschreibt das gesamte Tourenbuch.\nTrotzdem importieren?"
-        (confirmDialog.findViewById<View>(R.id.dialogText) as TextView).text = infoText
+        confirmDialog.findViewById<TextView>(R.id.dialogText).text = infoText
         confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             try {
                 var successMsg = filePath
@@ -244,7 +239,7 @@ class TourbookActivity : AppCompatActivity() {
             }
 
             confirmDialog.dismiss()
-            _exportDialog!!.dismiss()
+            _exportDialog.dismiss()
             _initYears()
         }
         confirmDialog.findViewById<View>(R.id.noButton).setOnClickListener { confirmDialog.dismiss() }
@@ -255,28 +250,28 @@ class TourbookActivity : AppCompatActivity() {
 
     private fun _initYears() {
         _availableYears = when (_tourbookType) {
-            TourbookType.eAscends -> _db!!.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db!!.ascendDao().getYears(AscendStyle.eBOTCHED.id)
-            else -> _db!!.ascendDao().getYears(AscendStyle.ePROJECT.id)
+            TourbookType.eAscends -> _db.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.ascendDao().getYears(AscendStyle.eBOTCHED.id)
+            else -> _db.ascendDao().getYears(AscendStyle.ePROJECT.id)
         }
 
         Arrays.sort(_availableYears)
-        _maxYearIdx = _availableYears!!.size - 1
+        _maxYearIdx = _availableYears.size - 1
         _currentYearIdx = _maxYearIdx
         if (_currentYearIdx >= 0) {
             findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
-            findViewById<View>(R.id.prevYearButton).visibility = if (_availableYears!!.size > 1) View.VISIBLE else View.INVISIBLE
-            _displayContent(_availableYears!![_currentYearIdx])
+            findViewById<View>(R.id.prevYearButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
+            _displayContent(_availableYears[_currentYearIdx])
         }
     }
 
     private fun prepareExportDialog() {
         _exportDialog = Dialog(this)
-        _exportDialog!!.setContentView(R.layout.export_dialog)
+        _exportDialog.setContentView(R.layout.export_dialog)
         _ioOption = IOOption.eExport
 
-        val exportRadioButton = _exportDialog!!.findViewById<View>(R.id.exportRadioButton) as RadioButton
-        val importRadioButton = _exportDialog!!.findViewById<View>(R.id.importRadioButton) as RadioButton
+        val exportRadioButton = _exportDialog.findViewById<RadioButton>(R.id.exportRadioButton)
+        val importRadioButton = _exportDialog.findViewById<RadioButton>(R.id.importRadioButton)
         exportRadioButton.setOnClickListener {
             exportRadioButton.isChecked = true
             importRadioButton.isChecked = false
@@ -287,9 +282,9 @@ class TourbookActivity : AppCompatActivity() {
             importRadioButton.isChecked = true
             _ioOption = IOOption.eImport
         }
-        _exportDialog!!.findViewById<View>(R.id.okButton).setOnClickListener { _showFileChooser() }
-        _exportDialog!!.findViewById<View>(R.id.cancelButton).setOnClickListener { _exportDialog!!.dismiss() }
-        _exportDialog!!.setCanceledOnTouchOutside(false)
-        _exportDialog!!.setCancelable(false)
+        _exportDialog.findViewById<View>(R.id.okButton).setOnClickListener { _showFileChooser() }
+        _exportDialog.findViewById<View>(R.id.cancelButton).setOnClickListener { _exportDialog.dismiss() }
+        _exportDialog.setCanceledOnTouchOutside(false)
+        _exportDialog.setCancelable(false)
     }
 }

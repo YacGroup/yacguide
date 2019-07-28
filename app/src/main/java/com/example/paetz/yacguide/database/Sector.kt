@@ -9,7 +9,7 @@ class Sector {
     @PrimaryKey
     var id: Int = 0
 
-    var nr: Float = 0.toFloat()
+    var nr: Float = 0f
     var name: String? = null
     var parentId: Int = 0
 }

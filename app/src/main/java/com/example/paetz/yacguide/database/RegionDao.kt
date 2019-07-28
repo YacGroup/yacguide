@@ -11,7 +11,7 @@ interface RegionDao {
     fun getAll(countryName: String): Array<Region>
 
     @Query("SELECT * FROM Region WHERE id = :id")
-    fun getRegion(id: Int): Region
+    fun getRegion(id: Int): Region?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(region: Region)

@@ -21,7 +21,7 @@ interface AscendDao {
     fun getAscendsForRoute(routeId: Int): Array<Ascend>
 
     @Query("SELECT * FROM Ascend WHERE id = :id")
-    fun getAscend(id: Int): Ascend
+    fun getAscend(id: Int): Ascend?
 
     @Query("SELECT DISTINCT year FROM Ascend WHERE styleId = :styleId")
     fun getYears(styleId: Int): IntArray
