@@ -13,6 +13,7 @@ object WidgetUtils {
     const val tableFontSizeDp = 18
     const val infoFontSizeDp = 16
     const val textFontSizeDp = 14
+    const val tourHeaderColor = -0x444445
 
     fun createCommonRowLayout(context: Context,
                               textLeft: String,

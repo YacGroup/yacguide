@@ -148,7 +148,7 @@ class TourbookAscendActivity : AppCompatActivity() {
                 region.name.orEmpty(),
                 WidgetUtils.infoFontSizeDp,
                 View.OnClickListener { },
-                -0x444445,
+                WidgetUtils.tourHeaderColor,
                 Typeface.BOLD,
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
