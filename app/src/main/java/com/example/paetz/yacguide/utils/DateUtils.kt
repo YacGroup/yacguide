@@ -12,13 +12,13 @@ object DateUtils {
     @SuppressLint("SimpleDateFormat")
     fun formatDate(date: String): String {
         val format = SimpleDateFormat("yyyy-MM-dd")
-        try {
+        return try {
             val formattedDate = format.parse(date)
             val cal = Calendar.getInstance()
             cal.time = formattedDate
-            return cal.get(Calendar.DAY_OF_MONTH).toString() + "." + (cal.get(Calendar.MONTH) + 1) + "." + cal.get(Calendar.YEAR)
+            "${cal.get(Calendar.DAY_OF_MONTH)}.${cal.get(Calendar.MONTH) + 1}.${cal.get(Calendar.YEAR)}"
         } catch (e: ParseException) {
-            return ""
+            ""
         }
 
     }
