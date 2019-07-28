@@ -33,23 +33,21 @@ import java.util.HashMap
 class PartnersActivity : AppCompatActivity() {
 
     private var _db: AppDatabase? = null
-    private var _checkboxMap: MutableMap<Int, CheckBox>? = null
+    private var _checkboxMap: MutableMap<Int, CheckBox> = HashMap()
     private var _selectedPartnerIds: ArrayList<Int>? = null
-    private var _partnerNamePart: String? = null
+    private var _partnerNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_partners)
 
         _db = AppDatabase.getAppDatabase(this)
-        _checkboxMap = HashMap()
         _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
-        _partnerNamePart = ""
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
-        searchEditText.onFocusChangeListener = View.OnFocusChangeListener { v, _ ->
-            val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(v.windowToken, 0)
+        searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
+            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -73,7 +71,7 @@ class PartnersActivity : AppCompatActivity() {
             val newName = (dialog.findViewById<View>(R.id.addPartnerEditText) as EditText).text.toString().trim { it <= ' ' }
             updatePartner(dialog, newName, null)
         }
-        val cancelButton = dialog.findViewById<View>(R.id.cancelButton) as Button
+        val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { dialog.dismiss() }
         dialog.setCanceledOnTouchOutside(false)
         dialog.setCancelable(false)
@@ -82,7 +80,7 @@ class PartnersActivity : AppCompatActivity() {
 
     fun enter(v: View) {
         val selectedIds = ArrayList<Int>()
-        for ((key, cb) in _checkboxMap!!) {
+        for ((key, cb) in _checkboxMap) {
             if (cb.isChecked) {
                 selectedIds.add(key)
             }
@@ -97,7 +95,7 @@ class PartnersActivity : AppCompatActivity() {
         title = "Kletterpartner"
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        _checkboxMap!!.clear()
+        _checkboxMap.clear()
         val partners = _db!!.partnerDao().all
         val ascends = _db!!.ascendDao().all
 
@@ -123,7 +121,7 @@ class PartnersActivity : AppCompatActivity() {
 
         for (partner in sortedPartners) {
             val partnerName = partner.name
-            if (!partnerName!!.toLowerCase().contains(_partnerNamePart!!.toLowerCase())) {
+            if (!partnerName!!.toLowerCase().contains(_partnerNamePart.toLowerCase())) {
                 continue
             }
             val innerLayout = RelativeLayout(this)
@@ -134,7 +132,7 @@ class PartnersActivity : AppCompatActivity() {
             if (_selectedPartnerIds!!.contains(partner.id)) {
                 checkBox.isChecked = true
             }
-            _checkboxMap!![partner.id] = checkBox
+            _checkboxMap[partner.id] = checkBox
             innerLayout.addView(checkBox)
 
             val editButton = ImageButton(this)
@@ -195,18 +193,15 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
-        var result = partner
         when {
             newName == "" ->
                 Toast.makeText(dialog.context, "Kein Name eingegeben", Toast.LENGTH_SHORT).show()
             _db!!.partnerDao().getId(newName) > 0 ->
                 Toast.makeText(dialog.context, "Name bereits vergeben", Toast.LENGTH_SHORT).show()
             else -> {
-                if (result == null) {
-                    result = Partner()
-                }
-                result.name = newName
-                _db!!.partnerDao().insert(result)
+                val updatedPartner = partner ?: Partner()
+                updatedPartner.name = newName
+                _db!!.partnerDao().insert(updatedPartner)
                 dialog.dismiss()
                 displayContent()
             }
