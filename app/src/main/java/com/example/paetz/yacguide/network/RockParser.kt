@@ -18,36 +18,36 @@ import java.util.HashSet
 class RockParser(
         db: AppDatabase,
         listener: UpdateListener,
-        private val sectorId: Int)
+        private val _sectorId: Int)
     : JSONWebParser(db, listener) {
 
     init {
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.DATA_REQUEST_ID,
-                baseUrl + "jsongipfel.php?app=yacguide&sektorid=" + sectorId
+                "${baseUrl}jsongipfel.php?app=yacguide&sektorid=$_sectorId"
         ))
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.SUBDATA_REQUEST_ID,
-                baseUrl + "jsonwege.php?app=yacguide&sektorid=" + sectorId
+                "${baseUrl}jsonwege.php?app=yacguide&sektorid=$_sectorId"
         ))
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.COMMENTS_REQUEST_ID,
-                baseUrl + "jsonkomment.php?app=yacguide&sektorid=" + sectorId
+                "${baseUrl}jsonkomment.php?app=yacguide&sektorid=$_sectorId"
         ))
     }
 
     @Throws(JSONException::class)
     override fun parseData(requestId: NetworkRequestType, json: String) {
-        when {
-            requestId === NetworkRequestType.DATA_REQUEST_ID -> parseRocks(json)
-            requestId === NetworkRequestType.SUBDATA_REQUEST_ID -> parseRoutes(json)
+        when (requestId) {
+            NetworkRequestType.DATA_REQUEST_ID -> parseRocks(json)
+            NetworkRequestType.SUBDATA_REQUEST_ID -> parseRoutes(json)
             else -> parseComments(json)
         }
     }
 
     @Throws(JSONException::class)
     private fun parseRocks(json: String) {
-        db.rockDao().deleteAll(sectorId)
+        db.rockDao().deleteAll(_sectorId)
         val jsonRocks = JSONArray(json)
         for (i in 0 until jsonRocks.length()) {
             val jsonRock = jsonRocks.getJSONObject(i)
@@ -64,14 +64,14 @@ class RockParser(
             r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
             r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
             r.ascended = false
-            r.parentId = sectorId
+            r.parentId = _sectorId
             db.rockDao().insert(r)
         }
     }
 
     @Throws(JSONException::class)
     private fun parseRoutes(json: String) {
-        for (rock in db.rockDao().getAll(sectorId)) {
+        for (rock in db.rockDao().getAll(_sectorId)) {
             db.routeDao().deleteAll(rock.id)
         }
         val jsonRoutes = JSONArray(json)
@@ -95,7 +95,7 @@ class RockParser(
         }
 
         // update already ascended rocks
-        for (rock in db.rockDao().getAll(sectorId)) {
+        for (rock in db.rockDao().getAll(_sectorId)) {
             var ascended = false
             for (route in db.routeDao().getAll(rock.id)) {
                 for (ascend in db.ascendDao().getAscendsForRoute(route.id)) {
@@ -149,8 +149,8 @@ class RockParser(
     }
 
     private fun deleteComments() {
-        db.sectorCommentDao().deleteAll(sectorId)
-        for (rock in db.rockDao().getAll(sectorId)) {
+        db.sectorCommentDao().deleteAll(_sectorId)
+        for (rock in db.rockDao().getAll(_sectorId)) {
             db.rockCommentDao().deleteAll(rock.id)
             for (route in db.routeDao().getAll(rock.id)) {
                 db.routeCommentDao().deleteAll(route.id)
