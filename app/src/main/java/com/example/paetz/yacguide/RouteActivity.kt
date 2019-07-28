@@ -1,6 +1,5 @@
 package com.example.paetz.yacguide
 
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -12,10 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 
 import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Ascend
 import com.example.paetz.yacguide.database.Comment.RockComment
 import com.example.paetz.yacguide.database.Rock
-import com.example.paetz.yacguide.database.Route
 import com.example.paetz.yacguide.utils.AscendStyle
 import com.example.paetz.yacguide.utils.IntentConstants
 import com.example.paetz.yacguide.utils.WidgetUtils
@@ -25,7 +22,7 @@ import java.util.HashSet
 class RouteActivity : TableActivity() {
 
     private var _rock: Rock? = null
-    private var _resultUpdated: Int = 0
+    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +38,6 @@ class RouteActivity : TableActivity() {
             rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist teilweise gesperrt."
             _rock!!.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist nicht anerkannt."
         }
-        _resultUpdated = IntentConstants.RESULT_NO_UPDATE
 
         displayContent()
     }
@@ -53,11 +49,10 @@ class RouteActivity : TableActivity() {
     }
 
     fun showMap(v: View) {
-        val gmmIntentUri = Uri.parse("geo:" + _rock!!.latitude + "," + _rock!!.longitude)
+        val gmmIntentUri = Uri.parse("geo:${_rock?.latitude},${_rock?.longitude}")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
 
-        if (mapIntent.resolveActivity(packageManager) ==
-                null) {
+        if (mapIntent.resolveActivity(packageManager) == null) {
             Toast.makeText(this, "Keine Karten-App verfügbar", Toast.LENGTH_SHORT).show()
         } else {
             startActivity(mapIntent)
@@ -105,14 +100,12 @@ class RouteActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _rock!!.nr.toString() + " " + _rock!!.name
+        this.title = "${_rock?.nr} ${_rock?.name}"
 
         for (route in db.routeDao().getAll(_rock!!.id)) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
-            var commentCountAddon = ""
-            if (commentCount > 0) {
-                commentCountAddon = "   [$commentCount]"
-            }
+            val commentCountAddon = if (commentCount > 0) "   [$commentCount]" else ""
+
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
                 intent.putExtra(IntentConstants.ROUTE_KEY, route.id)
@@ -127,7 +120,7 @@ class RouteActivity : TableActivity() {
             }
 
             val ascends = db.ascendDao().getAscendsForRoute(route.id)
-            if (ascends.size > 0) {
+            if (ascends.isNotEmpty()) {
                 val rowColors = HashSet<Int>()
                 for (ascend in ascends) {
                     rowColors.add(AscendStyle.fromId(ascend.styleId)!!.color)
@@ -136,8 +129,8 @@ class RouteActivity : TableActivity() {
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    route.name!! + commentCountAddon,
-                    route.grade!!,
+                    "${route.name.orEmpty()}$commentCountAddon",
+                    route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
                     bgColor,
