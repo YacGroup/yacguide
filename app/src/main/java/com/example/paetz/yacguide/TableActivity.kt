@@ -30,9 +30,8 @@ abstract class TableActivity : AppCompatActivity(), UpdateListener {
 
     // UpdateListener
     override fun onEvent(success: Boolean) {
-        if (updateDialog != null) {
-            updateDialog!!.dismiss()
-        }
+        updateDialog?.dismiss()
+
         if (success) {
             Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show()
         } else {
