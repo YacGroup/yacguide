@@ -70,8 +70,9 @@ class DescriptionActivity : TableActivity() {
             if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Wegqualität:",
-                        RouteComment.QUALITY_MAP[qualityId],
-                        WidgetUtils.textFontSizeDp, null,
+                        RouteComment.QUALITY_MAP[qualityId].orEmpty(),
+                        WidgetUtils.textFontSizeDp,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
@@ -79,8 +80,9 @@ class DescriptionActivity : TableActivity() {
             if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Schwierigkeit:",
-                        RouteComment.GRADE_MAP[gradeId],
-                        WidgetUtils.textFontSizeDp, null,
+                        RouteComment.GRADE_MAP[gradeId].orEmpty(),
+                        WidgetUtils.textFontSizeDp,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
@@ -88,8 +90,9 @@ class DescriptionActivity : TableActivity() {
             if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Absicherung:",
-                        RouteComment.SECURITY_MAP[securityId],
-                        WidgetUtils.textFontSizeDp, null,
+                        RouteComment.SECURITY_MAP[securityId].orEmpty(),
+                        WidgetUtils.textFontSizeDp,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
@@ -97,17 +100,19 @@ class DescriptionActivity : TableActivity() {
             if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Abtrocknung:",
-                        RouteComment.WETNESS_MAP[wetnessId],
-                        WidgetUtils.textFontSizeDp, null,
+                        RouteComment.WETNESS_MAP[wetnessId].orEmpty(),
+                        WidgetUtils.textFontSizeDp,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text,
+                    text.orEmpty(),
                     "",
-                    WidgetUtils.textFontSizeDp, null,
+                    WidgetUtils.textFontSizeDp,
+                    View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     10, 10, 10, 10))
@@ -151,7 +156,8 @@ class DescriptionActivity : TableActivity() {
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 firstAscendClimbers,
                 firstAscendDate,
-                WidgetUtils.infoFontSizeDp, null,
+                WidgetUtils.infoFontSizeDp,
+                View.OnClickListener { },
                 Color.WHITE,
                 Typeface.BOLD,
                 20, 20, 20, 0))
@@ -161,16 +167,18 @@ class DescriptionActivity : TableActivity() {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     "Kletterei:",
                     climbingType,
-                    WidgetUtils.infoFontSizeDp, null,
+                    WidgetUtils.infoFontSizeDp,
+                    View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     20, 20, 20, 0))
         }
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                _route!!.description!!,
+                _route?.description.orEmpty(),
                 "",
-                WidgetUtils.tableFontSizeDp, null,
+                WidgetUtils.tableFontSizeDp,
+                View.OnClickListener { },
                 Color.WHITE,
                 Typeface.BOLD))
     }

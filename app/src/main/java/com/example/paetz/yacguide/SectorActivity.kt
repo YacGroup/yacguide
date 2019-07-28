@@ -36,23 +36,23 @@ class SectorActivity : TableActivity() {
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
         for (comment in db.regionCommentDao().getAll(_region!!.id)) {
             val qualityId = comment.qualityId
-            val text = comment.text
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Bedeutung:",
-                        RegionComment.QUALITY_MAP[qualityId],
+                        RegionComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        null,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text,
+                    comment.text.orEmpty(),
                     "",
-                    WidgetUtils.textFontSizeDp, null,
+                    WidgetUtils.textFontSizeDp,
+                    View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     10, 10, 10, 10))

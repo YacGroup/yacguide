@@ -175,8 +175,9 @@ class TourbookActivity : AppCompatActivity() {
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "$day.$month.$year",
-                        region.name,
-                        WidgetUtils.infoFontSizeDp, null,
+                        region.name.orEmpty(),
+                        WidgetUtils.infoFontSizeDp,
+                        View.OnClickListener { },
                         -0x444445,
                         Typeface.BOLD,
                         5, 10, 5, 0))
