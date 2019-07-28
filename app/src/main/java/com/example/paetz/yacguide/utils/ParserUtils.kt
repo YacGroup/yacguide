@@ -10,7 +10,7 @@ object ParserUtils {
 
     // There are some czech letters with ambiguous utf-8 encodings.
     // Map structure: < wrong_utf8_as_regex, correct_utf8 >
-    private val specialCzechCharacterUtf8Map = object : HashMap<String, String>() {
+    private val _specialCzechCharacterUtf8Map = object : HashMap<String, String>() {
         init {
             put("\\\\u008a", "\u0160") // big š
             put("\\\\u008e", "\u017d") // big ž
@@ -34,7 +34,7 @@ object ParserUtils {
         matcher.appendTail(buffer)
 
         var result = buffer.toString()
-        for (wrongCodeRegex in specialCzechCharacterUtf8Map) {
+        for (wrongCodeRegex in _specialCzechCharacterUtf8Map) {
             result = result.replace(wrongCodeRegex.key.toRegex(), wrongCodeRegex.value)
         }
         return result
