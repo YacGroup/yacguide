@@ -12,7 +12,7 @@ class CountryParser(db: AppDatabase, listener: UpdateListener) : JSONWebParser(d
     init {
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.DATA_REQUEST_ID,
-                baseUrl + "jsonland.php?app=yacguide"))
+                "${baseUrl}jsonland.php?app=yacguide"))
     }
 
     @Throws(JSONException::class)

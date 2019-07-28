@@ -8,14 +8,14 @@ import org.json.JSONException
 
 import java.util.LinkedList
 
-abstract class JSONWebParser(protected var db: AppDatabase, protected var listener: UpdateListener) : NetworkListener {
+abstract class JSONWebParser(protected var db: AppDatabase, private var _listener: UpdateListener) : NetworkListener {
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
-    private var success: Boolean = true
+    private var _success: Boolean = true
     private var _processedRequestsCount: Int = 0
 
     override fun onNetworkTaskResolved(requestId: NetworkRequestType, result: String) {
-        if (success) {
+        if (_success) {
             try {
                 if (result.equals("null", ignoreCase = true)) {
                     // sandsteinklettern.de returns "null" string if there are no elements
@@ -27,14 +27,13 @@ abstract class JSONWebParser(protected var db: AppDatabase, protected var listen
                         ParserUtils.resolveToUtf8(result)
                 )
             } catch (e: JSONException) {
-                success = false
+                _success = false
             } catch (e: IllegalArgumentException) {
             }
-
         }
         if (++_processedRequestsCount == networkRequests.size) {
-            listener.onEvent(success)
-            success = true
+            _listener.onEvent(_success)
+            _success = true
         }
     }
 

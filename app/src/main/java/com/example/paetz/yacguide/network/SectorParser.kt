@@ -11,16 +11,16 @@ import org.json.JSONException
 
 class SectorParser(db: AppDatabase,
                    listener: UpdateListener,
-                   private val regionId: Int) : JSONWebParser(db, listener) {
+                   private val _regionId: Int) : JSONWebParser(db, listener) {
 
     init {
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.DATA_REQUEST_ID,
-                baseUrl + "jsonteilgebiet.php?app=yacguide&gebietid=" + regionId
+                "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"
         ))
         networkRequests.add(NetworkRequest(
                 NetworkRequestType.COMMENTS_REQUEST_ID,
-                baseUrl + "jsonkomment.php?app=yacguide&gebietid=" + regionId
+                "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId"
         ))
     }
 
@@ -35,7 +35,7 @@ class SectorParser(db: AppDatabase,
 
     @Throws(JSONException::class)
     private fun parseSectors(json: String) {
-        db.sectorDao().deleteAll(regionId)
+        db.sectorDao().deleteAll(_regionId)
         val jsonSectors = JSONArray(json)
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
@@ -43,14 +43,14 @@ class SectorParser(db: AppDatabase,
             s.id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID")
             s.name = ParserUtils.jsonField2String(jsonSector, "sektorname_d", "sektorname_cz")
             s.nr = ParserUtils.jsonField2Float(jsonSector, "sektornr")
-            s.parentId = regionId
+            s.parentId = _regionId
             db.sectorDao().insert(s)
         }
     }
 
     @Throws(JSONException::class)
     private fun parseRegionComments(json: String) {
-        db.regionCommentDao().deleteAll(regionId)
+        db.regionCommentDao().deleteAll(_regionId)
         val jsonComments = JSONArray(json)
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
@@ -58,7 +58,7 @@ class SectorParser(db: AppDatabase,
             comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
             comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
             comment.text = jsonComment.getString("kommentar")
-            comment.regionId = regionId
+            comment.regionId = _regionId
             db.regionCommentDao().insert(comment)
         }
     }
