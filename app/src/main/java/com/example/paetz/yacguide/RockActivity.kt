@@ -74,17 +74,18 @@ class RockActivity : TableActivity() {
             if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Bedeutung:",
-                        SectorComment.QUALITY_MAP[qualityId],
+                        SectorComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        null,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text,
+                    text.orEmpty(),
                     "",
-                    WidgetUtils.textFontSizeDp, null,
+                    WidgetUtils.textFontSizeDp,
+                    View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     10, 10, 10, 10))

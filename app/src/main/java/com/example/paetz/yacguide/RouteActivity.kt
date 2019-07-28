@@ -77,16 +77,18 @@ class RouteActivity : TableActivity() {
             if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         "Charakter:",
-                        RockComment.QUALITY_MAP[qualityId],
-                        WidgetUtils.textFontSizeDp, null,
+                        RockComment.QUALITY_MAP[qualityId].orEmpty(),
+                        WidgetUtils.textFontSizeDp,
+                        View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text,
+                    text.orEmpty(),
                     "",
-                    WidgetUtils.textFontSizeDp, null,
+                    WidgetUtils.textFontSizeDp,
+                    View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     10, 10, 10, 10))
