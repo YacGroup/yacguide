@@ -173,7 +173,7 @@ class TourbookActivity : AppCompatActivity() {
                         region.name.orEmpty(),
                         WidgetUtils.infoFontSizeDp,
                         View.OnClickListener { },
-                        -0x444445,
+                        WidgetUtils.tourHeaderColor,
                         Typeface.BOLD,
                         5, 10, 5, 0))
                 layout.addView(WidgetUtils.createHorizontalLine(this, 5))
