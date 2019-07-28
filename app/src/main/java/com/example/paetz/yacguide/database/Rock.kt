@@ -13,8 +13,8 @@ class Rock {
     var type: Char = ' '   // 'G' = Rock, 'M' = Massif, 'H' = Cage, 'B' = Boulder, 'N' = unofficial
     var status: Char = ' ' // 'X' = prohibited, 'Z' = temporarily prohibited, 'T' = partly prohibited
     var name: String? = null
-    var longitude: Float = 0.toFloat()
-    var latitude: Float = 0.toFloat()
+    var longitude: Float = 0f
+    var latitude: Float = 0f
     var ascended: Boolean = false
     var parentId: Int = 0
 

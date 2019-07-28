@@ -11,7 +11,7 @@ interface SectorDao {
     fun getAll(parentId: Int): Array<Sector>
 
     @Query("SELECT * FROM Sector WHERE id = :id")
-    fun getSector(id: Int): Sector
+    fun getSector(id: Int): Sector?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(sector: Sector)

@@ -111,23 +111,25 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
 
-        private var instance: AppDatabase? = null
+        private var _instance: AppDatabase? = null
 
         const val UNKNOWN_NAME = "???"
         const val INVALID_ID = -1
 
         fun getAppDatabase(context: Context): AppDatabase {
             synchronized(AppDatabase::class) {
-                if (instance == null) {
-                    instance = Room.databaseBuilder(context.applicationContext,
+                if (_instance == null) {
+                    _instance = Room.databaseBuilder(context.applicationContext,
                             AppDatabase::class.java, "yac_database").allowMainThreadQueries().build()
                 }
-                return instance!!
+                return _instance as AppDatabase
             }
         }
 
         fun destroyInstance() {
-            instance = null
+            synchronized(AppDatabase::class) {
+                _instance = null
+            }
         }
     }
 }
