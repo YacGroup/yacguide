@@ -192,8 +192,8 @@ class TourbookActivity : AppCompatActivity() {
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    rock.name + " - " + route.name,
-                    route.grade!!,
+                    "${rock.name.orEmpty()} - ${route.name.orEmpty()}",
+                    route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
