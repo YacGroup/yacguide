@@ -21,7 +21,7 @@ import com.example.paetz.yacguide.utils.WidgetUtils
 class DescriptionActivity : TableActivity() {
 
     private var _route: Route? = null
-    private var _resultUpdated: Int = 0
+    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,6 @@ class DescriptionActivity : TableActivity() {
         if (routeStatusId > 1) {
             (findViewById<View>(R.id.infoTextView) as TextView).text = "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
         }
-        _resultUpdated = IntentConstants.RESULT_NO_UPDATE
 
         displayContent()
     }
