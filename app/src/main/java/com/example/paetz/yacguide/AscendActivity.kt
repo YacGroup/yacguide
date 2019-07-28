@@ -44,7 +44,9 @@ class AscendActivity : AppCompatActivity() {
         _resultUpdated = IntentConstants.RESULT_NO_UPDATE
         _ascend = _db!!.ascendDao().getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID))
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
-        _route = _db!!.routeDao().getRoute(if (routeId == AppDatabase.INVALID_ID) _ascend!!.routeId else routeId)
+
+        _route = _db!!.routeDao().getRoute(routeId.takeUnless { it == AppDatabase.INVALID_ID }
+                ?: _ascend?.routeId ?: AppDatabase.INVALID_ID)
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
         _partnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
         if (_partnerIds == null) {
@@ -80,7 +82,8 @@ class AscendActivity : AppCompatActivity() {
             _db!!.rockDao().updateAscended(true, _db!!.routeDao().getRoute(_route!!.id)!!.parentId)
             _resultUpdated = IntentConstants.RESULT_UPDATED
         }
-        ascend.routeId = if (_route == null) _ascend!!.routeId else _route!!.id
+
+        ascend.routeId = _route?.id ?: _ascend?.routeId ?: AppDatabase.INVALID_ID
         ascend.styleId = _styleId
         ascend.year = _year
         ascend.month = _month
