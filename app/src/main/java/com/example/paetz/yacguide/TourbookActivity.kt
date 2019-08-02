@@ -70,6 +70,22 @@ class TourbookActivity : BaseNavigationActivity() {
         return true
     }
 
+    fun showMap(v: View) {
+        if (_currentYearIdx == -1) {
+            return
+        }
+
+        val ascends = getAscends(_availableYears[_currentYearIdx])
+
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(IntentConstants.SUMMIT_FILTER, ascends.map { ascend ->
+            _db.routeDao().getRoute(ascend.routeId)?.parentId?.let {
+                _db.rockDao().getRock(it)?.id
+            } ?: -1
+        }.filter { it != -1 }.toIntArray())
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = "Begehungen"

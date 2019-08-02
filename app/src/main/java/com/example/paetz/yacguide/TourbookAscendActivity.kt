@@ -76,6 +76,18 @@ class TourbookAscendActivity : AppCompatActivity() {
         finish()
     }
 
+    fun showMap(v: View) {
+        _db.routeDao().getRoute(_ascends[_currentAscendIdx].routeId)?.parentId?.let {
+            _db.rockDao().getRock(it)?.let { rock ->
+                val intent = Intent(this, MapActivity::class.java)
+                intent.putExtra("lat", rock.latitude.toDouble())
+                intent.putExtra("lon", rock.longitude.toDouble())
+                intent.putExtra(IntentConstants.SUMMIT_FILTER, IntArray(0))
+                startActivity(intent)
+            }
+        }
+    }
+
     fun showRoute(v: View) {
         _db.routeDao().getRoute(_ascends[_currentAscendIdx].routeId)?.id?.let {
             val intent = Intent(this, DescriptionActivity::class.java)

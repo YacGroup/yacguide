@@ -16,6 +16,10 @@
             android:id="@+id/nav_tourbook"
             android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="@string/menu_tourbook"/>
+        <item
+            android:title="@string/menu_map"
+            android:id="@+id/nav_map"
+            android:icon="@android:drawable/ic_dialog_map"/>
     </group>
 
 </menu>

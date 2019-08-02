@@ -50,5 +50,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity"/>
         <activity android:name=".TourbookAscendActivity" />
+        <activity android:name=".MapActivity"
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"/>
     </application>
 </manifest>

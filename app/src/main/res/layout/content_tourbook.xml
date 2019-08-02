@@ -44,6 +44,16 @@
             android:onClick="goToNextYear"
             app:srcCompat="@android:drawable/ic_media_ff" />
 
+        <ImageButton
+            android:id="@+id/mapButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@id/nextYearButton"
+            android:onClick="showMap"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
+
+
     </RelativeLayout>
 
     <RadioGroup

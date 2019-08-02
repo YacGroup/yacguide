@@ -41,6 +41,16 @@
         android:onClick="enterTourbook"
         android:text="Tourenbuch" />
 
+    <Button
+        android:id="@+id/mapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tourbookButton"
+        android:onClick="enterMap"
+        android:text="Karte" />
+
     <TextView
         android:id="@+id/dataSource"
         android:layout_width="wrap_content"

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 
 import com.example.paetz.yacguide.database.AppDatabase
+import com.example.paetz.yacguide.utils.IntentConstants
+import org.mapsforge.map.android.graphics.AndroidGraphicFactory
 import android.content.pm.PackageManager
 import android.widget.TextView
 
@@ -29,6 +31,7 @@ class MainActivity: BaseNavigationActivity() {
             e.printStackTrace()
         }
 
+        AndroidGraphicFactory.createInstance(application)
         database = AppDatabase.getAppDatabase(this)
         title = "YACguide"
     }
@@ -42,6 +45,13 @@ class MainActivity: BaseNavigationActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun enterTourbook(v: View) {
         val intent = Intent(this, TourbookActivity::class.java)
+        startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun enterMap(v: View) {
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(IntentConstants.SUMMIT_FILTER, IntArray(0))
         startActivity(intent)
     }
 }

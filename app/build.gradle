@@ -56,6 +56,12 @@ dependencies {
     // Test helpers
     testImplementation "android.arch.persistence.room:testing:$room_version"
 
+    def mapsforge_version = "0.11.0"
+    implementation "org.mapsforge:mapsforge-core:${mapsforge_version}"
+    implementation "org.mapsforge:mapsforge-map:${mapsforge_version}"
+    implementation "org.mapsforge:mapsforge-map-reader:${mapsforge_version}"
+    implementation "org.mapsforge:mapsforge-themes:${mapsforge_version}"
+    implementation "org.mapsforge:mapsforge-map-android:${mapsforge_version}"
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation 'com.caverock:androidsvg:1.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

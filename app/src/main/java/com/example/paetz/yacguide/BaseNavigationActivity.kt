@@ -54,6 +54,10 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
                 val intent = Intent(this, TourbookActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_map -> {
+                val intent = Intent(this, MapActivity::class.java)
+                startActivity(intent)
+            }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)

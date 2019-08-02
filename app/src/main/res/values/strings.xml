@@ -8,6 +8,7 @@
     <string name="copyright_osm" />
     <string name="menu_home">Übersicht</string>
     <string name="menu_database">Datenbank</string>
+    <string name="menu_map">Karte</string>
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
     <string name="nav_header_desc">Yet Another Climbing Guide</string>

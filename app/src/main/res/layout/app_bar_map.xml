@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RouteActivity">
+    tools:context=".MapActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
@@ -19,28 +19,17 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-
             <ImageButton
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:srcCompat="@android:drawable/ic_menu_info_details"
                 android:layout_gravity="end"
                 android:background="?attr/colorPrimary"
-                android:onClick="showComments"
+                android:onClick="showDetails"
                 />
-
-            <ImageButton
-                android:id="@+id/mapButton"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="end"
-                android:onClick="showMap"
-                android:background="?attr/colorPrimary"
-                app:srcCompat="@android:drawable/ic_menu_mapmode" />
-
         </android.support.v7.widget.Toolbar>
+
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_route"/>
+    <include layout="@layout/content_map"/>
 </android.support.design.widget.CoordinatorLayout>

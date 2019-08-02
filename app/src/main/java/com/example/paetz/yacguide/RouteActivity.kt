@@ -3,13 +3,11 @@ package com.example.paetz.yacguide
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 
 import com.example.paetz.yacguide.database.AppDatabase
 import com.example.paetz.yacguide.database.Comment.RockComment
@@ -47,13 +45,12 @@ class RouteActivity : TableActivity() {
     }
 
     fun showMap(v: View) {
-        val gmmIntentUri = Uri.parse("geo:${_rock?.latitude},${_rock?.longitude}")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
-        if (mapIntent.resolveActivity(packageManager) == null) {
-            Toast.makeText(this, "Keine Karten-App verfügbar", Toast.LENGTH_SHORT).show()
-        } else {
-            startActivity(mapIntent)
+        _rock?.let {
+            val intent = Intent(this, MapActivity::class.java)
+            intent.putExtra("lat", it.latitude.toDouble())
+            intent.putExtra("lon", it.longitude.toDouble())
+            intent.putExtra(IntentConstants.SUMMIT_FILTER, IntArray(0))
+            startActivity(intent)
         }
     }
 
@@ -100,7 +97,7 @@ class RouteActivity : TableActivity() {
         layout.removeAllViews()
         this.title = "${_rock?.nr} ${_rock?.name}"
 
-        val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyArray()
+        val routes = _rock?.let{ db.routeDao().getAll(it.id) } ?: emptyArray()
         for (route in routes) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
             val commentCountAddon = if (commentCount > 0) "   [$commentCount]" else ""
