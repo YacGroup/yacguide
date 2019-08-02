@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -24,28 +25,25 @@ class RouteActivity : TableActivity() {
     private var _rock: Rock? = null
     private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, AppDatabase.INVALID_ID)
-        super.initialize(R.layout.activity_route)
 
         _rock = db.rockDao().getRock(rockId)
-        val rockStatus = _rock!!.status
+        val rockStatus = _rock?.status
         when {
             rockStatus == Rock.statusProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist komplett gesperrt."
             rockStatus == Rock.statusTemporarilyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist zeitweise gesperrt."
             rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist teilweise gesperrt."
-            _rock!!.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist nicht anerkannt."
+            _rock?.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist nicht anerkannt."
         }
 
         displayContent()
-    }
-
-    override fun back(v: View) {
-        val resultIntent = Intent()
-        setResult(_resultUpdated, resultIntent)
-        finish()
     }
 
     fun showMap(v: View) {
@@ -59,12 +57,12 @@ class RouteActivity : TableActivity() {
         }
     }
 
-
-    fun showComments(v: View) {
+    override fun showComments(v: View) {
         val dialog = prepareCommentDialog()
 
-        val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        for (comment in db.rockCommentDao().getAll(_rock!!.id)) {
+        val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
+        val comments = _rock?.let { db.rockCommentDao().getAll(it.id) } ?: emptyArray()
+        for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
 
@@ -102,7 +100,8 @@ class RouteActivity : TableActivity() {
         layout.removeAllViews()
         this.title = "${_rock?.nr} ${_rock?.name}"
 
-        for (route in db.routeDao().getAll(_rock!!.id)) {
+        val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyArray()
+        for (route in routes) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
             val commentCountAddon = if (commentCount > 0) "   [$commentCount]" else ""
 
@@ -123,7 +122,9 @@ class RouteActivity : TableActivity() {
             if (ascends.isNotEmpty()) {
                 val rowColors = HashSet<Int>()
                 for (ascend in ascends) {
-                    rowColors.add(AscendStyle.fromId(ascend.styleId)!!.color)
+                    AscendStyle.fromId(ascend.styleId)?.let {
+                        rowColors.add(it.color)
+                    }
                 }
                 bgColor = AscendStyle.getPreferredColor(rowColors)
             }
@@ -140,4 +141,9 @@ class RouteActivity : TableActivity() {
     }
 
     override fun deleteContent() {}
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_route
+    }
 }
+

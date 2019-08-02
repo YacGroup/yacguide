@@ -10,6 +10,11 @@ interface RockDao {
     @Query("SELECT * FROM Rock WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): Array<Rock>
 
+
+    @Query("SELECT * FROM Rock ORDER BY nr")
+    fun getAllRocks(): Array<Rock>
+
+
     @Query("SELECT * FROM Rock WHERE id = :id")
     fun getRock(id: Int): Rock?
 

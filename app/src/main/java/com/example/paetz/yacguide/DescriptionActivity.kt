@@ -27,12 +27,12 @@ class DescriptionActivity : TableActivity() {
         super.onCreate(savedInstanceState)
 
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
-        super.initialize(R.layout.activity_description)
 
         _route = db.routeDao().getRoute(routeId)
-        val routeStatusId = _route!!.statusId
+        val routeStatusId = _route?.statusId ?: 0
         if (routeStatusId > 1) {
-            (findViewById<View>(R.id.infoTextView) as TextView).text = "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
+            findViewById<TextView>(R.id.infoTextView).text =
+                    "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
         }
 
         displayContent()
@@ -42,24 +42,20 @@ class DescriptionActivity : TableActivity() {
         // Note: Once reset, _resultUpdated may not be set back to RESULT_NO_UPDATE again!
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             _resultUpdated = resultCode
-            _route = db.routeDao().getRoute(_route!!.id) // update route instance
+            _route = _route?.let { db.routeDao().getRoute(it.id) } // update route instance
+
             val ascendsButton = findViewById<ImageButton>(R.id.ascendsButton)
-            ascendsButton.visibility = if (_route!!.ascendCount > 0) View.VISIBLE else View.INVISIBLE
-            Toast.makeText(this, "Begehungen aktualisiert", Toast.LENGTH_SHORT).show()
+            ascendsButton.visibility = if (_route?.ascendCount ?: 0 > 0) View.VISIBLE else View.INVISIBLE
+            Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
         }
     }
 
-    override fun back(v: View) {
-        val resultIntent = Intent()
-        setResult(_resultUpdated, resultIntent)
-        finish()
-    }
-
-    fun showComments(v: View) {
+    override fun showComments(v: View) {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        for (comment in db.routeCommentDao().getAll(_route!!.id)) {
+        val comments = _route?.let { db.routeCommentDao().getAll(it.id) } ?: emptyArray()
+        for (comment in comments) {
             val qualityId = comment.qualityId
             val gradeId = comment.gradeId
             val securityId = comment.securityId
@@ -120,38 +116,47 @@ class DescriptionActivity : TableActivity() {
     }
 
     fun enterAscend(v: View) {
-        val intent = Intent(this@DescriptionActivity, AscendActivity::class.java)
-        intent.putExtra(IntentConstants.ROUTE_KEY, _route!!.id)
-        startActivityForResult(intent, 0)
+        _route?.let {
+            val intent = Intent(this@DescriptionActivity, AscendActivity::class.java)
+            intent.putExtra(IntentConstants.ROUTE_KEY, it.id)
+            startActivityForResult(intent, 0)
+        }
+
     }
 
     fun goToAscends(v: View) {
-        val intent = Intent(this@DescriptionActivity, TourbookAscendActivity::class.java)
-        intent.putExtra(IntentConstants.ROUTE_KEY, _route!!.id)
-        startActivityForResult(intent, 0)
+        _route?.let {
+            val intent = Intent(this@DescriptionActivity, TourbookAscendActivity::class.java)
+            intent.putExtra(IntentConstants.ROUTE_KEY, it.id)
+            startActivityForResult(intent, 0)
+        }
     }
 
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility = if (_route!!.ascendCount > 0) View.VISIBLE else View.INVISIBLE
+        findViewById<View>(R.id.ascendsButton).visibility = if (_route?.ascendCount ?: 0 > 0) View.VISIBLE else View.INVISIBLE
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _route!!.name + "   " + _route!!.grade
+        this.title = "${_route?.name.orEmpty()}   ${_route?.grade.orEmpty()}"
 
-        var firstAscendClimbers: String = if (_route!!.firstAscendLeader!!.isEmpty())
-            "Erstbegeher unbekannt"
-        else
-            _route!!.firstAscendLeader!!
 
-        firstAscendClimbers += if (_route!!.firstAscendFollower!!.isEmpty())
-            ""
-        else
-            ", " + _route!!.firstAscendFollower!!
+        var firstAscendClimbers = _route
+                ?.firstAscendLeader
+                ?.takeUnless { it.isEmpty() }
+                ?: getString(R.string.first_ascend_unknown)
 
-        val firstAscendDate = if (_route!!.firstAscendDate == DateUtils.UNKNOWN_DATE)
-            "Datum unbekannt"
-        else
-            DateUtils.formatDate(_route!!.firstAscendDate!!)
+        firstAscendClimbers += _route
+                ?.firstAscendFollower
+                ?.takeUnless { it.isEmpty() }
+                ?.let { ", $it" }
+                ?: ""
+
+        val firstAscendDate = _route
+                ?.firstAscendDate
+                ?.takeUnless { it == DateUtils.UNKNOWN_DATE }
+                ?.let { DateUtils.formatDate(it) }
+                ?: getString(R.string.date_unknown)
+
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 firstAscendClimbers,
@@ -162,11 +167,10 @@ class DescriptionActivity : TableActivity() {
                 Typeface.BOLD,
                 20, 20, 20, 0))
 
-        val climbingType = _route!!.typeOfClimbing
-        if (climbingType!!.isNotEmpty()) {
+        _route?.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     "Kletterei:",
-                    climbingType,
+                    it,
                     WidgetUtils.infoFontSizeDp,
                     View.OnClickListener { },
                     Color.WHITE,
@@ -184,4 +188,8 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun deleteContent() {}
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_description
+    }
 }
