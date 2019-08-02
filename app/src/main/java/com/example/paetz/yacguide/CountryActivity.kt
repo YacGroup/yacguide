@@ -12,11 +12,9 @@ import com.example.paetz.yacguide.utils.IntentConstants
 import com.example.paetz.yacguide.utils.WidgetUtils
 
 class CountryActivity : TableActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        super.initialize(R.layout.activity_country)
         jsonParser = CountryParser(db, this)
 
         displayContent()
@@ -46,5 +44,9 @@ class CountryActivity : TableActivity() {
 
     override fun deleteContent() {
         db.deleteCountries()
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_table
     }
 }

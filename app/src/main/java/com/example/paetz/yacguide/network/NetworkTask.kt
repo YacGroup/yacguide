@@ -6,7 +6,8 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-class NetworkTask(private val _requestId: NetworkRequestType, private val _listener: NetworkListener) : AsyncTask<String, Void, String>() {
+class NetworkTask(private val _requestId: NetworkRequestType,
+                  private val _listener: NetworkListener) : AsyncTask<String, Void, String>() {
 
     override fun doInBackground(vararg urls: String): String? {
         if (urls.size != 1) {
@@ -20,7 +21,7 @@ class NetworkTask(private val _requestId: NetworkRequestType, private val _liste
             connection.inputStream.bufferedReader().readText()
         } catch (e: IOException) {
             System.err.println(e)
-            null
+            ""
         } finally {
             connection.disconnect()
         }
