@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
+import com.example.paetz.yacguide.database.AppDatabase
 
 import com.example.paetz.yacguide.database.Comment.SectorComment
 import com.example.paetz.yacguide.database.Rock
@@ -29,8 +30,7 @@ class RockActivity : TableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, com.example.paetz.yacguide.database.AppDatabase.INVALID_ID)
-        super.initialize(R.layout.activity_rock)
+        val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, AppDatabase.INVALID_ID)
 
         jsonParser = RockParser(db, this, sectorId)
         _sector = db.sectorDao().getSector(sectorId)
@@ -60,11 +60,12 @@ class RockActivity : TableActivity() {
         }
     }
 
-    fun showComments(v: View) {
+    override fun showComments(v: View) {
         val dialog = prepareCommentDialog()
 
-        val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        for (comment in db.sectorCommentDao().getAll(_sector!!.id)) {
+        val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
+        val comments = _sector?.let { db.sectorCommentDao().getAll(it.id) } ?: emptyArray()
+        for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
 
@@ -91,17 +92,18 @@ class RockActivity : TableActivity() {
     }
 
     fun onlySummitsCheck(v: View) {
-        _onlySummits = (findViewById<View>(R.id.onlySummitsCheckBox) as CheckBox).isChecked
+        _onlySummits = findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked
         displayContent()
     }
 
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _sector!!.name
-        for (rock in db.rockDao().getAll(_sector!!.id)) {
-            val rockName = rock.name
-            if (!rockName!!.toLowerCase().contains(_rockNamePart.toLowerCase())) {
+        this.title = _sector?.name.orEmpty()
+        val rocks = _sector?.let { db.rockDao().getAll(it.id) } ?: emptyArray()
+        for (rock in rocks) {
+            val rockName = rock.name.orEmpty()
+            if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {
                 continue
             }
             val type = rock.type
@@ -137,10 +139,16 @@ class RockActivity : TableActivity() {
     }
 
     override fun deleteContent() {
-        db.deleteRocks(_sector!!.id)
+        _sector?.let {
+            db.deleteRocks(it.id)
+        }
     }
 
     private fun rockIsAnOfficialSummit(rock: Rock): Boolean {
         return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine) && rock.status != Rock.statusProhibited
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_rock
     }
 }

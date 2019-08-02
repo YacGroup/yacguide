@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.paetz.yacguide">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,24 +16,39 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CountryActivity" />
-        <activity android:name=".RegionActivity" />
-        <activity android:name=".SectorActivity" />
-        <activity android:name=".RockActivity" />
-        <activity android:name=".RouteActivity" />
-        <activity android:name=".DescriptionActivity"/>
+        <activity android:name=".CountryActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".RegionActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".CountryActivity"/>
+        <activity android:name=".SectorActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".RegionActivity"/>
+        <activity android:name=".RockActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".SectorActivity"/>
+        <activity android:name=".RouteActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".RockActivity"/>
+        <activity android:name=".DescriptionActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".RouteActivity"/>
         <activity android:name=".AscendActivity" />
         <activity android:name=".PartnersActivity" />
-        <activity android:name=".TourbookActivity" />
+        <activity android:name=".TourbookActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".TourbookAscendActivity" />
     </application>
-
 </manifest>
