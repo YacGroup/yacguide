@@ -139,8 +139,14 @@ open class MapActivity : BaseNavigationActivity(), LocationListener {
     private fun retrieveDbItems(): List<RockGeoItem> {
         val db = AppDatabase.getAppDatabase(this)
 
+        val itemFilter = intent.getIntArrayExtra(IntentConstants.SUMMIT_FILTER)
+
         val result: MutableList<RockGeoItem> = ArrayList()
         for (rock in db.rockDao().getAllRocks()) {
+            if (itemFilter.isNotEmpty() && itemFilter.all { it != rock.id }) {
+                continue
+            }
+
             if (rock.latitude != 0f && rock.longitude != 0f) {
                 result.add(RockGeoItem(
                         rock.id,

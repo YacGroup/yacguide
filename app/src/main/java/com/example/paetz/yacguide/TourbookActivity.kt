@@ -14,13 +14,8 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
+import com.example.paetz.yacguide.database.*
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Region
-import com.example.paetz.yacguide.database.Rock
-import com.example.paetz.yacguide.database.Route
-import com.example.paetz.yacguide.database.Sector
-import com.example.paetz.yacguide.database.TourbookExporter
 import com.example.paetz.yacguide.utils.AscendStyle
 import com.example.paetz.yacguide.utils.FileChooser
 import com.example.paetz.yacguide.utils.FilesystemUtils
@@ -75,6 +70,21 @@ class TourbookActivity : BaseNavigationActivity() {
         return true
     }
 
+    fun showMap(v: View) {
+        if (_currentYearIdx == -1) {
+            return
+        }
+
+        val ascends = getAscends(_availableYears[_currentYearIdx])
+
+        val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(IntentConstants.SUMMIT_FILTER, ascends.map { ascend ->
+            _db.routeDao().getRoute(ascend.routeId)?.parentId?.let {
+                _db.rockDao().getRock(it)?.id
+            } ?: -1
+        }.filter { it != -1 }.toIntArray())
+        startActivity(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,11 +164,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent(year: Int) {
-        val ascends = when (_tourbookType) {
-            TourbookType.eAscends -> _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
-            else -> _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
-        }
+        val ascends = getAscends(year)
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
@@ -216,6 +222,15 @@ class TourbookActivity : BaseNavigationActivity() {
                     Typeface.NORMAL))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
+    }
+
+    private fun getAscends(year: Int): Array<Ascend> {
+        val ascends = when (_tourbookType) {
+            TourbookType.eAscends -> _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
+            else -> _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
+        }
+        return ascends
     }
 
     private fun _showFileChooser() {

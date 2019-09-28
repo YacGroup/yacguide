@@ -69,6 +69,15 @@
             android:onClick="delete"
             app:srcCompat="@android:drawable/ic_menu_delete" />
 
+        <ImageButton
+            android:id="@+id/mapButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:onClick="showMap"
+            app:srcCompat="@android:drawable/ic_dialog_map" />
+
     </RelativeLayout>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"

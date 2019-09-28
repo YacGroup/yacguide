@@ -49,6 +49,7 @@ class RouteActivity : TableActivity() {
             val intent = Intent(this, MapActivity::class.java)
             intent.putExtra("lat", it.latitude.toDouble())
             intent.putExtra("lon", it.longitude.toDouble())
+            intent.putExtra(IntentConstants.SUMMIT_FILTER, IntArray(0))
             startActivity(intent)
         }
     }

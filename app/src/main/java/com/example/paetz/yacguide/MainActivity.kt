@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 
 import com.example.paetz.yacguide.database.AppDatabase
+import com.example.paetz.yacguide.utils.IntentConstants
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory
 import com.example.paetz.yacguide.utils.IntentConstants
 import android.content.pm.PackageManager
@@ -51,6 +52,7 @@ class MainActivity: BaseNavigationActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun enterMap(v: View) {
         val intent = Intent(this, MapActivity::class.java)
+        intent.putExtra(IntentConstants.SUMMIT_FILTER, IntArray(0))
         startActivity(intent)
     }
 }
