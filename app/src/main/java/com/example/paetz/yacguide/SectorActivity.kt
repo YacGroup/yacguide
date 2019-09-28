@@ -75,9 +75,13 @@ class SectorActivity : TableActivity() {
                 intent.putExtra(IntentConstants.SECTOR_KEY, sector.id)
                 startActivity(intent)
             }
+
+            val rocks = db.rockDao().getAll(sector.id)
+            val totalCount = rocks.size
+            val ascendedCount = rocks.count { it.ascended }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     sectorName.orEmpty(),
-                    "",
+                    "$ascendedCount / $totalCount",
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
