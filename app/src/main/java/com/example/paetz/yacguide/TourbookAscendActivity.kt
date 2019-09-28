@@ -88,6 +88,15 @@ class TourbookAscendActivity : AppCompatActivity() {
         }
     }
 
+    fun showRoute(v: View) {
+        _db.routeDao().getRoute(_ascends[_currentAscendIdx].routeId)?.id?.let {
+            val intent = Intent(this, DescriptionActivity::class.java)
+            intent.putExtra(IntentConstants.ROUTE_KEY, it)
+            startActivity(intent)
+        }
+    }
+
+
     fun goToNextAscend(v: View) {
         if (++_currentAscendIdx <= _maxAscendIdx) {
             findViewById<View>(R.id.prevAscendButton).visibility = View.VISIBLE
