@@ -1,0 +1,28 @@
+language: minimal
+
+branches:
+  only:
+    - travis_ci_docker
+
+services:
+  - docker
+
+env:
+  global:
+    # The following encrypted variables were created by the commands:
+    #   * travis encrypt storepass=STORE_PASSWORD
+    #   * travis encrypt keypass=KEY_PASSWORD 
+    - secure: gvKrmxDBkPXIRCiQBsFEevQn4JmXV5uosnHR/FyzmnGspXLzYk1gBlJ+w9HRHUgvqdA1qWiJv+uX5fkmAOSc01UpCOJKJzoypg8g03IZtIo18ZBkLeF/nPeMsU0TaWqLY23IL8sHpMRVI0+NB4RvUV1rRmLt2db/N2Y2xJT2yJUS09LEvngEtntTyj0G6dm/R6pkc1uF7zFCmZJix5y5Aolcu6ivC9aPb5geFRyhA15cJK7gN796F6EQ8EDPZ+3vUF0T2j0lqx+xyucYBuT97c9Iug3SuXrmLhZ0HzmjLWTfcT0+QPMkHRG1vVEAfRqpdZfGYJ7I+gIX2BN0iF+yuqiKM0b5eIUsD1EoxBS92aDNCBNg+NZgx11/Q2fJxtJTxJ/xAU781wGFkKyliikKzboNcw+82ZMaoH/tKQR0DWHkWcvNv8iJaCqo4ys0Oz79/PMLEg/L+n30hhuAf7z7bNWa5FJf9+FgLSBsmv/lhOfydDtZ0nrEbCElCc6mIvvssCIiEH4vte4HSCwwQfonCaOwsTHPVSQhtcsEpgGxQtRVfrFYYgPIHLHptWidd6k7BEgI8NY/FwOQZwS7Zxy8ZnnqiEszYUZzzqUMDtWafwbxdShwJlsmZXCkI+LhMc+TtTj6lXJAQQNC6GR/B8bdsb9PZk+P5Ji30WrYcW66IxE=
+    - secure: D6vG7kxdU2q6SZXSSHvEfGUzLgydC2L9YDhbOJQP2NM2n/VzMbMRmussmXO5VncpDTjRVprZ7+WXsKlK9dqSCoNiwz6VHRq7oCxIE0RDLnzIQaNIDeAZzxzYLH6L9INe/K1fhXxKf0ythHMtrWuqFutxvY7ve59KDqbDQSbLxUzdi5/HvMVbaZp5jOacL4o+FjRvuWnaTzFsG/TrGKhdB2Necd9KmByq+UK/Nrr9lvS7rtoG4Vy0fMPhrhqmkOCVRZfRe9n1EYvWG2DhY7fNs/ExeNhJohas9RzSxqxYg12PjLVK5WcOOsVXFRist/qsZmrEbF1n/Xn4DYCjcWdKRWF/pkPQXR/zW3y7iGFglVqXQRnSk/dce+yMj1zFJmY7yBv1zNL3lGarDjtK62OpxCFjAy5gRoP/+WRpimW4ZsVtWfS+Vr6B2HnjJPbI57tTP4za4SRKAAtm0vTGytauoxFGzolE2B3I7AU5v/Y5hYwFYBTsPh8QRIKPjiJbC4b7marx/ypiNZ27rVJLR0ktCLzCYEzAe300Lqm/GRh8C0lnP8isAHGO42lzwzoHKn12z5qjl+axl3BGp8F6r+kA105PsI/K9WEMZsCQsNQ/bBlBHY4PYnl4SoZAb6QI/B8gerxnanc21lhKUnDgZQHEj0nFtWQ84niRmymiLxn/Pao=
+
+before_install:
+  # The encrypted keystore file as wel as the following command was created by the command 'travis encrypt-file keystore.jks'.
+  - "openssl aes-256-cbc -K $encrypted_78b319501daa_key -iv $encrypted_78b319501daa_iv -in keystore.jks.enc -out keystore.jks -d"
+  - docker build -f docker/Dockerfile -t yacguide .
+  - docker volume create yacguide
+  - docker run --name yacguide --detach --volume yacguide:/mnt/yacguide-build yacguide /bin/bash -c 'tail -f /dev/null'
+
+script:
+  - docker exec yacguide docker/build.sh $storepass $keypass
+  - docker cp yacguide:/mnt/yacguide-build/dist/yacguide.apk .
+  - docker stop -t 0 yacguide
