@@ -25,6 +25,6 @@ before_install:
   - docker run --name yacguide --detach --volume yacguide:/mnt/yacguide-build yacguide /bin/bash -c 'tail -f /dev/null'
 
 script:
-  - docker exec yacguide docker/build.sh $storepass $keypass
+  - docker exec yacguide docker/build.sh $storepass $keypass > build.log || tail -n 100 build.log
   - docker cp yacguide:/mnt/yacguide-build/dist/yacguide.apk .
   - docker stop -t 0 yacguide
