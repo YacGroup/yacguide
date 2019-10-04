@@ -19,7 +19,7 @@ before_install:
   # Print version for debugging
   - openssl version
   # The encrypted keystore file as wel as the following command was created by the command 'travis encrypt-file keystore.jks'.
-  - "openssl aes-256-cbc -K $encrypted_78b319501daa_key -iv $encrypted_78b319501daa_iv -in keystore.jks.enc -out $HOME/keystore.jks -d"
+  - "openssl aes-256-cbc -K $encrypted_78b319501daa_key -iv $encrypted_78b319501daa_iv -in keystore.jks.enc -out keystore.jks -d"
   - docker build -f docker/Dockerfile -t yacguide . > docker_build.log || tail -n 100 docker_build.log
   - docker volume create yacguide
   - docker run --name yacguide --detach --volume yacguide:/mnt/yacguide-build yacguide /bin/bash -c 'tail -f /dev/null'

@@ -17,7 +17,7 @@ cp -f ./app/build/outputs/apk/release/app-release-unsigned.apk /mnt/yacguide-bui
 ### Signing APK
 jarsigner \
     -verbose \
-    -keystore $HOME/keystore.jks \
+    -keystore keystore.jks \
     -storepass $storepass \
     -keypass $keypass \
     -signedjar /mnt/yacguide-build/dist/app-release-signed.apk \
