@@ -20,13 +20,16 @@ script:
   - docker run --name yacguide --volume yacguide:/mnt/yacguide-build yacguide docker/build.sh "$storepass" "$keypass" > build.log || tail -n 100 build.log
   - docker cp yacguide:/mnt/yacguide-build/dist/yacguide.apk .
 
-before_deploy: mv yacguide.apk yacguide-${TRAVIS_TAG}.apk
+before_deploy:
+  # Remove leading 'v' from tag name to extract release string
+  - export RELEASE=$(echo "${TRAVIS_TAG}" | sed 's/^v//')
+  - mv yacguide.apk yacguide-${RELEASE}.apk
 
 deploy:
   provider: releases
   api_key:
     secure: "rJAEGK92d9jR/Gm0n8hlLCzHXIIzUV9V1cDXYo6kycGizHZRxuOy6txlTEQfOucTLtpUPxMHj8dKa6M+6vYoCU6dQDixecn7WU90jXlGuf2XItTl9Vac81R6fUUhcfS2NyKr8fDgw3I7bfnZ59K3bi1uY95pBpSX6ISsaSFd3kydqTPkHVw4Kqb15NnOseWPwPrW27WI1Bd73D8KLvzReH8QadluYQr1qlNj8HbpTsHDZweRG9vsQTo90y/eedg8HTILEAmv5PrDB0m3pne9SraP+jG7FZE3es5Rw5J7ZO1o48tQ2aCDQY5wU2u2xTvA6RU+mLO3yb58nAIOuPxhIIEoAPv45Ha2cy1xF115HXCUtdZDhcUSIGMf/UvnOocBHKIcbV9t7tS92HMlqYvxGdXqZ52zBVKMQFojyKSfr0nUlmvz6Lu0zZ9TQ6QwbarrcX5IZIbTzMUKXqpcmMiaB0KRbPVjmFAO3hMpjnbEEfpNpBoPTk45AD2YX3cZ6xiQEZM5ogRNLvbNMaMad9nVctz6OORGOVlG3M3SCBsu/PX3sbNwGNx4ajs4bMckMd70gGDKXbNN6ScAJrObUlYIcY9J1aj/VYZLpCG1FtDWUlnbWZ0RrhmCvY2TYykW/tU8/F75LNkeXc4+I0t5smz79/b3l8v3EYazxgwO24H085I="
-  file: "yacguide-${TRAVIS_TAG}.apk"
+  file: "yacguide-${RELEASE}.apk"
   skip_cleanup: true
   on:
     tags: true
