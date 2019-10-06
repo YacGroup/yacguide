@@ -1,9 +1,5 @@
 language: minimal
 
-branches:
-  only:
-    - travis_ci_docker
-
 services:
   - docker
 
