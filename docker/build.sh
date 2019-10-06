@@ -4,9 +4,11 @@ storepass="$1"
 keypass="$2"
 
 ### Clean-up
+echo "Cleaning up ..."
 rm -f /mnt/yacguide-build/dist/*.apk
 
 ### Building unsigned APK
+echo "Building unsigned APK ..."
 ./gradlew \
     --gradle-user-home /mnt/yacguide-build/.gradle/ \
     clean \
@@ -15,6 +17,7 @@ mkdir -p /mnt/yacguide-build/dist
 cp -f ./app/build/outputs/apk/release/app-release-unsigned.apk /mnt/yacguide-build/dist
 
 ### Signing APK
+echo "Signing APK ..."
 jarsigner \
     -verbose \
     -keystore keystore.jks \
@@ -26,6 +29,7 @@ jarsigner \
 
 ### ZIP alignment
 # https://developer.android.com/studio/command-line/zipalign
+echo "ZIP alignment ..."
 ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign \
                4 \
                /mnt/yacguide-build/dist/app-release-signed.apk \
