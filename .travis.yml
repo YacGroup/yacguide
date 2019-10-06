@@ -15,15 +15,11 @@ env:
     - secure: vL7JHK994prRwVUPmbzfs3aTVJTiZJz3zK3h5bThVDWzQJhzuQBtVOfpjuFOjMeCuIhEje33yyAKngqpqjUm80SwMFri9wL1bvyZ0kWTgEBzajZAn+kKt+uaX5bjAATRVQAnLQwNnNgHfiJATiEPGRf3J9DWpKOBl/nsSxJ8H0oSt9GNany6kYls9Jspqbe1kA4JH7q8Qkr2RhKOhyScE3vjbUjJZzxyedXJu8Qqvf88yqxVvPBLRE3jI97dzVDJ4SG8KtAP1h6+um9Lp1apUEmfII0xwqkXxq3v2ksHB2KC+Q/l5ndQ8cq2qJyZfVNvkW6ib6ldZiNsmSaNUVT/JacQAd2lyYdo73rGc5NIDb/OpEW9gB3gtR1yhcQYopjsWMmaU+DCA9IOLWiD9NV2APmWUFKuiFa2dkQPR6sUQauS7KFrLdgSs8IJyXCRO5DMwy+G9hMiyFFie5KlJtimImzLJhCysZa81rJiQMDz5tgDIw0SmNfU9ymRxwUpWtVP1FnReoK/lFxcR5Ud0id8X9m8/vhwt+9E2mAfNpCjn7FKbUT+FqovkX8IKWzFaHu0YYs3IOmsdMKeNCYsGv7sRtmpmj7zoztlwDD7YT4G1oy9X2HgHxydvY/blZNFKwnbsnzcWvsC+eJH3mmSbvAum7GKWGLzjz73lteI5RnxVUI=
 
 before_install:
-  # Print version for debugging
-  - openssl version
   # The encrypted keystore file as wel as the following command was created by the command 'travis encrypt-file keystore.jks'.
   - "openssl aes-256-cbc -K $encrypted_78b319501daa_key -iv $encrypted_78b319501daa_iv -in keystore.jks.enc -out keystore.jks -d"
   - docker build -f docker/Dockerfile -t yacguide . > docker_build.log || tail -n 100 docker_build.log
   - docker volume create yacguide
-  - docker run --name yacguide --detach --volume yacguide:/mnt/yacguide-build yacguide /bin/bash -c 'tail -f /dev/null'
 
 script:
-  - docker exec yacguide docker/build.sh $storepass $keypass > build.log || tail -n 100 build.log
+  - docker run --name yacguide --volume yacguide:/mnt/yacguide-build yacguide docker/build.sh "$storepass" "$keypass" > build.log || tail -n 100 build.log
   - docker cp yacguide:/mnt/yacguide-build/dist/yacguide.apk .
-  - docker stop -t 0 yacguide
