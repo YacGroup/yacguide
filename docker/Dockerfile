@@ -1,4 +1,4 @@
-FROM yacguide:latest
+FROM chrgernoe/yacguide:latest
 
 # Copy local Git repository files to the container.
 WORKDIR /home/yac
