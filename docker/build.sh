@@ -2,35 +2,77 @@
 
 storepass="$1"
 keypass="$2"
+if [ -z ${3+x} ]; then
+    runDocker=true
+fi
 
-### Clean-up
-echo "Cleaning up ..."
-rm -f /mnt/yacguide-build/dist/*.apk
+dockerImage="chrgernoe/yacguide"
+dockerContainer="yacguide"
+dockerMountTarget="/mnt/yacguide"
+releaseDir="$(pwd)/app/build/outputs/apk/release"
+releaseApk="${releaseDir}/yacguide.apk"
+userId=$(id --user)
+groupId=$(id --group)
+userName=$(id --user --name)
+groupName=$(id --group --name)
 
-### Building unsigned APK
-echo "Building unsigned APK ..."
-./gradlew \
-    --gradle-user-home /mnt/yacguide-build/.gradle/ \
-    clean \
-    assembleRelease
-mkdir -p /mnt/yacguide-build/dist
-cp -f ./app/build/outputs/apk/release/app-release-unsigned.apk /mnt/yacguide-build/dist
+if [ ${runDocker} ]; then
+    ### Run this script in the Docker container context
+    # Start new container in background and mount local Git repository
+    # into the container.
+    echo "Starting container ..."
+    docker run \
+        --detach \
+        --rm \
+        --name ${dockerContainer} \
+        --mount type=bind,src="$(pwd)",dst="${dockerMountTarget}" \
+        ${dockerImage} /bin/bash -c "tail -f /dev/null"
+    # Create user inside the container with the same UID and GID as
+    # the current user. This makes sure that the files and directories
+    # of local Git repository are modified with the same permissions.
+    echo "Creating build user inside the container ..."
+    groupaddCmd="groupadd --gid ${groupId} ${groupName}"
+    useraddCmd="useradd \
+                    --create-home \
+                    --uid ${userId} \
+                    --gid ${groupId} \
+                    ${userName}"
+    docker exec \
+        ${dockerContainer} \
+        /bin/bash -c "${groupaddCmd} && ${useraddCmd}"
+    # Run the build script inside the container as the previously
+    # created user.
+    echo "Running the actual build inside the container ..."
+    docker exec \
+        --user ${userId}:${groupId} \
+        --workdir "${dockerMountTarget}" \
+        ${dockerContainer} \
+        $0 $storepass $keypass false
+    echo "Stopping container ..."
+    docker stop --time 0 ${dockerContainer}
+else
+    echo "Building unsigned APK ..."
+    ./gradlew \
+        --gradle-user-home $(pwd)/.gradle/ \
+        clean \
+        assembleRelease
 
-### Signing APK
-echo "Signing APK ..."
-jarsigner \
-    -verbose \
-    -keystore keystore.jks \
-    -storepass "$storepass" \
-    -keypass "$keypass" \
-    -signedjar /mnt/yacguide-build/dist/app-release-signed.apk \
-    /mnt/yacguide-build/dist/app-release-unsigned.apk \
-    key0
+    echo "Signing APK ..."
+    jarsigner \
+        -verbose \
+        -keystore keystore.jks \
+        -storepass "$storepass" \
+        -keypass "$keypass" \
+        -signedjar ${releaseDir}/app-release-signed.apk \
+        ${releaseDir}/app-release-unsigned.apk \
+        key0
 
-### ZIP alignment
-# https://developer.android.com/studio/command-line/zipalign
-echo "ZIP alignment ..."
-${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign \
-               4 \
-               /mnt/yacguide-build/dist/app-release-signed.apk \
-               /mnt/yacguide-build/dist/yacguide.apk
+    # https://developer.android.com/studio/command-line/zipalign
+    echo "ZIP alignment ..."
+    ${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS}/zipalign \
+        -f \
+        4 \
+        ${releaseDir}/app-release-signed.apk \
+        ${releaseApk}
+    echo "APK file: ${releaseApk}"
+fi
