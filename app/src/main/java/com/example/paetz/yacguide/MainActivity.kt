@@ -7,6 +7,8 @@ import android.view.View
 
 import com.example.paetz.yacguide.database.AppDatabase
 import com.example.paetz.yacguide.utils.IntentConstants
+import android.content.pm.PackageManager
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
     lateinit var database: AppDatabase
@@ -15,6 +17,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = "YACguide"
+
+        val textViewAppVersion: TextView = findViewById(R.id.appVersion)
+        try {
+            val pkgManager = this.packageManager
+            val pkgInfo = pkgManager.getPackageInfo(this.packageName, 0)
+            textViewAppVersion.text = pkgInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
 
         database = AppDatabase.getAppDatabase(this)
     }

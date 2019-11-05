@@ -36,14 +36,21 @@
         android:onClick="enterTourbook"/>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/dataSource"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/appVersion"
         android:textSize="16dp"
         android:textStyle="bold"
         android:textAlignment="center"
-        android:text="Quelle der Daten:\nwww.sandsteinklettern.de" />
+        android:text="Quelle der Daten:\nwww.sandsteinklettern.de"/>
+
+    <TextView
+        android:id="@+id/appVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
