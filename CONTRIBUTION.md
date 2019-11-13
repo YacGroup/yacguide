@@ -5,7 +5,7 @@
 Build the Docker image inside the project root directory.
 
 ```shell
-docker build -f docker/Dockerfile -t chrgernoe/yacguide .
+docker build -f docker/Dockerfile -t yacgroup/yacguide-build .
 ```
 
 ## Building a APK locally

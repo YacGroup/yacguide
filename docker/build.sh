@@ -6,8 +6,8 @@ if [ -z ${3+x} ]; then
     runDocker=true
 fi
 
-dockerImage="chrgernoe/yacguide"
-dockerContainer="yacguide"
+dockerImage="yacgroup/yacguide-build"
+dockerContainer="yacguide-build"
 dockerMountTarget="/mnt/yacguide"
 releaseDir="$(pwd)/app/build/outputs/apk/release"
 releaseApk="${releaseDir}/yacguide.apk"
