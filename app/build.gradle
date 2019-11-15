@@ -1,7 +1,17 @@
+plugins {
+    id 'com.gladed.androidgitversion' version '0.4.10'
+}
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+
+androidGitVersion {
+    baseCode 1
+    prefix 'v'
+    tagPattern(/^$prefix[0-9]+.*/)
+    hideBranches = ['master']
+}
 
 android {
     compileSdkVersion 28
@@ -9,8 +19,8 @@ android {
         applicationId "com.example.paetz.yacguide"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode androidGitVersion.code()
+        versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -20,7 +30,6 @@ android {
         }
     }
 }
-
 
 dependencies {
     // Room
