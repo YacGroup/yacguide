@@ -26,7 +26,7 @@ if [ ${runDocker} ]; then
         --rm \
         --name ${dockerContainer} \
         --mount type=bind,src="$(pwd)",dst="${dockerMountTarget}" \
-        ${dockerImage} /bin/bash -c "tail -f /dev/null"
+        ${dockerImage} /bin/bash -c "tail -f /dev/null" || exit 1
     # Create user inside the container with the same UID and GID as
     # the current user. This makes sure that the files and directories
     # of local Git repository are modified with the same permissions.
@@ -39,7 +39,7 @@ if [ ${runDocker} ]; then
                     ${userName}"
     docker exec \
         ${dockerContainer} \
-        /bin/bash -c "${groupaddCmd} && ${useraddCmd}"
+        /bin/bash -c "${groupaddCmd} && ${useraddCmd}" || exit 2
     # Run the build script inside the container as the previously
     # created user.
     echo "Running the actual build inside the container ..."
@@ -49,13 +49,13 @@ if [ ${runDocker} ]; then
         ${dockerContainer} \
         $0 $storepass $keypass false
     echo "Stopping container ..."
-    docker stop --time 0 ${dockerContainer}
+    docker stop --time 0 ${dockerContainer} || exit 3
 else
     echo "Building unsigned APK ..."
     ./gradlew \
         --gradle-user-home $(pwd)/.gradle/ \
         clean \
-        assembleRelease
+        assembleRelease || exit 4
 
     echo "Signing APK ..."
     jarsigner \
@@ -65,7 +65,7 @@ else
         -keypass "$keypass" \
         -signedjar ${releaseDir}/app-release-signed.apk \
         ${releaseDir}/app-release-unsigned.apk \
-        key0
+        key0 || exit 5
 
     # https://developer.android.com/studio/command-line/zipalign
     echo "ZIP alignment ..."
@@ -73,6 +73,6 @@ else
         -f \
         4 \
         ${releaseDir}/app-release-signed.apk \
-        ${releaseApk}
+        ${releaseApk} || exit 6
     echo "APK file: ${releaseApk}"
 fi
