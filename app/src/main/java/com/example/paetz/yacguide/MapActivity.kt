@@ -14,9 +14,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.example.paetz.yacguide.database.AppDatabase
+import com.example.paetz.yacguide.map.RockBitmapManager
 import com.example.paetz.yacguide.map.RockGeoItem
 import com.example.paetz.yacguide.map.cluster.ClusterManager
-import com.example.paetz.yacguide.map.cluster.MarkerBitmap
 import com.example.paetz.yacguide.utils.FileDownloader
 import com.example.paetz.yacguide.utils.IntentConstants
 import com.example.paetz.yacguide.utils.NetworkUtils
@@ -25,7 +25,6 @@ import org.mapsforge.core.graphics.*
 
 import org.mapsforge.core.model.LatLong
 import org.mapsforge.core.model.MapPosition
-import org.mapsforge.core.model.Point
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory
 import org.mapsforge.map.android.layers.MyLocationOverlay
 import org.mapsforge.map.android.util.AndroidPreferences
@@ -154,7 +153,6 @@ open class MapActivity : BaseNavigationActivity(), LocationListener {
                         LatLong(rock.latitude.toDouble(),
                                 rock.longitude.toDouble())))
             }
-
         }
         return result
     }
@@ -182,65 +180,6 @@ open class MapActivity : BaseNavigationActivity(), LocationListener {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
-    }
-
-    private fun getMarkerBitmap(): List<MarkerBitmap> {
-        val markerBitmaps: MutableList<MarkerBitmap> = ArrayList()
-
-        val balloonGreen = getDrawable(R.drawable.map_marker_green)
-        val markerGreen = AndroidGraphicFactory.convertToBitmap(balloonGreen)
-        markerGreen.incrementRefCount()
-
-        val balloonRed = getDrawable(R.drawable.map_marker_red)
-        val markerRedS = AndroidGraphicFactory.convertToBitmap(balloonRed)
-        markerRedS.incrementRefCount()
-
-        val paint1 = AndroidGraphicFactory.INSTANCE.createPaint()
-        paint1.setStyle(Style.STROKE)
-        paint1.setTextAlign(Align.CENTER)
-        paint1.setTypeface(FontFamily.DEFAULT, FontStyle.BOLD)
-        paint1.setColor(Color.RED)
-
-        markerBitmaps.add(MarkerBitmap(markerGreen, markerRedS,
-                Point(0.0, 0.0), 10f, 1, paint1))
-
-        // small icon. for 10 or less items.
-        val balloonSN = getDrawable(R.drawable.balloon_n_s)
-        val bitmapBalloonSN = AndroidGraphicFactory.convertToBitmap(balloonSN)
-        bitmapBalloonSN.incrementRefCount()
-
-        val balloonSS = getDrawable(R.drawable.balloon_n_n)
-        val bitmapBalloonSS = AndroidGraphicFactory.convertToBitmap(balloonSS)
-        bitmapBalloonSS.incrementRefCount()
-
-        val paint2 = AndroidGraphicFactory.INSTANCE.createPaint()
-        paint2.setStyle(Style.FILL)
-        paint2.setTextAlign(Align.CENTER)
-        paint2.setTypeface(FontFamily.DEFAULT, FontStyle.BOLD)
-        paint2.setColor(Color.WHITE)
-
-        markerBitmaps.add(MarkerBitmap(bitmapBalloonSN,
-                bitmapBalloonSS, Point(0.0, 0.0), 10f, 10, paint2))
-
-        // large icon 100 will be ignored.
-        val balloonMN = getDrawable(R.drawable.balloon_m_n)
-        val bitmapBalloonMN = AndroidGraphicFactory.convertToBitmap(balloonMN)
-        bitmapBalloonMN.incrementRefCount()
-
-        val balloonMS = getDrawable(R.drawable.balloon_m_s)
-        val bitmapBalloonMS = AndroidGraphicFactory.convertToBitmap(balloonMS)
-        bitmapBalloonMS.incrementRefCount()
-
-        val paint3 = AndroidGraphicFactory.INSTANCE.createPaint()
-        paint3.setStyle(Style.FILL)
-        paint3.setTextAlign(Align.CENTER)
-        paint3.setTypeface(FontFamily.DEFAULT, FontStyle.BOLD)
-        paint3.setColor(Color.WHITE)
-
-        markerBitmaps.add(MarkerBitmap(bitmapBalloonMN,
-                bitmapBalloonMS, Point(0.0, 0.0), 11f, 100, paint3))
-
-        return markerBitmaps
     }
 
     /**
@@ -459,7 +398,7 @@ open class MapActivity : BaseNavigationActivity(), LocationListener {
             clusterer = ClusterManager(
                     this,
                     mapView,
-                    getMarkerBitmap(),
+                    RockBitmapManager(this),
                     zoomLevelMax,
                     false)
         }

@@ -15,7 +15,7 @@ class ClusterTask<T : GeoItem>(
             synchronized(clusterManager.clusters) {
                 for (mCluster in clusterManager.clusters) {
                     synchronized(clusterManager.leftItems) {
-                        clusterManager.leftItems.addAll(mCluster.getItems())
+                        clusterManager.leftItems.addAll(mCluster.items)
                     }
                     mCluster.clear()
                 }

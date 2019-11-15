@@ -18,7 +18,7 @@ import java.util.Collections
 class ClusterManager<T : GeoItem>(
         val context: Context,
         val mapView: MapView?,
-        val markerIconBmps: List<MarkerBitmap>,
+        val bitmapManager: BitmapManager,
         private val maxClusteringZoom: Byte,
         val ignoreOnTap: Boolean) : Observer, SelectionHandler<T> {
     /**
@@ -64,7 +64,7 @@ class ClusterManager<T : GeoItem>(
             }
             synchronized(clusters) {
                 for (mCluster in clusters) {
-                    rtnList.addAll(mCluster.getItems())
+                    rtnList.addAll(mCluster.items)
                 }
             }
             return rtnList
@@ -121,12 +121,12 @@ class ClusterManager<T : GeoItem>(
             synchronized(clusters) {
                 for (mCluster in clusters) {
                     if (clusterTask != null && clusterTask!!.isCancelled) return
-                    if (mCluster.getItems().isEmpty())
+                    if (mCluster.items.isEmpty())
                         continue
                     // find a cluster which contains the marker.
                     // use 1st element to fix the location, hinder the cluster from
                     // running around and isClustering.
-                    val gpCenter = mCluster.getItems()[0].latLong
+                    val gpCenter = mCluster.items[0].latLong
                     val ptCenter = mapView.mapViewProjection.toPixels(gpCenter)
                     // find a cluster which contains the marker.
                     if (pos.distance(ptCenter) <= gridSize) {
@@ -241,10 +241,6 @@ class ClusterManager<T : GeoItem>(
                 cluster.clear()
             }
             clusters.clear()
-        }
-        for (markerBitmap in markerIconBmps) {
-            markerBitmap.getBitmap(true).decrementRefCount()
-            markerBitmap.getBitmap(false).decrementRefCount()
         }
         synchronized(leftItems) {
             leftItems.clear()

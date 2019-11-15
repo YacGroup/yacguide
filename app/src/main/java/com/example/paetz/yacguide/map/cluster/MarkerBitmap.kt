@@ -62,6 +62,8 @@ class MarkerBitmap
     init {
         this.textSize = textSize * DisplayModel.getDeviceScaleFactor()
         this.paint.setTextSize(textSize)
+        iconBmpNormal.incrementRefCount()
+        iconBmpSelect.incrementRefCount()
     }
 
     /**
