@@ -7,7 +7,6 @@ import android.view.View
 import com.example.paetz.yacguide.database.AppDatabase
 import com.example.paetz.yacguide.utils.IntentConstants
 import org.mapsforge.map.android.graphics.AndroidGraphicFactory
-import com.example.paetz.yacguide.utils.IntentConstants
 import android.content.pm.PackageManager
 import android.widget.TextView
 
