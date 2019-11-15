@@ -15,7 +15,7 @@ before_install:
   - "openssl aes-256-cbc -K $encrypted_78b319501daa_key -iv $encrypted_78b319501daa_iv -in keystore.jks.enc -out keystore.jks -d"
 
 script:
-  - ./docker/build.sh "$storepass" "$keypass" > build.log || tail -n 100 build.log
+  - ./docker/build.sh "$storepass" "$keypass"
 
 before_deploy:
   # Remove leading 'v' from tag name to extract release string
