@@ -47,15 +47,15 @@ if [ ${runDocker} ]; then
         --user ${userId}:${groupId} \
         --workdir "${dockerMountTarget}" \
         ${dockerContainer} \
-        $0 $storepass $keypass false || exit 3
+        $0 $storepass $keypass false
     echo "Stopping container ..."
-    docker stop --time 0 ${dockerContainer} || exit 4
+    docker stop --time 0 ${dockerContainer} || exit 3
 else
     echo "Building unsigned APK ..."
     ./gradlew \
         --gradle-user-home $(pwd)/.gradle/ \
         clean \
-        assembleRelease || exit 5
+        assembleRelease || exit 4
 
     echo "Signing APK ..."
     jarsigner \
@@ -65,7 +65,7 @@ else
         -keypass "$keypass" \
         -signedjar ${releaseDir}/app-release-signed.apk \
         ${releaseDir}/app-release-unsigned.apk \
-        key0 || exit 6
+        key0 || exit 5
 
     # https://developer.android.com/studio/command-line/zipalign
     echo "ZIP alignment ..."
@@ -73,6 +73,6 @@ else
         -f \
         4 \
         ${releaseDir}/app-release-signed.apk \
-        ${releaseApk} || exit 7
+        ${releaseApk} || exit 6
     echo "APK file: ${releaseApk}"
 fi
