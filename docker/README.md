@@ -8,5 +8,5 @@ For manually building the image run following command inside root of
 your local `yacguide` Git repository:
 
 ``` shell
-docker build -f docker/Dockerfile -t yacguide .
+docker build -f docker/Dockerfile -t yacgroup/yacguide-build .
 ```
