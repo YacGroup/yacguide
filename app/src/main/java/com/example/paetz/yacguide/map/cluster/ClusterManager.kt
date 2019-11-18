@@ -73,23 +73,24 @@ class ClusterManager<T : GeoItem>(
     val curBounds: BoundingBox?
         @Synchronized get() {
             if (currBoundingBox == null) {
-                if (mapView!!.width <= 0 || mapView.height <= 0) {
-                    throw IllegalArgumentException(" mapView.getWidth() <= 0 " +
-                            "|| mapView.getHeight() <= 0 "
-                            + mapView.width + " || " + mapView.height)
-                }
-                val nw = mapView.mapViewProjection.fromPixels(0.0, 0.0)
-                val se = mapView.mapViewProjection.fromPixels(mapView.width.toDouble(),
-                        mapView.height.toDouble())
-                if (nw != null && se != null) {
-                    currBoundingBox = if (se.latitude > nw.latitude) {
-                        BoundingBox(nw.latitude, se.longitude, se.latitude,
-                                nw.longitude)
-                    } else {
-                        BoundingBox(se.latitude, nw.longitude, nw.latitude,
-                                se.longitude)
+                mapView?.let {
+                    require((it.width > 0 && it.height > 0)) {
+                        "width <= 0 or height <= 0"
+                    }
+                    val nw = mapView.mapViewProjection.fromPixels(0.0, 0.0)
+                    val se = mapView.mapViewProjection.fromPixels(mapView.width.toDouble(),
+                            mapView.height.toDouble())
+                    if (nw != null && se != null) {
+                        currBoundingBox = if (se.latitude > nw.latitude) {
+                            BoundingBox(nw.latitude, se.longitude, se.latitude,
+                                    nw.longitude)
+                        } else {
+                            BoundingBox(se.latitude, nw.longitude, nw.latitude,
+                                    se.longitude)
+                        }
                     }
                 }
+
             }
             return currBoundingBox
         }
@@ -108,37 +109,39 @@ class ClusterManager<T : GeoItem>(
     @Synchronized
     fun addItem(item: T) {
         // if mapView is not inflated or if not in viewport, add to leftItems
-        if (mapView!!.width == 0 || !isItemInViewport(item)) {
+        if (mapView != null) {
+            if (mapView.width == 0 || !isItemInViewport(item)) {
 
-            synchronized(leftItems) {
-                if (clusterTask != null && clusterTask!!.isCancelled) return
-                leftItems.add(item)
-            }
-        } else if (maxClusteringZoom >= mapView.model.mapViewPosition
-                        .zoomLevel) {
-            val pos = mapView.mapViewProjection.toPixels(item.latLong)
-
-            synchronized(clusters) {
-                for (mCluster in clusters) {
-                    if (clusterTask != null && clusterTask!!.isCancelled) return
-                    if (mCluster.items.isEmpty())
-                        continue
-                    // find a cluster which contains the marker.
-                    // use 1st element to fix the location, hinder the cluster from
-                    // running around and isClustering.
-                    val gpCenter = mCluster.items[0].latLong
-                    val ptCenter = mapView.mapViewProjection.toPixels(gpCenter)
-                    // find a cluster which contains the marker.
-                    if (pos.distance(ptCenter) <= gridSize) {
-                        mCluster.addItem(item)
-                        return
-                    }
+                synchronized(leftItems) {
+                    if (clusterTask?.isCancelled == true) return
+                    leftItems.add(item)
                 }
-                clusters.add(createCluster(item))
-            }
-        } else {
-            synchronized(clusters) {
-                clusters.add(createCluster(item))
+            } else if (maxClusteringZoom >= mapView.model.mapViewPosition
+                            .zoomLevel) {
+                val pos = mapView.mapViewProjection.toPixels(item.latLong)
+
+                synchronized(clusters) {
+                    for (mCluster in clusters) {
+                        if (clusterTask?.isCancelled == true) return
+                        if (mCluster.items.isEmpty())
+                            continue
+                        // find a cluster which contains the marker.
+                        // use 1st element to fix the location, hinder the cluster from
+                        // running around and isClustering.
+                        val gpCenter = mCluster.items[0].latLong
+                        val ptCenter = mapView.mapViewProjection.toPixels(gpCenter)
+                        // find a cluster which contains the marker.
+                        if (pos.distance(ptCenter) <= gridSize) {
+                            mCluster.addItem(item)
+                            return
+                        }
+                    }
+                    clusters.add(createCluster(item))
+                }
+            } else {
+                synchronized(clusters) {
+                    clusters.add(createCluster(item))
+                }
             }
         }
     }
@@ -200,20 +203,22 @@ class ClusterManager<T : GeoItem>(
             return
         }
 
-        if (oldZoomLevel != mapView!!.model.mapViewPosition.zoomLevel.toDouble()) {
-            // react on zoom changes
-            // Log.d(TAG, "zooming...");
-            oldZoomLevel = mapView.model.mapViewPosition.zoomLevel.toDouble()
-            resetViewport(false)
-        } else {
-            // react on position changes
-            val mapViewPosition = mapView.model.mapViewPosition
+        if (mapView != null) {
+            if (oldZoomLevel != mapView.model.mapViewPosition.zoomLevel.toDouble()) {
+                // react on zoom changes
+                // Log.d(TAG, "zooming...");
+                oldZoomLevel = mapView.model.mapViewPosition.zoomLevel.toDouble()
+                resetViewport(false)
+            } else {
+                // react on position changes
+                val mapViewPosition = mapView.model.mapViewPosition
 
-            val posOld = mapView.mapViewProjection.toPixels(oldCenterLatLong)
-            val posNew = mapView.mapViewProjection.toPixels(mapViewPosition.center)
-            if (posOld != null && posOld.distance(posNew) > gridSize / 2) {
-                oldCenterLatLong = mapViewPosition.center
-                resetViewport(true)
+                val posOld = mapView.mapViewProjection.toPixels(oldCenterLatLong)
+                val posNew = mapView.mapViewProjection.toPixels(mapViewPosition.center)
+                if (posOld != null && posOld.distance(posNew) > gridSize / 2) {
+                    oldCenterLatLong = mapViewPosition.center
+                    resetViewport(true)
+                }
             }
         }
     }
