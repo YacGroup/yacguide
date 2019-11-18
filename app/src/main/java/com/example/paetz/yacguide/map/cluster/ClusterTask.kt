@@ -9,7 +9,7 @@ class ClusterTask<T : GeoItem>(
 
     override fun doInBackground(vararg params: Boolean?) {
         // If the map is moved without zoom-change: Add unclustered items.
-        if (params[0]!!) {
+        if (params[0] == true) {
             clusterManager.addLeftItems()
         } else {
             synchronized(clusterManager.clusters) {
@@ -25,9 +25,7 @@ class ClusterTask<T : GeoItem>(
             }
             if (!isCancelled) {
                 synchronized(clusterManager.clusters) {
-                    if (clusterManager.clusters.size != 0) {
-                        throw IllegalArgumentException()
-                    }
+                    require(clusterManager.clusters.size == 0)
                 }
                 clusterManager.addLeftItems()
             }
