@@ -12,7 +12,7 @@ env:
 
 script:
   # Build the unsigned APK file.
-  - make docker-start-new apk-build docker-stop
+  - make docker-run docker-prep apk-build docker-stop
 
 before_deploy:
   # The encrypted keystore file as well as the following command was created by the command 'travis encrypt-file keystore.jks'.
