@@ -6,7 +6,7 @@ FROM openjdk:8-jdk
 # Install required OS packages
 RUN \
    apt-get update && \
-   apt-get install --yes git wget apt-utils unzip && \
+   apt-get install --yes git wget apt-utils unzip make && \
    apt-get autoclean
 
 # Matched version in `app/build.gradle`
