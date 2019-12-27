@@ -95,12 +95,6 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    fun home(v: View) {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
     fun goToNextYear(v: View) {
         if (++_currentYearIdx <= _availableYears.size) {
             findViewById<View>(R.id.prevYearButton).visibility = View.VISIBLE

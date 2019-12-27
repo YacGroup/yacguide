@@ -42,10 +42,6 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_home -> {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-            }
             R.id.nav_database -> {
                 val intent = Intent(this, CountryActivity::class.java)
                 startActivity(intent)

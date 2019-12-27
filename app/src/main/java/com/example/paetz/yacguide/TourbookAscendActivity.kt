@@ -64,12 +64,6 @@ class TourbookAscendActivity : AppCompatActivity() {
         _displayContent(_ascends[_currentAscendIdx])
     }
 
-    fun home(v: View) {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
     fun back(v: View) {
         val resultIntent = Intent()
         setResult(_resultUpdated, resultIntent)
