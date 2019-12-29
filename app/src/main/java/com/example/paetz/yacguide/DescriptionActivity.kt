@@ -34,8 +34,6 @@ class DescriptionActivity : TableActivity() {
             findViewById<TextView>(R.id.infoTextView).text =
                     "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
         }
-
-        displayContent()
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

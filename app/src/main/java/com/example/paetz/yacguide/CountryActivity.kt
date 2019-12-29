@@ -16,8 +16,6 @@ class CountryActivity : TableActivity() {
         super.onCreate(savedInstanceState)
 
         jsonParser = CountryParser(db, this)
-
-        displayContent()
     }
 
     override fun displayContent() {

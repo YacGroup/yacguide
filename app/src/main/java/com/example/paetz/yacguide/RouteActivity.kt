@@ -23,7 +23,6 @@ import java.util.HashSet
 class RouteActivity : TableActivity() {
 
     private var _rock: Rock? = null
-    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         return true
@@ -42,8 +41,6 @@ class RouteActivity : TableActivity() {
             rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist teilweise gesperrt."
             _rock?.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist nicht anerkannt."
         }
-
-        displayContent()
     }
 
     fun showMap(v: View) {
@@ -85,13 +82,6 @@ class RouteActivity : TableActivity() {
                     Color.WHITE,
                     Typeface.NORMAL,
                     10, 10, 10, 10))
-        }
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == IntentConstants.RESULT_UPDATED) {
-            _resultUpdated = resultCode
-            displayContent()
         }
     }
 

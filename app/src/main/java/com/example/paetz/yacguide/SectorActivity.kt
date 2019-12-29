@@ -25,8 +25,6 @@ class SectorActivity : TableActivity() {
 
         jsonParser = SectorParser(db, this, regionId)
         _region = db.regionDao().getRegion(regionId)
-
-        displayContent()
     }
 
     override fun getLayoutId(): Int {

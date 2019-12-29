@@ -19,8 +19,6 @@ class RegionActivity : TableActivity() {
         super.onCreate(savedInstanceState)
         _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY)
         jsonParser = RegionParser(db, this, _countryName!!)
-
-        displayContent()
     }
 
     override fun getLayoutId(): Int {

@@ -50,14 +50,6 @@ class RockActivity : TableActivity() {
                 displayContent()
             }
         })
-
-        displayContent()
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == IntentConstants.RESULT_UPDATED) {
-            displayContent()
-        }
     }
 
     override fun showComments(v: View) {

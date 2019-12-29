@@ -42,6 +42,13 @@ abstract class TableActivity : BaseNavigationActivity(), UpdateListener {
 
     open fun showComments(v: View) {}
 
+
+    override fun onResume() {
+        super.onResume()
+
+        displayContent()
+    }
+
     // UpdateListener
     override fun onEvent(success: Boolean) {
         _updateDialog?.dismiss()
