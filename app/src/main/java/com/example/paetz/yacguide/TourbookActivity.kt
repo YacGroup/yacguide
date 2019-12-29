@@ -96,7 +96,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     fun goToNextYear(v: View) {
-        if (++_currentYearIdx <= _availableYears.size) {
+        if (++_currentYearIdx < _availableYears.size) {
             findViewById<View>(R.id.prevYearButton).visibility = View.VISIBLE
             findViewById<View>(R.id.nextYearButton).visibility = if (_currentYearIdx == _availableYears.size - 1) View.INVISIBLE else View.VISIBLE
             _displayContent(_availableYears[_currentYearIdx])
