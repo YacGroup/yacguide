@@ -146,7 +146,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        (findViewById<View>(R.id.yearTextView) as TextView).text = year.toString()
+        (findViewById<View>(R.id.yearTextView) as TextView).text = if (year == 0) "" else year.toString()
 
         var currentMonth = -1
         var currentDay = -1
@@ -275,6 +275,10 @@ class TourbookActivity : BaseNavigationActivity() {
             findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
             findViewById<View>(R.id.prevYearButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
             _displayContent(_availableYears[_currentYearIdx])
+        } else {
+            findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
+            findViewById<View>(R.id.prevYearButton).visibility = View.INVISIBLE
+            _displayContent(0)
         }
     }
 
