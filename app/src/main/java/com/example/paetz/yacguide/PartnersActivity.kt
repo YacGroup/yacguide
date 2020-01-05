@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.SparseIntArray
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -27,14 +28,13 @@ import com.example.paetz.yacguide.utils.IntentConstants
 import com.example.paetz.yacguide.utils.WidgetUtils
 
 import java.util.ArrayList
-import java.util.Collections
 import java.util.HashMap
 
 class PartnersActivity : AppCompatActivity() {
 
-    private var _db: AppDatabase? = null
+    private lateinit var _db: AppDatabase
     private var _checkboxMap: MutableMap<Int, CheckBox> = HashMap()
-    private var _selectedPartnerIds: ArrayList<Int>? = null
+    private lateinit var _selectedPartnerIds: List<Int>
     private var _partnerNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class PartnersActivity : AppCompatActivity() {
         setContentView(R.layout.activity_partners)
 
         _db = AppDatabase.getAppDatabase(this)
-        _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
+        _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS).orEmpty()
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
@@ -64,11 +64,11 @@ class PartnersActivity : AppCompatActivity() {
 
     fun addPartner(v: View) {
         val dialog = Dialog(this)
-        dialog.setTitle("Kletterpartner hinzufügen")
+        dialog.setTitle(getString(R.string.dialog_text_add_partner))
         dialog.setContentView(R.layout.add_partner_dialog)
-        val okButton = dialog.findViewById<View>(R.id.okButton) as Button
+        val okButton = dialog.findViewById<Button>(R.id.okButton)
         okButton.setOnClickListener {
-            val newName = (dialog.findViewById<View>(R.id.addPartnerEditText) as EditText).text.toString().trim { it <= ' ' }
+            val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
             updatePartner(dialog, newName, null)
         }
         val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
@@ -92,44 +92,38 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun displayContent() {
-        title = "Kletterpartner"
+        title = getString(R.string.title_climbing_partner)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         _checkboxMap.clear()
-        val partners = _db!!.partnerDao().all
-        val ascends = _db!!.ascendDao().all
+        val partners = _db.partnerDao().all
+        val ascends = _db.ascendDao().all
 
         // We need to sort the partners according to the number of ascends you have done with them
-        val ascendPartnerIds = ArrayList<Int>()
+        val ascendPartnerCount = SparseIntArray()
         for (ascend in ascends) {
-            ascendPartnerIds.addAll(ascend.partnerIds!!)
-        }
-        val sortedPartners = ArrayList<Partner>()
-        val partnerIdOccurences = ArrayList<Int>()
-        for (i in partners.indices) {
-            val occurenceCount = Collections.frequency(ascendPartnerIds, partners[i].id)
-            var index = i
-            for (j in 0 until i) {
-                if (occurenceCount > partnerIdOccurences[j]) {
-                    index = j
-                    break
+            ascend.partnerIds?.let {
+                for (id in it) {
+                    val prevValue = ascendPartnerCount.get(id, 0)
+                    ascendPartnerCount.put(id, prevValue + 1)
                 }
             }
-            sortedPartners.add(index, partners[i])
-            partnerIdOccurences.add(index, occurenceCount)
+        }
+
+        val sortedPartners = partners.sortedByDescending {
+            ascendPartnerCount.get(it.id, 0)
+        }.filter {
+            it.name.orEmpty().toLowerCase().contains(_partnerNamePart.toLowerCase())
         }
 
         for (partner in sortedPartners) {
-            val partnerName = partner.name
-            if (!partnerName!!.toLowerCase().contains(_partnerNamePart.toLowerCase())) {
-                continue
-            }
+            val partnerName = partner.name.orEmpty()
             val innerLayout = RelativeLayout(this)
             innerLayout.setBackgroundColor(Color.WHITE)
 
             val checkBox = CheckBox(this)
             checkBox.text = partnerName
-            if (_selectedPartnerIds!!.contains(partner.id)) {
+            if (_selectedPartnerIds.contains(partner.id)) {
                 checkBox.isChecked = true
             }
             _checkboxMap[partner.id] = checkBox
@@ -141,13 +135,13 @@ class PartnersActivity : AppCompatActivity() {
             editButton.setOnClickListener {
                 val dialog = Dialog(this@PartnersActivity)
                 dialog.setContentView(R.layout.add_partner_dialog)
-                (dialog.findViewById<View>(R.id.addPartnerEditText) as EditText).setText(partnerName)
-                val okButton = dialog.findViewById<View>(R.id.okButton) as Button
+                dialog.findViewById<EditText>(R.id.addPartnerEditText).setText(partnerName)
+                val okButton = dialog.findViewById<Button>(R.id.okButton)
                 okButton.setOnClickListener {
-                    val newName = (dialog.findViewById<View>(R.id.addPartnerEditText) as EditText).text.toString().trim { it <= ' ' }
+                    val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
                     updatePartner(dialog, newName, partner)
                 }
-                val cancelButton = dialog.findViewById<View>(R.id.cancelButton) as Button
+                val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
                 cancelButton.setOnClickListener { dialog.dismiss() }
                 dialog.setCanceledOnTouchOutside(false)
                 dialog.setCancelable(false)
@@ -161,14 +155,14 @@ class PartnersActivity : AppCompatActivity() {
             deleteButton.setOnClickListener {
                 val dialog = Dialog(this@PartnersActivity)
                 dialog.setContentView(R.layout.dialog)
-                dialog.findViewById<TextView>(R.id.dialogText).text = "Kletterpartner löschen?"
-                val okButton = dialog.findViewById<View>(R.id.yesButton) as Button
+                dialog.findViewById<TextView>(R.id.dialogText).text = getString(R.string.dialog_text_delete_partner)
+                val okButton = dialog.findViewById<Button>(R.id.yesButton)
                 okButton.setOnClickListener {
-                    _db!!.partnerDao().delete(partner)
+                    _db.partnerDao().delete(partner)
                     dialog.dismiss()
                     displayContent()
                 }
-                val cancelButton = dialog.findViewById<View>(R.id.noButton) as Button
+                val cancelButton = dialog.findViewById<Button>(R.id.noButton)
                 cancelButton.setOnClickListener { dialog.dismiss() }
                 dialog.setCanceledOnTouchOutside(false)
                 dialog.setCancelable(false)
@@ -195,13 +189,13 @@ class PartnersActivity : AppCompatActivity() {
     private fun updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
         when {
             newName == "" ->
-                Toast.makeText(dialog.context, "Kein Name eingegeben", Toast.LENGTH_SHORT).show()
-            _db!!.partnerDao().getId(newName) > 0 ->
-                Toast.makeText(dialog.context, "Name bereits vergeben", Toast.LENGTH_SHORT).show()
+                Toast.makeText(dialog.context, getString(R.string.hint_no_name), Toast.LENGTH_SHORT).show()
+            _db.partnerDao().getId(newName) > 0 ->
+                Toast.makeText(dialog.context, getString(R.string.hint_name_already_used), Toast.LENGTH_SHORT).show()
             else -> {
                 val updatedPartner = partner ?: Partner()
                 updatedPartner.name = newName
-                _db!!.partnerDao().insert(updatedPartner)
+                _db.partnerDao().insert(updatedPartner)
                 dialog.dismiss()
                 displayContent()
             }

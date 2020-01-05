@@ -64,17 +64,20 @@ class TourbookAscendActivity : AppCompatActivity() {
         _displayContent(_ascends[_currentAscendIdx])
     }
 
-    fun home(v: View) {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
-    }
-
     fun back(v: View) {
         val resultIntent = Intent()
         setResult(_resultUpdated, resultIntent)
         finish()
     }
+
+    fun showRoute(v: View) {
+        _db.routeDao().getRoute(_ascends[_currentAscendIdx].routeId)?.id?.let {
+            val intent = Intent(this, DescriptionActivity::class.java)
+            intent.putExtra(IntentConstants.ROUTE_KEY, it)
+            startActivity(intent)
+        }
+    }
+
 
     fun goToNextAscend(v: View) {
         if (++_currentAscendIdx <= _maxAscendIdx) {
@@ -246,7 +249,7 @@ class TourbookAscendActivity : AppCompatActivity() {
                 Typeface.NORMAL,
                 10, 10, 0, 0))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                ascend.notes?.takeUnless { it.isEmpty() } ?: " - ",
+                ascend.notes?.takeUnless { it.isBlank() } ?: " - ",
                 "",
                 WidgetUtils.tableFontSizeDp,
                 View.OnClickListener { },

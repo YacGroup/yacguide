@@ -1,7 +1,6 @@
 package com.example.paetz.yacguide.utils
 
 object IntentConstants {
-
     const val COUNTRY_KEY = "CountryName"
     const val REGION_KEY = "RegionId"
     const val SECTOR_KEY = "SectorId"
