@@ -22,19 +22,21 @@ class SectorActivity : TableActivity() {
         super.onCreate(savedInstanceState)
 
         val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, AppDatabase.INVALID_ID)
-        super.initialize(R.layout.activity_sector)
 
         jsonParser = SectorParser(db, this, regionId)
         _region = db.regionDao().getRegion(regionId)
-
-        displayContent()
     }
 
-    fun showComments(v: View) {
+    override fun getLayoutId(): Int {
+        return R.layout.activity_table
+    }
+
+    override fun showComments(v: View) {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        for (comment in db.regionCommentDao().getAll(_region!!.id)) {
+        val comments = _region?.let { db.regionCommentDao().getAll(it.id) } ?: emptyArray()
+        for (comment in comments) {
             val qualityId = comment.qualityId
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
@@ -62,16 +64,18 @@ class SectorActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _region!!.name
-        for (sector in db.sectorDao().getAll(_region!!.id)) {
+        this.title = _region?.name.orEmpty()
+        val sectors = _region?.let { db.sectorDao().getAll(it.id) } ?: emptyArray()
+        for (sector in sectors) {
             val sectorName = sector.name
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@SectorActivity, RockActivity::class.java)
                 intent.putExtra(IntentConstants.SECTOR_KEY, sector.id)
                 startActivity(intent)
             }
+
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    sectorName!!,
+                    sectorName.orEmpty(),
                     "",
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
@@ -82,6 +86,6 @@ class SectorActivity : TableActivity() {
     }
 
     override fun deleteContent() {
-        db.deleteSectors(_region!!.id)
+        _region?.let { db.deleteSectors(it.id) }
     }
 }

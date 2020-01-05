@@ -14,20 +14,11 @@
         android:layout_height="wrap_content">
 
         <ImageButton
-            android:id="@+id/homeButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:onClick="home"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
-
-        <ImageButton
             android:id="@+id/backButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/homeButton"
+            android:layout_alignParentLeft="true"
             android:onClick="back"
             app:srcCompat="@android:drawable/ic_menu_revert" />
 
@@ -65,9 +56,18 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/routeButton"
             android:onClick="delete"
             app:srcCompat="@android:drawable/ic_menu_delete" />
+
+        <ImageButton
+            android:id="@+id/routeButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:onClick="showRoute"
+            app:srcCompat="@android:drawable/ic_menu_info_details" />
 
     </RelativeLayout>
 

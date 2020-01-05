@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">yacguide</string>
+    <string name="title_climbing_partner">Kletterpartner</string>
+    <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
+    <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
+    <string name="hint_no_name">Kein Name eingegeben</string>
+    <string name="hint_name_already_used">Name bereits vergeben</string>
+    <string name="copyright_osm" />
+    <string name="menu_home">Übersicht</string>
+    <string name="menu_database">Datenbank</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="menu_tourbook">Tourenbuch</string>
+    <string name="nav_header_desc">Yet Another Climbing Guide</string>
+    <string name="nav_header_title">YACGuide</string>
+    <string name="nav_header_subtitle">Yet Another Climbing Guide</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="download">Aktualisieren</string>
+    <string name="delete">Gebiet löschen</string>
+    <string name="rock_search">Felsen suchen</string>
+    <string name="dialog_question_update">Diesen Bereich aktualisieren?</string>
+    <string name="dialog_question_delete">Diesen Bereich löschen?</string>
+    <string name="export">Import/Export</string>
+    <string name="ascends_refreshed">Begehungen aktualisiert</string>
+    <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
+    <string name="date_unknown">Datum unbekannt</string>
 </resources>

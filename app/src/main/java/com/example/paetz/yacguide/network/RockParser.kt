@@ -52,7 +52,7 @@ class RockParser(
         for (i in 0 until jsonRocks.length()) {
             val jsonRock = jsonRocks.getJSONObject(i)
             val type = ParserUtils.jsonField2Char(jsonRock, "typ")
-            if (!CLIMBING_OBJECT_TYPES.contains(type)) {
+            if (!_CLIMBING_OBJECT_TYPES.contains(type)) {
                 continue
             }
             val r = Rock()
@@ -160,7 +160,7 @@ class RockParser(
 
     companion object {
 
-        private val CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
+        private val _CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
             init {
                 add(Rock.typeSummit)
                 add(Rock.typeMassif)

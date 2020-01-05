@@ -1,74 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/baseLayout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="#bbbbbb">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/buttonLayout"
+    <include
+        layout="@layout/app_bar_route"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"/>
 
-        <ImageButton
-            android:id="@+id/homeButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:onClick="home"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
-
-        <ImageButton
-            android:id="@+id/backButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/homeButton"
-            android:onClick="back"
-            app:srcCompat="@android:drawable/ic_menu_revert" />
-
-        <ImageButton
-            android:id="@+id/commentButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/backButton"
-            android:onClick="showComments"
-            app:srcCompat="@android:drawable/ic_menu_info_details" />
-
-        <ImageButton
-            android:id="@+id/mapButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/commentButton"
-            android:onClick="showMap"
-            app:srcCompat="@android:drawable/ic_menu_mapmode" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/infoTextView"
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer"/>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/tableLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>
