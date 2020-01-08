@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.Manifest
 import android.app.Dialog
@@ -14,13 +14,13 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
-import com.example.paetz.yacguide.database.*
+import com.yacgroup.yacguide.database.*
 
-import com.example.paetz.yacguide.utils.AscendStyle
-import com.example.paetz.yacguide.utils.FileChooser
-import com.example.paetz.yacguide.utils.FilesystemUtils
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.FileChooser
+import com.yacgroup.yacguide.utils.FilesystemUtils
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 import org.json.JSONException
 import java.io.File

@@ -1,6 +1,6 @@
-package com.example.paetz.yacguide.database
+package com.yacgroup.yacguide.database
 
-import com.example.paetz.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException

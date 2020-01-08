@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.database.Comment
+package com.yacgroup.yacguide.database.Comment
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

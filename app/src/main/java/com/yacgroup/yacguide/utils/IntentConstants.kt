@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.utils
+package com.yacgroup.yacguide.utils
 
 object IntentConstants {
     const val COUNTRY_KEY = "CountryName"

@@ -1,8 +1,8 @@
-package com.example.paetz.yacguide.network
+package com.yacgroup.yacguide.network
 
-import com.example.paetz.yacguide.UpdateListener
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Country
+import com.yacgroup.yacguide.UpdateListener
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Country
 
 import org.json.JSONArray
 import org.json.JSONException

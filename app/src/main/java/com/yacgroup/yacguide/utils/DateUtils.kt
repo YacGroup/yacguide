@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.utils
+package com.yacgroup.yacguide.utils
 
 import android.annotation.SuppressLint
 import java.text.ParseException

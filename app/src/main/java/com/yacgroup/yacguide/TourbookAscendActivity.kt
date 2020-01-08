@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.content.Intent
@@ -12,14 +12,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Ascend
-import com.example.paetz.yacguide.database.Region
-import com.example.paetz.yacguide.database.Rock
-import com.example.paetz.yacguide.database.Sector
-import com.example.paetz.yacguide.utils.AscendStyle
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.util.ArrayList
 

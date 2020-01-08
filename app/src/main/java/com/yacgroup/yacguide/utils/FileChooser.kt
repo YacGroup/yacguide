@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.utils
+package com.yacgroup.yacguide.utils
 
 import android.app.Dialog
 import android.content.Context
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 
-import com.example.paetz.yacguide.R
+import com.yacgroup.yacguide.R
 
 import java.io.File
 import java.util.Arrays

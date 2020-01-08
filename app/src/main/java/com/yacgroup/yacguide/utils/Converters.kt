@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.utils
+package com.yacgroup.yacguide.utils
 
 import android.arch.persistence.room.TypeConverter
 import android.text.TextUtils
