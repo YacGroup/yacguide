@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 interface UpdateListener {
 

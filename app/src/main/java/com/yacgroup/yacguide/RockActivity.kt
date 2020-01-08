@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.content.Context
 import android.content.Intent
@@ -12,14 +12,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
-import com.example.paetz.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.AppDatabase
 
-import com.example.paetz.yacguide.database.Comment.SectorComment
-import com.example.paetz.yacguide.database.Rock
-import com.example.paetz.yacguide.database.Sector
-import com.example.paetz.yacguide.network.RockParser
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.network.RockParser
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RockActivity : TableActivity() {
 

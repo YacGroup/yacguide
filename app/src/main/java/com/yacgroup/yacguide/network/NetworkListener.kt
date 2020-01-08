@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.network
+package com.yacgroup.yacguide.network
 
 interface NetworkListener {
 

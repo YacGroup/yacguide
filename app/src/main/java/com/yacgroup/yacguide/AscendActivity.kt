@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -15,11 +15,11 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Ascend
-import com.example.paetz.yacguide.database.Route
-import com.example.paetz.yacguide.utils.AscendStyle
-import com.example.paetz.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.IntentConstants
 
 import java.util.ArrayList
 import java.util.Calendar

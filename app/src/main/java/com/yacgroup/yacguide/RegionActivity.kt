@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.graphics.Color
@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 
-import com.example.paetz.yacguide.network.RegionParser
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.network.RegionParser
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionActivity : TableActivity() {
 

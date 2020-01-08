@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,12 +11,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Comment.RockComment
-import com.example.paetz.yacguide.database.Rock
-import com.example.paetz.yacguide.utils.AscendStyle
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Comment.RockComment
+import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.util.HashSet
 

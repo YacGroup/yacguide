@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.os.Bundle
@@ -8,9 +8,9 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.network.JSONWebParser
-import com.example.paetz.yacguide.utils.NetworkUtils
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.network.JSONWebParser
+import com.yacgroup.yacguide.utils.NetworkUtils
 
 abstract class TableActivity : BaseNavigationActivity(), UpdateListener {
     protected lateinit var db: AppDatabase

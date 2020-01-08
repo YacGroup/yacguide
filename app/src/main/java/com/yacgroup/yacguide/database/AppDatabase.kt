@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.database
+package com.yacgroup.yacguide.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
@@ -6,15 +6,15 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
 import android.content.Context
 
-import com.example.paetz.yacguide.database.Comment.RegionComment
-import com.example.paetz.yacguide.database.Comment.RegionCommentDao
-import com.example.paetz.yacguide.database.Comment.RockComment
-import com.example.paetz.yacguide.database.Comment.RockCommentDao
-import com.example.paetz.yacguide.database.Comment.RouteComment
-import com.example.paetz.yacguide.database.Comment.RouteCommentDao
-import com.example.paetz.yacguide.database.Comment.SectorComment
-import com.example.paetz.yacguide.database.Comment.SectorCommentDao
-import com.example.paetz.yacguide.utils.Converters
+import com.yacgroup.yacguide.database.Comment.RegionComment
+import com.yacgroup.yacguide.database.Comment.RegionCommentDao
+import com.yacgroup.yacguide.database.Comment.RockComment
+import com.yacgroup.yacguide.database.Comment.RockCommentDao
+import com.yacgroup.yacguide.database.Comment.RouteComment
+import com.yacgroup.yacguide.database.Comment.RouteCommentDao
+import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.Comment.SectorCommentDao
+import com.yacgroup.yacguide.utils.Converters
 
 @Database(entities = [Country::class, Region::class, Sector::class, Rock::class, Route::class, Ascend::class, Partner::class, RegionComment::class, SectorComment::class, RockComment::class, RouteComment::class], version = 1)
 @TypeConverters(Converters::class)

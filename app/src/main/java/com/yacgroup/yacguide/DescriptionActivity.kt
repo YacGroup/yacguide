@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.content.Intent
@@ -11,12 +11,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Comment.RouteComment
-import com.example.paetz.yacguide.database.Route
-import com.example.paetz.yacguide.utils.DateUtils
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Comment.RouteComment
+import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.utils.DateUtils
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 class DescriptionActivity : TableActivity() {
 

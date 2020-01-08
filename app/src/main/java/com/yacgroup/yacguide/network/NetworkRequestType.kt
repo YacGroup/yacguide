@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.network
+package com.yacgroup.yacguide.network
 
 enum class NetworkRequestType {
     DATA_REQUEST_ID,

@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide.database
+package com.yacgroup.yacguide.database
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert

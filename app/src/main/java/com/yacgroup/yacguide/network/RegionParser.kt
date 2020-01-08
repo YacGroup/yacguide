@@ -1,10 +1,10 @@
-package com.example.paetz.yacguide.network
+package com.yacgroup.yacguide.network
 
-import com.example.paetz.yacguide.UpdateListener
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Region
-import com.example.paetz.yacguide.utils.NetworkUtils
-import com.example.paetz.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.UpdateListener
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.utils.NetworkUtils
+import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException

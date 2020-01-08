@@ -1,4 +1,4 @@
-package com.example.paetz.yacguide
+package com.yacgroup.yacguide
 
 import android.app.Activity
 import android.app.Dialog
@@ -22,10 +22,10 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.example.paetz.yacguide.database.AppDatabase
-import com.example.paetz.yacguide.database.Partner
-import com.example.paetz.yacguide.utils.IntentConstants
-import com.example.paetz.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.Partner
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.util.ArrayList
 import java.util.HashMap
