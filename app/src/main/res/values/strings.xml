@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">yacguide</string>
+    <string name="app_name">YACGuide</string>
     <string name="title_climbing_partner">Kletterpartner</string>
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
