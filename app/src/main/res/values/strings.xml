@@ -25,4 +25,7 @@
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
     <string name="date_unknown">Datum unbekannt</string>
+
+    <string name="botch">\u26A1</string>
+    <string name="project">\u2117</string>
 </resources>

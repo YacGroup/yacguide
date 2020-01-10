@@ -14,6 +14,7 @@ import com.yacgroup.yacguide.database.Comment.RouteComment
 import com.yacgroup.yacguide.database.Comment.RouteCommentDao
 import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.database.Comment.SectorCommentDao
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.Converters
 
 @Database(entities = [Country::class, Region::class, Sector::class, Rock::class, Route::class, Ascend::class, Partner::class, RegionComment::class, SectorComment::class, RockComment::class, RouteComment::class], version = 1)
@@ -74,10 +75,23 @@ abstract class AppDatabase : RoomDatabase() {
 
     fun deleteAscend(ascend: Ascend) {
         val routeId = ascend.routeId
-        val ascendedCount = routeDao().getAscendCount(routeId) - 1
-        routeDao().updateAscendCount(ascendedCount, routeId)
-        if (ascendedCount == 0) {
-            rockDao().updateAscended(false, routeDao().getRoute(routeId)!!.parentId)
+        if (routeDao().getRoute(routeId) != null) {
+            AscendStyle.actionOnAscend(
+                    ascend.styleId,
+                    routeId,
+                    routeDao()::decAscendCountLead,
+                    routeDao()::decAscendCountFollow,
+                    routeDao()::decAscendCountBotch,
+                    routeDao()::decAscendCountProject
+            );
+            AscendStyle.actionOnAscend(
+                    ascend.styleId,
+                    routeDao().getRoute(routeId)!!.parentId,
+                    rockDao()::decAscendCountLead,
+                    rockDao()::decAscendCountFollow,
+                    rockDao()::decAscendCountBotch,
+                    rockDao()::decAscendCountProject
+            )
         }
         ascendDao().delete(ascend)
     }

@@ -15,7 +15,10 @@ class Rock {
     var name: String? = null
     var longitude: Float = 0f
     var latitude: Float = 0f
-    var ascended: Boolean = false
+    var ascendCountLead: Short = 0
+    var ascendCountFollow: Short = 0
+    var ascendCountBotch: Short = 0
+    var ascendCountProject: Short = 0
     var parentId: Int = 0
 
     companion object {

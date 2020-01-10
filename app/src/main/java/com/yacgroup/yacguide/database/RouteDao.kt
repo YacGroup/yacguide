@@ -13,14 +13,32 @@ interface RouteDao {
     @Query("SELECT * FROM Route WHERE id = :id")
     fun getRoute(id: Int): Route?
 
-    @Query("SELECT ascendCount FROM Route WHERE id = :id")
-    fun getAscendCount(id: Int): Int
-
     @Query("UPDATE Route SET description = :description WHERE id = :id")
     fun updateDescription(description: String, id: Int)
 
-    @Query("UPDATE Route SET ascendCount = :ascendCount WHERE id = :id")
-    fun updateAscendCount(ascendCount: Int, id: Int)
+    @Query("UPDATE Route SET ascendCountLead = ascendCountLead + 1 WHERE id = :id")
+    fun incAscendCountLead(id: Int)
+
+    @Query("UPDATE Route SET ascendCountFollow = ascendCountFollow + 1 WHERE id = :id")
+    fun incAscendCountFollow(id: Int)
+
+    @Query("UPDATE Route SET ascendCountBotch = ascendCountBotch + 1 WHERE id = :id")
+    fun incAscendCountBotch(id: Int)
+
+    @Query("UPDATE Route SET ascendCountProject = ascendCountProject + 1 WHERE id = :id")
+    fun incAscendCountProject(id: Int)
+
+    @Query("UPDATE Route SET ascendCountLead = ascendCountLead - 1 WHERE id = :id")
+    fun decAscendCountLead(id: Int)
+
+    @Query("UPDATE Route SET ascendCountFollow = ascendCountFollow - 1 WHERE id = :id")
+    fun decAscendCountFollow(id: Int)
+
+    @Query("UPDATE Route SET ascendCountBotch = ascendCountBotch - 1 WHERE id = :id")
+    fun decAscendCountBotch(id: Int)
+
+    @Query("UPDATE Route SET ascendCountProject = ascendCountProject - 1 WHERE id = :id")
+    fun decAscendCountProject(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(route: Route)

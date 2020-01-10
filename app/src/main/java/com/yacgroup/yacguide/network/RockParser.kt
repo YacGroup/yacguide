@@ -63,7 +63,10 @@ class RockParser(
             r.status = ParserUtils.jsonField2Char(jsonRock, "status")
             r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
             r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
-            r.ascended = false
+            r.ascendCountLead = 0
+            r.ascendCountFollow = 0
+            r.ascendCountBotch = 0
+            r.ascendCountProject = 0
             r.parentId = _sectorId
             db.rockDao().insert(r)
         }
@@ -89,20 +92,35 @@ class RockParser(
             r.firstAscendDate = jsonRoute.getString("erstbegdatum")
             r.typeOfClimbing = jsonRoute.getString("kletterei")
             r.description = ParserUtils.jsonField2String(jsonRoute, "wegbeschr_d", "wegbeschr_cz")
-            r.ascendCount = db.ascendDao().getAscendsForRoute(routeId).size // if we re-add a route that has already been marked as ascended in the past
+            val ascends = db.ascendDao().getAscendsForRoute(routeId) // if we re-add a route that has already been marked as ascended in the past
+            for (ascend in ascends) {
+                AscendStyle.actionOnAscend(
+                        ascend.styleId,
+                        routeId,
+                        {r.ascendCountLead++},
+                        {r.ascendCountFollow++},
+                        {r.ascendCountBotch++},
+                        {r.ascendCountProject++}
+                )
+            }
             r.parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
             db.routeDao().insert(r)
         }
 
         // update already ascended rocks
         for (rock in db.rockDao().getAll(_sectorId)) {
-            var ascended = false
             for (route in db.routeDao().getAll(rock.id)) {
                 for (ascend in db.ascendDao().getAscendsForRoute(route.id)) {
-                    ascended = ascended or (ascend.styleId < AscendStyle.eBOTCHED.id)
+                    AscendStyle.actionOnAscend(
+                            ascend.styleId,
+                            rock.id,
+                            db.rockDao()::incAscendCountLead,
+                            db.rockDao()::incAscendCountFollow,
+                            db.rockDao()::incAscendCountBotch,
+                            db.rockDao()::incAscendCountProject
+                    )
                 }
             }
-            db.rockDao().updateAscended(ascended, rock.id)
         }
     }
 

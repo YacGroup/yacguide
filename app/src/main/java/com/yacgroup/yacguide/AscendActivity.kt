@@ -75,8 +75,21 @@ class AscendActivity : AppCompatActivity() {
             ascend.id = existingAscend.id
         } else {
             _route?.let {
-                _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(it.id) + 1, it.id)
-                _db.rockDao().updateAscended(true, it.parentId)
+                AscendStyle.actionOnAscend(
+                        _styleId,
+                        it.id,
+                        _db.routeDao()::incAscendCountLead,
+                        _db.routeDao()::incAscendCountFollow,
+                        _db.routeDao()::incAscendCountBotch,
+                        _db.routeDao()::incAscendCountProject)
+                AscendStyle.actionOnAscend(
+                        _styleId,
+                        it.parentId,
+                        _db.rockDao()::incAscendCountLead,
+                        _db.rockDao()::incAscendCountFollow,
+                        _db.rockDao()::incAscendCountBotch,
+                        _db.rockDao()::incAscendCountProject
+                )
                 _resultUpdated = IntentConstants.RESULT_UPDATED
             }
         }

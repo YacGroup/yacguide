@@ -1,39 +1,35 @@
 package com.yacgroup.yacguide.utils
 
-import android.graphics.Color
-
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.TreeSet
 
-enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
+enum class AscendStyle (val id: Int, val styleName: String) {
 
     // This needs to be in sync with sandsteinklettern.de!
-    eSOLO(1, "Solo", Color.GREEN),
-    eONSIGHT(2, "Onsight", Color.GREEN),
-    eREDPOINT(3, "Rotpunkt", Color.GREEN),
-    eALLFREE(4, "Alles frei", Color.GREEN),
-    eHOCHGESCHLEUDERT(5, "Irgendwie hochgeschleudert", Color.GREEN),
-    eALTERNATINGLEADS(6, "Wechselführung", Color.GREEN),
-    eFOLLOWED(7, "Nachstieg", Color.GREEN),
-    eHINTERHERGEHAMPELT(8, "Hinterhergehampelt", Color.GREEN),
-    eBOTCHED(9, "Gesackt", Color.RED),
-    eSEEN(10, "Zugesehen", Color.CYAN),
-    eVISITED(11, "An den Einstieg gepinktelt", Color.CYAN),
-    eHEARD(12, "Von gehört", Color.CYAN),
-    ePROJECT(13, "Will ich klettern", Color.YELLOW);
+    eSOLO(1, "Solo"),
+    eONSIGHT(2, "Onsight"),
+    eREDPOINT(3, "Rotpunkt"),
+    eALLFREE(4, "Alles frei"),
+    eHOCHGESCHLEUDERT(5, "Irgendwie hochgeschleudert"),
+    eALTERNATINGLEADS(6, "Wechselführung"),
+    eFOLLOWED(7, "Nachstieg"),
+    eHINTERHERGEHAMPELT(8, "Hinterhergehampelt"),
+    eBOTCHED(9, "Gesackt"),
+    eSEEN(10, "Zugesehen"),
+    eVISITED(11, "An den Einstieg gepinktelt"),
+    eHEARD(12, "Von gehört"),
+    ePROJECT(13, "Will ich klettern");
 
     companion object {
 
         private val _BY_ID = HashMap<Int, AscendStyle>()
         private val _BY_NAME = HashMap<String, AscendStyle>()
-        private val _BY_COLOR = HashMap<Int, AscendStyle>()
 
         init {
             for (style in values()) {
                 _BY_ID[style.id] = style
                 _BY_NAME[style.styleName] = style
-                _BY_COLOR[style.color] = style
             }
         }
 
@@ -43,6 +39,15 @@ enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
 
         fun fromId(id: Int): AscendStyle? {
             return _BY_ID[id]
+        }
+
+        fun actionOnAscend(styleId: Int, objectId: Int, actionLead: (Int) -> Unit, actionFollow: (Int) -> Unit, actionBotch: (Int) -> Unit, actionProject: (Int) -> Unit) {
+            when (styleId) {
+                in 1..5 -> actionLead(objectId)
+                in 6..8 -> actionFollow(objectId)
+                9 -> actionBotch(objectId)
+                13 -> actionProject(objectId)
+            }
         }
 
         // We need to preserve order given by IDs
@@ -55,15 +60,5 @@ enum class AscendStyle (val id: Int, val styleName: String, val color: Int) {
                 }
                 return orderedNames.toTypedArray()
             }
-
-        fun getPreferredColor(colors: Set<Int>): Int {
-            return when {
-                colors.contains(Color.GREEN) -> Color.GREEN
-                colors.contains(Color.RED) -> Color.RED
-                colors.contains(Color.YELLOW) -> Color.YELLOW
-                colors.contains(Color.CYAN) -> Color.CYAN
-                else -> Color.WHITE
-            }
-        }
     }
 }
