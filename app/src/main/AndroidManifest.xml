@@ -45,5 +45,7 @@
         <activity android:name=".TourbookActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TourbookAscendActivity" />
+        <activity android:name=".AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>
