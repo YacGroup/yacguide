@@ -2,6 +2,7 @@ package com.yacgroup.yacguide
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.TextView
 
 class AboutActivity : BaseNavigationActivity() {
@@ -16,6 +17,7 @@ class AboutActivity : BaseNavigationActivity() {
 
         val textViewAppVersion: TextView = findViewById(R.id.textViewAppVersion)
         textViewAppVersion.text = "Version ${getAppVersion()}"
+        textViewAppVersion.gravity = Gravity.CENTER_HORIZONTAL
     }
 
     private fun getAppVersion() : String {

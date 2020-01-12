@@ -10,7 +10,6 @@
     tools:showIn="@layout/app_bar_about"
     tools:context=".AboutActivity">
 
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
