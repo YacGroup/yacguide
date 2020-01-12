@@ -11,7 +11,7 @@
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
     <string name="nav_header_desc">Yet Another Climbing Guide</string>
-    <string name="nav_header_title">YACGuide</string>
+    <string name="nav_header_title">YACguide</string>
     <string name="nav_header_subtitle">Yet Another Climbing Guide</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
