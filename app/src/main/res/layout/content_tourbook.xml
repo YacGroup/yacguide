@@ -58,7 +58,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#ff00ff00"
             android:buttonTint="@android:color/black"
             android:checked="true"
             android:onClick="showAscends"
@@ -69,20 +68,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#ffff0000"
             android:buttonTint="@android:color/black"
             android:onClick="showBotches"
-            android:text="Säcke" />
+            android:text="@string/botch_text_symbol"/>
 
         <RadioButton
             android:id="@+id/projectsRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#ffffff00"
             android:buttonTint="@android:color/black"
             android:onClick="showProjects"
-            android:text="Projekte" />
+            android:text="@string/project_text_symbol"/>
     </RadioGroup>
 
     <ScrollView

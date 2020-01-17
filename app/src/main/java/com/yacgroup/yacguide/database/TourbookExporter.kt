@@ -1,5 +1,6 @@
 package com.yacgroup.yacguide.database
 
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
@@ -115,8 +116,21 @@ class TourbookExporter(private val _db: AppDatabase) {
             val route = _db.routeDao().getRoute(routeId)
             // route may not exist in database anymore
             if (route != null) {
-                _db.routeDao().updateAscendCount(_db.routeDao().getAscendCount(routeId) + 1, routeId)
-                _db.rockDao().updateAscended(true, route.parentId)
+                AscendStyle.actionOnAscend(
+                        ascend.styleId,
+                        route.id,
+                        _db.routeDao()::incAscendCountLead,
+                        _db.routeDao()::incAscendCountFollow,
+                        _db.routeDao()::incAscendCountBotch,
+                        _db.routeDao()::incAscendCountProject)
+                AscendStyle.actionOnAscend(
+                        ascend.styleId,
+                        route.parentId,
+                        _db.rockDao()::incAscendCountLead,
+                        _db.rockDao()::incAscendCountFollow,
+                        _db.rockDao()::incAscendCountBotch,
+                        _db.rockDao()::incAscendCountProject
+                )
             }
         }
     }

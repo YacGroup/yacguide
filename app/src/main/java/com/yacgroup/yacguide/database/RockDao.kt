@@ -16,8 +16,29 @@ interface RockDao {
     @Query("SELECT * FROM Rock WHERE id = :id")
     fun getRock(id: Int): Rock?
 
-    @Query("UPDATE Rock SET ascended = :ascended WHERE id = :id")
-    fun updateAscended(ascended: Boolean, id: Int)
+    @Query("UPDATE Rock SET ascendCountLead = ascendCountLead + 1 WHERE id = :id")
+    fun incAscendCountLead(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountFollow = ascendCountFollow + 1 WHERE id = :id")
+    fun incAscendCountFollow(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountBotch = ascendCountBotch + 1 WHERE id = :id")
+    fun incAscendCountBotch(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountProject = ascendCountProject + 1 WHERE id = :id")
+    fun incAscendCountProject(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountLead = ascendCountLead - 1 WHERE id = :id")
+    fun decAscendCountLead(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountFollow = ascendCountFollow - 1 WHERE id = :id")
+    fun decAscendCountFollow(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountBotch = ascendCountBotch - 1 WHERE id = :id")
+    fun decAscendCountBotch(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountProject = ascendCountProject - 1 WHERE id = :id")
+    fun decAscendCountProject(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(rock: Rock)

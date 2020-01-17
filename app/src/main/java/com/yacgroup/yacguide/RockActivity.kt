@@ -110,6 +110,8 @@ class RockActivity : TableActivity() {
                 typeface = Typeface.NORMAL
                 typeAdd = "  ($type)"
             }
+            val botchAdd = if (rock.ascendCountBotch > 0) getString(R.string.botch) else ""
+            val projectAdd = if (rock.ascendCountProject > 0) getString(R.string.project) else ""
             if (status == Rock.statusProhibited) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
@@ -120,11 +122,13 @@ class RockActivity : TableActivity() {
                 startActivityForResult(intent, 0)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    rock.nr.toString() + "  " + rockName + typeAdd,
+                    "${rock.nr}  $rockName$typeAdd $botchAdd $projectAdd",
                     status.toString(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
-                    if (rock.ascended) Color.GREEN else bgColor,
+                    if (rock.ascendCountLead > 0) customSettings.getColorLead()
+                        else if (rock.ascendCountFollow > 0) customSettings.getColorFollow()
+                            else bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }

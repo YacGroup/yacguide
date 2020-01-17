@@ -1,6 +1,5 @@
 package com.yacgroup.yacguide
 
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -43,7 +42,7 @@ class DescriptionActivity : TableActivity() {
             _route = _route?.let { db.routeDao().getRoute(it.id) } // update route instance
 
             val ascendsButton = findViewById<ImageButton>(R.id.ascendsButton)
-            ascendsButton.visibility = if (_route?.ascendCount ?: 0 > 0) View.VISIBLE else View.INVISIBLE
+            ascendsButton.visibility = if (_route?.ascended() ?: false) View.VISIBLE else View.INVISIBLE
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
         }
     }
@@ -131,7 +130,7 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility = if (_route?.ascendCount ?: 0 > 0) View.VISIBLE else View.INVISIBLE
+        findViewById<View>(R.id.ascendsButton).visibility = if (_route?.ascended() ?: false) View.VISIBLE else View.INVISIBLE
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()

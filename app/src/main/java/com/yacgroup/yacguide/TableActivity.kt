@@ -10,16 +10,19 @@ import android.widget.Toast
 
 import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.network.JSONWebParser
+import com.yacgroup.yacguide.utils.CustomSettings
 import com.yacgroup.yacguide.utils.NetworkUtils
 
 abstract class TableActivity : BaseNavigationActivity(), UpdateListener {
     protected lateinit var db: AppDatabase
+    protected lateinit var customSettings: CustomSettings
     protected var jsonParser: JSONWebParser? = null
     private var _updateDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppDatabase.getAppDatabase(this)
+        customSettings = CustomSettings.getCustomSettings();
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -41,7 +44,6 @@ abstract class TableActivity : BaseNavigationActivity(), UpdateListener {
     }
 
     open fun showComments(v: View) {}
-
 
     override fun onResume() {
         super.onResume()
