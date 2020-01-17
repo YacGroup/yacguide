@@ -96,7 +96,7 @@ abstract class AppDatabase : RoomDatabase() {
         ascendDao().delete(ascend)
     }
 
-    // Some default stuff necessary for tourbook if according objects have
+    // Some default stuff necessary for import_export if according objects have
     // been deleted from the database
     fun createUnknownRoute(): Route {
         val route = Route()

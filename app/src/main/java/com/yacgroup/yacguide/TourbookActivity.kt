@@ -54,15 +54,11 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.tourbook, menu)
+        menuInflater.inflate(R.menu.import_export, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_export -> export()
             else -> return super.onOptionsItemSelected(item)
@@ -95,18 +91,18 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    fun goToNextYear(v: View) {
+    fun goToNext(v: View) {
         if (++_currentYearIdx < _availableYears.size) {
-            findViewById<View>(R.id.prevYearButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.nextYearButton).visibility = if (_currentYearIdx == _availableYears.size - 1) View.INVISIBLE else View.VISIBLE
+            findViewById<View>(R.id.prevButton).visibility = View.VISIBLE
+            findViewById<View>(R.id.nextButton).visibility = if (_currentYearIdx == _availableYears.size - 1) View.INVISIBLE else View.VISIBLE
             _displayContent(_availableYears[_currentYearIdx])
         }
     }
 
-    fun goToPreviousYear(v: View) {
+    fun goToPrevious(v: View) {
         if (--_currentYearIdx >= 0) {
-            findViewById<View>(R.id.nextYearButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.prevYearButton).visibility = if (_currentYearIdx == 0) View.INVISIBLE else View.VISIBLE
+            findViewById<View>(R.id.nextButton).visibility = View.VISIBLE
+            findViewById<View>(R.id.prevButton).visibility = if (_currentYearIdx == 0) View.INVISIBLE else View.VISIBLE
             _displayContent(_availableYears[_currentYearIdx])
         }
     }
@@ -146,7 +142,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        (findViewById<View>(R.id.yearTextView) as TextView).text = if (year == 0) "" else year.toString()
+        (findViewById<View>(R.id.currentTextView) as TextView).text = if (year == 0) "" else year.toString()
 
         var currentMonth = -1
         var currentDay = -1
@@ -272,12 +268,12 @@ class TourbookActivity : BaseNavigationActivity() {
         Arrays.sort(_availableYears)
         _currentYearIdx = _availableYears.size - 1
         if (_currentYearIdx >= 0) {
-            findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
-            findViewById<View>(R.id.prevYearButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
+            findViewById<View>(R.id.nextButton).visibility = View.INVISIBLE
+            findViewById<View>(R.id.prevButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
             _displayContent(_availableYears[_currentYearIdx])
         } else {
-            findViewById<View>(R.id.nextYearButton).visibility = View.INVISIBLE
-            findViewById<View>(R.id.prevYearButton).visibility = View.INVISIBLE
+            findViewById<View>(R.id.nextButton).visibility = View.INVISIBLE
+            findViewById<View>(R.id.prevButton).visibility = View.INVISIBLE
             _displayContent(0)
         }
     }

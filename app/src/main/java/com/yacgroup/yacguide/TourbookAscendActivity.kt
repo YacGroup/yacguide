@@ -5,8 +5,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -23,7 +24,7 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.util.ArrayList
 
-class TourbookAscendActivity : AppCompatActivity() {
+class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: AppDatabase
     private var _ascends: Array<Ascend> = emptyArray()
@@ -34,7 +35,6 @@ class TourbookAscendActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tourbook_ascend)
         this.title = "Tourenbuch"
 
         _db = AppDatabase.getAppDatabase(this)
@@ -48,12 +48,21 @@ class TourbookAscendActivity : AppCompatActivity() {
             _routeId = _ascends[0].routeId
         } else if (_routeId != AppDatabase.INVALID_ID) {
             _ascends = _db.ascendDao().getAscendsForRoute(_routeId)
-            findViewById<View>(R.id.nextAscendButton).visibility = if (_ascends.size > 1) View.VISIBLE else View.INVISIBLE
+            findViewById<View>(R.id.nextButton).visibility = if (_ascends.size > 1) View.VISIBLE else View.INVISIBLE
         }
         _maxAscendIdx = _ascends.size - 1
         if (_ascends.isNotEmpty()) {
             _displayContent(_ascends[_currentAscendIdx])
         }
+    }
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_tourbook_ascend
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.edit_delete, menu)
+        return true
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -64,44 +73,38 @@ class TourbookAscendActivity : AppCompatActivity() {
         _displayContent(_ascends[_currentAscendIdx])
     }
 
-    fun back(v: View) {
-        val resultIntent = Intent()
-        setResult(_resultUpdated, resultIntent)
-        finish()
-    }
-
-    fun showRoute(v: View) {
-        _db.routeDao().getRoute(_ascends[_currentAscendIdx].routeId)?.id?.let {
-            val intent = Intent(this, DescriptionActivity::class.java)
-            intent.putExtra(IntentConstants.ROUTE_KEY, it)
-            startActivity(intent)
-        }
-    }
-
-
-    fun goToNextAscend(v: View) {
+    fun goToNext(v: View) {
         if (++_currentAscendIdx <= _maxAscendIdx) {
-            findViewById<View>(R.id.prevAscendButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.nextAscendButton).visibility = if (_currentAscendIdx == _maxAscendIdx) View.INVISIBLE else View.VISIBLE
+            findViewById<View>(R.id.prevButton).visibility = View.VISIBLE
+            findViewById<View>(R.id.nextButton).visibility = if (_currentAscendIdx == _maxAscendIdx) View.INVISIBLE else View.VISIBLE
             _displayContent(_ascends[_currentAscendIdx])
         }
     }
 
-    fun goToPreviousAscend(v: View) {
+    fun goToPrevious(v: View) {
         if (--_currentAscendIdx >= 0) {
-            findViewById<View>(R.id.nextAscendButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.prevAscendButton).visibility = if (_currentAscendIdx == 0) View.INVISIBLE else View.VISIBLE
+            findViewById<View>(R.id.nextButton).visibility = View.VISIBLE
+            findViewById<View>(R.id.prevButton).visibility = if (_currentAscendIdx == 0) View.INVISIBLE else View.VISIBLE
             _displayContent(_ascends[_currentAscendIdx])
         }
     }
 
-    fun edit(v: View) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_edit -> edit()
+            R.id.action_delete -> delete()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
+    }
+
+    private fun edit() {
         val intent = Intent(this@TourbookAscendActivity, AscendActivity::class.java)
         intent.putExtra(IntentConstants.ASCEND_KEY, _ascends[_currentAscendIdx].id)
         startActivityForResult(intent, 0)
     }
 
-    fun delete(v: View) {
+    private fun delete() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog)
         (dialog.findViewById<View>(R.id.dialogText) as TextView).text = "Diese Begehung löschen?"

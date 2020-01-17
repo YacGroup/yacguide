@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_gravity="center"
     android:clickable="true"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:id="@+id/dialogLayout">
+    android:focusableInTouchMode="true">
 
     <TextView
         android:layout_width="match_parent"
@@ -22,11 +22,9 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/styleLayout">
+        android:layout_gravity="center">
 
     <TextView
-        android:id="@+id/styleTextView"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="Stil:" />
@@ -41,11 +39,9 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/dateLayout">
+        android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/dateTextView"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Datum:" />
@@ -65,11 +61,9 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/partnersLayout">
+        android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/partnersTextView"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Seilpartner:" />
@@ -89,11 +83,9 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/notesLayout">
+        android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/notesTextView"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Bemerkungen:" />
@@ -113,14 +105,12 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/yesNoLayout">
+        android:layout_gravity="center">
 
     <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:id="@+id/yesButton"
             android:text="OK"
             android:onClick="enter"
             />
@@ -129,7 +119,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:id="@+id/noButton"
         android:text="Abbrechen"
         android:onClick="cancel"
         />

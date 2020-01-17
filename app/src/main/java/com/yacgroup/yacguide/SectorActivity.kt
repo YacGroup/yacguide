@@ -14,7 +14,7 @@ import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class SectorActivity : TableActivity() {
+class SectorActivity : UpdatableTableActivity() {
 
     private var _region: Region? = null
 
@@ -28,7 +28,7 @@ class SectorActivity : TableActivity() {
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_table
+        return R.layout.activity_sector
     }
 
     override fun showComments(v: View) {

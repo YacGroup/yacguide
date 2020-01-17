@@ -17,7 +17,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="download">Aktualisieren</string>
-    <string name="delete">Gebiet löschen</string>
+    <string name="delete">Löschen</string>
+    <string name="edit">Bearbeiten</string>
     <string name="rock_search">Felsen suchen</string>
     <string name="dialog_question_update">Diesen Bereich aktualisieren?</string>
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>

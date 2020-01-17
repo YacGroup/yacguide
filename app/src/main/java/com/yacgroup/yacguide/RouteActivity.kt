@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -14,19 +13,12 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RockComment
 import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
-
-import java.util.HashSet
 
 class RouteActivity : TableActivity() {
 
     private var _rock: Rock? = null
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return true
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +80,7 @@ class RouteActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = "${_rock?.nr} ${_rock?.name}"
+        this.title = "${_rock?.name}"
 
         val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyArray()
         for (route in routes) {
@@ -122,8 +114,6 @@ class RouteActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }
-
-    override fun deleteContent() {}
 
     override fun getLayoutId(): Int {
         return R.layout.activity_route
