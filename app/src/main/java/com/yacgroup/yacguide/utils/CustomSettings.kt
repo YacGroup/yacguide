@@ -2,16 +2,16 @@ package com.yacgroup.yacguide.utils
 
 import android.graphics.Color
 
-class CustomSettings () {
+class CustomSettings {
 
     private val _colorLead = Color.GREEN
     private val _colorFollow = Color.GREEN
 
-    fun getColorLead() : Int {
+    fun getColorLead(): Int {
         return _colorLead
     }
 
-    fun getColorFollow() : Int {
+    fun getColorFollow(): Int {
         return _colorFollow
     }
 
@@ -25,10 +25,5 @@ class CustomSettings () {
             }
             return _instance as CustomSettings
         }
-
-        fun destroyInstance() {
-                _instance = null
-        }
     }
-
 }

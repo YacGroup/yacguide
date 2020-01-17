@@ -27,7 +27,7 @@ class Route {
     var ascendCountProject: Short = 0
     var parentId: Int = 0
 
-    fun ascended() : Boolean {
+    fun ascended(): Boolean {
         return ascendCountLead.or(ascendCountFollow).or(ascendCountBotch).or(ascendCountProject) > 0
     }
 

@@ -70,7 +70,7 @@
             android:layout_weight="1"
             android:buttonTint="@android:color/black"
             android:onClick="showBotches"
-            android:text="Säcke \u26A1"/>
+            android:text="@string/botch_text_symbol"/>
 
         <RadioButton
             android:id="@+id/projectsRadioButton"
@@ -79,7 +79,7 @@
             android:layout_weight="1"
             android:buttonTint="@android:color/black"
             android:onClick="showProjects"
-            android:text="Projekte \u2117" />
+            android:text="@string/project_text_symbol"/>
     </RadioGroup>
 
     <ScrollView
