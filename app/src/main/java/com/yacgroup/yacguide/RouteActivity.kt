@@ -93,7 +93,9 @@ class RouteActivity : TableActivity() {
         val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyArray()
         for (route in routes) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
-            val commentCountAddon = if (commentCount > 0) "   [$commentCount]" else ""
+            val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
+            val botchAdd = if (route.ascendCountBotch > 0) getString(R.string.botch) else ""
+            val projectAdd = if (route.ascendCountProject > 0) getString(R.string.project) else ""
 
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
@@ -108,23 +110,14 @@ class RouteActivity : TableActivity() {
                 bgColor = Color.LTGRAY
             }
 
-            val ascends = db.ascendDao().getAscendsForRoute(route.id)
-            if (ascends.isNotEmpty()) {
-                val rowColors = HashSet<Int>()
-                for (ascend in ascends) {
-                    AscendStyle.fromId(ascend.styleId)?.let {
-                        rowColors.add(it.color)
-                    }
-                }
-                bgColor = AscendStyle.getPreferredColor(rowColors)
-            }
-
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${route.name.orEmpty()}$commentCountAddon",
+                    "${route.name.orEmpty()}$commentCountAdd $botchAdd $projectAdd",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
-                    bgColor,
+                    if (route.ascendCountLead > 0) customSettings.getColorLead()
+                        else if (route.ascendCountFollow > 0) customSettings.getColorFollow()
+                            else bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }

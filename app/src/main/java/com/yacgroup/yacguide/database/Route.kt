@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
 import java.util.HashMap
+import kotlin.experimental.or
 
 @Entity
 class Route {
@@ -20,8 +21,15 @@ class Route {
     var firstAscendDate: String? = null
     var typeOfClimbing: String? = null
     var description: String? = null
-    var ascendCount: Int = 0
+    var ascendCountLead: Short = 0
+    var ascendCountFollow: Short = 0
+    var ascendCountBotch: Short = 0
+    var ascendCountProject: Short = 0
     var parentId: Int = 0
+
+    fun ascended(): Boolean {
+        return ascendCountLead.or(ascendCountFollow).or(ascendCountBotch).or(ascendCountProject) > 0
+    }
 
     companion object {
 
