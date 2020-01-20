@@ -11,7 +11,7 @@ import com.yacgroup.yacguide.network.CountryParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class CountryActivity : TableActivity() {
+class CountryActivity : UpdatableTableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,6 +45,6 @@ class CountryActivity : TableActivity() {
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_table
+        return R.layout.activity_country
     }
 }

@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/baseLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#bbbbbb"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".RockActivity"
-    tools:showIn="@layout/app_bar_rock">
+    android:layout_height="wrap_content"
+    android:background="#bbbbbb">
 
     <EditText
         android:id="@+id/searchEditText"
@@ -30,19 +27,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchEditText">
-
-        <LinearLayout
-            android:id="@+id/tableLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
 </android.support.constraint.ConstraintLayout>

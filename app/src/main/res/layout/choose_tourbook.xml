@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/ascendsRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:buttonTint="@android:color/black"
+        android:checked="true"
+        android:onClick="showAscends"
+        android:text="Begehungen" />
+
+    <RadioButton
+        android:id="@+id/botchesRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:buttonTint="@android:color/black"
+        android:onClick="showBotches"
+        android:text="@string/botch_text_symbol"/>
+
+    <RadioButton
+        android:id="@+id/projectsRadioButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:buttonTint="@android:color/black"
+        android:onClick="showProjects"
+        android:text="@string/project_text_symbol"/>
+
+</RadioGroup>

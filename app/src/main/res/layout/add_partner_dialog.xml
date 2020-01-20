@@ -3,8 +3,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:id="@+id/dialogLayout">
+    android:layout_gravity="center">
 
     <EditText
         android:id="@+id/addPartnerEditText"
@@ -17,16 +16,15 @@
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/yesNoLayout">
+        android:layout_gravity="center">
 
     <Button xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/okButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="OK"
-            />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="OK"
+        />
 
     <Button xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/cancelButton"

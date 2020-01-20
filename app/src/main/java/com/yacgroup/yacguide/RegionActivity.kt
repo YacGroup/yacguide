@@ -11,7 +11,7 @@ import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RegionActivity : TableActivity() {
+class RegionActivity : UpdatableTableActivity() {
 
     private var _countryName: String? = null
 
@@ -22,7 +22,7 @@ class RegionActivity : TableActivity() {
     }
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_table
+        return R.layout.activity_region
     }
 
     override fun displayContent() {
