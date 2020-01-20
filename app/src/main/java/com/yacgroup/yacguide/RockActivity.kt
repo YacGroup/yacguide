@@ -21,7 +21,7 @@ import com.yacgroup.yacguide.network.RockParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RockActivity : TableActivity() {
+class RockActivity : UpdatableTableActivity() {
 
     private var _sector: Sector? = null
     private var _onlySummits: Boolean = false

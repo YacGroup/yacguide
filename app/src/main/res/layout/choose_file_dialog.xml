@@ -3,15 +3,13 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:id="@+id/dialogLayout">
+    android:layout_gravity="center">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/yesNoLayout">
+        android:layout_gravity="center">
 
         <Button xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
@@ -29,6 +27,7 @@
             android:text="Abbrechen"
             />
     </LinearLayout>
+
     <TextView
         android:id="@+id/currentPathTextView"
         android:layout_width="wrap_content"

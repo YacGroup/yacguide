@@ -16,8 +16,6 @@
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/nav_tourbook"/>
-
         <include layout="@layout/content_table"/>
 
     </LinearLayout>

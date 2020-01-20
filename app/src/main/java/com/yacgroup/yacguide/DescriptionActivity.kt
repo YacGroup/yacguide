@@ -183,8 +183,6 @@ class DescriptionActivity : TableActivity() {
                 Typeface.BOLD))
     }
 
-    override fun deleteContent() {}
-
     override fun getLayoutId(): Int {
         return R.layout.activity_description
     }
