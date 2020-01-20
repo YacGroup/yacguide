@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/YacGroup/yacguide.svg?branch=master)](https://travis-ci.org/YacGroup/yacguide)
 
-# YACGuide - Yet Another Climbing Guide
+# YAC Guide - Yet Another Climbing Guide
 
 Offline tool for
 [sandsteinklettern.de](http://www.sandsteinklettern.de).

@@ -12,10 +12,11 @@
             android:id="@+id/nav_tourbook"
             android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="@string/menu_tourbook"/>
+        <!-- Title is correctly set in class BaseNavigationActivity -->
         <item
             android:id="@+id/nav_about"
             android:icon="@android:drawable/ic_menu_info_details"
-            android:title="Über YACguide"/>
+            android:title="@string/menu_about"/>
     </group>
 
 </menu>

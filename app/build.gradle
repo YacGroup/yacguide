@@ -16,7 +16,7 @@ androidGitVersion {
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.yacgroupe.yacguide"
+        applicationId "com.yacgroup.yacguide"
         minSdkVersion 22
         targetSdkVersion 28
         versionCode androidGitVersion.code()
