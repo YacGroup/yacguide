@@ -112,6 +112,7 @@ class RockActivity : UpdatableTableActivity() {
             }
             val botchAdd = if (rock.ascendCountBotch > 0) getString(R.string.botch) else ""
             val projectAdd = if (rock.ascendCountProject > 0) getString(R.string.project) else ""
+            val watchingAdd = if (rock.ascendCountWatching > 0) getString(R.string.watching) else ""
             if (status == Rock.statusProhibited) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
@@ -122,7 +123,7 @@ class RockActivity : UpdatableTableActivity() {
                 startActivityForResult(intent, 0)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rock.nr}  $rockName$typeAdd $botchAdd $projectAdd",
+                    "${rock.nr}  $rockName$typeAdd$botchAdd$projectAdd$watchingAdd",
                     status.toString(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,

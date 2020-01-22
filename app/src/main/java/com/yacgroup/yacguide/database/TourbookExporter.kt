@@ -122,6 +122,7 @@ class TourbookExporter(private val _db: AppDatabase) {
                         _db.routeDao()::incAscendCountLead,
                         _db.routeDao()::incAscendCountFollow,
                         _db.routeDao()::incAscendCountBotch,
+                        _db.routeDao()::incAscendCountWatching,
                         _db.routeDao()::incAscendCountProject)
                 AscendStyle.actionOnAscend(
                         ascend.styleId,
@@ -129,6 +130,7 @@ class TourbookExporter(private val _db: AppDatabase) {
                         _db.rockDao()::incAscendCountLead,
                         _db.rockDao()::incAscendCountFollow,
                         _db.rockDao()::incAscendCountBotch,
+                        _db.rockDao()::incAscendCountWatching,
                         _db.rockDao()::incAscendCountProject
                 )
             }

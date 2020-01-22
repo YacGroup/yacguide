@@ -63,10 +63,6 @@ class RockParser(
             r.status = ParserUtils.jsonField2Char(jsonRock, "status")
             r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
             r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
-            r.ascendCountLead = 0
-            r.ascendCountFollow = 0
-            r.ascendCountBotch = 0
-            r.ascendCountProject = 0
             r.parentId = _sectorId
             db.rockDao().insert(r)
         }
@@ -100,6 +96,7 @@ class RockParser(
                         {r.ascendCountLead++},
                         {r.ascendCountFollow++},
                         {r.ascendCountBotch++},
+                        {r.ascendCountWatching++},
                         {r.ascendCountProject++}
                 )
             }
@@ -117,6 +114,7 @@ class RockParser(
                             db.rockDao()::incAscendCountLead,
                             db.rockDao()::incAscendCountFollow,
                             db.rockDao()::incAscendCountBotch,
+                            db.rockDao()::incAscendCountWatching,
                             db.rockDao()::incAscendCountProject
                     )
                 }
