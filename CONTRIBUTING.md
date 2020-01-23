@@ -2,10 +2,12 @@
 
 **This step is only required, if you work at the build environment!**
 
-Build the Docker image inside the project root directory.
+Clone the repository
+[yacguide-docker-ci](https://github.com/YacGroup/yacguide-docker-ci)
+and run the following command inside repository root directory:
 
 ```shell
-docker build -f docker/Dockerfile -t yacgroup/yacguide-build .
+docker build -f Dockerfile -t yacgroup/yacguide-build .
 ```
 
 ## Building the APK locally
