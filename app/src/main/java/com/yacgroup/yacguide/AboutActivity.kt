@@ -13,7 +13,7 @@ class AboutActivity : BaseNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.title = String.format(getString(R.string.menu_about), getString(R.string.app_name))
+        this.title = getString(R.string.menu_about, getString(R.string.app_name))
 
         val textViewAppVersion: TextView = findViewById(R.id.textViewAppVersion)
         textViewAppVersion.text = "Version ${getAppVersion()}"

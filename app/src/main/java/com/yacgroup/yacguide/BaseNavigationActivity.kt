@@ -33,7 +33,7 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navMenu: Menu = navView.getMenu()
         navMenu.findItem(R.id.nav_about).setTitle(
-                String.format(getString(R.string.menu_about), getString(R.string.app_name)))
+                getString(R.string.menu_about, getString(R.string.app_name)))
         val toggle = ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
