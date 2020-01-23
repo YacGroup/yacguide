@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">YAC Guide</string>
+    <string name="app_name">YacGuide</string>
     <string name="app_name_long">Yet Another Climbing Guide</string>
     <string name="title_climbing_partner">Kletterpartner</string>
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
