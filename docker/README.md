@@ -1,11 +1,11 @@
-## Yacguide Docker Build Environment
+## YacGuide Docker Build Environment
 
-This is the Docker image for building the `yacguide` Android app.
+This is the Docker image for building the `YacGuide` Android app.
 
-See <https://github.com/yacgroup/yacguide> for more information.
+See <https://github.com/YacGroup/YacGuide> for more information.
 
 For manually building the image run following command inside root of
-your local `yacguide` Git repository:
+your local Git repository:
 
 ``` shell
 docker build -f docker/Dockerfile -t yacgroup/yacguide-build .

@@ -1,18 +1,19 @@
-<resources>
-    <string name="app_name">YACGuide</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">YacGuide</string>
+    <string name="app_name_long">Yet Another Climbing Guide</string>
     <string name="title_climbing_partner">Kletterpartner</string>
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
     <string name="hint_no_name">Kein Name eingegeben</string>
     <string name="hint_name_already_used">Name bereits vergeben</string>
-    <string name="copyright_osm" />
     <string name="menu_home">Übersicht</string>
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
-    <string name="nav_header_desc">Yet Another Climbing Guide</string>
-    <string name="nav_header_title">YACguide</string>
-    <string name="nav_header_subtitle">Yet Another Climbing Guide</string>
+    <string name="menu_about">Über <xliff:g id="app_name">%1$s</xliff:g></string>
+    <string name="nav_header_desc">@string/app_name_long</string>
+    <string name="nav_header_title">@string/app_name</string>
+    <string name="nav_header_subtitle">@string/app_name_long</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
