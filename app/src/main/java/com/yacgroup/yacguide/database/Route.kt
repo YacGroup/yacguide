@@ -24,11 +24,12 @@ class Route {
     var ascendCountLead: Short = 0
     var ascendCountFollow: Short = 0
     var ascendCountBotch: Short = 0
+    var ascendCountWatching: Short = 0
     var ascendCountProject: Short = 0
     var parentId: Int = 0
 
     fun ascended(): Boolean {
-        return ascendCountLead.or(ascendCountFollow).or(ascendCountBotch).or(ascendCountProject) > 0
+        return ascendCountLead.or(ascendCountFollow).or(ascendCountBotch).or(ascendCountWatching).or(ascendCountProject) > 0
     }
 
     companion object {

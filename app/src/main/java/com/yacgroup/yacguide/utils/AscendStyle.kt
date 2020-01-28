@@ -41,11 +41,18 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             return _BY_ID[id]
         }
 
-        fun actionOnAscend(styleId: Int, objectId: Int, actionLead: (Int) -> Unit, actionFollow: (Int) -> Unit, actionBotch: (Int) -> Unit, actionProject: (Int) -> Unit) {
+        fun actionOnAscend(styleId: Int,
+                           objectId: Int,
+                           actionLead: (Int) -> Unit,
+                           actionFollow: (Int) -> Unit,
+                           actionBotch: (Int) -> Unit,
+                           actionWatching: (Int) -> Unit,
+                           actionProject: (Int) -> Unit) {
             when (styleId) {
                 in 1..5 -> actionLead(objectId)
                 in 6..8 -> actionFollow(objectId)
                 9 -> actionBotch(objectId)
+                in 10..12 -> actionWatching(objectId)
                 13 -> actionProject(objectId)
             }
         }

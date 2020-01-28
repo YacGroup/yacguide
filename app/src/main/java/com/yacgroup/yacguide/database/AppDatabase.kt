@@ -82,6 +82,7 @@ abstract class AppDatabase : RoomDatabase() {
                     routeDao()::decAscendCountLead,
                     routeDao()::decAscendCountFollow,
                     routeDao()::decAscendCountBotch,
+                    routeDao()::decAscendCountWatching,
                     routeDao()::decAscendCountProject
             );
             AscendStyle.actionOnAscend(
@@ -90,6 +91,7 @@ abstract class AppDatabase : RoomDatabase() {
                     rockDao()::decAscendCountLead,
                     rockDao()::decAscendCountFollow,
                     rockDao()::decAscendCountBotch,
+                    rockDao()::decAscendCountWatching,
                     rockDao()::decAscendCountProject
             )
         }
@@ -137,12 +139,6 @@ abstract class AppDatabase : RoomDatabase() {
                             AppDatabase::class.java, "yac_database").allowMainThreadQueries().build()
                 }
                 return _instance as AppDatabase
-            }
-        }
-
-        fun destroyInstance() {
-            synchronized(AppDatabase::class) {
-                _instance = null
             }
         }
     }

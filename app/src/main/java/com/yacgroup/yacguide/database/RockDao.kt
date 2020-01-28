@@ -25,6 +25,9 @@ interface RockDao {
     @Query("UPDATE Rock SET ascendCountBotch = ascendCountBotch + 1 WHERE id = :id")
     fun incAscendCountBotch(id: Int)
 
+    @Query("UPDATE Rock SET ascendCountWatching = ascendCountWatching + 1 WHERE id = :id")
+    fun incAscendCountWatching(id: Int)
+
     @Query("UPDATE Rock SET ascendCountProject = ascendCountProject + 1 WHERE id = :id")
     fun incAscendCountProject(id: Int)
 
@@ -36,6 +39,9 @@ interface RockDao {
 
     @Query("UPDATE Rock SET ascendCountBotch = ascendCountBotch - 1 WHERE id = :id")
     fun decAscendCountBotch(id: Int)
+
+    @Query("UPDATE Rock SET ascendCountWatching = ascendCountWatching - 1 WHERE id = :id")
+    fun decAscendCountWatching(id: Int)
 
     @Query("UPDATE Rock SET ascendCountProject = ascendCountProject - 1 WHERE id = :id")
     fun decAscendCountProject(id: Int)

@@ -81,6 +81,7 @@ class AscendActivity : AppCompatActivity() {
                         _db.routeDao()::incAscendCountLead,
                         _db.routeDao()::incAscendCountFollow,
                         _db.routeDao()::incAscendCountBotch,
+                        _db.routeDao()::incAscendCountWatching,
                         _db.routeDao()::incAscendCountProject)
                 AscendStyle.actionOnAscend(
                         _styleId,
@@ -88,6 +89,7 @@ class AscendActivity : AppCompatActivity() {
                         _db.rockDao()::incAscendCountLead,
                         _db.rockDao()::incAscendCountFollow,
                         _db.rockDao()::incAscendCountBotch,
+                        _db.rockDao()::incAscendCountWatching,
                         _db.rockDao()::incAscendCountProject
                 )
                 _resultUpdated = IntentConstants.RESULT_UPDATED

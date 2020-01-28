@@ -88,6 +88,7 @@ class RouteActivity : TableActivity() {
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             val botchAdd = if (route.ascendCountBotch > 0) getString(R.string.botch) else ""
             val projectAdd = if (route.ascendCountProject > 0) getString(R.string.project) else ""
+            val watchingAdd = if (route.ascendCountWatching > 0) getString(R.string.watching) else ""
 
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
@@ -103,7 +104,7 @@ class RouteActivity : TableActivity() {
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${route.name.orEmpty()}$commentCountAdd $botchAdd $projectAdd",
+                    "${route.name.orEmpty()}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
