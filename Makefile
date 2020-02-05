@@ -22,18 +22,24 @@ DOCKER_EXEC_CMD := docker exec \
 # Build parameters
 # --------------------------------------------------------------------
 KEYSTORE_FILE := keystore.jks
+FLAVOR := stable
 # Make directories relative because we are mounting the current
 # working directory to another path in the container.
-RELEASE_DIR := app/build/outputs/apk/release
-APK_FILE_UNSIGNED := $(RELEASE_DIR)/app-release-unsigned.apk
-APK_FILE_SIGNED := $(RELEASE_DIR)/app-release-signed.apk
-APK_FILE_DEPLOY := $(RELEASE_DIR)/yacguide.apk
+RELEASE_DIR := app/build/outputs/apk/$(FLAVOR)/release
+APK_FILE_UNSIGNED := $(RELEASE_DIR)/app-$(FLAVOR)-release-unsigned.apk
+APK_FILE_SIGNED := $(RELEASE_DIR)/app-$(FLAVOR)-release-signed.apk
+APK_FILE_DEPLOY := $(RELEASE_DIR)/yacguide-$(FLAVOR).apk
 ifndef NO_DOCKER
 # Run the build scripts inside the container under the current user.
 APK_RUN_CMD := $(DOCKER_EXEC_CMD) $(DOCKER_CONTAINER) /bin/bash -c
 else
 APK_RUN_CMD := /bin/bash -c
 endif
+
+# --------------------------------------------------------------------
+# Internal variables
+# --------------------------------------------------------------------
+FLAVOR_CAP := $(shell echo $(FLAVOR) | sed -e 's/\b\(.\)/\u\1/g')
 
 # --------------------------------------------------------------------
 # General targets
@@ -51,6 +57,7 @@ help::
 	@echo "  NO_DOCKER=true - Do not run commands inside Docker container."
 	@echo "  STOREPASS=\"<PASSOWRD>\" - Keystore password (optional)"
 	@echo "  KEYPASS=\"<PASSOWRD>\" - Key password (optional)"
+	@echo "  FLAVOR=stable|dev - App flavor (optional). Default: stable"
 	@echo ""
 	@echo "Targets:"
 
@@ -88,7 +95,7 @@ $(APK_FILE_UNSIGNED):
 	$(APK_RUN_CMD) './gradlew \
 		--gradle-user-home $$(pwd)/.gradle/ \
 		clean \
-		assembleRelease'
+		assemble$(FLAVOR_CAP)Release'
 
 help::
 	@echo "  apk-sign - sign APK file"
