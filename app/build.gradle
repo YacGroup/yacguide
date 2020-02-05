@@ -30,6 +30,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions 'default'
+    productFlavors {
+        stable {
+            dimension 'default'
+        }
+        dev {
+            dimension 'default'
+            applicationIdSuffix '.dev'
+            versionCode 20200208
+            versionName '20200208'
+        }
+    }
 }
 
 dependencies {
