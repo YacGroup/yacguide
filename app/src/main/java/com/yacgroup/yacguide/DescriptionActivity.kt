@@ -37,7 +37,6 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 class DescriptionActivity : TableActivity() {
 
     private var _route: Route? = null
-    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +52,11 @@ class DescriptionActivity : TableActivity() {
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Note: Once reset, _resultUpdated may not be set back to RESULT_NO_UPDATE again!
         if (resultCode == IntentConstants.RESULT_UPDATED) {
-            _resultUpdated = resultCode
-            _route = _route?.let { db.routeDao().getRoute(it.id) } // update route instance
+            _route = db.routeDao().getRoute(_route!!.id) // update route instance
 
             val ascendsButton = findViewById<ImageButton>(R.id.ascendsButton)
-            ascendsButton.visibility = if (_route?.ascended() ?: false) View.VISIBLE else View.INVISIBLE
+            ascendsButton.visibility = if (_route!!.ascendsBitMask > 0) View.VISIBLE else View.INVISIBLE
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
         }
     }
@@ -147,7 +144,7 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility = if (_route?.ascended() ?: false) View.VISIBLE else View.INVISIBLE
+        findViewById<View>(R.id.ascendsButton).visibility = if (_route!!.ascendsBitMask > 0) View.VISIBLE else View.INVISIBLE
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()

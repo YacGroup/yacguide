@@ -107,15 +107,7 @@ class RockParser(
             r.description = ParserUtils.jsonField2String(jsonRoute, "wegbeschr_d", "wegbeschr_cz")
             val ascends = db.ascendDao().getAscendsForRoute(routeId) // if we re-add a route that has already been marked as ascended in the past
             for (ascend in ascends) {
-                AscendStyle.actionOnAscend(
-                        ascend.styleId,
-                        routeId,
-                        {r.ascendCountLead++},
-                        {r.ascendCountFollow++},
-                        {r.ascendCountBotch++},
-                        {r.ascendCountWatching++},
-                        {r.ascendCountProject++}
-                )
+                r.ascendsBitMask = (r.ascendsBitMask or AscendStyle.bitMask(ascend.styleId))
             }
             r.parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
             db.routeDao().insert(r)
@@ -123,19 +115,10 @@ class RockParser(
 
         // update already ascended rocks
         for (rock in db.rockDao().getAll(_sectorId)) {
-            for (route in db.routeDao().getAll(rock.id)) {
-                for (ascend in db.ascendDao().getAscendsForRoute(route.id)) {
-                    AscendStyle.actionOnAscend(
-                            ascend.styleId,
-                            rock.id,
-                            db.rockDao()::incAscendCountLead,
-                            db.rockDao()::incAscendCountFollow,
-                            db.rockDao()::incAscendCountBotch,
-                            db.rockDao()::incAscendCountWatching,
-                            db.rockDao()::incAscendCountProject
-                    )
-                }
+            for (ascend in db.ascendDao().getAscendsForRock(rock.id)) {
+                rock.ascendsBitMask = (rock.ascendsBitMask or AscendStyle.bitMask(ascend.styleId))
             }
+            db.rockDao().setAscendsBitMask(rock.ascendsBitMask, rock.id)
         }
     }
 

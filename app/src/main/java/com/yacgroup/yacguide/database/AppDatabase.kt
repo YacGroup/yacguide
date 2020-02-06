@@ -90,29 +90,57 @@ abstract class AppDatabase : RoomDatabase() {
         sectorCommentDao().deleteAll(sectorId)
     }
 
-    fun deleteAscend(ascend: Ascend) {
-        val routeId = ascend.routeId
-        if (routeDao().getRoute(routeId) != null) {
-            AscendStyle.actionOnAscend(
-                    ascend.styleId,
-                    routeId,
-                    routeDao()::decAscendCountLead,
-                    routeDao()::decAscendCountFollow,
-                    routeDao()::decAscendCountBotch,
-                    routeDao()::decAscendCountWatching,
-                    routeDao()::decAscendCountProject
-            );
-            AscendStyle.actionOnAscend(
-                    ascend.styleId,
-                    routeDao().getRoute(routeId)!!.parentId,
-                    rockDao()::decAscendCountLead,
-                    rockDao()::decAscendCountFollow,
-                    rockDao()::decAscendCountBotch,
-                    rockDao()::decAscendCountWatching,
-                    rockDao()::decAscendCountProject
-            )
+    fun deleteAscends() {
+        for (rock in rockDao().all) {
+            rock.ascendsBitMask = 0
         }
+        for (route in routeDao().all) {
+            route.ascendsBitMask = 0
+        }
+        for (ascend in ascendDao().all) {
+            ascendDao().delete(ascend)
+        }
+    }
+
+    fun deleteAscend(ascend: Ascend) {
+        uncheckBitMasks(ascend)
         ascendDao().delete(ascend)
+    }
+
+    fun checkBitMasks(ascend: Ascend) {
+        val route = routeDao().getRoute(ascend.routeId)
+        if (route != null) {
+            routeDao().setAscendsBitMask(route.ascendsBitMask or AscendStyle.bitMask(ascend.styleId), route.id)
+            rockDao().setAscendsBitMask(rockDao().getRock(route.parentId)!!.ascendsBitMask or AscendStyle.bitMask(ascend.styleId), route.parentId)
+        }
+    }
+
+    fun uncheckBitMasks(ascend: Ascend) {
+        val route = routeDao().getRoute(ascend.routeId)
+        if (route != null) {
+            val rock = rockDao().getRockForAscend(ascend.id)
+            val rockAscends = ascendDao().getAscendsForRock(rock!!.id)
+            var rockFound = false
+            var routeFound = false
+            for (rockAscend in rockAscends) {
+                if (ascend.id == rockAscend.id) {
+                    continue
+                }
+                if (ascend.styleId == rockAscend.styleId) {
+                    rockFound = true
+                    if (ascend.routeId == rockAscend.routeId) {
+                        routeFound = true
+                        break
+                    }
+                }
+            }
+            if (!rockFound) {
+                rockDao().setAscendsBitMask(rock.ascendsBitMask and AscendStyle.bitMask(ascend.styleId).inv(), rock.id)
+            }
+            if (!routeFound) {
+                routeDao().setAscendsBitMask(route.ascendsBitMask and AscendStyle.bitMask(ascend.styleId).inv(), route.id)
+            }
+        }
     }
 
     // Some default stuff necessary for import_export if according objects have

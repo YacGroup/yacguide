@@ -24,6 +24,9 @@ import android.arch.persistence.room.Query
 
 @Dao
 interface RouteDao {
+    @get:Query("SELECT * FROM Route")
+    val all: Array<Route>
+
     @Query("SELECT * FROM Route WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): Array<Route>
 
@@ -33,35 +36,8 @@ interface RouteDao {
     @Query("UPDATE Route SET description = :description WHERE id = :id")
     fun updateDescription(description: String, id: Int)
 
-    @Query("UPDATE Route SET ascendCountLead = ascendCountLead + 1 WHERE id = :id")
-    fun incAscendCountLead(id: Int)
-
-    @Query("UPDATE Route SET ascendCountFollow = ascendCountFollow + 1 WHERE id = :id")
-    fun incAscendCountFollow(id: Int)
-
-    @Query("UPDATE Route SET ascendCountBotch = ascendCountBotch + 1 WHERE id = :id")
-    fun incAscendCountBotch(id: Int)
-
-    @Query("UPDATE Route SET ascendCountWatching = ascendCountWatching + 1 WHERE id = :id")
-    fun incAscendCountWatching(id: Int)
-
-    @Query("UPDATE Route SET ascendCountProject = ascendCountProject + 1 WHERE id = :id")
-    fun incAscendCountProject(id: Int)
-
-    @Query("UPDATE Route SET ascendCountLead = ascendCountLead - 1 WHERE id = :id")
-    fun decAscendCountLead(id: Int)
-
-    @Query("UPDATE Route SET ascendCountFollow = ascendCountFollow - 1 WHERE id = :id")
-    fun decAscendCountFollow(id: Int)
-
-    @Query("UPDATE Route SET ascendCountBotch = ascendCountBotch - 1 WHERE id = :id")
-    fun decAscendCountBotch(id: Int)
-
-    @Query("UPDATE Route SET ascendCountWatching = ascendCountWatching - 1 WHERE id = :id")
-    fun decAscendCountWatching(id: Int)
-
-    @Query("UPDATE Route SET ascendCountProject = ascendCountProject - 1 WHERE id = :id")
-    fun decAscendCountProject(id: Int)
+    @Query("UPDATE Route SET ascendsBitMask = :bitMask WHERE id = :id")
+    fun setAscendsBitMask(bitMask: Int, id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(route: Route)

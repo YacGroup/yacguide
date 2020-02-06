@@ -48,7 +48,6 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     private var _currentAscendIdx: Int = 0
     private var _maxAscendIdx: Int = 0
     private var _routeId: Int = 0
-    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,10 +83,10 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
-            _resultUpdated = IntentConstants.RESULT_UPDATED
+            Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
+            _ascends[_currentAscendIdx] = _db.ascendDao().getAscend(_ascends[_currentAscendIdx].id)!!
+            _displayContent(_ascends[_currentAscendIdx])
         }
-        _ascends[_currentAscendIdx] = _db.ascendDao().getAscend(_ascends[_currentAscendIdx].id)!!
-        _displayContent(_ascends[_currentAscendIdx])
     }
 
     fun goToNext(v: View) {

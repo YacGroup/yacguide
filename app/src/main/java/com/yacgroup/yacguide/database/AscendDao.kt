@@ -37,6 +37,9 @@ interface AscendDao {
     @Query("SELECT * FROM Ascend WHERE routeId = :routeId ORDER BY year, month, day")
     fun getAscendsForRoute(routeId: Int): Array<Ascend>
 
+    @Query("SELECT Ascend.* FROM Ascend JOIN Route ON routeId = Route.id WHERE Route.parentId = :rockId")
+    fun getAscendsForRock(rockId: Int): Array<Ascend>
+
     @Query("SELECT * FROM Ascend WHERE id = :id")
     fun getAscend(id: Int): Ascend?
 

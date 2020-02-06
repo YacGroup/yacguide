@@ -93,10 +93,14 @@ class TourbookActivity : BaseNavigationActivity() {
         prepareExportDialog()
     }
 
+    override fun onResume() {
+        super.onResume()
+        _displayContent(_availableYears[_currentYearIdx])
+    }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
-            Toast.makeText(this, "Begehung gelöscht", Toast.LENGTH_SHORT).show()
-            _displayContent(_availableYears[_currentYearIdx])
+            Toast.makeText(this, getString(R.string.ascend_deleted), Toast.LENGTH_SHORT).show()
         }
     }
 

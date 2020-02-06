@@ -30,6 +30,7 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RockComment
 import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
@@ -103,9 +104,9 @@ class RouteActivity : TableActivity() {
         for (route in routes) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
-            val botchAdd = if (route.ascendCountBotch > 0) getString(R.string.botch) else ""
-            val projectAdd = if (route.ascendCountProject > 0) getString(R.string.project) else ""
-            val watchingAdd = if (route.ascendCountWatching > 0) getString(R.string.watching) else ""
+            val botchAdd = if (AscendStyle.isBotch(route.ascendsBitMask)) getString(R.string.botch) else ""
+            val projectAdd = if (AscendStyle.isProject(route.ascendsBitMask)) getString(R.string.project) else ""
+            val watchingAdd = if (AscendStyle.isWatching(route.ascendsBitMask)) getString(R.string.watching) else ""
 
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
@@ -125,8 +126,8 @@ class RouteActivity : TableActivity() {
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
-                    if (route.ascendCountLead > 0) customSettings.getColorLead()
-                        else if (route.ascendCountFollow > 0) customSettings.getColorFollow()
+                    if (AscendStyle.isLead(route.ascendsBitMask)) customSettings.getColorLead()
+                        else if (AscendStyle.isFollow(route.ascendsBitMask)) customSettings.getColorFollow()
                             else bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))

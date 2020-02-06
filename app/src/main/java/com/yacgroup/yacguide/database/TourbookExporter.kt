@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide.database
 
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
@@ -55,7 +54,6 @@ class TourbookExporter(private val _db: AppDatabase) {
         } catch (e: Exception) {
             throw JSONException("")
         }
-
     }
 
     @Throws(JSONException::class)
@@ -95,9 +93,7 @@ class TourbookExporter(private val _db: AppDatabase) {
     @Throws(JSONException::class)
     private fun writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
-        for (ascend in _db.ascendDao().all) {
-            _db.deleteAscend(ascend)
-        }
+        _db.deleteAscends()
         _db.partnerDao().deleteAll()
         var ascendId = 1
         var partnerId = 1
@@ -130,27 +126,7 @@ class TourbookExporter(private val _db: AppDatabase) {
 
             ascend.partnerIds = partnerIds
             _db.ascendDao().insert(ascend)
-            val route = _db.routeDao().getRoute(routeId)
-            // route may not exist in database anymore
-            if (route != null) {
-                AscendStyle.actionOnAscend(
-                        ascend.styleId,
-                        route.id,
-                        _db.routeDao()::incAscendCountLead,
-                        _db.routeDao()::incAscendCountFollow,
-                        _db.routeDao()::incAscendCountBotch,
-                        _db.routeDao()::incAscendCountWatching,
-                        _db.routeDao()::incAscendCountProject)
-                AscendStyle.actionOnAscend(
-                        ascend.styleId,
-                        route.parentId,
-                        _db.rockDao()::incAscendCountLead,
-                        _db.rockDao()::incAscendCountFollow,
-                        _db.rockDao()::incAscendCountBotch,
-                        _db.rockDao()::incAscendCountWatching,
-                        _db.rockDao()::incAscendCountProject
-                )
-            }
+            _db.checkBitMasks(ascend)
         }
     }
 }

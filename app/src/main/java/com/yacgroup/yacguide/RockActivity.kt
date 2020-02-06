@@ -35,6 +35,7 @@ import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.network.RockParser
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
@@ -127,9 +128,9 @@ class RockActivity : UpdatableTableActivity() {
                 typeface = Typeface.NORMAL
                 typeAdd = "  ($type)"
             }
-            val botchAdd = if (rock.ascendCountBotch > 0) getString(R.string.botch) else ""
-            val projectAdd = if (rock.ascendCountProject > 0) getString(R.string.project) else ""
-            val watchingAdd = if (rock.ascendCountWatching > 0) getString(R.string.watching) else ""
+            val botchAdd = if (AscendStyle.isBotch(rock.ascendsBitMask)) getString(R.string.botch) else ""
+            val projectAdd = if (AscendStyle.isProject(rock.ascendsBitMask)) getString(R.string.project) else ""
+            val watchingAdd = if (AscendStyle.isWatching(rock.ascendsBitMask)) getString(R.string.watching) else ""
             if (status == Rock.statusProhibited) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
@@ -144,8 +145,8 @@ class RockActivity : UpdatableTableActivity() {
                     status.toString(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
-                    if (rock.ascendCountLead > 0) customSettings.getColorLead()
-                        else if (rock.ascendCountFollow > 0) customSettings.getColorFollow()
+                    if (AscendStyle.isLead(rock.ascendsBitMask)) customSettings.getColorLead()
+                        else if (AscendStyle.isFollow(rock.ascendsBitMask)) customSettings.getColorFollow()
                             else bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))

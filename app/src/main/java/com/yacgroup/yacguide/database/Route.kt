@@ -38,16 +38,8 @@ class Route {
     var firstAscendDate: String? = null
     var typeOfClimbing: String? = null
     var description: String? = null
-    var ascendCountLead: Short = 0
-    var ascendCountFollow: Short = 0
-    var ascendCountBotch: Short = 0
-    var ascendCountWatching: Short = 0
-    var ascendCountProject: Short = 0
+    var ascendsBitMask: Int = 0
     var parentId: Int = 0
-
-    fun ascended(): Boolean {
-        return ascendCountLead.or(ascendCountFollow).or(ascendCountBotch).or(ascendCountWatching).or(ascendCountProject) > 0
-    }
 
     companion object {
 
