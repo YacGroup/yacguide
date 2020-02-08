@@ -1,3 +1,18 @@
+# Index
+
+1. [Contributing to Source Code](#contributing-to-source-code)
+   1. [Adding new Files](#adding-new-files)
+2. [Docker CI Environment](#docker-ci-environment)
+   1. [Building the Docker Image](#building-the-docker-image)
+   2. [Building the APK locally](#building-the-apk-locally)
+3. [Releases](#releases)
+   1. [Release Types](#release-types)
+   2. [Version Name and Number](#version-number)
+   3. [Making Releases](#making-releases)
+
+
+# Contributing to Source Code
+
 ## Adding new Files
 
 If you create a new file it needs to contain a license header. If you
@@ -50,13 +65,14 @@ XML (layout) file:
  -->
 ```
 
+# Docker CI Environment
+
 ## Building the Docker Image
 
 **This step is only required, if you work at the build environment!**
 
-Clone the repository
-[yacguide-docker-ci](https://github.com/YacGroup/yacguide-docker-ci)
-and run the following command inside repository root directory:
+Clone the repository [yacguide-docker-ci] and run the following
+command inside repository root directory:
 
 ```shell
 docker build -f Dockerfile -t yacgroup/yacguide-build .
@@ -69,6 +85,10 @@ the project directory but **DO NOT** commit this file.
 
 The parameters `<storepass>` and `<keypass>` are the keystore and key
 passwords for signing the APK file.
+
+The optional make parameter `FLAVOR=stable|dev` can be used to build
+either the stable or development version. By default the stable
+version is built.
 
 Run the following commands within the repository root.
 
@@ -108,3 +128,71 @@ the command:
 ```shell
 make docker-shell
 ```
+
+# Releases
+
+**NOTE**: At the moment only the development version is available
+because there is no first stable release.
+
+## Release Types
+
+### Stable
+
+Is released in the [F-Droid] app store. The user interface may change
+because the community continuously improves the app. The database will
+always be compatible to the previous version, however, if a database
+change is necessary, the user will be informed how he can convert
+e.g. his tour book.
+
+### Dev
+
+The development version contains regular snapshots which may lead to
+unexpected changes without notice. It can be installed alongside the
+official `YacGuide` app and is available at [F-Droid] under the name
+`YacGuide Dev`. It uses an independent internal database, hence e.g.
+tour book entries from the stable release cannot be accessed
+automatically from the development version and vice versa. However
+usually it is possible to exchange the data via a manual export/import
+step.
+
+## Version Number
+
+### Stable Release
+
+The version number follows the [semantic version scheme] and consists
+of three digits `X.Y.Z`.
+
+* `X` - Increased, if incompatible changes are made.
+* `Y` - Increased by compatible feature changes.
+* `Z` - Increased for bug fixes.
+
+### Development Version
+
+The development version uses the date in the format `YYYYMMDD` as
+version number.
+
+## Making Releases
+
+After performing the steps below, the [F-Droid] server will build and
+sign the app after some time and make it available in the app store.
+
+### Stable Release
+
+Create a annotated Git tag following the corresponding version scheme
+with a leading `v`. E.g. `v1.2.3`.
+
+### Development Version
+
+At the moment this must be done manually by the following steps in the
+`master` branch:
+
+1. Change the `versionCode` and `versionName` of the Android product
+   flavor section in file [build.gradle](app/build.gradle) and commit
+   this change.
+2. Create an annotated Git tag named `dev-YYYYMMDD`.
+3. Push both changes to the GitHub repo.
+
+
+[yacguide-docker-ci]: https://github.com/YacGroup/yacguide-docker-ci
+[F-Droid]: https://f-droid.org
+[semantic version scheme]: http://semver.org/
