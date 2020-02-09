@@ -47,7 +47,6 @@ class AscendActivity : AppCompatActivity() {
     private var _ascend: Ascend? = null
     private var _route: Route? = null
     private var _partnerIds: ArrayList<Int>? = null
-    private var _resultUpdated: Int = IntentConstants.RESULT_NO_UPDATE
     private var _styleId: Int = 0
     private var _year: Int = 0
     private var _month: Int = 0
@@ -85,34 +84,9 @@ class AscendActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun enter(v: View) {
-        val ascend = Ascend()
-
         val existingAscend = _ascend
-        if (existingAscend != null) {
-            ascend.id = existingAscend.id
-        } else {
-            _route?.let {
-                AscendStyle.actionOnAscend(
-                        _styleId,
-                        it.id,
-                        _db.routeDao()::incAscendCountLead,
-                        _db.routeDao()::incAscendCountFollow,
-                        _db.routeDao()::incAscendCountBotch,
-                        _db.routeDao()::incAscendCountWatching,
-                        _db.routeDao()::incAscendCountProject)
-                AscendStyle.actionOnAscend(
-                        _styleId,
-                        it.parentId,
-                        _db.rockDao()::incAscendCountLead,
-                        _db.rockDao()::incAscendCountFollow,
-                        _db.rockDao()::incAscendCountBotch,
-                        _db.rockDao()::incAscendCountWatching,
-                        _db.rockDao()::incAscendCountProject
-                )
-                _resultUpdated = IntentConstants.RESULT_UPDATED
-            }
-        }
 
+        val ascend = Ascend()
         ascend.routeId = _route?.id ?: existingAscend?.routeId ?: AppDatabase.INVALID_ID
         ascend.styleId = _styleId
         ascend.year = _year
@@ -120,9 +94,17 @@ class AscendActivity : AppCompatActivity() {
         ascend.day = _day
         ascend.partnerIds = _partnerIds
         ascend.notes = findViewById<EditText>(R.id.notesEditText).text.toString()
+
+        if (existingAscend != null) {
+            _db.uncheckBitMasks(existingAscend)
+            ascend.id = existingAscend.id
+        }
+
         _db.ascendDao().insert(ascend)
+        _db.checkBitMasks(ascend)
+
         val resultIntent = Intent()
-        setResult(_resultUpdated, resultIntent)
+        setResult(IntentConstants.RESULT_UPDATED, resultIntent)
         finish()
     }
 

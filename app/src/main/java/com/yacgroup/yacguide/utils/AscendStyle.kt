@@ -58,20 +58,40 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             return _BY_ID[id]
         }
 
-        fun actionOnAscend(styleId: Int,
-                           objectId: Int,
-                           actionLead: (Int) -> Unit,
-                           actionFollow: (Int) -> Unit,
-                           actionBotch: (Int) -> Unit,
-                           actionWatching: (Int) -> Unit,
-                           actionProject: (Int) -> Unit) {
-            when (styleId) {
-                in 1..5 -> actionLead(objectId)
-                in 6..8 -> actionFollow(objectId)
-                9 -> actionBotch(objectId)
-                in 10..12 -> actionWatching(objectId)
-                13 -> actionProject(objectId)
-            }
+        fun bitMask(style: AscendStyle): Int {
+            return bitMask(style.id)
+        }
+
+        fun bitMask(styleId: Int): Int {
+            return 0b1 shl (styleId - 1)
+        }
+
+        fun isLead(mask: Int): Boolean {
+            return mask and (bitMask(eSOLO)
+                          or bitMask(eONSIGHT)
+                          or bitMask(eREDPOINT)
+                          or bitMask(eALLFREE)
+                          or bitMask(eHOCHGESCHLEUDERT)) > 0
+        }
+
+        fun isFollow(mask: Int): Boolean {
+            return mask and (bitMask(eALTERNATINGLEADS)
+                          or bitMask(eFOLLOWED)
+                          or bitMask(eHINTERHERGEHAMPELT)) > 0
+        }
+
+        fun isBotch(mask: Int): Boolean {
+            return mask and bitMask(eBOTCHED) > 0
+        }
+
+        fun isWatching(mask: Int): Boolean {
+            return mask and (bitMask(eSEEN)
+                          or bitMask(eVISITED)
+                          or bitMask(eHEARD)) > 0
+        }
+
+        fun isProject(mask: Int): Boolean {
+            return mask and bitMask(ePROJECT) > 0
         }
 
         // We need to preserve order given by IDs

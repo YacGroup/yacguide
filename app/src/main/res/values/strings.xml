@@ -42,6 +42,7 @@
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
     <string name="export">Import/Export</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
+    <string name="ascend_deleted">Begehung gelöscht</string>
     <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
     <string name="date_unknown">Datum unbekannt</string>
 
