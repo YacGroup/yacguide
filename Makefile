@@ -105,14 +105,14 @@ apk-sign: $(APK_FILE_SIGNED)
 
 $(APK_FILE_SIGNED): $(APK_FILE_UNSIGNED)
 	@echo "Signing APK ..."
-	$(APK_RUN_CMD) 'jarsigner \
-		-verbose \
-		-keystore $(KEYSTORE_FILE) \
-		-storepass $(STOREPASS) \
-		-keypass $(KEYPASS) \
-		-signedjar $@ \
-		$< \
-		key0'
+	$(APK_RUN_CMD) \
+		'$${ANDROID_HOME}/build-tools/$${ANDROID_BUILD_TOOLS}/apksigner \
+			sign \
+			--ks $(KEYSTORE_FILE) \
+			--ks-pass pass:$(STOREPASS) \
+			--key-pass pass:$(KEYPASS) \
+			--in $< \
+			--out $@'
 
 help::
 	@echo "  apk-zipalign - zipalign signed APK file"
