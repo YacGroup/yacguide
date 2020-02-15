@@ -6,6 +6,17 @@
 *.html
 *.jks
 
+### Fastlane
+**/fastlane/report.xml
+# deliver temporary files
+**/fastlane/Preview.html
+# snapshot generated screenshots
+**/fastlane/screenshots
+# scan temporary files
+**/fastlane/test_output
+# Ignore automatically generated README.md file
+fastlane/README.md
+
 ### AndroidStudio ###
 # Covers files to be ignored for android development using Android Studio.
 

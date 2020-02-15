@@ -1,0 +1,12 @@
+Offline tool
+for <a href="http://www.sandsteinklettern.de">sandsteinklettern.de</a>
+(development version)
+
+Features:
+<ul>
+   <li>Offline access to climbing route information</li>
+   <li>Tour book</li>
+</ul>
+
+<b>The development version contains regular snapshots which may lead
+to unexpected changes without notice.</b>
