@@ -183,14 +183,19 @@ with a leading `v`. E.g. `v1.2.3`.
 
 ### Development Version
 
-At the moment this must be done manually by the following steps in the
-`master` branch:
+1. Change into the master branch and sync your branch with remote
+   repository.
+2. Make sure that your Git status is clean, e.g. that you have no
+   uncommitted or untracked items.
+3. Run the following `fastlane` command to create and commit
+   the release.
 
-1. Change the `versionCode` and `versionName` of the Android product
-   flavor section in file [build.gradle](app/build.gradle) and commit
-   this change.
-2. Create an annotated Git tag named `dev-YYYYMMDD`.
-3. Push both changes to the GitHub repo.
+   `bundle exec fastlane create_dev_release`
+
+4. After checking that everything is okay, push the changes to the
+   remote repository:
+
+   `git push --follow-tags`
 
 
 [yacguide-docker-ci]: https://github.com/YacGroup/yacguide-docker-ci

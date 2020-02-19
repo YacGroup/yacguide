@@ -1,3 +1,4 @@
+# -*- mode: ruby -*-
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
 #
@@ -16,8 +17,99 @@
 default_platform(:android)
 
 platform :android do
+
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
   end
+
+  desc "Create dev release"
+  lane :create_dev_release do
+    version = get_version(flavor: "dev")
+    set_version(version)
+    create_changelog(version)
+    commit_git(version)
+    create_git_tag(version)
+  end
+
+  desc "Create changelog"
+  private_lane :create_changelog do |opts|
+    require "fileutils"
+
+    changelog_from_git_commits(
+      tag_match_pattern: "dev-*",
+      pretty: "%h - %s",
+    )
+    changelog_text = lane_context[SharedValues::FL_CHANGELOG] + "\n"
+    changelog_filename = opts["version_code"].to_s + ".txt"
+    changelog_path = "../app/src/" + opts["flavor"] +
+                     "/fastlane/metadata/android/en-US/changelogs/"
+    changelog_file = changelog_path + changelog_filename
+    FileUtils.mkdir_p(changelog_path)
+    File.open(changelog_file, "w") do |fobj|
+      fobj.write(changelog_text)
+    end
+    add_path_to_git(path: changelog_file)
+  end
+
+  desc "Set versionCode and versionName in Gradle file"
+  private_lane :set_version do |opts|
+    GRADLE_FILE = "../app/build.gradle"
+    text = ""
+    File.open(GRADLE_FILE, "r") do |fobj|
+      text = fobj.read
+    end
+    if opts["flavor"] == "dev"
+      text = text.sub(/(versionCode)\s+\d+/,
+                      '\1 %d' % opts["version_code"])
+      text = text.sub(/(versionName)\s+'\d+'/,
+                      '\1 \'%s\'' % opts["version_name"])
+    end
+    File.open(GRADLE_FILE, "w") do |fobj|
+      fobj.write(text)
+    end
+    add_path_to_git(path: GRADLE_FILE)
+  end
+
+  desc "Return version information"
+  private_lane :get_version do |opts|
+    if opts[:flavor] == "dev"
+      time = Time.now
+      version_name = time.strftime "%Y%m%d"
+      version_code = version_name.to_i
+    end
+    { "version_code" => version_code,
+      "version_name" => version_name,
+      "flavor" => opts[:flavor],
+    }
+  end
+
+  desc "Create Git tag"
+  private_lane :create_git_tag do |opts|
+    if opts["flavor"] == "dev"
+      add_git_tag(
+        tag: "dev-%s" % opts["version_code"],
+        message: "Daily dev %d" % opts["version_code"],
+      )
+    end
+  end
+
+  desc "Add path to Git"
+  private_lane :add_path_to_git do |opts|
+    require 'pathname'
+
+    # Action 'git_add' needs the paths relative to the repo root.
+    git_path =  Pathname(opts[:path]).
+                  relative_path_from(Pathname.new("../")).to_s
+    git_add(path: git_path)
+  end
+
+  desc "Commit everything to Git"
+  private_lane :commit_git do |opts|
+    if opts["flavor"] == "dev"
+      message = "Daily dev %d" % opts["version_code"]
+    end
+    git_commit(path: ".", message: message)
+  end
+
 end
