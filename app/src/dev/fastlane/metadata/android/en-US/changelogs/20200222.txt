@@ -1,0 +1,4 @@
+9d395bd - Add lane for creating a dev release
+35ca39a - Add initial fastlane setup for F-Droid
+42240b6 - Use apksigner instead of deprecated jarsigner tool
+874d720 - Remove deploy step since the app will be publish via F-Droid
