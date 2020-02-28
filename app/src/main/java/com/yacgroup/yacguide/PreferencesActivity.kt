@@ -27,6 +27,6 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.title = getString(R.string.action_settings)
+        this.setTitle(R.string.action_settings)
     }
 }
