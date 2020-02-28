@@ -71,6 +71,10 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
                 val intent = Intent(this, TourbookActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_preferences -> {
+                val intent = Intent(this, PreferencesActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_about -> {
                 val intent = Intent(this, AboutActivity::class.java)
                 startActivity(intent)

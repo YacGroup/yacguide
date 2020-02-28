@@ -63,6 +63,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TourbookAscendActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".PreferencesActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".PrivacyPolicyActivity"/>
