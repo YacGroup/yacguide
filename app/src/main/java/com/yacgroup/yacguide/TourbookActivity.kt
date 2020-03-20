@@ -95,7 +95,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onResume() {
         super.onResume()
-        _displayContent(_availableYears[_currentYearIdx])
+        _initYears()
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
