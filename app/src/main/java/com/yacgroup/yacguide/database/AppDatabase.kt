@@ -92,10 +92,10 @@ abstract class AppDatabase : RoomDatabase() {
 
     fun deleteAscends() {
         for (rock in rockDao().all) {
-            rock.ascendsBitMask = 0
+            rockDao().setAscendsBitMask(bitMask = 0, id = rock.id)
         }
         for (route in routeDao().all) {
-            route.ascendsBitMask = 0
+            routeDao().setAscendsBitMask(bitMask = 0, id = route.id)
         }
         for (ascend in ascendDao().all) {
             ascendDao().delete(ascend)
