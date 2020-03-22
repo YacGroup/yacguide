@@ -55,8 +55,8 @@ help::
 	@echo ""
 	@echo "Parameters:"
 	@echo "  NO_DOCKER=true - Do not run commands inside Docker container."
-	@echo "  STOREPASS=\"<PASSOWRD>\" - Keystore password (optional)"
-	@echo "  KEYPASS=\"<PASSOWRD>\" - Key password (optional)"
+	@echo "  STOREPASS=\"<password>\" - Keystore password (optional)"
+	@echo "  KEYPASS=\"<password>\" - Key password (optional)"
 	@echo "  FLAVOR=stable|dev - App flavor (optional). Default: stable"
 	@echo ""
 	@echo "Targets:"
@@ -183,7 +183,9 @@ docker-rm:
 	@echo "Removing container '$(DOCKER_CONTAINER)'."
 	-docker container rm $(DOCKER_CONTAINER)
 
-# Start an interactive shell in the Docker container
+help::
+	@echo "  docker-shell - start interactive shell in Docker container"
+
 .PHONY: docker-shell
 docker-shell:
 	$(DOCKER_EXEC_CMD) \
