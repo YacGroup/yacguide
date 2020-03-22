@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMAGE := yacgroup/yacguide-build
+DOCKER_IMAGE := yacgroup/yacguide-build:20200123
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
 USER_ID := $(shell id --user)
