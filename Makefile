@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMAGE := yacgroup/yacguide-build:20200123
+DOCKER_IMAGE := yacgroup/yacguide-build:20200329
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
 USER_ID := $(shell id --user)
@@ -31,9 +31,9 @@ APK_FILE_SIGNED := $(RELEASE_DIR)/app-$(FLAVOR)-release-signed.apk
 APK_FILE_DEPLOY := $(RELEASE_DIR)/yacguide-$(FLAVOR).apk
 ifndef NO_DOCKER
 # Run the build scripts inside the container under the current user.
-APK_RUN_CMD := $(DOCKER_EXEC_CMD) $(DOCKER_CONTAINER) /bin/bash -c
+EXEC_CMD := $(DOCKER_EXEC_CMD) $(DOCKER_CONTAINER) /bin/bash -c
 else
-APK_RUN_CMD := /bin/bash -c
+EXEC_CMD := /bin/bash -c
 endif
 
 # --------------------------------------------------------------------
@@ -58,6 +58,7 @@ help::
 	@echo "  STOREPASS=\"<password>\" - Keystore password (optional)"
 	@echo "  KEYPASS=\"<password>\" - Key password (optional)"
 	@echo "  FLAVOR=stable|dev - App flavor (optional). Default: stable"
+	@echo "  SHELL_CMD=\"<shell command>\" - Shell command to be run (optional)"
 	@echo ""
 	@echo "Targets:"
 
@@ -81,6 +82,16 @@ help::
 clean:
 	$(RM) -r app/build
 
+help::
+	@echo "  run-shell-cmd - run a shell command provided by parameter"
+	@echo "                  SHELL_CMD inside the Docker container."
+	@echo "                  If NO_DOCKER=true, the command is"
+	@echo "                  executed locally."
+
+.PHONY: run-shell-cmd
+run-shell-cmd:
+	$(EXEC_CMD) '$(SHELL_CMD)'
+
 # --------------------------------------------------------------------
 # APK build commands
 # --------------------------------------------------------------------
@@ -92,7 +103,7 @@ apk-build: $(APK_FILE_UNSIGNED)
 
 $(APK_FILE_UNSIGNED):
 	@echo "Building unsigned APK ..."
-	$(APK_RUN_CMD) './gradlew \
+	$(EXEC_CMD) './gradlew \
 		--gradle-user-home $$(pwd)/.gradle/ \
 		clean \
 		assemble$(FLAVOR_CAP)Release'
@@ -105,7 +116,7 @@ apk-sign: $(APK_FILE_SIGNED)
 
 $(APK_FILE_SIGNED): $(APK_FILE_UNSIGNED)
 	@echo "Signing APK ..."
-	$(APK_RUN_CMD) \
+	$(EXEC_CMD) \
 		'$${ANDROID_HOME}/build-tools/$${ANDROID_BUILD_TOOLS}/apksigner \
 			sign \
 			--ks $(KEYSTORE_FILE) \
@@ -123,7 +134,7 @@ apk-zipalign: $(APK_FILE_DEPLOY)
 # https://developer.android.com/studio/command-line/zipalign
 $(APK_FILE_DEPLOY): $(APK_FILE_SIGNED)
 	@echo "ZIP alignment ..."
-	$(APK_RUN_CMD) \
+	$(EXEC_CMD) \
 		'$${ANDROID_HOME}/build-tools/$${ANDROID_BUILD_TOOLS}/zipalign \
 			-f 4 $< $@'
 
@@ -155,12 +166,15 @@ docker-run:
 		--mount type=bind,src="$(PWD)",dst="$(DOCKER_MOUNT_TARGET)" \
 		$(DOCKER_IMAGE) /bin/bash -c 'tail -f /dev/null'
 
+.PHONY: docker-prep
+docker-prep: docker-prep-user fastlane-setup
+
 # Create a user inside the container with the same UID and GID as the
 # current user. This makes sure that the files and directories of
 # local Git repository are modified with the same permissions.
-.PHONY: docker-prep
-docker-prep:
-	@echo "Preparing container ..."
+.PHONY: docker-prep-user
+docker-prep-user:
+	@echo "Preparing user and group inside container ..."
 	docker exec \
 		$(DOCKER_CONTAINER) \
 		/bin/bash -c '$(GROUP_ADD_CMD) && $(USER_ADD_CMD)'
@@ -193,3 +207,19 @@ docker-shell:
 		--tty \
 		$(DOCKER_CONTAINER) \
 		/bin/bash
+
+# --------------------------------------------------------------------
+# Fastlane commands
+# --------------------------------------------------------------------
+# Install required Ruby Gems for Fastlane
+.PHONY: fastlane-setup
+fastlane-setup:
+	@echo "Running Faslane setup ..."
+	$(EXEC_CMD) "bundle install --path vendor/bundle"
+
+help::
+	@echo "  tests - run tests"
+
+.PHONY: tests
+tests:
+	$(EXEC_CMD) "bundle exec fastlane test"

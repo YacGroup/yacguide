@@ -17,6 +17,10 @@
 # Ignore automatically generated README.md file
 fastlane/README.md
 
+### Ruby
+.bundle
+vendor
+
 ### AndroidStudio ###
 # Covers files to be ignored for android development using Android Studio.
 

@@ -1,11 +1,27 @@
-language: minimal
+language: shell
+os: linux
+dist: xenial
 
 services:
   - docker
 
-script:
-  # Build unsigned APK file for both flavors
+stages:
+  - tests
+
+before_script:
   - make docker-run docker-prep
-  - make apk-build FLAVOR=stable
-  - make apk-build FLAVOR=dev
+
+jobs:
+  include:
+    - stage: tests
+      name: "Unit tests"
+      script: make tests
+    - stage: tests
+      name: "Build test flavor stable"
+      script: make apk-build FLAVOR=stable
+    - stage: tests
+      name: "Build test flavor dev"
+      script: make apk-build FLAVOR=dev
+
+after_script:
   - make docker-stop
