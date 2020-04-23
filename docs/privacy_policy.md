@@ -1,4 +1,7 @@
-# Datenschutzerklärung für Mobile App
+---
+layout: page
+title: Datenschutzerklärung
+---
 
 Stand: 23.04.2020
 

@@ -9,6 +9,7 @@
    1. [Release Types](#release-types)
    2. [Version Name and Number](#version-number)
    3. [Making Releases](#making-releases)
+4. [GitHub Page](#github-page)
 
 
 # Contributing to Source Code
@@ -197,6 +198,14 @@ with a leading `v`. E.g. `v1.2.3`.
 
    `git push --follow-tags`
 
+## GitHub Page
+
+To build the GitHub page locally, you need to run the following
+commands inside the projects root directory:
+
+* `make docke-run docker-prepare`
+* `make jekyll-serve`
+* Access generated GitHub page at <http://127.0.0.1:4000>
 
 [yacguide-docker-ci]: https://github.com/YacGroup/yacguide-docker-ci
 [F-Droid]: https://f-droid.org

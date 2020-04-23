@@ -1,0 +1,8 @@
+title: Yet Another Climbing Guide
+email: yacgroup.dd@gmail.com
+description: Offline tool for sandsteinklettern.de
+
+theme: minima
+
+header_pages:
+  - privacy_policy.md

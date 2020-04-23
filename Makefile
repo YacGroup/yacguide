@@ -156,7 +156,8 @@ docker-start-existing:
 	docker start $(DOCKER_CONTAINER)
 
 # Start new container in background and mount local Git repository
-# into the container.
+# into the container. TCP port 4000 is published to the host for
+# accessing the Jekyll web server.
 .PHONY: docker-run
 docker-run:
 	@echo "Starting new container ..."
@@ -164,10 +165,12 @@ docker-run:
 		--detach \
 		--name $(DOCKER_CONTAINER) \
 		--mount type=bind,src="$(PWD)",dst="$(DOCKER_MOUNT_TARGET)" \
+		--network host \
+		--publish 127.0.0.1:4000:4000/tcp \
 		$(DOCKER_IMAGE) /bin/bash -c 'tail -f /dev/null'
 
 .PHONY: docker-prep
-docker-prep: docker-prep-user fastlane-setup
+docker-prep: docker-prep-user fastlane-setup jekyll-setup
 
 # Create a user inside the container with the same UID and GID as the
 # current user. This makes sure that the files and directories of
@@ -214,7 +217,7 @@ docker-shell:
 # Install required Ruby Gems for Fastlane
 .PHONY: fastlane-setup
 fastlane-setup:
-	@echo "Running Faslane setup ..."
+	@echo "Running Fastlane setup ..."
 	$(EXEC_CMD) "bundle install --path vendor/bundle"
 
 help::
@@ -223,3 +226,20 @@ help::
 .PHONY: tests
 tests:
 	$(EXEC_CMD) "bundle exec fastlane test"
+
+# --------------------------------------------------------------------
+# GitHub page commands
+# --------------------------------------------------------------------
+# Install required Ruby Gems for Jekyll
+.PHONY: jekyll-setup
+jekyll-setup:
+	@echo "Running Jekyll setup ..."
+	$(EXEC_CMD) "cd docs && bundle install --path vendor/bundle"
+
+help::
+	@echo "  jekyll-serve - run Jekyll web server"
+
+.PHONY: jekyll-serve
+jekyll-serve:
+	@echo "Running Jekyll web server ..."
+	$(EXEC_CMD) "cd docs && bundle exec jekyll serve"
