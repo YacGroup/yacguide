@@ -17,9 +17,11 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 
 class AboutActivity : BaseNavigationActivity() {
@@ -46,5 +48,11 @@ class AboutActivity : BaseNavigationActivity() {
             e.printStackTrace()
         }
         return "0.0"
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun showPrivacyPolicy(v: View) {
+        val intent = Intent(this, PrivacyPolicyActivity::class.java)
+        startActivity(intent)
     }
 }
