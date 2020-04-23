@@ -30,6 +30,7 @@
     <string name="nav_header_desc">@string/app_name_long</string>
     <string name="nav_header_title">@string/app_name</string>
     <string name="nav_header_subtitle">@string/app_name_long</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

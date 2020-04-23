@@ -84,6 +84,16 @@
             android:layout_gravity="center_horizontal"
             android:text="http://db-sandsteinklettern.gipfelbuch.de" />
 
+        <Button
+            android:id="@+id/button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:onClick="showPrivacyPolicy"
+            android:text="@string/privacy_policy" />
+
     </LinearLayout>
 
 </ScrollView>
