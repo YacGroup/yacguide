@@ -1,4 +1,4 @@
-# YacGuide - Yet Another Climbing Guide
+# [YacGuide] - Yet Another Climbing Guide
 
 [![Build Status](https://travis-ci.org/YacGroup/YacGuide.svg?branch=master)](https://travis-ci.org/YacGroup/YacGuide)
 
@@ -15,3 +15,6 @@ Offline tool for
 ## Contributing
 
 See our [contributing doc](CONTRIBUTING.md) for information.
+
+
+[YacGuide]: https://yacgroup.github.io/yacguide/
