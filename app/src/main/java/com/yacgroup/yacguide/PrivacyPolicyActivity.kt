@@ -18,25 +18,22 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.TextView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
 
-class PrivacyPolicyActivity: AppCompatActivity() {
+class PrivacyPolicyActivity : BaseNavigationActivity() {
+
+    override fun getLayoutId(): Int {
+        return R.layout.activity_privacy_policy
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = getString(R.string.privacy_policy)
-        setContentView(R.layout.content_privacy_policy)
-        displayContent()
-    }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun back(v: View) {
-        finish()
+        displayContent()
     }
 
     private fun displayContent() {
