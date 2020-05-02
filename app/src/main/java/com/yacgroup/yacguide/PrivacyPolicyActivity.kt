@@ -29,7 +29,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.title = getString(R.string.privacy_policy)
+        setTitle(R.string.privacy_policy)
         setContentView(R.layout.activity_privacy_policy)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         _displayContent()

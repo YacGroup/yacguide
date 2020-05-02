@@ -82,6 +82,7 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
+        finish()
         return true
     }
 }

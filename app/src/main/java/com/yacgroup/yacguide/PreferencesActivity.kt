@@ -17,9 +17,16 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.View
+import android.widget.CheckBox
+import android.widget.Toast
 
 class PreferencesActivity : BaseNavigationActivity() {
+
+    private var _customSettings: SharedPreferences? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_preferences
@@ -27,6 +34,22 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setTitle(R.string.action_settings)
+        setTitle(R.string.action_settings)
+
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _displayContent()
+    }
+
+    fun saveSettings(v: View) {
+        val editor = _customSettings!!.edit()
+        editor.putBoolean(getString(R.string.tourbook_ordering_key), findViewById<CheckBox>(R.id.tourbookOrderingCheckbox).isChecked)
+        editor.commit()
+        Toast.makeText(this, R.string.settings_stored, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun _displayContent() {
+        findViewById<CheckBox>(R.id.tourbookOrderingCheckbox).isChecked =
+                _customSettings!!.getBoolean(getString(R.string.tourbook_ordering_key),
+                        resources.getBoolean(R.bool.order_tourbook_chronologically))
     }
 }

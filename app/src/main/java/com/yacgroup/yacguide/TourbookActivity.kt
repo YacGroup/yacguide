@@ -19,7 +19,9 @@ package com.yacgroup.yacguide
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -55,6 +57,8 @@ class TourbookActivity : BaseNavigationActivity() {
     private var _ioOption: IOOption? = null
     private lateinit var _exportDialog: Dialog
 
+    private var _customSettings: SharedPreferences? = null
+
     override fun getLayoutId(): Int {
         return R.layout.activity_tourbook
     }
@@ -88,6 +92,7 @@ class TourbookActivity : BaseNavigationActivity() {
         this.title = "Begehungen"
 
         _db = AppDatabase.getAppDatabase(this)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _initYears()
         prepareExportDialog()
@@ -160,6 +165,9 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _displayContent(year: Int) {
         val ascends = getAscends(year)
+        if (!_customSettings!!.getBoolean(getString(R.string.tourbook_ordering_key), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
+            ascends.reverse()
+        }
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()

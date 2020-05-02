@@ -19,4 +19,7 @@
 <resources>
     <string name="app_name">YacGuide</string>
     <string name="app_name_long">Yet Another Climbing Guide</string>
+
+    <!-- default settings -->
+    <bool name="order_tourbook_chronologically">false</bool>
 </resources>
