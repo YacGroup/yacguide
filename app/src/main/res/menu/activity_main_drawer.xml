@@ -32,7 +32,7 @@
         <item
             android:id="@+id/nav_preferences"
             android:icon="@android:drawable/ic_menu_preferences"
-            android:title="Einstellungen"/>
+            android:title="@string/action_settings"/>
         <!-- Title is correctly set in class BaseNavigationActivity -->
         <item
             android:id="@+id/nav_about"
