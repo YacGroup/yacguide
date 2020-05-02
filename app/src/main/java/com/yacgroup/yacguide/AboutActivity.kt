@@ -17,12 +17,18 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Intent
+import android.app.Dialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
+import io.noties.markwon.AbstractMarkwonPlugin
+import io.noties.markwon.Markwon
+import io.noties.markwon.core.MarkwonTheme
 
 class AboutActivity : BaseNavigationActivity() {
 
@@ -52,7 +58,39 @@ class AboutActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun showPrivacyPolicy(v: View) {
-        val intent = Intent(this, PrivacyPolicyActivity::class.java)
-        startActivity(intent)
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.comment_dialog)
+        dialog.findViewById<TextView>(R.id.titleTextView).setText(R.string.privacy_policy)
+        dialog.findViewById<View>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
+
+        val privacyTextView = _createPrivacyTextView(dialog.context)
+        val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
+        layout.addView(privacyTextView)
+
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+
+    private fun _createPrivacyTextView(context: Context): TextView {
+        class MarkwonPlugin: AbstractMarkwonPlugin() {
+            override fun configureTheme(builder: MarkwonTheme.Builder) {
+                builder.headingBreakHeight(0)
+            }
+            override fun processMarkdown(markdown: String): String {
+                // Replace front matter from markdown file by markdown section.
+                val regex =  Regex("^---.*---$",
+                        setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
+                return markdown.replace(regex, "# ".plus(getString(R.string.privacy_policy)))
+            }
+        }
+        val markwon = Markwon.builder(context).usePlugin(MarkwonPlugin()).build()
+        val rawResource = getResources().openRawResource(R.raw.privacy_policy)
+        val privacyStr = rawResource.bufferedReader().use  { it.readText() }
+        val privacyTextView = TextView(context)
+        markwon.setMarkdown(privacyTextView, privacyStr)
+        privacyTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10.toFloat())
+
+        return privacyTextView
     }
 }

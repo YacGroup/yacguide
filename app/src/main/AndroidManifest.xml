@@ -65,7 +65,5 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".PrivacyPolicyActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 </manifest>
