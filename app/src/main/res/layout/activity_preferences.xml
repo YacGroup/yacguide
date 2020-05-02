@@ -33,7 +33,7 @@
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/content_about"/>
+        <include layout="@layout/content_preferences"/>
 
     </LinearLayout>
 
