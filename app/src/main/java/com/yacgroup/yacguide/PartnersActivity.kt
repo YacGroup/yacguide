@@ -28,6 +28,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.SparseIntArray
 import android.util.TypedValue
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -73,10 +74,20 @@ class PartnersActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable) {
                 _partnerNamePart = searchEditText.text.toString()
-                displayContent()
+                _displayContent()
             }
         })
-        displayContent()
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        _displayContent()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            _saveAndLeave()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     fun addPartner(v: View) {
@@ -86,7 +97,7 @@ class PartnersActivity : AppCompatActivity() {
         val okButton = dialog.findViewById<Button>(R.id.okButton)
         okButton.setOnClickListener {
             val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
-            updatePartner(dialog, newName, null)
+            _updatePartner(dialog, newName, null)
         }
         val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
         cancelButton.setOnClickListener { dialog.dismiss() }
@@ -95,7 +106,7 @@ class PartnersActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    fun enter(v: View) {
+    private fun _saveAndLeave() {
         val selectedIds = ArrayList<Int>()
         for ((key, cb) in _checkboxMap) {
             if (cb.isChecked) {
@@ -108,7 +119,7 @@ class PartnersActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun displayContent() {
+    private fun _displayContent() {
         title = getString(R.string.title_climbing_partner)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
@@ -156,7 +167,7 @@ class PartnersActivity : AppCompatActivity() {
                 val okButton = dialog.findViewById<Button>(R.id.okButton)
                 okButton.setOnClickListener {
                     val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
-                    updatePartner(dialog, newName, partner)
+                    _updatePartner(dialog, newName, partner)
                 }
                 val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
                 cancelButton.setOnClickListener { dialog.dismiss() }
@@ -177,7 +188,7 @@ class PartnersActivity : AppCompatActivity() {
                 okButton.setOnClickListener {
                     _db.partnerDao().delete(partner)
                     dialog.dismiss()
-                    displayContent()
+                    _displayContent()
                 }
                 val cancelButton = dialog.findViewById<Button>(R.id.noButton)
                 cancelButton.setOnClickListener { dialog.dismiss() }
@@ -203,7 +214,7 @@ class PartnersActivity : AppCompatActivity() {
         }
     }
 
-    private fun updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
+    private fun _updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
         when {
             newName == "" ->
                 Toast.makeText(dialog.context, getString(R.string.hint_no_name), Toast.LENGTH_SHORT).show()
@@ -214,7 +225,7 @@ class PartnersActivity : AppCompatActivity() {
                 updatedPartner.name = newName
                 _db.partnerDao().insert(updatedPartner)
                 dialog.dismiss()
-                displayContent()
+                _displayContent()
             }
         }
     }
