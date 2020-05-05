@@ -19,27 +19,31 @@ package com.yacgroup.yacguide
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
+import android.view.MenuItem
 import android.widget.TextView
 import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.Markwon
 import io.noties.markwon.core.MarkwonTheme
 
-class PrivacyPolicyActivity: AppCompatActivity() {
+class PrivacyPolicyActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = getString(R.string.privacy_policy)
-        setContentView(R.layout.content_privacy_policy)
-        displayContent()
+        setContentView(R.layout.activity_privacy_policy)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        _displayContent()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun back(v: View) {
-        finish()
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
-    private fun displayContent() {
+    private fun _displayContent() {
         class MyMarkwonPlugin: AbstractMarkwonPlugin() {
             override fun configureTheme(builder: MarkwonTheme.Builder) {
                 // Set default heading break height to 0.
@@ -55,7 +59,7 @@ class PrivacyPolicyActivity: AppCompatActivity() {
         val markwon = Markwon.builder(this).usePlugin(MyMarkwonPlugin()).build()
         val rawResource = getResources().openRawResource(R.raw.privacy_policy)
         val privacyStr = rawResource.bufferedReader().use  { it.readText() }
-        val privacyTextView = findViewById<TextView>(R.id.textView)
+        val privacyTextView = findViewById<TextView>(R.id.privacyPolicyTextView)
         markwon.setMarkdown(privacyTextView, privacyStr)
     }
 }

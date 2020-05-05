@@ -58,7 +58,8 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".RouteActivity"/>
         <activity android:name=".AscendActivity" />
-        <activity android:name=".PartnersActivity" />
+        <activity android:name=".PartnersActivity"
+            android:parentActivityName=".AscendActivity"/>
         <activity android:name=".TourbookActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".TourbookAscendActivity"
@@ -67,6 +68,8 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".AboutActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".PrivacyPolicyActivity"/>
+        <activity android:name=".PrivacyPolicyActivity"
+            android:parentActivityName=".AboutActivity">
+        </activity>
     </application>
 </manifest>

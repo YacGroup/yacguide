@@ -30,13 +30,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:onClick="enter"
-            app:srcCompat="@android:drawable/ic_menu_revert" />
+            android:maxLines="1"
+            android:singleLine="true"
+            android:hint="@string/partner_search" />
 
         <ImageButton
             android:layout_width="50dp"
@@ -45,22 +47,6 @@
             android:layout_alignParentRight="true"
             android:onClick="addPartner"
             app:srcCompat="@android:drawable/ic_input_add" />
-
-    </RelativeLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/searchEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:hint="Partner suchen" />
 
     </RelativeLayout>
 
