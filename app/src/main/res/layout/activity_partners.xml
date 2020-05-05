@@ -38,7 +38,7 @@
             android:layout_alignParentLeft="true"
             android:maxLines="1"
             android:singleLine="true"
-            android:hint="Partner suchen" />
+            android:hint="@string/partner_search" />
 
         <ImageButton
             android:layout_width="50dp"

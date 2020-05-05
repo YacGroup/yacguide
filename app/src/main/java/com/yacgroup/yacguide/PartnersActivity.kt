@@ -92,7 +92,7 @@ class PartnersActivity : AppCompatActivity() {
 
     fun addPartner(v: View) {
         val dialog = Dialog(this)
-        dialog.setTitle(getString(R.string.dialog_text_add_partner))
+        dialog.setTitle(R.string.dialog_text_add_partner)
         dialog.setContentView(R.layout.add_partner_dialog)
         val okButton = dialog.findViewById<Button>(R.id.okButton)
         okButton.setOnClickListener {
@@ -120,7 +120,7 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _displayContent() {
-        title = getString(R.string.title_climbing_partner)
+        this.setTitle(R.string.title_climbing_partner)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         _checkboxMap.clear()
@@ -183,7 +183,7 @@ class PartnersActivity : AppCompatActivity() {
             deleteButton.setOnClickListener {
                 val dialog = Dialog(this@PartnersActivity)
                 dialog.setContentView(R.layout.dialog)
-                dialog.findViewById<TextView>(R.id.dialogText).text = getString(R.string.dialog_text_delete_partner)
+                dialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_text_delete_partner)
                 val okButton = dialog.findViewById<Button>(R.id.yesButton)
                 okButton.setOnClickListener {
                     _db.partnerDao().delete(partner)
@@ -217,9 +217,9 @@ class PartnersActivity : AppCompatActivity() {
     private fun _updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
         when {
             newName == "" ->
-                Toast.makeText(dialog.context, getString(R.string.hint_no_name), Toast.LENGTH_SHORT).show()
+                Toast.makeText(dialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
             _db.partnerDao().getId(newName) > 0 ->
-                Toast.makeText(dialog.context, getString(R.string.hint_name_already_used), Toast.LENGTH_SHORT).show()
+                Toast.makeText(dialog.context, R.string.hint_name_already_used, Toast.LENGTH_SHORT).show()
             else -> {
                 val updatedPartner = partner ?: Partner()
                 updatedPartner.name = newName
