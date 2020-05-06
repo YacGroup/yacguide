@@ -31,17 +31,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tourbookOrderingCheckbox"
-            android:text="@string/tourbook_ordering_key"/>
+            android:text="@string/tourbook_ordering_key"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
 
         <View style="@style/Divider"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/saveButton"
-            android:text="@string/store_settings"
-            android:onClick="saveSettings"/>
 
     </LinearLayout>
 

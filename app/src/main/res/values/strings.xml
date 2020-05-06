@@ -47,12 +47,10 @@
     <!-- Widgets -->
     <string name="rock_search">Felsen suchen</string>
     <string name="partner_search">Partner suchen</string>
-    <string name="store_settings">Einstellungen speichern</string>
 
     <!-- Toasts -->
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
-    <string name="settings_stored">Einstellungen gespeichert</string>
     <string name="hint_no_name">Kein Name eingegeben</string>
     <string name="hint_name_already_used">Name bereits vergeben</string>
 

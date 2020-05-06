@@ -20,9 +20,7 @@ package com.yacgroup.yacguide
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import android.widget.CheckBox
-import android.widget.Toast
 
 class PreferencesActivity : BaseNavigationActivity() {
 
@@ -40,11 +38,15 @@ class PreferencesActivity : BaseNavigationActivity() {
         _displayContent()
     }
 
-    fun saveSettings(v: View) {
+    override fun onStop() {
+        _storeSettings()
+        super.onStop()
+    }
+
+    private fun _storeSettings() {
         val editor = _customSettings!!.edit()
         editor.putBoolean(getString(R.string.tourbook_ordering_key), findViewById<CheckBox>(R.id.tourbookOrderingCheckbox).isChecked)
         editor.commit()
-        Toast.makeText(this, R.string.settings_stored, Toast.LENGTH_SHORT).show()
     }
 
     private fun _displayContent() {
