@@ -17,12 +17,7 @@
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="title_climbing_partner">Kletterpartner</string>
-    <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
-    <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
-    <string name="hint_no_name">Kein Name eingegeben</string>
-    <string name="hint_name_already_used">Name bereits vergeben</string>
-    <string name="menu_home">Übersicht</string>
+    <!-- Menu -->
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
@@ -30,26 +25,47 @@
     <string name="nav_header_desc">@string/app_name_long</string>
     <string name="nav_header_title">@string/app_name</string>
     <string name="nav_header_subtitle">@string/app_name_long</string>
-    <string name="privacy_policy">Datenschutzerklärung</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Submenus -->
+    <string name="export">Import/Export</string>
     <string name="download">Aktualisieren</string>
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
-    <string name="rock_search">Felsen suchen</string>
-    <string name="partner_search">Partner suchen</string>
+
+    <!-- Activity names -->
+    <string name="title_climbing_partner">Kletterpartner</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
+    <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
     <string name="dialog_question_update">Diesen Bereich aktualisieren?</string>
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
-    <string name="export">Import/Export</string>
+
+    <!-- Widgets -->
+    <string name="rock_search">Felsen suchen</string>
+    <string name="partner_search">Partner suchen</string>
+
+    <!-- Toasts -->
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
+    <string name="hint_no_name">Kein Name eingegeben</string>
+    <string name="hint_name_already_used">Name bereits vergeben</string>
+
+    <!-- Data -->
     <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
     <string name="date_unknown">Datum unbekannt</string>
 
+    <!-- Tourbook -->
     <string name="botch">\u0020\u26A1</string>
     <string name="botch_text_symbol">Säcke \u26A1</string>
     <string name="watching">\u0020\u261D</string>
     <string name="project">\u0020\u2117</string>
     <string name="project_text_symbol">Projekte \u2117</string>
+
+    <!-- Custom settings -->
+    <string name="preferences_filename">yacguide_settings</string>
+    <string name="tourbook_ordering_key">Tourenbuch chronologisch ordnen</string>
 </resources>

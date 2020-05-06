@@ -25,6 +25,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <View style="@style/Divider"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tourbookOrderingCheckbox"
+            android:text="@string/tourbook_ordering_key"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+
+        <View style="@style/Divider"/>
+
     </LinearLayout>
 
 </ScrollView>

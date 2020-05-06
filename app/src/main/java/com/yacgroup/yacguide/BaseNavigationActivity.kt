@@ -62,6 +62,7 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
+        onStop()
         when (item.itemId) {
             R.id.nav_database -> {
                 val intent = Intent(this, CountryActivity::class.java)
@@ -82,6 +83,7 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         drawerLayout.closeDrawer(GravityCompat.START)
+        finish()
         return true
     }
 }
