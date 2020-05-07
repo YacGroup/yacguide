@@ -26,6 +26,23 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     private var _customSettings: SharedPreferences? = null
 
+    private val _settingKeysMap = mapOf(R.id.tourbookOrderingCheckbox to Pair(R.string.order_tourbook_chronologically,
+                                                                              R.bool.order_tourbook_chronologically),
+                                        R.id.countSummitsCheckbox to Pair(R.string.count_summits,
+                                                                          R.bool.count_summits),
+                                        R.id.countMassifsCheckbox to Pair(R.string.count_massifs,
+                                                                          R.bool.count_massifs),
+                                        R.id.countBouldersCheckbox to Pair(R.string.count_boulders,
+                                                                           R.bool.count_boulders),
+                                        R.id.countCavesCheckbox to Pair(R.string.count_caves,
+                                                                        R.bool.count_caves),
+                                        R.id.countUnofficialRocks to Pair(R.string.count_unofficial_rocks,
+                                                                          R.bool.count_unofficial_rocks),
+                                        R.id.countProhibitedRocks to Pair(R.string.count_prohibited_rocks,
+                                                                          R.bool.count_prohibited_rocks),
+                                        R.id.countOnlyLeadsCheckbox to Pair(R.string.count_only_leads,
+                                                                            R.bool.count_only_leads))
+
     override fun getLayoutId(): Int {
         return R.layout.activity_preferences
     }
@@ -45,13 +62,16 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     private fun _storeSettings() {
         val editor = _customSettings!!.edit()
-        editor.putBoolean(getString(R.string.tourbook_ordering_key), findViewById<CheckBox>(R.id.tourbookOrderingCheckbox).isChecked)
+        for ((checkboxId, keyPair) in _settingKeysMap) {
+            editor.putBoolean(getString(keyPair.first), findViewById<CheckBox>(checkboxId).isChecked)
+        }
         editor.commit()
     }
 
     private fun _displayContent() {
-        findViewById<CheckBox>(R.id.tourbookOrderingCheckbox).isChecked =
-                _customSettings!!.getBoolean(getString(R.string.tourbook_ordering_key),
-                        resources.getBoolean(R.bool.order_tourbook_chronologically))
+        for ((checkboxId, keyPair) in _settingKeysMap) {
+            findViewById<CheckBox>(checkboxId).isChecked = _customSettings!!.getBoolean(getString(keyPair.first),
+                                                                                        resources.getBoolean(keyPair.second))
+        }
     }
 }

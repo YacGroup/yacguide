@@ -25,17 +25,88 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <View style="@style/Divider"/>
+        <View style="@style/FatDivider"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_tourbook"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tourbookOrderingCheckbox"
-            android:text="@string/tourbook_ordering_key"
+            android:text="@string/order_tourbook_chronologically"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <View style="@style/FatDivider"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collect_rocks"
             android:textSize="16dp"
             android:layout_margin="10dp"/>
 
-        <View style="@style/Divider"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countSummitsCheckbox"
+            android:text="@string/count_summits"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countMassifsCheckbox"
+            android:text="@string/count_massifs"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countBouldersCheckbox"
+            android:text="@string/count_boulders"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countCavesCheckbox"
+            android:text="@string/count_caves"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <View style="@style/ThinDivider"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countUnofficialRocks"
+            android:text="@string/count_unofficial_rocks"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countProhibitedRocks"
+            android:text="@string/count_prohibited_rocks"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/countOnlyLeadsCheckbox"
+            android:text="@string/count_only_leads"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <View style="@style/FatDivider"/>
 
     </LinearLayout>
 
