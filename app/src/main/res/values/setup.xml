@@ -20,8 +20,18 @@
     <string name="app_name">YacGuide</string>
     <string name="app_name_long">Yet Another Climbing Guide</string>
 
+    <!-- colors -->
+    <color name="greenblue">#00cc99</color>
+    <color name="green">#66ff33</color>
+    <color name="yellow">#ffff00</color>
+    <color name="red">#ff9966</color>
+    <color name="purple">#cc99ff</color>
+    <color name="blue">#33ccff</color>
+    <color name="white">#ffffff</color>
+
     <!-- default settings -->
     <bool name="order_tourbook_chronologically">false</bool>
+
     <bool name="count_summits">true</bool>
     <bool name="count_massifs">false</bool>
     <bool name="count_boulders">false</bool>
@@ -29,4 +39,9 @@
     <bool name="count_unofficial_rocks">false</bool>
     <bool name="count_prohibited_rocks">false</bool>
     <bool name="count_only_leads">false</bool>
+
+    <color name="color_lead">@color/greenblue</color>
+    <color name="color_follow">@color/greenblue</color>
+    <bool name="colorize_tourbook_entries">false</bool>
+
 </resources>

@@ -17,11 +17,14 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -120,15 +123,17 @@ class RouteActivity : TableActivity() {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
-
+            if (AscendStyle.isLead(route.ascendsBitMask)) {
+                bgColor = customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
+            } else if (AscendStyle.isFollow(route.ascendsBitMask)) {
+                bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
+            }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     "${route.name.orEmpty()}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onCLickListener,
-                    if (AscendStyle.isLead(route.ascendsBitMask)) customSettings.getColorLead()
-                        else if (AscendStyle.isFollow(route.ascendsBitMask)) customSettings.getColorFollow()
-                            else bgColor,
+                    bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }

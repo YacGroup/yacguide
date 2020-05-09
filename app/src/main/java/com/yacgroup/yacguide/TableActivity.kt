@@ -18,20 +18,21 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 
 import com.yacgroup.yacguide.database.AppDatabase
-import com.yacgroup.yacguide.utils.CustomSettings
 
 abstract class TableActivity : BaseNavigationActivity() {
     protected lateinit var db: AppDatabase
-    protected lateinit var customSettings: CustomSettings
+    protected lateinit var customSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppDatabase.getAppDatabase(this)
-        customSettings = CustomSettings.getCustomSettings();
+        customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
     }
 
     open fun showComments(v: View) {}

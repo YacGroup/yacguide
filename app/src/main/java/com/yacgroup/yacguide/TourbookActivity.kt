@@ -26,6 +26,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -57,7 +58,7 @@ class TourbookActivity : BaseNavigationActivity() {
     private var _ioOption: IOOption? = null
     private lateinit var _exportDialog: Dialog
 
-    private var _customSettings: SharedPreferences? = null
+    private lateinit var _customSettings: SharedPreferences
 
     override fun getLayoutId(): Int {
         return R.layout.activity_tourbook
@@ -165,7 +166,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _displayContent(year: Int) {
         val ascends = getAscends(year)
-        if (!_customSettings!!.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
+        if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
 
@@ -177,6 +178,14 @@ class TourbookActivity : BaseNavigationActivity() {
         var currentDay = -1
         var currentRegionId = -1
 
+        val defaultColor = ContextCompat.getColor(this, R.color.white)
+        var leadColor = defaultColor
+        var followColor = defaultColor
+        if (_customSettings.getBoolean(getString(R.string.colorize_tourbook_entries),
+                                       resources.getBoolean(R.bool.colorize_tourbook_entries))) {
+            leadColor = _customSettings.getInt(getString(R.string.lead), defaultColor)
+            followColor = _customSettings.getInt(getString(R.string.follow), defaultColor)
+        }
         for (ascend in ascends) {
             val month = ascend.month
             val day = ascend.day
@@ -216,12 +225,17 @@ class TourbookActivity : BaseNavigationActivity() {
                 startActivityForResult(intent, 0)
             }
 
+            val bgColor = when {
+                AscendStyle.isLead(AscendStyle.bitMask(ascend.styleId)) -> leadColor
+                AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)) -> followColor
+                else -> defaultColor
+            }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     "${rock.name.orEmpty()} - ${route.name.orEmpty()}",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
-                    Color.WHITE,
+                    bgColor,
                     Typeface.NORMAL))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }

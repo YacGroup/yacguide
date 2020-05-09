@@ -19,9 +19,11 @@ package com.yacgroup.yacguide
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -135,6 +137,11 @@ class RockActivity : UpdatableTableActivity() {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
+            if (AscendStyle.isLead(rock.ascendsBitMask)) {
+                bgColor = customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
+            } else if (AscendStyle.isFollow(rock.ascendsBitMask)) {
+                bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
+            }
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@RockActivity, RouteActivity::class.java)
                 intent.putExtra(IntentConstants.ROCK_KEY, rock.id)
@@ -145,9 +152,7 @@ class RockActivity : UpdatableTableActivity() {
                     status.toString(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
-                    if (AscendStyle.isLead(rock.ascendsBitMask)) customSettings.getColorLead()
-                        else if (AscendStyle.isFollow(rock.ascendsBitMask)) customSettings.getColorFollow()
-                            else bgColor,
+                    bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
