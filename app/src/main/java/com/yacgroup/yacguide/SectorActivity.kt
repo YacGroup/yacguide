@@ -17,7 +17,9 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -27,19 +29,25 @@ import android.widget.LinearLayout
 import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RegionComment
 import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.SectorParser
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
+import kotlin.Result
 
 class SectorActivity : UpdatableTableActivity() {
 
     private var _region: Region? = null
+
+    private var _customSettings: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, AppDatabase.INVALID_ID)
 
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         jsonParser = SectorParser(db, this, regionId)
         _region = db.regionDao().getRegion(regionId)
     }
@@ -91,9 +99,12 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
+            val rocks = db.rockDao().getAll(sector.id)
+            val rockCountString = _generateRockCountString(rocks)
+
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     sectorName.orEmpty(),
-                    "",
+                    rockCountString,
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
@@ -104,5 +115,45 @@ class SectorActivity : UpdatableTableActivity() {
 
     override fun deleteContent() {
         _region?.let { db.deleteSectors(it.id) }
+    }
+
+    private fun _generateRockCountString(rocks: Array<Rock>): String {
+        val countSummits = _customSettings!!.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
+        val countMassifs = _customSettings!!.getBoolean(getString(R.string.count_massifs), resources.getBoolean(R.bool.count_massifs))
+        val countBoulders = _customSettings!!.getBoolean(getString(R.string.count_boulders), resources.getBoolean(R.bool.count_boulders))
+        val countCaves = _customSettings!!.getBoolean(getString(R.string.count_caves), resources.getBoolean(R.bool.count_caves))
+        if (!(countSummits || countMassifs || countBoulders || countCaves)) {
+            return ""
+        }
+
+        var filteredRocks = rocks.toList()
+        if (!countSummits) {
+            filteredRocks = filteredRocks.filter{ it.type != Rock.typeSummit && it.type != Rock.typeAlpine }
+        }
+        if (!countMassifs) {
+            filteredRocks = filteredRocks.filter { it.type != Rock.typeMassif && it.type != Rock.typeStonePit}
+        }
+        if (!countBoulders) {
+            filteredRocks = filteredRocks.filter { it.type != Rock.typeBoulder }
+        }
+        if (!countCaves) {
+            filteredRocks = filteredRocks.filter { it.type != Rock.typeCave }
+        }
+
+        if (!_customSettings!!.getBoolean(getString(R.string.count_unofficial_rocks), resources.getBoolean(R.bool.count_unofficial_rocks))) {
+            filteredRocks = filteredRocks.filter { it.type != Rock.typeUnofficial }
+        }
+        if (!_customSettings!!.getBoolean(getString(R.string.count_prohibited_rocks), resources.getBoolean(R.bool.count_prohibited_rocks))) {
+            filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
+        }
+        val allRockCount = filteredRocks.size
+
+        filteredRocks = if (_customSettings!!.getBoolean(getString(R.string.count_only_leads), resources.getBoolean(R.bool.count_only_leads))) {
+            filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
+        } else {
+            filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) || AscendStyle.isFollow(it.ascendsBitMask) }
+        }
+
+        return "(${filteredRocks.size} / $allRockCount)"
     }
 }

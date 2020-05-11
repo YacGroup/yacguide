@@ -165,7 +165,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _displayContent(year: Int) {
         val ascends = getAscends(year)
-        if (!_customSettings!!.getBoolean(getString(R.string.tourbook_ordering_key), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
+        if (!_customSettings!!.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
 

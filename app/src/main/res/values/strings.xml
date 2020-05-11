@@ -67,5 +67,16 @@
 
     <!-- Custom settings -->
     <string name="preferences_filename">yacguide_settings</string>
-    <string name="tourbook_ordering_key">Tourenbuch chronologisch ordnen</string>
+
+    <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
+
+    <string name="collect_rocks">Felsen sammeln</string>
+    <string name="count_summits">Gipfel</string>
+    <string name="count_massifs">Massive</string>
+    <string name="count_boulders">Blöcke</string>
+    <string name="count_caves">Höhlen</string>
+    <string name="count_unofficial_rocks">Inoffizielle Felsen</string>
+    <string name="count_prohibited_rocks">Gesperrte Felsen</string>
+    <string name="count_only_leads">Nur Vorstiege</string>
+
 </resources>
