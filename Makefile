@@ -170,7 +170,8 @@ docker-run:
 		$(DOCKER_IMAGE) /bin/bash -c 'tail -f /dev/null'
 
 .PHONY: docker-prep
-docker-prep: docker-prep-user fastlane-setup jekyll-setup
+docker-prep: docker-prep-user docker-prep-git fastlane-setup \
+jekyll-setup
 
 # Create a user inside the container with the same UID and GID as the
 # current user. This makes sure that the files and directories of
@@ -181,6 +182,18 @@ docker-prep-user:
 	docker exec \
 		$(DOCKER_CONTAINER) \
 		/bin/bash -c '$(GROUP_ADD_CMD) && $(USER_ADD_CMD)'
+
+# Setup Git inside the container so that commits are possible.
+.PHONY: docker-prep-git
+docker-prep-git:
+	@echo "Preparing Git inside container ..."
+	$(DOCKER_EXEC_CMD) \
+		--env GIT_CFG_USER_EMAIL="$$(git config --global --get user.email)" \
+		--env GIT_CFG_USER_NAME="$$(git config --global --get user.name)" \
+		$(DOCKER_CONTAINER) \
+		/bin/bash -c '\
+git config --global user.email "$$GIT_CFG_USER_EMAIL" && \
+git config --global user.name "$$GIT_CFG_USER_NAME"'
 
 help::
 	@echo "  docker-stop - stop Docker container"
