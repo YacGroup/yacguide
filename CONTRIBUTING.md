@@ -2,9 +2,11 @@
 
 1. [Contributing to Source Code](#contributing-to-source-code)
    1. [Adding new Files](#adding-new-files)
-2. [Docker CI Environment](#docker-ci-environment)
-   1. [Building the Docker Image](#building-the-docker-image)
-   2. [Building the APK locally](#building-the-apk-locally)
+2. [Docker Environment](#docker-environment)
+   1. [Minimal Tool Requirements](#minimal-tool-requirements)
+   2. [Getting Started](#getting-started)
+   3. [Building the Docker Image](#building-the-docker-image)
+   4. [Building the APK locally](#building-the-apk-locally)
 3. [Releases](#releases)
    1. [Release Types](#release-types)
    2. [Version Name and Number](#version-number)
@@ -66,7 +68,48 @@ XML (layout) file:
  -->
 ```
 
-# Docker CI Environment
+# Docker Environment
+
+The Docker environment makes sure that the process of making builds,
+releases, tests etc. are done in a defined environment and that the
+user does not need to install all the required tools on its machine.
+
+The general Docker image is available on [Docker Hub]. On top of this,
+the container needs some user-specific setup, which are done during
+the container preparation step.
+
+* Create user with same name, UID and GID
+* Make minimal Git setup
+* Install required tools
+
+## Minimal Tool Requirements
+
+The tool chain is tested and designed to work on Linux only. The
+following tools must be installed on the user machine:
+
+* Make
+* Docker client
+
+## Getting Started
+
+The command `make help` shows you all necessary commands to work with
+the container environment. E.g., if you want to run the tests inside
+the container, you need to do the following steps:
+
+1. `make docker-start-new` or, if you already have an existing
+  container, use `make docker-start-existing`
+2. `make tests`
+
+The second command assumes that you have a running container, which
+was started with the first command. Therefore, the second command can
+now be executed as long as the container is up and running.
+
+If you want to work interactively inside the container, you first need
+to start a container, as in the previous example and then run
+
+`make docker-shell`
+
+to start an interactive shell inside container.
 
 ## Building the Docker Image
 
@@ -184,29 +227,32 @@ with a leading `v`. E.g. `v1.2.3`.
 
 ### Development Version
 
-1. Change into the master branch and sync your branch with remote
-   repository.
+1. Change into the `master` branch and sync your branch with the
+   remote repository.
 2. Make sure that your Git status is clean, e.g. that you have no
    uncommitted or untracked items.
-3. Run the following `fastlane` command to create and commit
-   the release.
+3. Prepare the Docker container, if necessary
+   (see [Docker Environment](#docker-environment))
+4. Run the following command to create and commit the release:
 
-   `bundle exec fastlane create_dev_release`
+   `make release-dev`
 
-4. After checking that everything is okay, push the changes to the
+5. After checking that everything is okay, push the changes to the
    remote repository:
 
    `git push --follow-tags`
 
 ## GitHub Page
 
-To build the GitHub page locally, you need to run the following
-commands inside the projects root directory:
+To build the GitHub page locally, you need to do the following steps
+inside the projects root directory:
 
-* `make docke-run docker-prepare`
-* `make jekyll-serve`
+* Prepare the Docker container, if necessary
+  (see [Docker Environment](#docker-environment))
+* Run `make jekyll-serve`
 * Access generated GitHub page at <http://127.0.0.1:4000>
 
 [yacguide-docker-ci]: https://github.com/YacGroup/yacguide-docker-ci
 [F-Droid]: https://f-droid.org
 [semantic version scheme]: http://semver.org/
+[Docker Hub]: https://hub.docker.com/repository/docker/yacgroup/yacguide-build

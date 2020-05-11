@@ -256,3 +256,14 @@ help::
 jekyll-serve:
 	@echo "Running Jekyll web server ..."
 	$(EXEC_CMD) "cd docs && bundle exec jekyll serve"
+
+# --------------------------------------------------------------------
+# Commands to make releases using the container
+# --------------------------------------------------------------------
+help::
+	@echo "  release-dev - Make development release (tag and commit)"
+
+.PHONY: release-dev
+release-dev:
+	@echo "Making development release ..."
+	$(EXEC_CMD) "bundle exec fastlane create_dev_release"
