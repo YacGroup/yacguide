@@ -79,4 +79,9 @@
     <string name="count_prohibited_rocks">Gesperrte Felsen</string>
     <string name="count_only_leads">Nur Vorstiege</string>
 
+    <string name="color_ascends">Markierung für bestiegene Felsen/Wege</string>
+    <string name="lead">Vorstieg</string>
+    <string name="follow">Nachstieg</string>
+    <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
+
 </resources>

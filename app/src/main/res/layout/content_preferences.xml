@@ -18,7 +18,8 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:fadeScrollbars="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -103,6 +104,51 @@
             android:layout_height="wrap_content"
             android:id="@+id/countOnlyLeadsCheckbox"
             android:text="@string/count_only_leads"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <View style="@style/FatDivider"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/color_ascends"
+            android:textSize="16dp"
+            android:layout_margin="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:layout_margin="10dp"
+                    android:id="@+id/leadColorButton"
+                    android:text="@string/lead"
+                    android:textSize="16dp"
+                    android:onClick="changeColor"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:layout_margin="10dp"
+                    android:id="@+id/followColorButton"
+                    android:text="@string/follow"
+                    android:textSize="16dp"
+                    android:onClick="changeColor"/>
+
+        </LinearLayout>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/colorizeTourbookEntriesCheckbox"
+            android:text="@string/colorize_tourbook_entries"
             android:textSize="16dp"
             android:layout_marginLeft="20dp"/>
 

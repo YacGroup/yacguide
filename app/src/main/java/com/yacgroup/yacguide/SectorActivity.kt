@@ -40,14 +40,11 @@ class SectorActivity : UpdatableTableActivity() {
 
     private var _region: Region? = null
 
-    private var _customSettings: SharedPreferences? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, AppDatabase.INVALID_ID)
 
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         jsonParser = SectorParser(db, this, regionId)
         _region = db.regionDao().getRegion(regionId)
     }
@@ -118,10 +115,10 @@ class SectorActivity : UpdatableTableActivity() {
     }
 
     private fun _generateRockCountString(rocks: Array<Rock>): String {
-        val countSummits = _customSettings!!.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
-        val countMassifs = _customSettings!!.getBoolean(getString(R.string.count_massifs), resources.getBoolean(R.bool.count_massifs))
-        val countBoulders = _customSettings!!.getBoolean(getString(R.string.count_boulders), resources.getBoolean(R.bool.count_boulders))
-        val countCaves = _customSettings!!.getBoolean(getString(R.string.count_caves), resources.getBoolean(R.bool.count_caves))
+        val countSummits = customSettings.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
+        val countMassifs = customSettings.getBoolean(getString(R.string.count_massifs), resources.getBoolean(R.bool.count_massifs))
+        val countBoulders = customSettings.getBoolean(getString(R.string.count_boulders), resources.getBoolean(R.bool.count_boulders))
+        val countCaves = customSettings.getBoolean(getString(R.string.count_caves), resources.getBoolean(R.bool.count_caves))
         if (!(countSummits || countMassifs || countBoulders || countCaves)) {
             return ""
         }
@@ -140,15 +137,15 @@ class SectorActivity : UpdatableTableActivity() {
             filteredRocks = filteredRocks.filter { it.type != Rock.typeCave }
         }
 
-        if (!_customSettings!!.getBoolean(getString(R.string.count_unofficial_rocks), resources.getBoolean(R.bool.count_unofficial_rocks))) {
+        if (!customSettings.getBoolean(getString(R.string.count_unofficial_rocks), resources.getBoolean(R.bool.count_unofficial_rocks))) {
             filteredRocks = filteredRocks.filter { it.type != Rock.typeUnofficial }
         }
-        if (!_customSettings!!.getBoolean(getString(R.string.count_prohibited_rocks), resources.getBoolean(R.bool.count_prohibited_rocks))) {
+        if (!customSettings.getBoolean(getString(R.string.count_prohibited_rocks), resources.getBoolean(R.bool.count_prohibited_rocks))) {
             filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
         }
         val allRockCount = filteredRocks.size
 
-        filteredRocks = if (_customSettings!!.getBoolean(getString(R.string.count_only_leads), resources.getBoolean(R.bool.count_only_leads))) {
+        filteredRocks = if (customSettings.getBoolean(getString(R.string.count_only_leads), resources.getBoolean(R.bool.count_only_leads))) {
             filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
         } else {
             filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) || AscendStyle.isFollow(it.ascendsBitMask) }
