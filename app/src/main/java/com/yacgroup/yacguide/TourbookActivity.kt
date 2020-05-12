@@ -22,16 +22,13 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
 import com.yacgroup.yacguide.database.*
@@ -49,14 +46,11 @@ import java.util.Arrays
 
 class TourbookActivity : BaseNavigationActivity() {
 
-    private val _FILE_NAME = "Tourenbuch.json"
-
     private lateinit var _db: AppDatabase
     private lateinit var _availableYears: IntArray
     private var _currentYearIdx: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
     private var _ioOption: IOOption? = null
-    private lateinit var _exportDialog: Dialog
 
     private lateinit var _customSettings: SharedPreferences
 
@@ -82,7 +76,8 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_export -> export()
+            R.id.action_import -> _import()
+            R.id.action_export -> _export()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -90,13 +85,12 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.title = "Begehungen"
+        setTitle(R.string.ascends)
 
         _db = AppDatabase.getAppDatabase(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _initYears()
-        prepareExportDialog()
     }
 
     override fun onResume() {
@@ -106,15 +100,19 @@ class TourbookActivity : BaseNavigationActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
-            Toast.makeText(this, getString(R.string.ascend_deleted), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (FilesystemUtils.permissionGranted(grantResults)) {
-            _exportDialog.show()
+            _showFileChooser()
         } else {
-            Toast.makeText(this, "Export/Import nicht möglich ohne Schreibrechte", Toast.LENGTH_SHORT).show()
+            val errorTextId = if (_ioOption == IOOption.eImport)
+                    R.string.import_impossible
+                else
+                    R.string.export_impossible
+            Toast.makeText(this, errorTextId, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -134,32 +132,34 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun export() {
-        if (!FilesystemUtils.isExternalStorageAvailable) {
-            Toast.makeText(_exportDialog.context, "Speichermedium nicht verfügbar", Toast.LENGTH_SHORT).show()
-            return
+    private fun _import() {
+        _ioOption = IOOption.eImport
+        if (FilesystemUtils.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            _showFileChooser()
         }
-        if (!FilesystemUtils.hasPermissionToWriteToExternalStorage(this@TourbookActivity)) {
-            ActivityCompat.requestPermissions(this@TourbookActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            return
+    }
+
+    private fun _export() {
+        _ioOption = IOOption.eExport
+        if (FilesystemUtils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            _showFileChooser()
         }
-        _exportDialog.show()
     }
 
     fun showAscends(v: View) {
-        title = "Begehungen"
+        setTitle(R.string.ascends)
         _tourbookType = TourbookType.eAscends
         _initYears()
     }
 
     fun showBotches(v: View) {
-        title = "Säcke"
+        setTitle(R.string.botch_text_symbol)
         _tourbookType = TourbookType.eBotches
         _initYears()
     }
 
     fun showProjects(v: View) {
-        title = "Projekte"
+        setTitle(R.string.project_text_symbol)
         _tourbookType = TourbookType.eProjects
         _initYears()
     }
@@ -252,14 +252,14 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _showFileChooser() {
         val defaultFileName = if (_ioOption == IOOption.eExport)
-            _FILE_NAME
+            getString(R.string.tourbook_filename)
         else
             ""
-        FileChooser(_exportDialog.context, defaultFileName).setFileListener(object : FileChooser.FileSelectedListener {
+        FileChooser(this, defaultFileName).setFileListener(object : FileChooser.FileSelectedListener {
             override fun fileSelected(file: File) {
                 val filePath = file.absolutePath
                 if (_ioOption == IOOption.eImport && !file.exists()) {
-                    Toast.makeText(_exportDialog.context, "Datei existiert nicht", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@TourbookActivity, R.string.file_not_existing, Toast.LENGTH_SHORT).show()
                     return
                 }
                 _showConfirmDialog(filePath)
@@ -268,12 +268,12 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _showConfirmDialog(filePath: String) {
-        val confirmDialog = Dialog(_exportDialog.context)
+        val confirmDialog = Dialog(this)
         confirmDialog.setContentView(R.layout.dialog)
-        val infoText = if (_ioOption == IOOption.eExport)
-            "Dies überschreibt eine bereits vorhandene Datei gleichen Namens.\nTrotzdem exportieren?"
+        val infoText = getString(if (_ioOption == IOOption.eExport)
+            R.string.override_file
         else
-            "Dies überschreibt das gesamte Tourenbuch.\nTrotzdem importieren?"
+            R.string.override_tourbook)
         confirmDialog.findViewById<TextView>(R.id.dialogText).text = infoText
         confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             try {
@@ -281,18 +281,17 @@ class TourbookActivity : BaseNavigationActivity() {
                 var successMsg = filePath
                 successMsg += if (_ioOption == IOOption.eExport) {
                     exporter.exportTourbook(filePath)
-                    " erfolgreich exportiert"
+                    getString(R.string.successfully_exported)
                 } else {
                     exporter.importTourbook(filePath)
-                    " erfolgreich importiert"
+                    getString(R.string.successfully_imported)
                 }
                 Toast.makeText(this@TourbookActivity, successMsg, Toast.LENGTH_SHORT).show()
             } catch (e: JSONException) {
-                Toast.makeText(this@TourbookActivity, "Fehler beim Export/Import", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@TourbookActivity, R.string.import_export_error, Toast.LENGTH_SHORT).show()
             }
 
             confirmDialog.dismiss()
-            _exportDialog.dismiss()
             _initYears()
         }
         confirmDialog.findViewById<View>(R.id.noButton).setOnClickListener { confirmDialog.dismiss() }
@@ -319,28 +318,5 @@ class TourbookActivity : BaseNavigationActivity() {
             findViewById<View>(R.id.prevButton).visibility = View.INVISIBLE
             _displayContent(0)
         }
-    }
-
-    private fun prepareExportDialog() {
-        _exportDialog = Dialog(this)
-        _exportDialog.setContentView(R.layout.export_dialog)
-        _ioOption = IOOption.eExport
-
-        val exportRadioButton = _exportDialog.findViewById<RadioButton>(R.id.exportRadioButton)
-        val importRadioButton = _exportDialog.findViewById<RadioButton>(R.id.importRadioButton)
-        exportRadioButton.setOnClickListener {
-            exportRadioButton.isChecked = true
-            importRadioButton.isChecked = false
-            _ioOption = IOOption.eExport
-        }
-        importRadioButton.setOnClickListener {
-            exportRadioButton.isChecked = false
-            importRadioButton.isChecked = true
-            _ioOption = IOOption.eImport
-        }
-        _exportDialog.findViewById<View>(R.id.okButton).setOnClickListener { _showFileChooser() }
-        _exportDialog.findViewById<View>(R.id.cancelButton).setOnClickListener { _exportDialog.dismiss() }
-        _exportDialog.setCanceledOnTouchOutside(false)
-        _exportDialog.setCancelable(false)
     }
 }
