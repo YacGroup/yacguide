@@ -37,6 +37,8 @@ abstract class TableActivity : BaseNavigationActivity() {
 
     open fun showComments(v: View) {}
 
+    open fun showParent(v: View) {}
+
     override fun onResume() {
         super.onResume()
 

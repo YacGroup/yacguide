@@ -81,6 +81,12 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         return true
     }
 
+    fun showParent(v: View) {
+        val intent = Intent(this, DescriptionActivity::class.java)
+        intent.putExtra(IntentConstants.ROUTE_KEY, _routeId)
+        startActivity(intent)
+    }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()

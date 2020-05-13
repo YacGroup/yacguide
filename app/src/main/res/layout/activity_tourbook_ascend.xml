@@ -31,7 +31,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/appbar_empty"/>
+        <include layout="@layout/appbar_parent"/>
 
         <include layout="@layout/nav_tourbook"/>
 

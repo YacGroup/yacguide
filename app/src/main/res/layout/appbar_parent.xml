@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2019 Fabian Kantereit
+  Copyright (C) 2020 Fabian Kantereit
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -33,14 +33,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
-
-            <ImageButton
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                app:srcCompat="@android:drawable/ic_menu_info_details"
-                android:layout_gravity="end"
-                android:background="?attr/colorPrimary"
-                android:onClick="showComments"/>
 
             <ImageButton
                 android:layout_width="50dp"

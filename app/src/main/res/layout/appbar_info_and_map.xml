@@ -50,6 +50,13 @@
                 android:background="?attr/colorPrimary"
                 android:onClick="showMap"/>
 
+            <ImageButton
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/ic_arrow_upward_black_24dp"
+                android:layout_gravity="end"
+                android:background="?attr/colorPrimary"
+                android:onClick="showParent"/>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

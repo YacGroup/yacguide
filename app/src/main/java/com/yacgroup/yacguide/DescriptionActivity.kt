@@ -126,6 +126,14 @@ class DescriptionActivity : TableActivity() {
         }
     }
 
+    override fun showParent(v: View) {
+        super.showParent(v)
+
+        val intent = Intent(this, RouteActivity::class.java)
+        intent.putExtra(IntentConstants.ROCK_KEY, _route?.parentId)
+        startActivity(intent)
+    }
+
     fun enterAscend(v: View) {
         _route?.let {
             val intent = Intent(this@DescriptionActivity, AscendActivity::class.java)

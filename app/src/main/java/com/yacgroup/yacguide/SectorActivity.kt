@@ -83,6 +83,14 @@ class SectorActivity : UpdatableTableActivity() {
         }
     }
 
+    override fun showParent(v: View) {
+        super.showParent(v)
+
+        val intent = Intent(this, RegionActivity::class.java)
+        intent.putExtra(IntentConstants.COUNTRY_KEY, _region?.country)
+        startActivity(intent)
+    }
+
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()

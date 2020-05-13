@@ -114,6 +114,14 @@ class RockActivity : UpdatableTableActivity() {
         }
     }
 
+    override fun showParent(v: View) {
+        super.showParent(v)
+
+        val intent = Intent(this, SectorActivity::class.java)
+        intent.putExtra(IntentConstants.REGION_KEY, _sector?.parentId)
+        startActivity(intent)
+    }
+
     fun onlySummitsCheck(v: View) {
         _onlySummits = findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked
         displayContent()
