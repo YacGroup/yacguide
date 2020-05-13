@@ -34,7 +34,7 @@ enum class AscendStyle (val id: Int, val styleName: String) {
     eHINTERHERGEHAMPELT(8, "Hinterhergehampelt"),
     eBOTCHED(9, "Gesackt"),
     eSEEN(10, "Zugesehen"),
-    eVISITED(11, "An den Einstieg gepinktelt"),
+    eVISITED(11, "An den Einstieg gepinkelt"),
     eHEARD(12, "Von gehört"),
     ePROJECT(13, "Will ich klettern");
 
