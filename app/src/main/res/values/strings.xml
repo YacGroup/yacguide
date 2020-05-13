@@ -67,6 +67,8 @@
 
     <!-- Custom settings -->
     <string name="preferences_filename">yacguide_settings</string>
+    
+    <string name="display_only_official_summits">Nur offizielle Gipfel</string>
 
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
 

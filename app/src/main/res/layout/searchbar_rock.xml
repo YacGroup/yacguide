@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onlySummitsCheck"
-        android:text="Nur offizielle Gipfel"
+        android:text="@string/display_only_official_summits"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

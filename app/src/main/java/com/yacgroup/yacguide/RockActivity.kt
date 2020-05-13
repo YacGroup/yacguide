@@ -19,7 +19,6 @@ package com.yacgroup.yacguide
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -70,6 +69,18 @@ class RockActivity : UpdatableTableActivity() {
                 displayContent()
             }
         })
+
+        _onlySummits = customSettings.getBoolean(
+                getString(R.string.display_only_official_summits),
+                resources.getBoolean(R.bool.display_only_official_summits))
+        findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked = _onlySummits
+    }
+
+    override fun onStop() {
+        val editor = customSettings.edit()
+        editor.putBoolean(getString(R.string.display_only_official_summits), findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked)
+        editor.commit()
+        super.onStop()
     }
 
     override fun showComments(v: View) {
