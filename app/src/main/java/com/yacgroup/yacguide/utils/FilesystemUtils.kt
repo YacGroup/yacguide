@@ -17,22 +17,32 @@
 
 package com.yacgroup.yacguide.utils
 
-import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Environment
+import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
+import com.yacgroup.yacguide.R
 
 object FilesystemUtils {
 
-    val isExternalStorageAvailable: Boolean
+    private val isExternalStorageAvailable: Boolean
         get() {
             val state = Environment.getExternalStorageState()
             return Environment.MEDIA_MOUNTED == state
         }
 
-    fun hasPermissionToWriteToExternalStorage(activity: Activity): Boolean {
-        return ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    fun checkPermission(activity: Activity, permissionName: String): Boolean {
+        if (!isExternalStorageAvailable) {
+            Toast.makeText(activity, R.string.storage_not_available, Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (ContextCompat.checkSelfPermission(activity, permissionName) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, arrayOf(permissionName), 0)
+            return false
+        }
+        return true
     }
 
     fun permissionGranted(grantResults: IntArray): Boolean {

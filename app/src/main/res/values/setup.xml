@@ -20,7 +20,11 @@
     <string name="app_name">YacGuide</string>
     <string name="app_name_long">Yet Another Climbing Guide</string>
 
-    <!-- colors -->
+    <!-- File names -->
+    <string name="tourbook_filename">Tourenbuch.json</string>
+    <string name="preferences_filename">yacguide_settings</string>
+
+    <!-- Colors -->
     <color name="greenblue">#00cc99</color>
     <color name="green">#66ff33</color>
     <color name="yellow">#ffff00</color>
@@ -29,7 +33,7 @@
     <color name="blue">#33ccff</color>
     <color name="white">#ffffff</color>
 
-    <!-- default settings -->
+    <!-- Default settings -->
     <bool name="display_only_official_summits">false</bool>
 
     <bool name="order_tourbook_chronologically">false</bool>

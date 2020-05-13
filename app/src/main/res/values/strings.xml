@@ -29,7 +29,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Submenus -->
-    <string name="export">Import/Export</string>
+    <string name="import_tourbook">Import</string>
+    <string name="export_tourbook">Export</string>
     <string name="download">Aktualisieren</string>
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
@@ -59,15 +60,28 @@
     <string name="date_unknown">Datum unbekannt</string>
 
     <!-- Tourbook -->
+    <string name="ascends">Begehungen</string>
     <string name="botch">\u0020\u26A1</string>
     <string name="botch_text_symbol">Säcke \u26A1</string>
     <string name="watching">\u0020\u261D</string>
     <string name="project">\u0020\u2117</string>
     <string name="project_text_symbol">Projekte \u2117</string>
 
+    <!-- File IO -->
+    <string name="storage_not_available">Speichermedium nicht verfügbar</string>
+    <string name="import_impossible">Import nicht möglich ohne Leserechte</string>
+    <string name="export_impossible">Export nicht möglich ohne Schreibrechte</string>
+    <string name="file_not_existing">Datei existiert nicht</string>
+    <string name="override_file">Dies überschreibt eine bereits vorhandene Datei gleichen Namens.
+                                 Trotzdem exportieren?</string>
+    <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.
+                                     Trotzdem importieren?</string>
+    <string name="successfully_exported"> erfolgreich exportiert</string>
+    <string name="successfully_imported"> erfolgreich importiert</string>
+    <string name="import_export_error">Fehler beim Import/Export</string>
+
+
     <!-- Custom settings -->
-    <string name="preferences_filename">yacguide_settings</string>
-    
     <string name="display_only_official_summits">Nur offizielle Gipfel</string>
 
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
