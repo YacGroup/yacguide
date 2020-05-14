@@ -1,5 +1,6 @@
 plugins {
     id 'com.gladed.androidgitversion' version '0.4.10'
+    id 'com.github.triplet.play' version '2.7.5'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -30,6 +31,12 @@ androidGitVersion {
     prefix 'v'
     tagPattern(/^$prefix[0-9]+.*/)
     hideBranches = ['master']
+}
+
+play {
+    serviceAccountCredentials = rootProject.file("google-services.json")
+    // This disables GPP by default.
+    enabled = false
 }
 
 android {
@@ -75,6 +82,11 @@ android {
             applicationIdSuffix '.dev'
             versionCode 20200527
             versionName '20200527'
+        }
+    }
+    playConfigs {
+        dev {
+            enabled = true
         }
     }
 }

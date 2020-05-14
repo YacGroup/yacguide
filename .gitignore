@@ -6,6 +6,7 @@
 *.html
 *.jks
 keystore.properties
+google-services.json
 
 ### Fastlane
 **/fastlane/report.xml
