@@ -87,9 +87,7 @@ class RockParser(
 
     @Throws(JSONException::class)
     private fun parseRoutes(json: String) {
-        for (rock in db.rockDao().getAll(_sectorId)) {
-            db.routeDao().deleteAll(rock.id)
-        }
+        db.rockDao().getAll(_sectorId).map{ db.routeDao().deleteAll(it.id) }
         val jsonRoutes = JSONArray(json)
         for (i in 0 until jsonRoutes.length()) {
             val jsonRoute = jsonRoutes.getJSONObject(i)

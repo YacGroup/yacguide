@@ -26,7 +26,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface PartnerDao {
     @get:Query("SELECT * FROM Partner")
-    val all: Array<Partner>
+    val all: List<Partner>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(partner: Partner)

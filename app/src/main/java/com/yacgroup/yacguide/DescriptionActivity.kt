@@ -65,7 +65,7 @@ class DescriptionActivity : TableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _route?.let { db.routeCommentDao().getAll(it.id) } ?: emptyArray()
+        val comments = _route?.let { db.routeCommentDao().getAll(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val gradeId = comment.gradeId

@@ -41,11 +41,8 @@ class TourbookExporter(private val _db: AppDatabase) {
 
     @Throws(JSONException::class)
     fun exportTourbook(filePath: String) {
-        val ascends = _db.ascendDao().all
         val jsonAscends = JSONArray()
-        for (ascend in ascends) {
-            jsonAscends.put(ascend2Json(ascend))
-        }
+        _db.ascendDao().all.map { jsonAscends.put(ascend2Json(it)) }
         val file = File(filePath)
         try {
             val outStream = FileOutputStream(file)

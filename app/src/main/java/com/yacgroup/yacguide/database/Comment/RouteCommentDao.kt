@@ -25,7 +25,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface RouteCommentDao {
     @Query("SELECT * FROM RouteComment WHERE routeId = :routeId")
-    fun getAll(routeId: Int): Array<RouteComment>
+    fun getAll(routeId: Int): List<RouteComment>
 
     @Query("SELECT COUNT(*) FROM RouteComment WHERE routeId = :routeId")
     fun getCommentCount(routeId: Int): Int

@@ -71,7 +71,7 @@ class RouteActivity : TableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _rock?.let { db.rockCommentDao().getAll(it.id) } ?: emptyArray()
+        val comments = _rock?.let { db.rockCommentDao().getAll(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
@@ -103,7 +103,7 @@ class RouteActivity : TableActivity() {
         layout.removeAllViews()
         this.title = "${_rock?.name}"
 
-        val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyArray()
+        val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyList()
         for (route in routes) {
             val commentCount = db.routeCommentDao().getCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""

@@ -25,7 +25,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface RegionDao {
     @Query("SELECT * FROM Region WHERE country = :countryName")
-    fun getAll(countryName: String): Array<Region>
+    fun getAll(countryName: String): List<Region>
 
     @Query("SELECT * FROM Region WHERE id = :id")
     fun getRegion(id: Int): Region?
