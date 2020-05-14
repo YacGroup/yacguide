@@ -92,41 +92,47 @@ class TourbookExporter(private val _db: AppDatabase) {
 
     @Throws(JSONException::class)
     private fun writeJsonStringToDatabase(jsonString: String) {
-        val jsonAscends = JSONArray(jsonString)
-        _db.deleteAscends()
-        _db.partnerDao().deleteAll()
-        var ascendId = 1
-        var partnerId = 1
-        for (i in 0 until jsonAscends.length()) {
-            val jsonAscend = jsonAscends.getJSONObject(i)
-            val routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey)
-            val ascend = Ascend()
-            ascend.id = ascendId++
-            ascend.routeId = routeId
-            ascend.styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey)
-            ascend.year = ParserUtils.jsonField2Int(jsonAscend, _yearKey)
-            ascend.month = ParserUtils.jsonField2Int(jsonAscend, _monthKey)
-            ascend.day = ParserUtils.jsonField2Int(jsonAscend, _dayKey)
-            ascend.notes = jsonAscend.getString(_notesKey)
-            val partnerNames = jsonAscend.getJSONArray(_partnersKey)
-            val partnerIds = ArrayList<Int>()
-            for (j in 0 until partnerNames.length()) {
-                val name = partnerNames.getString(j).trim { it <= ' ' }
+        _db.beginTransaction()
+        try {
+            val jsonAscends = JSONArray(jsonString)
+            _db.deleteAscends()
+            _db.partnerDao().deleteAll()
+            var ascendId = 1
+            var partnerId = 1
+            for (i in 0 until jsonAscends.length()) {
+                val jsonAscend = jsonAscends.getJSONObject(i)
+                val routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey)
+                val ascend = Ascend()
+                ascend.id = ascendId++
+                ascend.routeId = routeId
+                ascend.styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey)
+                ascend.year = ParserUtils.jsonField2Int(jsonAscend, _yearKey)
+                ascend.month = ParserUtils.jsonField2Int(jsonAscend, _monthKey)
+                ascend.day = ParserUtils.jsonField2Int(jsonAscend, _dayKey)
+                ascend.notes = jsonAscend.getString(_notesKey)
+                val partnerNames = jsonAscend.getJSONArray(_partnersKey)
+                val partnerIds = ArrayList<Int>()
+                for (j in 0 until partnerNames.length()) {
+                    val name = partnerNames.getString(j).trim { it <= ' ' }
 
-                var partner = _db.partnerDao().all.find { name == it.name }
+                    var partner = _db.partnerDao().all.find { name == it.name }
 
-                if (partner == null) {
-                    partner = Partner()
-                    partner.id = partnerId++
-                    partner.name = name
-                    _db.partnerDao().insert(partner)
+                    if (partner == null) {
+                        partner = Partner()
+                        partner.id = partnerId++
+                        partner.name = name
+                        _db.partnerDao().insert(partner)
+                    }
+                    partnerIds.add(partner.id)
                 }
-                partnerIds.add(partner.id)
-            }
 
-            ascend.partnerIds = partnerIds
-            _db.ascendDao().insert(ascend)
-            _db.checkBitMasks(ascend)
+                ascend.partnerIds = partnerIds
+                _db.ascendDao().insert(ascend)
+                _db.checkBitMasks(ascend)
+            }
+            _db.setTransactionSuccessful()
+        } finally {
+            _db.endTransaction()
         }
     }
 }
