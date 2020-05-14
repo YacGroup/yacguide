@@ -87,7 +87,7 @@ class RockActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _sector?.let { db.sectorCommentDao().getAll(it.id) } ?: emptyArray()
+        val comments = _sector?.let { db.sectorCommentDao().getAll(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
@@ -123,7 +123,7 @@ class RockActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         this.title = _sector?.name.orEmpty()
-        val rocks = _sector?.let { db.rockDao().getAll(it.id) } ?: emptyArray()
+        val rocks = _sector?.let { db.rockDao().getAll(it.id) } ?: emptyList()
         for (rock in rocks) {
             val rockName = rock.name.orEmpty()
             if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {

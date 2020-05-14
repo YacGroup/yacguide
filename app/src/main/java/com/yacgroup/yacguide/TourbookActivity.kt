@@ -165,7 +165,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent(year: Int) {
-        val ascends = getAscends(year)
+        val ascends = getAscends(year).toMutableList()
         if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
@@ -241,13 +241,12 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun getAscends(year: Int): Array<Ascend> {
-        val ascends = when (_tourbookType) {
+    private fun getAscends(year: Int): List<Ascend> {
+        return when (_tourbookType) {
             TourbookType.eAscends -> _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
             else -> _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
         }
-        return ascends
     }
 
     private fun _showFileChooser() {

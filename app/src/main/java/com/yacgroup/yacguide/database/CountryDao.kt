@@ -26,7 +26,7 @@ import android.arch.persistence.room.Query
 interface CountryDao {
 
     @get:Query("SELECT * FROM Country")
-    val all: Array<Country>
+    val all: List<Country>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(country: Country)

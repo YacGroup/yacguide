@@ -25,7 +25,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface SectorDao {
     @Query("SELECT * FROM Sector WHERE parentId = :parentId ORDER BY nr")
-    fun getAll(parentId: Int): Array<Sector>
+    fun getAll(parentId: Int): List<Sector>
 
     @Query("SELECT * FROM Sector WHERE id = :id")
     fun getSector(id: Int): Sector?

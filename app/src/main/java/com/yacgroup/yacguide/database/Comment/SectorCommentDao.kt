@@ -25,7 +25,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface SectorCommentDao {
     @Query("SELECT * FROM SectorComment WHERE sectorId = :sectorId")
-    fun getAll(sectorId: Int): Array<SectorComment>
+    fun getAll(sectorId: Int): List<SectorComment>
 
     @Query("SELECT COUNT(*) FROM SectorComment WHERE sectorId = :sectorId")
     fun getCommentCount(sectorId: Int): Int

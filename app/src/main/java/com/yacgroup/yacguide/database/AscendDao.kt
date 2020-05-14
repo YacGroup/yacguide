@@ -26,19 +26,19 @@ import android.arch.persistence.room.Query
 @Dao
 interface AscendDao {
     @get:Query("SELECT * FROM Ascend")
-    val all: Array<Ascend>
+    val all: List<Ascend>
 
     @Query("SELECT * FROM Ascend WHERE year = :year AND styleId = :styleId ORDER BY year, month, day")
-    fun getAll(year: Int, styleId: Int): Array<Ascend>
+    fun getAll(year: Int, styleId: Int): List<Ascend>
 
     @Query("SELECT * FROM Ascend WHERE year = :year AND styleId < :styleIdLimit ORDER BY year, month, day")
-    fun getAllBelowStyleId(year: Int, styleIdLimit: Int): Array<Ascend>
+    fun getAllBelowStyleId(year: Int, styleIdLimit: Int): List<Ascend>
 
     @Query("SELECT * FROM Ascend WHERE routeId = :routeId ORDER BY year, month, day")
-    fun getAscendsForRoute(routeId: Int): Array<Ascend>
+    fun getAscendsForRoute(routeId: Int): List<Ascend>
 
     @Query("SELECT Ascend.* FROM Ascend JOIN Route ON routeId = Route.id WHERE Route.parentId = :rockId")
-    fun getAscendsForRock(rockId: Int): Array<Ascend>
+    fun getAscendsForRock(rockId: Int): List<Ascend>
 
     @Query("SELECT * FROM Ascend WHERE id = :id")
     fun getAscend(id: Int): Ascend?

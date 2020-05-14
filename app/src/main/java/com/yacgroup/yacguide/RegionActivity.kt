@@ -47,7 +47,7 @@ class RegionActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
-        val regions = _countryName?.let { db.regionDao().getAll(it) } ?: emptyArray()
+        val regions = _countryName?.let { db.regionDao().getAll(it) } ?: emptyList()
         for (region in regions) {
             val regionName = region.name
             val onClickListener = View.OnClickListener {

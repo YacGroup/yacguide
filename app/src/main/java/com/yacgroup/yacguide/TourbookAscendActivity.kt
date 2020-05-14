@@ -44,14 +44,14 @@ import java.util.ArrayList
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: AppDatabase
-    private var _ascends: Array<Ascend> = emptyArray()
+    private var _ascends: MutableList<Ascend> = mutableListOf<Ascend>()
     private var _currentAscendIdx: Int = 0
     private var _maxAscendIdx: Int = 0
     private var _routeId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.title = "Tourenbuch"
+        setTitle(R.string.menu_tourbook)
 
         _db = AppDatabase.getAppDatabase(this)
 
@@ -59,11 +59,11 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         _routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
         if (ascendId != AppDatabase.INVALID_ID) {
             _db.ascendDao().getAscend(ascendId)?.let {
-                _ascends = arrayOf(it)
+                _ascends = mutableListOf(it)
             }
             _routeId = _ascends[0].routeId
         } else if (_routeId != AppDatabase.INVALID_ID) {
-            _ascends = _db.ascendDao().getAscendsForRoute(_routeId)
+            _ascends = _db.ascendDao().getAscendsForRoute(_routeId).toMutableList()
             findViewById<View>(R.id.nextButton).visibility = if (_ascends.size > 1) View.VISIBLE else View.INVISIBLE
         }
         _maxAscendIdx = _ascends.size - 1
@@ -123,7 +123,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     private fun delete() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog)
-        (dialog.findViewById<View>(R.id.dialogText) as TextView).text = "Diese Begehung löschen?"
+        (dialog.findViewById<View>(R.id.dialogText) as TextView).setText(R.string.dialog_question_delete_ascend)
         dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             _db.deleteAscend(_ascends[_currentAscendIdx])
             dialog.dismiss()

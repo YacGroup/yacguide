@@ -25,10 +25,10 @@ import android.arch.persistence.room.Query
 @Dao
 interface RockDao {
     @get:Query("SELECT * FROM Rock")
-    val all: Array<Rock>
+    val all: List<Rock>
 
     @Query("SELECT * FROM Rock WHERE parentId = :parentId ORDER BY nr")
-    fun getAll(parentId: Int): Array<Rock>
+    fun getAll(parentId: Int): List<Rock>
 
     @Query("SELECT * FROM Rock WHERE id = :id")
     fun getRock(id: Int): Rock?

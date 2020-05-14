@@ -25,7 +25,7 @@ import android.arch.persistence.room.Query
 @Dao
 interface RockCommentDao {
     @Query("SELECT * FROM RockComment WHERE rockId = :rockId")
-    fun getAll(rockId: Int): Array<RockComment>
+    fun getAll(rockId: Int): List<RockComment>
 
     @Query("SELECT COUNT(*) FROM RockComment WHERE rockId = :rockId")
     fun getCommentCount(rockId: Int): Int

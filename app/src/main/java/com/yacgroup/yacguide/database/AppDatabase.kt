@@ -52,26 +52,17 @@ abstract class AppDatabase : RoomDatabase() {
 
     // Helpers to avoid code duplications
     fun deleteCountries() {
-        val countries = countryDao().all
-        for (country in countries) {
-            deleteRegions(country.name)
-        }
+        countryDao().all.map{ deleteRegions(it.name) }
         countryDao().deleteAll()
     }
 
     fun deleteRegions(countryName: String) {
-        val regions = regionDao().getAll(countryName)
-        for (region in regions) {
-            deleteSectors(region.id)
-        }
+        regionDao().getAll(countryName).map{ deleteSectors(it.id) }
         regionDao().deleteAll(countryName)
     }
 
     fun deleteSectors(regionId: Int) {
-        val sectors = sectorDao().getAll(regionId)
-        for (sector in sectors) {
-            deleteRocks(sector.id)
-        }
+        sectorDao().getAll(regionId).map{ deleteRocks(it.id) }
         sectorDao().deleteAll(regionId)
         regionCommentDao().deleteAll(regionId)
     }

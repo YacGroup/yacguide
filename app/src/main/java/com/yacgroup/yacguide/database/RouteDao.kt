@@ -25,16 +25,13 @@ import android.arch.persistence.room.Query
 @Dao
 interface RouteDao {
     @get:Query("SELECT * FROM Route")
-    val all: Array<Route>
+    val all: List<Route>
 
     @Query("SELECT * FROM Route WHERE parentId = :parentId ORDER BY nr")
-    fun getAll(parentId: Int): Array<Route>
+    fun getAll(parentId: Int): List<Route>
 
     @Query("SELECT * FROM Route WHERE id = :id")
     fun getRoute(id: Int): Route?
-
-    @Query("UPDATE Route SET description = :description WHERE id = :id")
-    fun updateDescription(description: String, id: Int)
 
     @Query("UPDATE Route SET ascendsBitMask = :bitMask WHERE id = :id")
     fun setAscendsBitMask(bitMask: Int, id: Int)

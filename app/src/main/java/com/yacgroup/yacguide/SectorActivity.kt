@@ -57,7 +57,7 @@ class SectorActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        val comments = _region?.let { db.regionCommentDao().getAll(it.id) } ?: emptyArray()
+        val comments = _region?.let { db.regionCommentDao().getAll(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
 
@@ -87,7 +87,7 @@ class SectorActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         this.title = _region?.name.orEmpty()
-        val sectors = _region?.let { db.sectorDao().getAll(it.id) } ?: emptyArray()
+        val sectors = _region?.let { db.sectorDao().getAll(it.id) } ?: emptyList()
         for (sector in sectors) {
             val sectorName = sector.name
             val onClickListener = View.OnClickListener {
@@ -114,7 +114,7 @@ class SectorActivity : UpdatableTableActivity() {
         _region?.let { db.deleteSectors(it.id) }
     }
 
-    private fun _generateRockCountString(rocks: Array<Rock>): String {
+    private fun _generateRockCountString(rocks: List<Rock>): String {
         val countSummits = customSettings.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
         val countMassifs = customSettings.getBoolean(getString(R.string.count_massifs), resources.getBoolean(R.bool.count_massifs))
         val countBoulders = customSettings.getBoolean(getString(R.string.count_boulders), resources.getBoolean(R.bool.count_boulders))
@@ -123,7 +123,7 @@ class SectorActivity : UpdatableTableActivity() {
             return ""
         }
 
-        var filteredRocks = rocks.toList()
+        var filteredRocks = rocks
         if (!countSummits) {
             filteredRocks = filteredRocks.filter{ it.type != Rock.typeSummit && it.type != Rock.typeAlpine }
         }
