@@ -5,6 +5,7 @@
 ### General ###
 *.html
 *.jks
+keystore.properties
 
 ### Fastlane
 **/fastlane/report.xml
