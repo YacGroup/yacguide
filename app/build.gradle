@@ -29,6 +29,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            // This ensures that the app can be installed on the phone in parallel to any
+            // already installed version.
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
     }
     flavorDimensions 'default'
     productFlavors {
