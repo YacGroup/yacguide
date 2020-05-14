@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide.network
 
+import android.util.Log
 import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -34,19 +35,26 @@ abstract class JSONWebParser(protected var db: AppDatabase,
 
     override fun onNetworkTaskResolved(requestId: NetworkRequestType, result: String) {
         if (_success) {
+            Log.d("import","Starting data import")
+            db.beginTransaction()
             try {
                 if (result.equals("null", ignoreCase = true)) {
                     // sandsteinklettern.de returns "null" string if there are no elements
                     throw IllegalArgumentException("")
                 }
                 // remove HTML-encoded characters
+
                 parseData(
                         requestId,
                         ParserUtils.resolveToUtf8(result)
                 )
+                db.setTransactionSuccessful()
             } catch (e: JSONException) {
                 _success = false
             } catch (e: IllegalArgumentException) {
+            } finally {
+                db.endTransaction()
+                Log.d("import","Finished data import")
             }
         }
         if (++_processedRequestsCount == networkRequests.size) {
