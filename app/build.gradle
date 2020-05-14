@@ -6,6 +6,25 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+// Create this file with some default values because otherwise the Gradle build fails.
+if (!keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.text = """\
+// These are just some default values. 
+storePassword=yacguide
+keyPassword=yacguide_key
+keyAlias=key0
+storeFile=keystore.jks
+playServicesFile=google-services.json
+"""
+}
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 androidGitVersion {
     baseCode 1
     prefix 'v'
@@ -24,16 +43,26 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+    signingConfigs {
+        gplay {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile rootProject.file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.gplay
         }
         debug {
             // This ensures that the app can be installed on the phone in parallel to any
             // already installed version.
             applicationIdSuffix ".debug"
             debuggable true
+            signingConfig signingConfigs.debug
         }
     }
     flavorDimensions 'default'
