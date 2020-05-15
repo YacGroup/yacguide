@@ -1,0 +1,9 @@
+Offline tool based on the data from http://www.sandsteinklettern.de.
+
+<b>Features:</b>
+
+* Offline access to climbing route information
+* Personal tourbook
+
+<b>The development version contains regular snapshots which may lead
+to unexpected changes without notice.</b>
