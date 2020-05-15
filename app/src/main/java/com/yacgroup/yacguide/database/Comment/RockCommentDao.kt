@@ -17,22 +17,31 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface RockCommentDao {
     @Query("SELECT * FROM RockComment WHERE rockId = :rockId")
     fun getAll(rockId: Int): List<RockComment>
 
+    @Query("SELECT * FROM RockComment JOIN Rock On RockComment.rockId = Rock.id WHERE Rock.parentId = :sectorId")
+    fun getAllInSector(sectorId: Int): List<RockComment>
+
+    @Query("SELECT * FROM RockComment JOIN Rock On RockComment.rockId = Rock.id JOIN Sector ON Rock.parentId = Sector.id WHERE Sector.parentId = :regionId")
+    fun getAllInRegion(regionId: Int): List<RockComment>
+
+    @Query("SELECT * FROM RockComment JOIN Rock On RockComment.rockId = Rock.id JOIN Sector ON Rock.parentId = Sector.id JOIN Region ON Sector.parentId = Region.id WHERE Region.country = :countryName")
+    fun getAllInCountry(countryName: String): List<RockComment>
+
     @Query("SELECT COUNT(*) FROM RockComment WHERE rockId = :rockId")
     fun getCommentCount(rockId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: RockComment)
+    fun insert(comments: List<RockComment>)
 
-    @Query("DELETE FROM RockComment WHERE rockId = :rockId")
-    fun deleteAll(rockId: Int)
+    @Delete
+    fun delete(comments: List<RockComment>)
+
+    @Query("DELETE FROM RockComment")
+    fun deleteAll()
 }

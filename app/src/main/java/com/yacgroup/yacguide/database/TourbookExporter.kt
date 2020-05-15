@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 
-class TourbookExporter(private val _db: AppDatabase) {
+class TourbookExporter(private val _db: DatabaseWrapper) {
 
     private val _routeIdKey = "routeId"
     private val _styleIdKey = "styleId"
@@ -42,7 +42,7 @@ class TourbookExporter(private val _db: AppDatabase) {
     @Throws(JSONException::class)
     fun exportTourbook(filePath: String) {
         val jsonAscends = JSONArray()
-        _db.ascendDao().all.map { jsonAscends.put(ascend2Json(it)) }
+        _db.getAscends().map { jsonAscends.put(ascend2Json(it)) }
         val file = File(filePath)
         try {
             val outStream = FileOutputStream(file)
@@ -74,13 +74,7 @@ class TourbookExporter(private val _db: AppDatabase) {
         jsonAscend.put(_monthKey, ascend.month.toString())
         jsonAscend.put(_dayKey, ascend.day.toString())
         val partnerList = JSONArray()
-        for (id in ascend.partnerIds.orEmpty()) {
-            val partner = _db.partnerDao().getPartner(id)
-
-            partner?.name?.let {
-                partnerList.put(it)
-            }
-        }
+        _db.getPartnerNames(ascend.partnerIds.orEmpty()).map { partnerList.put(it) }
         jsonAscend.put(_partnersKey, partnerList)
         jsonAscend.put(_notesKey, ascend.notes)
 
@@ -91,7 +85,9 @@ class TourbookExporter(private val _db: AppDatabase) {
     private fun writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
-        _db.partnerDao().deleteAll()
+        _db.deletePartners()
+        val ascends = mutableListOf<Ascend>()
+        val partners = mutableListOf<Partner>()
         var ascendId = 1
         var partnerId = 1
         for (i in 0 until jsonAscends.length()) {
@@ -110,20 +106,21 @@ class TourbookExporter(private val _db: AppDatabase) {
             for (j in 0 until partnerNames.length()) {
                 val name = partnerNames.getString(j).trim { it <= ' ' }
 
-                var partner = _db.partnerDao().all.find { name == it.name }
+                var partner = partners.find { name == it.name }
 
                 if (partner == null) {
                     partner = Partner()
                     partner.id = partnerId++
                     partner.name = name
-                    _db.partnerDao().insert(partner)
+                    partners.add(partner)
                 }
                 partnerIds.add(partner.id)
             }
 
             ascend.partnerIds = partnerIds
-            _db.ascendDao().insert(ascend)
-            _db.checkBitMasks(ascend)
+            ascends.add(ascend)
         }
+        _db.addPartners(partners)
+        _db.addAscends(ascends)
     }
 }

@@ -32,8 +32,8 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -43,7 +43,7 @@ import java.util.Calendar
 
 class AscendActivity : AppCompatActivity() {
 
-    private lateinit var _db: AppDatabase
+    private lateinit var _db: DatabaseWrapper
     private var _ascend: Ascend? = null
     private var _route: Route? = null
     private var _partnerIds: ArrayList<Int>? = null
@@ -56,13 +56,13 @@ class AscendActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ascend)
 
-        _db = AppDatabase.getAppDatabase(this)
+        _db = DatabaseWrapper(this)
 
-        _ascend = _db.ascendDao().getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID))
-        val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
+        _ascend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID))
+        val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
 
-        _route = _db.routeDao().getRoute(routeId.takeUnless { it == AppDatabase.INVALID_ID }
-                ?: _ascend?.routeId ?: AppDatabase.INVALID_ID)
+        _route = _db.getRoute(routeId.takeUnless { it == DatabaseWrapper.INVALID_ID }
+                ?: _ascend?.routeId ?: DatabaseWrapper.INVALID_ID)
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
         _partnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                 ?: _ascend?.partnerIds ?: ArrayList()
@@ -87,7 +87,7 @@ class AscendActivity : AppCompatActivity() {
         val existingAscend = _ascend
 
         val ascend = Ascend()
-        ascend.routeId = _route?.id ?: existingAscend?.routeId ?: AppDatabase.INVALID_ID
+        ascend.routeId = _route?.id ?: existingAscend?.routeId ?: DatabaseWrapper.INVALID_ID
         ascend.styleId = _styleId
         ascend.year = _year
         ascend.month = _month
@@ -96,13 +96,11 @@ class AscendActivity : AppCompatActivity() {
         ascend.notes = findViewById<EditText>(R.id.notesEditText).text.toString()
 
         if (existingAscend != null) {
-            _db.uncheckBitMasks(existingAscend)
             ascend.id = existingAscend.id
+            _db.deleteAscend(existingAscend)
         }
 
-        _db.ascendDao().insert(ascend)
-        _db.checkBitMasks(ascend)
-
+        _db.addAscend(ascend)
         val resultIntent = Intent()
         setResult(IntentConstants.RESULT_UPDATED, resultIntent)
         finish()
@@ -133,11 +131,8 @@ class AscendActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun selectPartners(v: View) {
-        val partners = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val partnerIds = ArrayList<Int>()
-        for (partner in partners) {
-            partnerIds.add(_db.partnerDao().getId(partner))
-        }
+        val partnerNames = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val partnerIds = _db.getPartnerIds(partnerNames.toList()) as ArrayList<Int>
         val intent = Intent(this@AscendActivity, PartnersActivity::class.java)
         intent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
         startActivityForResult(intent, 0)
@@ -145,7 +140,7 @@ class AscendActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun displayContent() {
-        title = _route?.let { "${it.name}   ${it.grade}" } ?: AppDatabase.UNKNOWN_NAME
+        title = _route?.let { "${it.name}   ${it.grade}" } ?: DatabaseWrapper.UNKNOWN_NAME
 
         val spinner = findViewById<Spinner>(R.id.styleSpinner)
         val adapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.names)
@@ -173,11 +168,7 @@ class AscendActivity : AppCompatActivity() {
             spinner.setSelection(if (_styleId != 0) adapter.getPosition(AscendStyle.fromId(_styleId)?.styleName) else 0)
         }
 
-        val partners = ArrayList<String>()
-        for (id in _partnerIds.orEmpty()) {
-            val partner = _db.partnerDao().getPartner(id)
-            partners.add(partner?.name ?: AppDatabase.UNKNOWN_NAME)
-        }
-        findViewById<EditText>(R.id.partnersEditText).setText(TextUtils.join(", ", partners))
+        val partnerNames = _db.getPartnerNames(_partnerIds.orEmpty().toList())
+        findViewById<EditText>(R.id.partnersEditText).setText(TextUtils.join(", ", partnerNames))
     }
 }

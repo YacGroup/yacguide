@@ -31,7 +31,10 @@ interface RegionDao {
     fun getRegion(id: Int): Region?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(region: Region)
+    fun insert(regions: List<Region>)
+
+    @Query("DELETE FROM Region")
+    fun deleteAll()
 
     @Query("DELETE FROM Region WHERE Country = :countryName")
     fun deleteAll(countryName: String)

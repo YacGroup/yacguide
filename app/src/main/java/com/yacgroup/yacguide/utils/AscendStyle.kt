@@ -58,7 +58,7 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             return _BY_ID[id]
         }
 
-        fun bitMask(style: AscendStyle): Int {
+        private fun _bitMask(style: AscendStyle): Int {
             return bitMask(style.id)
         }
 
@@ -67,31 +67,31 @@ enum class AscendStyle (val id: Int, val styleName: String) {
         }
 
         fun isLead(mask: Int): Boolean {
-            return mask and (bitMask(eSOLO)
-                          or bitMask(eONSIGHT)
-                          or bitMask(eREDPOINT)
-                          or bitMask(eALLFREE)
-                          or bitMask(eHOCHGESCHLEUDERT)) > 0
+            return mask and (_bitMask(eSOLO)
+                          or _bitMask(eONSIGHT)
+                          or _bitMask(eREDPOINT)
+                          or _bitMask(eALLFREE)
+                          or _bitMask(eHOCHGESCHLEUDERT)) > 0
         }
 
         fun isFollow(mask: Int): Boolean {
-            return mask and (bitMask(eALTERNATINGLEADS)
-                          or bitMask(eFOLLOWED)
-                          or bitMask(eHINTERHERGEHAMPELT)) > 0
+            return mask and (_bitMask(eALTERNATINGLEADS)
+                          or _bitMask(eFOLLOWED)
+                          or _bitMask(eHINTERHERGEHAMPELT)) > 0
         }
 
         fun isBotch(mask: Int): Boolean {
-            return mask and bitMask(eBOTCHED) > 0
+            return mask and _bitMask(eBOTCHED) > 0
         }
 
         fun isWatching(mask: Int): Boolean {
-            return mask and (bitMask(eSEEN)
-                          or bitMask(eVISITED)
-                          or bitMask(eHEARD)) > 0
+            return mask and (_bitMask(eSEEN)
+                          or _bitMask(eVISITED)
+                          or _bitMask(eHEARD)) > 0
         }
 
         fun isProject(mask: Int): Boolean {
-            return mask and bitMask(ePROJECT) > 0
+            return mask and _bitMask(ePROJECT) > 0
         }
 
         // We need to preserve order given by IDs

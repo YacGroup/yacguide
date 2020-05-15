@@ -29,7 +29,7 @@ interface CountryDao {
     val all: List<Country>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(country: Country)
+    fun insert(countries: List<Country>)
 
     @Query("DELETE FROM Country")
     fun deleteAll()

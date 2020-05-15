@@ -39,8 +39,8 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.yacgroup.yacguide.database.DatabaseWrapper
 
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -50,7 +50,7 @@ import java.util.HashMap
 
 class PartnersActivity : AppCompatActivity() {
 
-    private lateinit var _db: AppDatabase
+    private lateinit var _db: DatabaseWrapper
     private var _checkboxMap: MutableMap<Int, CheckBox> = HashMap()
     private lateinit var _selectedPartnerIds: List<Int>
     private var _partnerNamePart: String = ""
@@ -59,7 +59,7 @@ class PartnersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_partners)
 
-        _db = AppDatabase.getAppDatabase(this)
+        _db = DatabaseWrapper(this)
         _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS).orEmpty()
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
@@ -124,12 +124,10 @@ class PartnersActivity : AppCompatActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         _checkboxMap.clear()
-        val partners = _db.partnerDao().all
-        val ascends = _db.ascendDao().all
 
         // We need to sort the partners according to the number of ascends you have done with them
         val ascendPartnerCount = SparseIntArray()
-        for (ascend in ascends) {
+        for (ascend in _db.getAscends()) {
             ascend.partnerIds?.let {
                 for (id in it) {
                     val prevValue = ascendPartnerCount.get(id, 0)
@@ -138,7 +136,7 @@ class PartnersActivity : AppCompatActivity() {
             }
         }
 
-        val sortedPartners = partners.sortedByDescending {
+        val sortedPartners = _db.getPartners().sortedByDescending {
             ascendPartnerCount.get(it.id, 0)
         }.filter {
             it.name.orEmpty().toLowerCase().contains(_partnerNamePart.toLowerCase())
@@ -186,7 +184,7 @@ class PartnersActivity : AppCompatActivity() {
                 dialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_text_delete_partner)
                 val okButton = dialog.findViewById<Button>(R.id.yesButton)
                 okButton.setOnClickListener {
-                    _db.partnerDao().delete(partner)
+                    _db.deletePartner(partner)
                     dialog.dismiss()
                     _displayContent()
                 }
@@ -218,12 +216,12 @@ class PartnersActivity : AppCompatActivity() {
         when {
             newName == "" ->
                 Toast.makeText(dialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
-            _db.partnerDao().getId(newName) > 0 ->
+            _db.getPartnerId(newName) > 0 ->
                 Toast.makeText(dialog.context, R.string.hint_name_already_used, Toast.LENGTH_SHORT).show()
             else -> {
                 val updatedPartner = partner ?: Partner()
                 updatedPartner.name = newName
-                _db.partnerDao().insert(updatedPartner)
+                _db.addPartner(updatedPartner)
                 dialog.dismiss()
                 _displayContent()
             }

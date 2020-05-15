@@ -17,22 +17,31 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface RouteCommentDao {
     @Query("SELECT * FROM RouteComment WHERE routeId = :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 
+    @Query("SELECT * FROM RouteComment JOIN Route ON RouteComment.routeId = Route.id JOIN Rock ON Route.parentId = Rock.id WHERE Rock.parentId = :sectorId")
+    fun getAllInSector(sectorId: Int): List<RouteComment>
+
+    @Query("SELECT * FROM RouteComment JOIN Route ON RouteComment.routeId = Route.id JOIN Rock ON Route.parentId = Rock.id JOIN Sector ON Rock.parentId = Sector.id WHERE Sector.parentId = :regionId")
+    fun getAllInRegion(regionId: Int): List<RouteComment>
+
+    @Query("SELECT * FROM RouteComment JOIN Route ON RouteComment.routeId = Route.id JOIN Rock ON Route.parentId = Rock.id JOIN Sector ON Rock.parentId = Sector.id JOIN Region ON Sector.parentId = Region.id WHERE Region.country = :countryName")
+    fun getAllInCountry(countryName: String): List<RouteComment>
+
     @Query("SELECT COUNT(*) FROM RouteComment WHERE routeId = :routeId")
     fun getCommentCount(routeId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: RouteComment)
+    fun insert(comments: List<RouteComment>)
 
-    @Query("DELETE FROM RouteComment WHERE routeId = :routeId")
-    fun deleteAll(routeId: Int)
+    @Delete
+    fun delete(comments: List<RouteComment>)
+
+    @Query("DELETE FROM RouteComment")
+    fun deleteAll()
 }

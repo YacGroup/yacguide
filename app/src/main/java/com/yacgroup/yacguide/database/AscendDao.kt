@@ -52,6 +52,12 @@ interface AscendDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(ascend: Ascend)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(ascends: List<Ascend>)
+
     @Delete
     fun delete(ascend: Ascend)
+
+    @Query("DELETE FROM Ascend")
+    fun deleteAll()
 }

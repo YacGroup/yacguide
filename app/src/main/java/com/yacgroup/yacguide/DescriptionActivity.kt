@@ -27,8 +27,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RouteComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.DateUtils
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -41,9 +41,9 @@ class DescriptionActivity : TableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
+        val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
 
-        _route = db.routeDao().getRoute(routeId)
+        _route = db.getRoute(routeId)
         val routeStatusId = _route?.statusId ?: 0
         if (routeStatusId > 1) {
             findViewById<TextView>(R.id.infoTextView).text =
@@ -53,11 +53,11 @@ class DescriptionActivity : TableActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
-            _route = db.routeDao().getRoute(_route!!.id) // update route instance
+            _route = db.getRoute(_route!!.id) // update route instance
 
             val ascendsButton = findViewById<ImageButton>(R.id.ascendsButton)
             ascendsButton.visibility = if (_route!!.ascendsBitMask > 0) View.VISIBLE else View.INVISIBLE
-            Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.ascends_refreshed, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -65,7 +65,7 @@ class DescriptionActivity : TableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _route?.let { db.routeCommentDao().getAll(it.id) } ?: emptyList()
+        val comments = _route?.let { db.getRouteComments(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val gradeId = comment.gradeId
@@ -76,7 +76,7 @@ class DescriptionActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Wegqualität:",
+                        getString(R.string.route_quality),
                         RouteComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -86,7 +86,7 @@ class DescriptionActivity : TableActivity() {
             }
             if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Schwierigkeit:",
+                        getString(R.string.grade),
                         RouteComment.GRADE_MAP[gradeId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -96,7 +96,7 @@ class DescriptionActivity : TableActivity() {
             }
             if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Absicherung:",
+                        getString(R.string.security),
                         RouteComment.SECURITY_MAP[securityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -106,7 +106,7 @@ class DescriptionActivity : TableActivity() {
             }
             if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Abtrocknung:",
+                        getString(R.string.drying),
                         RouteComment.WETNESS_MAP[wetnessId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -179,7 +179,7 @@ class DescriptionActivity : TableActivity() {
 
         _route?.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "Kletterei:",
+                    getString(R.string.type_of_climbing),
                     it,
                     WidgetUtils.infoFontSizeDp,
                     View.OnClickListener { },

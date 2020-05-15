@@ -28,14 +28,17 @@ interface PartnerDao {
     @get:Query("SELECT * FROM Partner")
     val all: List<Partner>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(partner: Partner)
-
     @Query("SELECT Id FROM Partner WHERE Name = :name")
     fun getId(name: String): Int
 
     @Query("SELECT * FROM Partner WHERE Id = :id")
     fun getPartner(id: Int): Partner?
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(partner: Partner)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(partners: List<Partner>)
 
     @Delete
     fun delete(partner: Partner)

@@ -17,10 +17,7 @@
 
 package com.yacgroup.yacguide.database
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface RouteDao {
@@ -30,15 +27,30 @@ interface RouteDao {
     @Query("SELECT * FROM Route WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Route>
 
+    @Query("SELECT * FROM Route JOIN Rock ON Route.parentId = Rock.id WHERE Rock.parentId = :sectorId")
+    fun getAllInSector(sectorId: Int): List<Route>
+
+    @Query("SELECT * FROM Route JOIN Rock ON Route.parentId = Rock.id JOIN Sector ON Rock.parentId = Sector.id WHERE Sector.parentId = :regionId")
+    fun getAllInRegion(regionId: Int): List<Route>
+
+    @Query("SELECT * FROM Route JOIN Rock ON Route.parentId = Rock.id JOIN Sector ON Rock.parentId = Sector.id JOIN Region ON Sector.parentId = Region.id WHERE Region.country = :countryName")
+    fun getAllInCountry(countryName: String): List<Route>
+
     @Query("SELECT * FROM Route WHERE id = :id")
     fun getRoute(id: Int): Route?
 
-    @Query("UPDATE Route SET ascendsBitMask = :bitMask WHERE id = :id")
-    fun setAscendsBitMask(bitMask: Int, id: Int)
+    @Update
+    fun update(route: Route)
+
+    @Update
+    fun update(routes: List<Route>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(route: Route)
+    fun insert(routes: List<Route>)
 
-    @Query("DELETE FROM Route WHERE parentId = :parentId")
-    fun deleteAll(parentId: Int)
+    @Delete
+    fun delete(routes: List<Route>)
+
+    @Query("DELETE FROM Route")
+    fun deleteAll()
 }

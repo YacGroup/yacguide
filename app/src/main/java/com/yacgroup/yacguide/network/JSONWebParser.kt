@@ -18,15 +18,13 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONException
 
 import java.util.LinkedList
 
-abstract class JSONWebParser(protected var db: AppDatabase,
-                             private var _listener: UpdateListener) : NetworkListener {
+abstract class JSONWebParser(private var _listener: UpdateListener): NetworkListener {
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
     private var _success: Boolean = true

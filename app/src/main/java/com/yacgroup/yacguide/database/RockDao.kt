@@ -17,10 +17,7 @@
 
 package com.yacgroup.yacguide.database
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface RockDao {
@@ -30,17 +27,32 @@ interface RockDao {
     @Query("SELECT * FROM Rock WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Rock>
 
+    @Query("SELECT * FROM Rock JOIN Sector ON Rock.parentId = Sector.id WHERE Sector.parentId = :regionId")
+    fun getAllInRegion(regionId: Int): List<Rock>
+
+    @Query("SELECT * FROM Rock JOIN Sector ON Rock.parentId = Sector.id JOIN Region ON Sector.parentId = Region.id WHERE Region.country = :countryName")
+    fun getAllInCountry(countryName: String): List<Rock>
+
     @Query("SELECT * FROM Rock WHERE id = :id")
     fun getRock(id: Int): Rock?
 
     @Query("SELECT Rock.* FROM Rock JOIN Route ON Rock.id = Route.parentId JOIN Ascend ON Route.id = Ascend.routeId WHERE Ascend.id = :ascendId")
     fun getRockForAscend(ascendId: Int): Rock?
 
-    @Query("UPDATE Rock SET ascendsBitMask = :bitMask WHERE id = :id")
-    fun setAscendsBitMask(bitMask: Int, id: Int)
+    @Update
+    fun update(rock: Rock)
+
+    @Update
+    fun update(rocks: List<Rock>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(rock: Rock)
+    fun insert(rocks: List<Rock>)
+
+    @Delete
+    fun delete(rocks: List<Rock>)
+
+    @Query("DELETE FROM Rock")
+    fun deleteAll()
 
     @Query("DELETE FROM Rock WHERE parentId = :parentId")
     fun deleteAll(parentId: Int)
