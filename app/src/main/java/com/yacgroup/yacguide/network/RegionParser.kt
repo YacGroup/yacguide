@@ -18,7 +18,7 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
-import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.utils.NetworkUtils
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -27,10 +27,10 @@ import org.json.JSONArray
 import org.json.JSONException
 
 class RegionParser(
-        db: AppDatabase,
+        private val _db: DatabaseWrapper,
         listener: UpdateListener,
         private val _countryName: String)
-    : JSONWebParser(db, listener) {
+    : JSONWebParser(listener) {
 
     init {
         networkRequests.add(NetworkRequest(
@@ -41,7 +41,7 @@ class RegionParser(
     @Throws(JSONException::class)
     override fun parseData(requestId: NetworkRequestType, json: String) {
         // We don't need to care about requestId here; we only have one
-        db.regionDao().deleteAll(_countryName)
+        val regions = mutableListOf<Region>()
         val jsonRegions = JSONArray(json)
         for (i in 0 until jsonRegions.length()) {
             val jsonRegion = jsonRegions.getJSONObject(i)
@@ -49,7 +49,8 @@ class RegionParser(
             r.id = ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID")
             r.name = jsonRegion.getString("gebiet")
             r.country = _countryName
-            db.regionDao().insert(r)
+            regions.add(r)
         }
+        _db.refreshRegions(regions, _countryName)
     }
 }

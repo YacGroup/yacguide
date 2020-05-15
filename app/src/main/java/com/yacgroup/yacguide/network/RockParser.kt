@@ -18,10 +18,10 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RockComment
 import com.yacgroup.yacguide.database.Comment.RouteComment
 import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.AscendStyle
@@ -33,10 +33,10 @@ import org.json.JSONException
 import java.util.HashSet
 
 class RockParser(
-        db: AppDatabase,
+        private val _db: DatabaseWrapper,
         listener: UpdateListener,
         private val _sectorId: Int)
-    : JSONWebParser(db, listener) {
+    : JSONWebParser(listener) {
 
     init {
         networkRequests.add(NetworkRequest(
@@ -64,7 +64,7 @@ class RockParser(
 
     @Throws(JSONException::class)
     private fun parseRocks(json: String) {
-        db.rockDao().deleteAll(_sectorId)
+        val rocks = mutableListOf<Rock>()
         val jsonRocks = JSONArray(json)
         for (i in 0 until jsonRocks.length()) {
             val jsonRock = jsonRocks.getJSONObject(i)
@@ -81,13 +81,14 @@ class RockParser(
             r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
             r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
             r.parentId = _sectorId
-            db.rockDao().insert(r)
+            rocks.add(r)
         }
+        _db.refreshRocks(rocks, _sectorId)
     }
 
     @Throws(JSONException::class)
     private fun parseRoutes(json: String) {
-        db.rockDao().getAll(_sectorId).map{ db.routeDao().deleteAll(it.id) }
+        val routes = mutableListOf<Route>()
         val jsonRoutes = JSONArray(json)
         for (i in 0 until jsonRoutes.length()) {
             val jsonRoute = jsonRoutes.getJSONObject(i)
@@ -103,26 +104,28 @@ class RockParser(
             r.firstAscendDate = jsonRoute.getString("erstbegdatum")
             r.typeOfClimbing = jsonRoute.getString("kletterei")
             r.description = ParserUtils.jsonField2String(jsonRoute, "wegbeschr_d", "wegbeschr_cz")
-            val ascends = db.ascendDao().getAscendsForRoute(routeId) // if we re-add a route that has already been marked as ascended in the past
-            for (ascend in ascends) {
-                r.ascendsBitMask = (r.ascendsBitMask or AscendStyle.bitMask(ascend.styleId))
-            }
+            // if we re-add a route that has already been marked as ascended in the past:
+            _db.getRouteAscends(routeId).map { r.ascendsBitMask = (r.ascendsBitMask or AscendStyle.bitMask(it.styleId)) }
             r.parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
-            db.routeDao().insert(r)
+            routes.add(r)
         }
+        _db.refreshRoutes(routes, _sectorId)
 
         // update already ascended rocks
-        for (rock in db.rockDao().getAll(_sectorId)) {
-            for (ascend in db.ascendDao().getAscendsForRock(rock.id)) {
-                rock.ascendsBitMask = (rock.ascendsBitMask or AscendStyle.bitMask(ascend.styleId))
+        val updatedRocks = _db.getRocks(_sectorId).map {
+            for (ascend in _db.getRockAscends(it.id)) {
+                it.ascendsBitMask = it.ascendsBitMask or AscendStyle.bitMask(ascend.styleId)
             }
-            db.rockDao().setAscendsBitMask(rock.ascendsBitMask, rock.id)
+            it
         }
+        _db.updateRocks(updatedRocks)
     }
 
     @Throws(JSONException::class)
     private fun parseComments(json: String) {
-        deleteComments()
+        val sectorComments = mutableListOf<SectorComment>()
+        val rockComments = mutableListOf<RockComment>()
+        val routeComments = mutableListOf<RouteComment>()
         val jsonComments = JSONArray(json)
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
@@ -139,7 +142,7 @@ class RockParser(
                     comment.wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass")
                     comment.text = jsonComment.getString("kommentar")
                     comment.routeId = routeId
-                    db.routeCommentDao().insert(comment)
+                    routeComments.add(comment)
                 }
                 rockId != 0 -> {
                     val comment = RockComment()
@@ -147,7 +150,7 @@ class RockParser(
                     comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
                     comment.text = jsonComment.getString("kommentar")
                     comment.rockId = rockId
-                    db.rockCommentDao().insert(comment)
+                    rockComments.add(comment)
                 }
                 sectorId != 0 -> {
                     val comment = SectorComment()
@@ -155,21 +158,14 @@ class RockParser(
                     comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
                     comment.text = jsonComment.getString("kommentar")
                     comment.sectorId = sectorId
-                    db.sectorCommentDao().insert(comment)
+                    sectorComments.add(comment)
                 }
                 else -> throw JSONException("Unknown comment origin")
             }
         }
-    }
-
-    private fun deleteComments() {
-        db.sectorCommentDao().deleteAll(_sectorId)
-        for (rock in db.rockDao().getAll(_sectorId)) {
-            db.rockCommentDao().deleteAll(rock.id)
-            for (route in db.routeDao().getAll(rock.id)) {
-                db.routeCommentDao().deleteAll(route.id)
-            }
-        }
+        _db.refreshSectorComments(sectorComments, _sectorId)
+        _db.refreshRockComments(rockComments, _sectorId)
+        _db.refreshRouteComments(routeComments, _sectorId)
     }
 
     companion object {

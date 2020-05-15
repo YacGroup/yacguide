@@ -17,24 +17,21 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RegionComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
-import kotlin.Result
 
 class SectorActivity : UpdatableTableActivity() {
 
@@ -43,10 +40,10 @@ class SectorActivity : UpdatableTableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, AppDatabase.INVALID_ID)
+        val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, DatabaseWrapper.INVALID_ID)
 
         jsonParser = SectorParser(db, this, regionId)
-        _region = db.regionDao().getRegion(regionId)
+        _region = db.getRegion(regionId)
     }
 
     override fun getLayoutId(): Int {
@@ -57,14 +54,14 @@ class SectorActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        val comments = _region?.let { db.regionCommentDao().getAll(it.id) } ?: emptyList()
+        val comments = _region?.let { db.getRegionsComments(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
 
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Bedeutung:",
+                        getString(R.string.importance),
                         RegionComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -87,7 +84,7 @@ class SectorActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         this.title = _region?.name.orEmpty()
-        val sectors = _region?.let { db.sectorDao().getAll(it.id) } ?: emptyList()
+        val sectors = _region?.let { db.getSectors(it.id) } ?: emptyList()
         for (sector in sectors) {
             val sectorName = sector.name
             val onClickListener = View.OnClickListener {
@@ -96,7 +93,7 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
-            val rocks = db.rockDao().getAll(sector.id)
+            val rocks = db.getRocks(sector.id)
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,

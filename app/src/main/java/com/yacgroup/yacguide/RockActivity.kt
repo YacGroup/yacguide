@@ -30,9 +30,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
-import com.yacgroup.yacguide.database.AppDatabase
 
 import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.network.RockParser
@@ -49,10 +49,10 @@ class RockActivity : UpdatableTableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, AppDatabase.INVALID_ID)
+        val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
 
         jsonParser = RockParser(db, this, sectorId)
-        _sector = db.sectorDao().getSector(sectorId)
+        _sector = db.getSector(sectorId)
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
@@ -87,7 +87,7 @@ class RockActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _sector?.let { db.sectorCommentDao().getAll(it.id) } ?: emptyList()
+        val comments = _sector?.let { db.getSectorComments(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
@@ -95,7 +95,7 @@ class RockActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Bedeutung:",
+                        getString(R.string.importance),
                         SectorComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -123,7 +123,7 @@ class RockActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         this.title = _sector?.name.orEmpty()
-        val rocks = _sector?.let { db.rockDao().getAll(it.id) } ?: emptyList()
+        val rocks = _sector?.let { db.getRocks(it.id) } ?: emptyList()
         for (rock in rocks) {
             val rockName = rock.name.orEmpty()
             if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {

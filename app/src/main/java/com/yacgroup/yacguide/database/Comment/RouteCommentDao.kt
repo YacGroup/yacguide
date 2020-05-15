@@ -17,22 +17,35 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.database.Sector
 
 @Dao
 interface RouteCommentDao {
-    @Query("SELECT * FROM RouteComment WHERE routeId = :routeId")
+    @Query("${RouteComment.SELECT_ALL} ${RouteComment.FOR_ROUTE} :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 
-    @Query("SELECT COUNT(*) FROM RouteComment WHERE routeId = :routeId")
+    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Rock.FOR_SECTOR} :sectorId")
+    fun getAllInSector(sectorId: Int): List<RouteComment>
+
+    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    fun getAllInRegion(regionId: Int): List<RouteComment>
+
+    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<RouteComment>
+
+    @Query("SELECT COUNT(*) FROM RouteComment ${RouteComment.FOR_ROUTE} :routeId")
     fun getCommentCount(routeId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: RouteComment)
+    fun insert(comments: List<RouteComment>)
 
-    @Query("DELETE FROM RouteComment WHERE routeId = :routeId")
-    fun deleteAll(routeId: Int)
+    @Delete
+    fun delete(comments: List<RouteComment>)
+
+    @Query(RouteComment.DELETE_ALL)
+    fun deleteAll()
 }

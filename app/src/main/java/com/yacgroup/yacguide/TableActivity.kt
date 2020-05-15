@@ -23,15 +23,15 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 
-import com.yacgroup.yacguide.database.AppDatabase
+import com.yacgroup.yacguide.database.DatabaseWrapper
 
 abstract class TableActivity : BaseNavigationActivity() {
-    protected lateinit var db: AppDatabase
+    protected lateinit var db: DatabaseWrapper
     protected lateinit var customSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        db = AppDatabase.getAppDatabase(this)
+        db = DatabaseWrapper(this)
         customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
     }
 

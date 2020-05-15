@@ -37,6 +37,10 @@ class RouteComment {
 
     companion object {
 
+        const val SELECT_ALL = "SELECT RouteComment.* FROM RouteComment"
+        const val DELETE_ALL = "DELETE FROM RouteComment"
+        const val FOR_ROUTE = "WHERE RouteComment.routeId ="
+
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
             init {

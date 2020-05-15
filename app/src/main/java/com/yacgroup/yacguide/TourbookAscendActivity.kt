@@ -29,12 +29,8 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.yacgroup.yacguide.database.*
 
-import com.yacgroup.yacguide.database.AppDatabase
-import com.yacgroup.yacguide.database.Ascend
-import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -43,7 +39,7 @@ import java.util.ArrayList
 
 class TourbookAscendActivity : BaseNavigationActivity() {
 
-    private lateinit var _db: AppDatabase
+    private lateinit var _db: DatabaseWrapper
     private var _ascends: MutableList<Ascend> = mutableListOf<Ascend>()
     private var _currentAscendIdx: Int = 0
     private var _maxAscendIdx: Int = 0
@@ -53,17 +49,17 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.menu_tourbook)
 
-        _db = AppDatabase.getAppDatabase(this)
+        _db = DatabaseWrapper(this)
 
-        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_KEY, AppDatabase.INVALID_ID)
-        _routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, AppDatabase.INVALID_ID)
-        if (ascendId != AppDatabase.INVALID_ID) {
-            _db.ascendDao().getAscend(ascendId)?.let {
+        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID)
+        _routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
+        if (ascendId != DatabaseWrapper.INVALID_ID) {
+            _db.getAscend(ascendId)?.let {
                 _ascends = mutableListOf(it)
             }
             _routeId = _ascends[0].routeId
-        } else if (_routeId != AppDatabase.INVALID_ID) {
-            _ascends = _db.ascendDao().getAscendsForRoute(_routeId).toMutableList()
+        } else if (_routeId != DatabaseWrapper.INVALID_ID) {
+            _ascends = _db.getRouteAscends(_routeId).toMutableList()
             findViewById<View>(R.id.nextButton).visibility = if (_ascends.size > 1) View.VISIBLE else View.INVISIBLE
         }
         _maxAscendIdx = _ascends.size - 1
@@ -84,7 +80,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
-            _ascends[_currentAscendIdx] = _db.ascendDao().getAscend(_ascends[_currentAscendIdx].id)!!
+            _ascends[_currentAscendIdx] = _db.getAscend(_ascends[_currentAscendIdx].id)!!
             _displayContent(_ascends[_currentAscendIdx])
         }
     }
@@ -141,29 +137,24 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
-        var route = _db.routeDao().getRoute(_routeId)
+        var route = _db.getRoute(_routeId)
         val rock: Rock
         val sector: Sector
         val region: Region
         if (route != null) {
-            rock = _db.rockDao().getRock(route.parentId) ?: _db.createUnknownRock()
-            sector = _db.sectorDao().getSector(rock.parentId) ?: _db.createUnknownSector()
-            region = _db.regionDao().getRegion(sector.parentId) ?: _db.createUnknownRegion()
+            rock = _db.getRock(route.parentId) ?: _db.createUnknownRock()
+            sector = _db.getSector(rock.parentId) ?: _db.createUnknownSector()
+            region = _db.getRegion(sector.parentId) ?: _db.createUnknownRegion()
         } else {
             route = _db.createUnknownRoute()
             rock = _db.createUnknownRock()
             sector = _db.createUnknownSector()
             region = _db.createUnknownRegion()
-            Toast.makeText(this, "Zugehöriger Weg nicht gefunden.\n" + "Datenbankeintrag wurde scheinbar gelöscht.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.corresponding_route_not_found, Toast.LENGTH_LONG).show()
         }
 
-        val partnerIds = ascend.partnerIds
-        val partners = ArrayList<String>()
-        for (id in partnerIds.orEmpty()) {
-            val partner = _db.partnerDao().getPartner(id)
-            partners.add(partner?.name ?: AppDatabase.UNKNOWN_NAME)
-        }
-        val partnersString = TextUtils.join(", ", partners)
+        val partnerNames = _db.getPartnerNames(ascend.partnerIds?.toList().orEmpty())
+        val partnersString = TextUtils.join(", ", partnerNames)
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 "${ascend.day}.${ascend.month}.${ascend.year}",
@@ -175,7 +166,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Teilgebiet",
+                getString(R.string.region),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },
@@ -192,7 +183,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Felsen",
+                getString(R.string.rock),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },
@@ -209,7 +200,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Weg",
+                getString(R.string.route),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },
@@ -226,7 +217,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Stil",
+                getString(R.string.style),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },
@@ -243,7 +234,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Seilpartner",
+                getString(R.string.partner),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },
@@ -260,7 +251,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 10, 10, 10, 10))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "Bemerkungen",
+                getString(R.string.notes),
                 "",
                 WidgetUtils.textFontSizeDp,
                 View.OnClickListener { },

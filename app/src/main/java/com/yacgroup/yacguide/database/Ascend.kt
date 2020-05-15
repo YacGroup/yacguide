@@ -36,4 +36,10 @@ class Ascend {
     var partnerIds: ArrayList<Int>? = null
     var notes: String? = null
 
+    companion object {
+        const val SELECT_ALL = "SELECT Ascend.* FROM Ascend"
+        const val DELETE_ALL = "DELETE FROM Ascend"
+        const val ORDER_CHRONOLOGICALLY = "ORDER BY year, month, day"
+    }
+
 }

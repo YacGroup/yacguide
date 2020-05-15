@@ -17,22 +17,29 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
+import com.yacgroup.yacguide.database.Region
 
 @Dao
 interface RegionCommentDao {
-    @Query("SELECT * FROM RegionComment WHERE regionId = :regionId")
+    @Query("${RegionComment.SELECT_ALL} ${RegionComment.FOR_REGION} :regionId")
     fun getAll(regionId: Int): List<RegionComment>
 
-    @Query("SELECT COUNT(*) FROM RegionComment WHERE regionId = :regionId")
+    @Query("${RegionComment.SELECT_ALL} ${Region.JOIN_ON} RegionComment.regionId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<RegionComment>
+
+    @Query("SELECT COUNT(*) FROM RegionComment ${RegionComment.FOR_REGION} :regionId")
     fun getCommentCount(regionId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: RegionComment)
+    fun insert(comments: List<RegionComment>)
 
-    @Query("DELETE FROM RegionComment WHERE regionId = :regionId")
+    @Delete
+    fun delete(regionComments: List<RegionComment>)
+
+    @Query(RegionComment.DELETE_ALL)
+    fun deleteAll()
+
+    @Query("${RegionComment.DELETE_ALL} ${RegionComment.FOR_REGION} :regionId")
     fun deleteAll(regionId: Int)
 }

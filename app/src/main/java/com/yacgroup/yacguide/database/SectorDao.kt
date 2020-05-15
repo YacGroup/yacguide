@@ -17,22 +17,28 @@
 
 package com.yacgroup.yacguide.database
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface SectorDao {
-    @Query("SELECT * FROM Sector WHERE parentId = :parentId ORDER BY nr")
+    @Query("${Sector.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Sector>
 
-    @Query("SELECT * FROM Sector WHERE id = :id")
+    @Query("${Sector.SELECT_ALL} ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<Sector>
+
+    @Query("${Sector.SELECT_ALL} WHERE id = :id")
     fun getSector(id: Int): Sector?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(sector: Sector)
+    fun insert(sectors: List<Sector>)
 
-    @Query("DELETE FROM Sector WHERE parentId = :parentId")
+    @Delete
+    fun delete(sectors: List<Sector>)
+
+    @Query(Sector.DELETE_ALL)
+    fun deleteAll()
+
+    @Query("${Sector.DELETE_ALL} WHERE parentId = :parentId")
     fun deleteAll(parentId: Int)
 }

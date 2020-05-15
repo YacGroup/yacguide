@@ -25,22 +25,22 @@ import android.arch.persistence.room.Query
 
 @Dao
 interface AscendDao {
-    @get:Query("SELECT * FROM Ascend")
+    @get:Query(Ascend.SELECT_ALL)
     val all: List<Ascend>
 
-    @Query("SELECT * FROM Ascend WHERE year = :year AND styleId = :styleId ORDER BY year, month, day")
+    @Query("${Ascend.SELECT_ALL} WHERE year = :year AND styleId = :styleId ${Ascend.ORDER_CHRONOLOGICALLY}")
     fun getAll(year: Int, styleId: Int): List<Ascend>
 
-    @Query("SELECT * FROM Ascend WHERE year = :year AND styleId < :styleIdLimit ORDER BY year, month, day")
+    @Query("${Ascend.SELECT_ALL} WHERE year = :year AND styleId < :styleIdLimit ${Ascend.ORDER_CHRONOLOGICALLY}")
     fun getAllBelowStyleId(year: Int, styleIdLimit: Int): List<Ascend>
 
-    @Query("SELECT * FROM Ascend WHERE routeId = :routeId ORDER BY year, month, day")
+    @Query("${Ascend.SELECT_ALL} WHERE routeId = :routeId ${Ascend.ORDER_CHRONOLOGICALLY}")
     fun getAscendsForRoute(routeId: Int): List<Ascend>
 
-    @Query("SELECT Ascend.* FROM Ascend JOIN Route ON routeId = Route.id WHERE Route.parentId = :rockId")
+    @Query("${Ascend.SELECT_ALL} ${Route.JOIN_ON} Ascend.routeId ${Route.FOR_ROCK} :rockId")
     fun getAscendsForRock(rockId: Int): List<Ascend>
 
-    @Query("SELECT * FROM Ascend WHERE id = :id")
+    @Query("${Ascend.SELECT_ALL} WHERE id = :id")
     fun getAscend(id: Int): Ascend?
 
     @Query("SELECT DISTINCT year FROM Ascend WHERE styleId = :styleId")
@@ -52,6 +52,12 @@ interface AscendDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(ascend: Ascend)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(ascends: List<Ascend>)
+
     @Delete
     fun delete(ascend: Ascend)
+
+    @Query(Ascend.DELETE_ALL)
+    fun deleteAll()
 }

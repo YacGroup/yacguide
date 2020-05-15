@@ -18,13 +18,13 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Country
+import com.yacgroup.yacguide.database.DatabaseWrapper
 
 import org.json.JSONArray
 import org.json.JSONException
 
-class CountryParser(db: AppDatabase, listener: UpdateListener) : JSONWebParser(db, listener) {
+class CountryParser(private val _db: DatabaseWrapper, listener: UpdateListener) : JSONWebParser(listener) {
 
     init {
         networkRequests.add(NetworkRequest(
@@ -35,13 +35,14 @@ class CountryParser(db: AppDatabase, listener: UpdateListener) : JSONWebParser(d
     @Throws(JSONException::class)
     override fun parseData(requestId: NetworkRequestType, json: String) {
         // We don't need to care about requestId here; we only have one
-        db.countryDao().deleteAll()
+        val countries = mutableListOf<Country>()
         val jsonCountries = JSONArray(json)
         for (i in 0 until jsonCountries.length()) {
             val jsonCountry = jsonCountries.getJSONObject(i)
             val c = Country()
             c.name = jsonCountry.getString("land")
-            db.countryDao().insert(c)
+            countries.add(c)
         }
+        _db.refreshCountries(countries)
     }
 }

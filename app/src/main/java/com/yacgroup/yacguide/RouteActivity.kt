@@ -17,9 +17,7 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
@@ -30,8 +28,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RockComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -44,15 +42,15 @@ class RouteActivity : TableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, AppDatabase.INVALID_ID)
+        val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, DatabaseWrapper.INVALID_ID)
 
-        _rock = db.rockDao().getRock(rockId)
+        _rock = db.getRock(rockId)
         val rockStatus = _rock?.status
         when {
-            rockStatus == Rock.statusProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist komplett gesperrt."
-            rockStatus == Rock.statusTemporarilyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist zeitweise gesperrt."
-            rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist teilweise gesperrt."
-            _rock?.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).text = "Achtung: Der Felsen ist nicht anerkannt."
+            rockStatus == Rock.statusProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_fully_prohibited)
+            rockStatus == Rock.statusTemporarilyProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_temporarily_prohibited)
+            rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_partly_prohibited)
+            _rock?.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_inofficial )
         }
     }
 
@@ -61,7 +59,7 @@ class RouteActivity : TableActivity() {
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
 
         if (mapIntent.resolveActivity(packageManager) == null) {
-            Toast.makeText(this, "Keine Karten-App verfügbar", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.no_map_app_available, Toast.LENGTH_SHORT).show()
         } else {
             startActivity(mapIntent)
         }
@@ -71,7 +69,7 @@ class RouteActivity : TableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _rock?.let { db.rockCommentDao().getAll(it.id) } ?: emptyList()
+        val comments = _rock?.let { db.getRockComments(it.id) } ?: emptyList()
         for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
@@ -79,7 +77,7 @@ class RouteActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "Charakter:",
+                        getString(R.string.nature),
                         RockComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
@@ -103,9 +101,9 @@ class RouteActivity : TableActivity() {
         layout.removeAllViews()
         this.title = "${_rock?.name}"
 
-        val routes = _rock?.let { db.routeDao().getAll(it.id) } ?: emptyList()
+        val routes = _rock?.let { db.getRoutes(it.id) } ?: emptyList()
         for (route in routes) {
-            val commentCount = db.routeCommentDao().getCommentCount(route.id)
+            val commentCount = db.getRouteCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             val botchAdd = if (AscendStyle.isBotch(route.ascendsBitMask)) getString(R.string.botch) else ""
             val projectAdd = if (AscendStyle.isProject(route.ascendsBitMask)) getString(R.string.project) else ""
