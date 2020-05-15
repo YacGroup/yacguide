@@ -1,0 +1,1 @@
+Wir arbeiten kontinuierlich an der Verbesserung der App. Für eine detaillierte Liste von Änderungen, schau dir bitte die Git-Commits an.
