@@ -1,5 +1,0 @@
-cc72f29 - Add link to YacGuide GitHub page
-2514d93 - Don't show F-Droid badget for for now
-4b5d6ee - Make privacy policy available in app
-ff82930 - Setup GitHub page for privacy policy
-bf0d2e8 - Add privacy policy

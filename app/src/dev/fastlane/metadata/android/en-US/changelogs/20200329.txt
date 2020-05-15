@@ -1,6 +1,0 @@
-5fcea90 - Run unit tests in CI job which fixes #109
-d4f6d33 - Fix reset of rock and route ascends bit mask while tourbook import
-d49b294 - Fix app crash if tourbook is empty
-ad09b07 - Use tagged Docker image for CI
-ee78a6e - Improve help and fix typos in Makefile
-b2cea29 - Update Android Studio config files for latest version

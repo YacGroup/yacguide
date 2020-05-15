@@ -1,3 +1,0 @@
-Offline tool
-für <a href="http://www.sandsteinklettern.de">sandsteinklettern.de</a>
-(Entwicklerversion)
