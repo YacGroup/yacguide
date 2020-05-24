@@ -1,7 +1,8 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMAGE := yacgroup/yacguide-build:20200329
+DOCKER_IMG_VER := 20200329
+DOCKER_IMG := yacgroup/yacguide-build:$(DOCKER_IMG_VER)
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
 USER_ID := $(shell id --user)
@@ -59,6 +60,7 @@ help::
 	@echo "  KEYPASS=\"<password>\" - Key password (optional)"
 	@echo "  FLAVOR=stable|dev - App flavor (optional). Default: stable"
 	@echo "  SHELL_CMD=\"<shell command>\" - Shell command to be run (optional)"
+	@echo "  DOCKER_IMG_VER=<version> - Optional Docker image version. (default: $(DOCKER_IMG_VER))"
 	@echo ""
 	@echo "Targets:"
 
@@ -167,7 +169,7 @@ docker-run:
 		--mount type=bind,src="$(PWD)",dst="$(DOCKER_MOUNT_TARGET)" \
 		--network host \
 		--publish 127.0.0.1:4000:4000/tcp \
-		$(DOCKER_IMAGE) /bin/bash -c 'tail -f /dev/null'
+		$(DOCKER_IMG) /bin/bash -c 'tail -f /dev/null'
 
 .PHONY: docker-prep
 docker-prep: docker-prep-user docker-prep-git fastlane-setup \
