@@ -24,7 +24,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -165,7 +165,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent(year: Int) {
-        val ascends = getAscends(year).toMutableList()
+        val ascends = _getAscends(year).toMutableList()
         if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
@@ -241,7 +241,7 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun getAscends(year: Int): List<Ascend> {
+    private fun _getAscends(year: Int): List<Ascend> {
         return when (_tourbookType) {
             TourbookType.eAscends -> _db.getAscendsBelowStyleId(year, AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.getAscendsOfStyle(year, AscendStyle.eBOTCHED.id)

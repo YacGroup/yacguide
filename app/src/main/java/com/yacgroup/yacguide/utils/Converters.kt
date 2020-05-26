@@ -17,7 +17,7 @@
 
 package com.yacgroup.yacguide.utils
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import android.text.TextUtils
 import java.util.ArrayList
 
