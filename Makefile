@@ -22,14 +22,7 @@ DOCKER_EXEC_CMD := docker exec \
 # --------------------------------------------------------------------
 # Build parameters
 # --------------------------------------------------------------------
-KEYSTORE_FILE := keystore.jks
-FLAVOR := stable
-# Make directories relative because we are mounting the current
-# working directory to another path in the container.
-RELEASE_DIR := app/build/outputs/apk/$(FLAVOR)/release
-APK_FILE_UNSIGNED := $(RELEASE_DIR)/app-$(FLAVOR)-release-unsigned.apk
-APK_FILE_SIGNED := $(RELEASE_DIR)/app-$(FLAVOR)-release-signed.apk
-APK_FILE_DEPLOY := $(RELEASE_DIR)/yacguide-$(FLAVOR).apk
+GRADLE_USER_HOME = $$(pwd)/.gradle/
 ifndef NO_DOCKER
 # Run the build scripts inside the container under the current user.
 EXEC_CMD := $(DOCKER_EXEC_CMD) $(DOCKER_CONTAINER) /bin/bash -c
@@ -38,37 +31,32 @@ EXEC_CMD := /bin/bash -c
 endif
 
 # --------------------------------------------------------------------
-# Internal variables
-# --------------------------------------------------------------------
-FLAVOR_CAP := $(shell echo $(FLAVOR) | sed -e 's/\b\(.\)/\u\1/g')
-
-# --------------------------------------------------------------------
 # General targets
 # --------------------------------------------------------------------
-
 .PHONY: help
 help::
-	@echo "Build and sign APK file."
+	@echo "Makefile for general tasks"
 	@echo ""
 	@echo "gmake <TARGET> <PARAMETERS>"
 	@echo ""
-	@echo "Target 'apk-sign' requires parameters 'STOREPASS' and 'KEYPASS'."
-	@echo ""
 	@echo "Parameters:"
 	@echo "  NO_DOCKER=true - Do not run commands inside Docker container."
-	@echo "  STOREPASS=\"<password>\" - Keystore password (optional)"
-	@echo "  KEYPASS=\"<password>\" - Key password (optional)"
-	@echo "  FLAVOR=stable|dev - App flavor (optional). Default: stable"
 	@echo "  SHELL_CMD=\"<shell command>\" - Shell command to be run (optional)"
 	@echo "  DOCKER_IMG_VER=<version> - Optional Docker image version. (default: $(DOCKER_IMG_VER))"
 	@echo ""
 	@echo "Targets:"
 
 help::
-	@echo "  dist - make distribution (run all apk-* targets)"
+	@echo "  dists - build releases or all flavors"
 
-.PHONY: dist
-dist: apk-build apk-sign apk-zipalign
+.PHONY: dists
+dists:
+	@echo "Building and signing APKs ..."
+	$(EXEC_CMD) "./gradlew \
+		--gradle-user-home $(GRADLE_USER_HOME) \
+		clean \
+		assembleDevRelease \
+		assembleStableRelease"
 
 help::
 	@echo "  distclean - clean everything not under version control"
@@ -93,52 +81,6 @@ help::
 .PHONY: run-shell-cmd
 run-shell-cmd:
 	$(EXEC_CMD) '$(SHELL_CMD)'
-
-# --------------------------------------------------------------------
-# APK build commands
-# --------------------------------------------------------------------
-help::
-	@echo "  apk-build - build unsigned APK file"
-
-.PHONY: apk-build
-apk-build: $(APK_FILE_UNSIGNED)
-
-$(APK_FILE_UNSIGNED):
-	@echo "Building unsigned APK ..."
-	$(EXEC_CMD) './gradlew \
-		--gradle-user-home $$(pwd)/.gradle/ \
-		clean \
-		assemble$(FLAVOR_CAP)Release'
-
-help::
-	@echo "  apk-sign - sign APK file"
-
-.PHONY: apk-sign
-apk-sign: $(APK_FILE_SIGNED)
-
-$(APK_FILE_SIGNED): $(APK_FILE_UNSIGNED)
-	@echo "Signing APK ..."
-	$(EXEC_CMD) \
-		'$${ANDROID_HOME}/build-tools/$${ANDROID_BUILD_TOOLS}/apksigner \
-			sign \
-			--ks $(KEYSTORE_FILE) \
-			--ks-pass pass:$(STOREPASS) \
-			--key-pass pass:$(KEYPASS) \
-			--in $< \
-			--out $@'
-
-help::
-	@echo "  apk-zipalign - zipalign signed APK file"
-
-.PHONY: apk-zipalign
-apk-zipalign: $(APK_FILE_DEPLOY)
-
-# https://developer.android.com/studio/command-line/zipalign
-$(APK_FILE_DEPLOY): $(APK_FILE_SIGNED)
-	@echo "ZIP alignment ..."
-	$(EXEC_CMD) \
-		'$${ANDROID_HOME}/build-tools/$${ANDROID_BUILD_TOOLS}/zipalign \
-			-f 4 $< $@'
 
 # --------------------------------------------------------------------
 # Docker command
@@ -235,7 +177,7 @@ help::
 .PHONY: tests
 tests:
 	$(EXEC_CMD) "./gradlew \
-		--gradle-user-home $$(pwd)/.gradle/ \
+		--gradle-user-home $(GRADLE_USER_HOME) \
 		test"
 
 # --------------------------------------------------------------------
