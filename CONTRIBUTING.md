@@ -124,30 +124,47 @@ docker build -f Dockerfile -t yacgroup/yacguide-build .
 
 ## Building the APK locally
 
-Copy the `keystore.jks` file from your private location to
-the project directory but **DO NOT** commit this file.
+For building a signed APK the following files are necessary:
 
-The parameters `<storepass>` and `<keypass>` are the keystore and key
-passwords for signing the APK file.
+* Keystore properties file named `keystore.properties` with the
+  following properties defined:
 
-The optional make parameter `FLAVOR=stable|dev` can be used to build
-either the stable or development version. By default the stable
-version is built.
+```properties
+storePassword=<storePassword>
+keyPassword=<keyPassword>
+keyAlias=<keyAlias>
+storeFile=<keystoreFile>
+playServicesFile=<googleServicesAccountFile>
+```
 
-Run the following commands within the repository root.
+* Keystore file (`.jks`)
+* Google Service Account file (`.json`)
+
+These files must **not** be committed and will be provided by the CI
+for Google Play deployment.
+
+Follow the [Android Studio app signing] documentation for creating a
+keystore file.
+
+The Google services account file is only necessary for the actual
+Google Play deployment.
 
 ### Inside the Docker Environment
 
+For building the APK inside the Docker environment, run the following
+command:
+
 ```shell
-make docker-start-new dist docker-stop STOREPASS="<storepass>" KEYPASS="<keypass>"
+make docker-start-new dists docker-stop
 ```
 
 ### Without using Docker Environment
 
-**NOTE:** This requires that all tools are installed locally.
+**NOTE:** This requires that all tools are installed locally e.g. this
+is the case, if you have installed Android Studio.
 
 ```shell
-make dist NO_DOCKER=true STOREPASS="<storepass>" KEYPASS="<keypass>"
+make dists NO_DOCKER=true
 ```
 
 ### Troubleshooting
@@ -220,6 +237,9 @@ version number.
 After performing the steps below, the [F-Droid] server will build and
 sign the app after some time and make it available in the app store.
 
+The deployment of the app to the Google Play store is done by the CI,
+if a release tag is pushed to the GitHub repository.
+
 ### Stable Release
 
 Create a annotated Git tag following the corresponding version scheme
@@ -237,11 +257,6 @@ with a leading `v`. E.g. `v1.2.3`.
 
    `make release-dev`
 
-5. After checking that everything is okay, push the changes to the
-   remote repository:
-
-   `git push --follow-tags`
-
 ## GitHub Page
 
 To build the GitHub page locally, you need to do the following steps
@@ -256,3 +271,4 @@ inside the projects root directory:
 [F-Droid]: https://f-droid.org
 [semantic version scheme]: http://semver.org/
 [Docker Hub]: https://hub.docker.com/repository/docker/yacgroup/yacguide-build
+[Android Studio app signing]: https://developer.android.com/studio/publish/app-signing
