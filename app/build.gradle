@@ -38,8 +38,8 @@ android {
         dev {
             dimension 'default'
             applicationIdSuffix '.dev'
-            versionCode 20200428
-            versionName '20200428'
+            versionCode 20200527
+            versionName '20200527'
         }
     }
 }
