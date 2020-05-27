@@ -5,23 +5,33 @@ dist: xenial
 services:
   - docker
 
-stages:
-  - tests
-
 before_script:
+  # Decode Google Service Account JSON file
+  - echo $playServicesFileBase64 | base64 -d > $playServicesFile
+  # Decode keystore file from variable
+  - echo $playKeyStoreBase64 | base64 -d > $playKeyStore
+  # Write keystore properties file
+  - printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\nplayServicesFile=%s\n'
+    $playKeyStore $playStorePassword $playKeyAlias $playKeyPassword $playServicesFile > keystore.properties
+  # Prepare Docker cotainer
   - make docker-run docker-prep
 
-jobs:
-  include:
-    - stage: tests
-      name: "Unit tests"
-      script: make tests
-    - stage: tests
-      name: "Build test flavor stable"
-      script: make apk-build FLAVOR=stable
-    - stage: tests
-      name: "Build test flavor dev"
-      script: make apk-build FLAVOR=dev
+script:
+  - make tests dists
 
 after_script:
+  - make docker-stop
+
+before_deploy:
+  - make docker-start-existing
+
+deploy:
+  - provider: script
+    script: make deploy-play-dev
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^dev-[0-9]{8}$
+      skip_cleanup: true
+
+after_deploy:
   - make docker-stop
