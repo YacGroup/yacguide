@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMG_VER := 20200329
+DOCKER_IMG_VER := 20200527
 DOCKER_IMG := yacgroup/yacguide-build:$(DOCKER_IMG_VER)
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
@@ -172,7 +172,7 @@ docker-run:
 		$(DOCKER_IMG) /bin/bash -c 'tail -f /dev/null'
 
 .PHONY: docker-prep
-docker-prep: docker-prep-user docker-prep-git fastlane-setup \
+docker-prep: docker-prep-user docker-prep-git \
 jekyll-setup
 
 # Create a user inside the container with the same UID and GID as the
@@ -227,20 +227,16 @@ docker-shell:
 		/bin/bash
 
 # --------------------------------------------------------------------
-# Fastlane commands
+# Testing
 # --------------------------------------------------------------------
-# Install required Ruby Gems for Fastlane
-.PHONY: fastlane-setup
-fastlane-setup:
-	@echo "Running Fastlane setup ..."
-	$(EXEC_CMD) "bundle install --path vendor/bundle"
-
 help::
 	@echo "  tests - run tests"
 
 .PHONY: tests
 tests:
-	$(EXEC_CMD) "bundle exec fastlane test"
+	$(EXEC_CMD) "./gradlew \
+		--gradle-user-home $$(pwd)/.gradle/ \
+		test"
 
 # --------------------------------------------------------------------
 # GitHub page commands
@@ -263,12 +259,12 @@ jekyll-serve:
 # Commands to make releases using the container
 # --------------------------------------------------------------------
 help::
-	@echo "  release-dev - Make development release (tag and commit)"
+	@echo "  release-dev - Make development release (commit and tag)"
 
 .PHONY: release-dev
 release-dev:
 	@echo "Making development release ..."
-	$(EXEC_CMD) "bundle exec fastlane create_dev_release"
+	$(EXEC_CMD) "scripts/create_release --release-type dev"
 
 help::
 	@echo "  deploy-play-dev - Deploy development release to Google Play"

@@ -1,0 +1,105 @@
+#! /usr/bin/env python3
+#
+# YacGuide Android Application
+#
+# Copyright (C) 2020 Christian Sommer
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+"""Script for creating releases."""
+
+import os
+import re
+import argparse
+from datetime import datetime
+import git
+
+
+def get_cli_parser():
+    """Return argument parser object."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    help_release_type = "release type (default: %(default)s)"
+    parser.add_argument("--release-type", choices=["dev"],
+                        default="dev", required=False,
+                        help=help_release_type)
+    help_version = """release version string. For release type 'dev'
+it is the date code in the format 'YYYYMMDD'."""
+    parser.add_argument("--version", required=False,
+                        help=help_version)
+    help_skip_checks = "skip checks"
+    parser.add_argument("--skip-checks", action="store_true",
+                        default=False, required=False,
+                        help=help_skip_checks)
+    return parser
+
+
+class Release:
+    """Release Class
+
+    Attributes:
+        cli_parser (argparse.ArgumentParser): Command line interface
+            parser
+        cli_args (argparse.Namespace): Parsed CLI arguments
+        repo (git.Repo): Git repo object
+    """
+    _GRADLE_FILE = "app/build.gradle"
+
+    def __init__(self):
+        self.cli_parser = get_cli_parser()
+        self.cli_args = self.cli_parser.parse_args()
+        self.repo = git.Repo(os.getcwd())
+
+    def main(self):
+        """Main function"""
+        if not self.cli_args.skip_checks:
+            self.pre_checks()
+        if self.cli_args.release_type == "dev":
+            self.create_dev_release()
+
+    def pre_checks(self):
+        """Run some checks before creating the release."""
+        if self.repo.is_dirty():
+            raise Exception("Repo is dirty.")
+
+    def update_dev_version(self, version):
+        """Update development version code and name in Gradle file."""
+        with open(self._GRADLE_FILE) as fobj:
+            build_gradle = fobj.read()
+        build_gradle_updated = re.sub(
+            r'(versionCode)\s+\d+', r'\1 %s' % version, build_gradle)
+        build_gradle_updated = re.sub(
+            r"(versionName)\s+'\d+'", r"\1 '%s'" % version,
+            build_gradle_updated)
+        with open(self._GRADLE_FILE, "w") as fobj:
+            fobj.write(build_gradle_updated)
+        self.repo.index.add([self._GRADLE_FILE])
+        self.repo.index.commit("Daily dev %s" % version)
+
+    def create_dev_release(self):
+        """Create a development release"""
+        if not self.cli_args.version:
+            version = datetime.now().strftime("%Y%m%d")
+        tag_name = "dev-%s" % version
+        self.update_dev_version(version)
+        self.repo.create_tag(tag_name)
+        print("""\n
+Next step:
+----------
+  Push the release commit and tag using 'git push --follow-tags'.
+""")
+
+
+if __name__ == "__main__":
+    RELEASE = Release()
+    RELEASE.main()
