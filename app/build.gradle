@@ -34,7 +34,7 @@ androidGitVersion {
 }
 
 play {
-    serviceAccountCredentials = rootProject.file("google-services.json")
+    serviceAccountCredentials = rootProject.file(keystoreProperties['playServicesFile'])
     // This disables GPP by default.
     enabled = false
 }
@@ -49,6 +49,7 @@ android {
         versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        archivesBaseName = "yacguide"
     }
     signingConfigs {
         gplay {
@@ -86,6 +87,7 @@ android {
     }
     playConfigs {
         dev {
+            track = "beta"
             enabled = true
         }
     }

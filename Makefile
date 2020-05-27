@@ -267,3 +267,13 @@ help::
 release-dev:
 	@echo "Making development release ..."
 	$(EXEC_CMD) "bundle exec fastlane create_dev_release"
+
+help::
+	@echo "  deploy-play-dev - Deploy development release to Google Play"
+
+.PHONY: deploy-play-dev
+deploy-play-dev:
+	@echo "Deploying development release to Google Play ..."
+	$(EXEC_CMD) "./gradlew \
+		--gradle-user-home $(GRADLE_USER_HOME) \
+		publishDevReleaseBundle"
