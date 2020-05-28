@@ -61,7 +61,7 @@ class SectorActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.importance),
+                        getString(R.string.relevance),
                         RegionComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },

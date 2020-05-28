@@ -95,7 +95,7 @@ class RockActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.importance),
+                        getString(R.string.relevance),
                         SectorComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },

@@ -76,7 +76,7 @@
     <string name="protection">Absicherung:</string>
     <string name="drying">Abtrocknung:</string>
     <string name="type_of_climbing">Kletterei:</string>
-    <string name="importance">Bedeutung:</string>
+    <string name="relevance">Bedeutung:</string>
     <string name="nature">Charakter:</string>
     <string name="rock_fully_prohibited">Achtung: Der Felsen ist komplett gesperrt.</string>
     <string name="rock_temporarily_prohibited">Achtung: Der Felsen ist zeitweise gesperrt.</string>
