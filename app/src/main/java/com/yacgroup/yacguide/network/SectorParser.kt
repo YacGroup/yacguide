@@ -18,17 +18,17 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
-import com.yacgroup.yacguide.database.AppDatabase
 import com.yacgroup.yacguide.database.Comment.RegionComment
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException
 
-class SectorParser(db: AppDatabase,
+class SectorParser(private val _db: DatabaseWrapper,
                    listener: UpdateListener,
-                   private val _regionId: Int) : JSONWebParser(db, listener) {
+                   private val _regionId: Int) : JSONWebParser(listener) {
 
     init {
         networkRequests.add(NetworkRequest(
@@ -52,7 +52,7 @@ class SectorParser(db: AppDatabase,
 
     @Throws(JSONException::class)
     private fun parseSectors(json: String) {
-        db.sectorDao().deleteAll(_regionId)
+        val sectors = mutableListOf<Sector>()
         val jsonSectors = JSONArray(json)
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
@@ -61,13 +61,14 @@ class SectorParser(db: AppDatabase,
             s.name = ParserUtils.jsonField2String(jsonSector, "sektorname_d", "sektorname_cz")
             s.nr = ParserUtils.jsonField2Float(jsonSector, "sektornr")
             s.parentId = _regionId
-            db.sectorDao().insert(s)
+            sectors.add(s)
         }
+        _db.refreshSectors(sectors, _regionId)
     }
 
     @Throws(JSONException::class)
     private fun parseRegionComments(json: String) {
-        db.regionCommentDao().deleteAll(_regionId)
+        val comments = mutableListOf<RegionComment>()
         val jsonComments = JSONArray(json)
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
@@ -76,7 +77,8 @@ class SectorParser(db: AppDatabase,
             comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
             comment.text = jsonComment.getString("kommentar")
             comment.regionId = _regionId
-            db.regionCommentDao().insert(comment)
+            comments.add(comment)
         }
+        _db.refreshRegionComments(comments, _regionId)
     }
 }

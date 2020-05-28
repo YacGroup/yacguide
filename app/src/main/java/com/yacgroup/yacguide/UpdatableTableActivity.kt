@@ -51,22 +51,22 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         _updateDialog?.dismiss()
 
         if (success) {
-            Toast.makeText(this, "Bereich aktualisiert", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.objects_refreshed, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Fehler bei Aktualisierung", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
         }
         displayContent()
     }
 
     private fun update() {
         if (!NetworkUtils.isNetworkAvailable(this)) {
-            Toast.makeText(this, "Keine Internetverbindung", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
         if (jsonParser != null) {
             val dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog)
-            (dialog.findViewById<View>(R.id.dialogText) as TextView).text = getString(R.string.dialog_question_update)
+            (dialog.findViewById<View>(R.id.dialogText) as TextView).setText(R.string.dialog_question_update)
             dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
                 jsonParser?.fetchData()
                 showUpdateDialog()

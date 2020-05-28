@@ -51,14 +51,37 @@
     <string name="partner_search">Partner suchen</string>
 
     <!-- Toasts -->
+    <string name="objects_refreshed">Bereich aktualisiert</string>
+    <string name="error_on_refresh">Fehler bei Aktualisierung</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
     <string name="hint_no_name">Kein Name eingegeben</string>
     <string name="hint_name_already_used">Name bereits vergeben</string>
+    <string name="no_internet_connection">Keine Internetverbindung</string>
+    <string name="no_map_app_available">Keine Karten-App verfügbar</string>
+    <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
+                                                 Datenbankeintrag wurde scheinbar gelöscht.</string>
 
     <!-- Data -->
+    <string name="region">Teilgebiet</string>
+    <string name="rock">Felsen</string>
+    <string name="route">Weg</string>
+    <string name="style">Stil</string>
+    <string name="partner">Seilpartner</string>
+    <string name="notes">Bemerkungen</string>
     <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
     <string name="date_unknown">Datum unbekannt</string>
+    <string name="route_quality">Wegqualität:</string>
+    <string name="grade">Schwierigkeit:</string>
+    <string name="protection">Absicherung:</string>
+    <string name="drying">Abtrocknung:</string>
+    <string name="type_of_climbing">Kletterei:</string>
+    <string name="relevance">Bedeutung:</string>
+    <string name="nature">Charakter:</string>
+    <string name="rock_fully_prohibited">Achtung: Der Felsen ist komplett gesperrt.</string>
+    <string name="rock_temporarily_prohibited">Achtung: Der Felsen ist zeitweise gesperrt.</string>
+    <string name="rock_partly_prohibited">Achtung: Der Felsen ist teilweise gesperrt.</string>
+    <string name="rock_inofficial">Achtung: Der Felsen ist nicht anerkannt.</string>
 
     <!-- Tourbook -->
     <string name="ascends">Begehungen</string>

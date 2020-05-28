@@ -17,31 +17,43 @@
 
 package com.yacgroup.yacguide.database
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 
 @Dao
 interface RockDao {
-    @get:Query("SELECT * FROM Rock")
+    @get:Query(Rock.SELECT_ALL)
     val all: List<Rock>
 
-    @Query("SELECT * FROM Rock WHERE parentId = :parentId ORDER BY nr")
+    @Query("${Rock.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Rock>
 
-    @Query("SELECT * FROM Rock WHERE id = :id")
+    @Query("${Rock.SELECT_ALL} ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    fun getAllInRegion(regionId: Int): List<Rock>
+
+    @Query("${Rock.SELECT_ALL} ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<Rock>
+
+    @Query("${Rock.SELECT_ALL} WHERE id = :id")
     fun getRock(id: Int): Rock?
 
-    @Query("SELECT Rock.* FROM Rock JOIN Route ON Rock.id = Route.parentId JOIN Ascend ON Route.id = Ascend.routeId WHERE Ascend.id = :ascendId")
+    @Query("${Rock.SELECT_ALL} JOIN Route ON Rock.id = Route.parentId JOIN Ascend ON Route.id = Ascend.routeId WHERE Ascend.id = :ascendId")
     fun getRockForAscend(ascendId: Int): Rock?
 
-    @Query("UPDATE Rock SET ascendsBitMask = :bitMask WHERE id = :id")
-    fun setAscendsBitMask(bitMask: Int, id: Int)
+    @Update
+    fun update(rock: Rock)
+
+    @Update
+    fun update(rocks: List<Rock>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(rock: Rock)
+    fun insert(rocks: List<Rock>)
 
-    @Query("DELETE FROM Rock WHERE parentId = :parentId")
+    @Delete
+    fun delete(rocks: List<Rock>)
+
+    @Query(Rock.DELETE_ALL)
+    fun deleteAll()
+
+    @Query("${Rock.DELETE_ALL} WHERE parentId = :parentId")
     fun deleteAll(parentId: Int)
 }

@@ -34,6 +34,10 @@ class RockComment {
 
     companion object {
 
+        const val SELECT_ALL = "SELECT RockComment.* FROM RockComment"
+        const val DELETE_ALL = "DELETE FROM RockComment"
+        const val FOR_ROCK = "WHERE RockComment.rockId ="
+
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
             init {

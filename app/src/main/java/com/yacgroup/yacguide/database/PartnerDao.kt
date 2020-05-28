@@ -25,21 +25,24 @@ import android.arch.persistence.room.Query
 
 @Dao
 interface PartnerDao {
-    @get:Query("SELECT * FROM Partner")
+    @get:Query(Partner.SELECT_ALL)
     val all: List<Partner>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(partner: Partner)
 
     @Query("SELECT Id FROM Partner WHERE Name = :name")
     fun getId(name: String): Int
 
-    @Query("SELECT * FROM Partner WHERE Id = :id")
+    @Query("${Partner.SELECT_ALL} WHERE Id = :id")
     fun getPartner(id: Int): Partner?
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(partner: Partner)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(partners: List<Partner>)
 
     @Delete
     fun delete(partner: Partner)
 
-    @Query("DELETE FROM Partner")
+    @Query(Partner.DELETE_ALL)
     fun deleteAll()
 }

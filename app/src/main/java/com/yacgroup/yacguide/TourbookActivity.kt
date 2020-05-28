@@ -46,7 +46,7 @@ import java.util.Arrays
 
 class TourbookActivity : BaseNavigationActivity() {
 
-    private lateinit var _db: AppDatabase
+    private lateinit var _db: DatabaseWrapper
     private lateinit var _availableYears: IntArray
     private var _currentYearIdx: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
@@ -87,7 +87,7 @@ class TourbookActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.ascends)
 
-        _db = AppDatabase.getAppDatabase(this)
+        _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _initYears()
@@ -190,7 +190,7 @@ class TourbookActivity : BaseNavigationActivity() {
             val month = ascend.month
             val day = ascend.day
 
-            var route = _db.routeDao().getRoute(ascend.routeId)
+            var route = _db.getRoute(ascend.routeId)
             val rock: Rock
             val sector: Sector
             val region: Region
@@ -200,9 +200,9 @@ class TourbookActivity : BaseNavigationActivity() {
                 rock = _db.createUnknownRock()
                 region = _db.createUnknownRegion()
             } else {
-                rock = _db.rockDao().getRock(route.parentId)!!
-                sector = _db.sectorDao().getSector(rock.parentId)!!
-                region = _db.regionDao().getRegion(sector.parentId)!!
+                rock = _db.getRock(route.parentId)!!
+                sector = _db.getSector(rock.parentId)!!
+                region = _db.getRegion(sector.parentId)!!
             }
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
@@ -243,9 +243,9 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun getAscends(year: Int): List<Ascend> {
         return when (_tourbookType) {
-            TourbookType.eAscends -> _db.ascendDao().getAllBelowStyleId(year, AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db.ascendDao().getAll(year, AscendStyle.eBOTCHED.id)
-            else -> _db.ascendDao().getAll(year, AscendStyle.ePROJECT.id)
+            TourbookType.eAscends -> _db.getAscendsBelowStyleId(year, AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.getAscendsOfStyle(year, AscendStyle.eBOTCHED.id)
+            else -> _db.getAscendsOfStyle(year, AscendStyle.ePROJECT.id)
         }
     }
 
@@ -301,9 +301,9 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _initYears() {
         _availableYears = when (_tourbookType) {
-            TourbookType.eAscends -> _db.ascendDao().getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db.ascendDao().getYears(AscendStyle.eBOTCHED.id)
-            else -> _db.ascendDao().getYears(AscendStyle.ePROJECT.id)
+            TourbookType.eAscends -> _db.getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.getYearsOfStyle(AscendStyle.eBOTCHED.id)
+            else -> _db.getYearsOfStyle(AscendStyle.ePROJECT.id)
         }
 
         Arrays.sort(_availableYears)

@@ -24,15 +24,18 @@ import android.arch.persistence.room.Query
 
 @Dao
 interface RegionDao {
-    @Query("SELECT * FROM Region WHERE country = :countryName")
+    @Query("${Region.SELECT_ALL} ${Region.FOR_COUNTRY} :countryName")
     fun getAll(countryName: String): List<Region>
 
-    @Query("SELECT * FROM Region WHERE id = :id")
+    @Query("${Region.SELECT_ALL} WHERE id = :id")
     fun getRegion(id: Int): Region?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(region: Region)
+    fun insert(regions: List<Region>)
 
-    @Query("DELETE FROM Region WHERE Country = :countryName")
+    @Query(Region.DELETE_ALL)
+    fun deleteAll()
+
+    @Query("${Region.DELETE_ALL} ${Region.FOR_COUNTRY} :countryName")
     fun deleteAll(countryName: String)
 }

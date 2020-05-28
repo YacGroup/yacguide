@@ -25,12 +25,12 @@ import android.arch.persistence.room.Query
 @Dao
 interface CountryDao {
 
-    @get:Query("SELECT * FROM Country")
+    @get:Query(Country.SELECT_ALL)
     val all: List<Country>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(country: Country)
+    fun insert(countries: List<Country>)
 
-    @Query("DELETE FROM Country")
+    @Query(Country.DELETE_ALL)
     fun deleteAll()
 }

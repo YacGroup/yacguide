@@ -22,4 +22,9 @@ import android.arch.persistence.room.Entity
 @Entity(primaryKeys = ["name"])
 class Country {
     var name = ""
+
+    companion object {
+        const val SELECT_ALL = "SELECT Country.* FROM Country"
+        const val DELETE_ALL = "DELETE FROM Country"
+    }
 }

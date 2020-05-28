@@ -17,22 +17,34 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Sector
 
 @Dao
 interface RockCommentDao {
-    @Query("SELECT * FROM RockComment WHERE rockId = :rockId")
+    @Query("${RockComment.SELECT_ALL} ${RockComment.FOR_ROCK} :rockId")
     fun getAll(rockId: Int): List<RockComment>
 
-    @Query("SELECT COUNT(*) FROM RockComment WHERE rockId = :rockId")
+    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Rock.FOR_SECTOR} :sectorId")
+    fun getAllInSector(sectorId: Int): List<RockComment>
+
+    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    fun getAllInRegion(regionId: Int): List<RockComment>
+
+    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<RockComment>
+
+    @Query("SELECT COUNT(*) FROM RockComment ${RockComment.FOR_ROCK} :rockId")
     fun getCommentCount(rockId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: RockComment)
+    fun insert(comments: List<RockComment>)
 
-    @Query("DELETE FROM RockComment WHERE rockId = :rockId")
-    fun deleteAll(rockId: Int)
+    @Delete
+    fun delete(comments: List<RockComment>)
+
+    @Query(RockComment.DELETE_ALL)
+    fun deleteAll()
 }

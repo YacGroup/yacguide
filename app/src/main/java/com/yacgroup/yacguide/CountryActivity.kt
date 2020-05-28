@@ -36,10 +36,10 @@ class CountryActivity : UpdatableTableActivity() {
     }
 
     override fun displayContent() {
-        this.title = getString(R.string.app_name)
+        setTitle(R.string.app_name)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        for (country in db.countryDao().all) {
+        for (country in db.getCountries()) {
             val countryName = country.name
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@CountryActivity, RegionActivity::class.java)

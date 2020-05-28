@@ -17,22 +17,33 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.Sector
 
 @Dao
 interface SectorCommentDao {
-    @Query("SELECT * FROM SectorComment WHERE sectorId = :sectorId")
+    @Query("${SectorComment.SELECT_ALL} ${SectorComment.FOR_SECTOR} :sectorId")
     fun getAll(sectorId: Int): List<SectorComment>
 
-    @Query("SELECT COUNT(*) FROM SectorComment WHERE sectorId = :sectorId")
+    @Query("${SectorComment.SELECT_ALL} ${Sector.JOIN_ON} SectorComment.sectorId ${Sector.FOR_REGION} :regionId")
+    fun getAllInRegion(regionId: Int): List<SectorComment>
+
+    @Query("${SectorComment.SELECT_ALL} ${Sector.JOIN_ON} SectorComment.sectorId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    fun getAllInCountry(countryName: String): List<SectorComment>
+
+    @Query("SELECT COUNT(*) FROM SectorComment ${SectorComment.FOR_SECTOR} :sectorId")
     fun getCommentCount(sectorId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(comment: SectorComment)
+    fun insert(comments: List<SectorComment>)
 
-    @Query("DELETE FROM SectorComment WHERE sectorId = :sectorId")
+    @Delete
+    fun delete(comments: List<SectorComment>)
+
+    @Query(SectorComment.DELETE_ALL)
+    fun deleteAll()
+
+    @Query("${SectorComment.DELETE_ALL} ${SectorComment.FOR_SECTOR} :sectorId")
     fun deleteAll(sectorId: Int)
 }

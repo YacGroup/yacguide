@@ -34,6 +34,10 @@ class SectorComment {
 
     companion object {
 
+        const val SELECT_ALL = "SELECT SectorComment.* FROM SectorComment"
+        const val DELETE_ALL = "DELETE FROM SectorComment"
+        const val FOR_SECTOR = "WHERE SectorComment.sectorId ="
+
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
             init {

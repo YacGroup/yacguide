@@ -34,6 +34,10 @@ class RegionComment {
 
     companion object {
 
+        const val SELECT_ALL = "SELECT RegionComment.* FROM RegionComment"
+        const val DELETE_ALL = "DELETE FROM RegionComment"
+        const val FOR_REGION = "WHERE RegionComment.regionId ="
+
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
             init {
