@@ -17,7 +17,7 @@
 
 package com.yacgroup.yacguide.database
 
-import android.arch.persistence.room.Entity
+import androidx.room.Entity
 
 @Entity(primaryKeys = ["name"])
 class Country {

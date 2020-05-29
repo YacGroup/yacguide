@@ -17,7 +17,7 @@
 
 package com.yacgroup.yacguide.database.Comment
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.database.Sector
 

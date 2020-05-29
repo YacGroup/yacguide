@@ -53,20 +53,23 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
-    def room_version = "1.1.1"
+    def room_version = "2.2.5"
 
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     // use kapt for Kotlin
 
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
     // optional - RxJava support for Room
-    implementation "android.arch.persistence.room:rxjava2:$room_version"
+    implementation "androidx.room:room-rxjava2:$room_version"
 
     // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation "android.arch.persistence.room:guava:$room_version"
+    implementation "androidx.room:room-guava:$room_version"
 
     // Test helpers
-    testImplementation "android.arch.persistence.room:testing:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
 
     implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation 'com.caverock:androidsvg:1.3'
