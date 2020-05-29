@@ -35,12 +35,11 @@ import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
-import com.yacgroup.yacguide.network.RockParser
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RockActivity : UpdatableTableActivity() {
+class RockActivity : TableActivity() {
 
     private var _sector: Sector? = null
     private var _onlySummits: Boolean = false
@@ -51,7 +50,6 @@ class RockActivity : UpdatableTableActivity() {
 
         val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
 
-        jsonParser = RockParser(db, this, sectorId)
         _sector = db.getSector(sectorId)
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
@@ -166,12 +164,6 @@ class RockActivity : UpdatableTableActivity() {
                     bgColor,
                     typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
-    }
-
-    override fun deleteContent() {
-        _sector?.let {
-            db.deleteRocks(it.id)
         }
     }
 

@@ -17,8 +17,14 @@
 
 package com.yacgroup.yacguide.network
 
-enum class NetworkRequestType {
-    DATA_REQUEST_ID,
-    SUBDATA_REQUEST_ID,
-    COMMENTS_REQUEST_ID
+enum class RequestType {
+    COUNTRY_DATA,
+    REGION_DATA,
+    SECTOR_DATA,
+    ROCK_DATA,
+    ROUTE_DATA,
+    REGION_COMMENTS,
+    SECTOR_COMMENTS
 }
+
+class NetworkRequestUId(val type: RequestType, val id: Int)

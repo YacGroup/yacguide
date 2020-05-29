@@ -40,14 +40,13 @@ class CountryActivity : UpdatableTableActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         for (country in db.getCountries()) {
-            val countryName = country.name
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@CountryActivity, RegionActivity::class.java)
-                intent.putExtra(IntentConstants.COUNTRY_KEY, countryName)
+                intent.putExtra(IntentConstants.COUNTRY_KEY, country.name)
                 startActivity(intent)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    countryName,
+                    country.name,
                     "",
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
@@ -58,7 +57,7 @@ class CountryActivity : UpdatableTableActivity() {
     }
 
     override fun deleteContent() {
-        db.deleteCountries()
+        db.deleteCountriesRecursively()
     }
 
     override fun getLayoutId(): Int {

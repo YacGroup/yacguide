@@ -23,7 +23,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-class NetworkTask(private val _requestId: NetworkRequestType,
+class NetworkTask(private val _requestId: NetworkRequestUId,
                   private val _listener: NetworkListener) : AsyncTask<String, Void, String>() {
 
     override fun doInBackground(vararg urls: String): String? {

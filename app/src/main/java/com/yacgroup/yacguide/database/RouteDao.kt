@@ -27,9 +27,6 @@ interface RouteDao {
     @Query("${Route.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Route>
 
-    @Query("${Route.SELECT_ALL} ${Rock.JOIN_ON} Route.parentId ${Rock.FOR_SECTOR} :sectorId")
-    fun getAllInSector(sectorId: Int): List<Route>
-
     @Query("${Route.SELECT_ALL} ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
     fun getAllInRegion(regionId: Int): List<Route>
 

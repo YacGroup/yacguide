@@ -35,7 +35,7 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SectorActivity : UpdatableTableActivity() {
 
-    private var _region: Region? = null
+    private lateinit var _region: Region
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ class SectorActivity : UpdatableTableActivity() {
         val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, DatabaseWrapper.INVALID_ID)
 
         jsonParser = SectorParser(db, this, regionId)
-        _region = db.getRegion(regionId)
+        _region = db.getRegion(regionId)!!
     }
 
     override fun getLayoutId(): Int {
@@ -54,7 +54,7 @@ class SectorActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        val comments = _region?.let { db.getRegionsComments(it.id) } ?: emptyList()
+        val comments = db.getRegionsComments(_region.id)
         for (comment in comments) {
             val qualityId = comment.qualityId
 
@@ -83,10 +83,9 @@ class SectorActivity : UpdatableTableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _region?.name.orEmpty()
-        val sectors = _region?.let { db.getSectors(it.id) } ?: emptyList()
+        this.title = _region.name
+        val sectors = db.getSectors(_region.id)
         for (sector in sectors) {
-            val sectorName = sector.name
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@SectorActivity, RockActivity::class.java)
                 intent.putExtra(IntentConstants.SECTOR_KEY, sector.id)
@@ -97,7 +96,7 @@ class SectorActivity : UpdatableTableActivity() {
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    sectorName.orEmpty(),
+                    sector.name.orEmpty(),
                     rockCountString,
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
@@ -108,7 +107,7 @@ class SectorActivity : UpdatableTableActivity() {
     }
 
     override fun deleteContent() {
-        _region?.let { db.deleteSectors(it.id) }
+        db.deleteSectorsRecursively(_region.id)
     }
 
     private fun _generateRockCountString(rocks: List<Rock>): String {

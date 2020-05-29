@@ -30,7 +30,7 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
     private var _success: Boolean = true
     private var _processedRequestsCount: Int = 0
 
-    override fun onNetworkTaskResolved(requestId: NetworkRequestType, result: String) {
+    override fun onNetworkTaskResolved(requestId: NetworkRequestUId, result: String) {
         if (_success) {
             try {
                 if (result.equals("null", ignoreCase = true)) {
@@ -48,7 +48,7 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
             }
         }
         if (++_processedRequestsCount == networkRequests.size) {
-            _listener.onEvent(_success)
+            onFinalTaskResolved()
             _success = true
         }
     }
@@ -61,5 +61,9 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
     }
 
     @Throws(JSONException::class)
-    protected abstract fun parseData(requestId: NetworkRequestType, json: String)
+    protected abstract fun parseData(requestId: NetworkRequestUId, json: String)
+
+    protected open fun onFinalTaskResolved() {
+        _listener.onEvent(_success)
+    }
 }

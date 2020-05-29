@@ -21,6 +21,7 @@ import android.app.Dialog
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 
@@ -66,13 +67,13 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         if (jsonParser != null) {
             val dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog)
-            (dialog.findViewById<View>(R.id.dialogText) as TextView).setText(R.string.dialog_question_update)
-            dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
+            dialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_question_update)
+            dialog.findViewById<Button>(R.id.yesButton).setOnClickListener {
                 jsonParser?.fetchData()
                 showUpdateDialog()
                 dialog.dismiss()
             }
-            dialog.findViewById<View>(R.id.noButton).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<Button>(R.id.noButton).setOnClickListener { dialog.dismiss() }
             dialog.setCancelable(false)
             dialog.setCanceledOnTouchOutside(false)
             dialog.show()
@@ -82,14 +83,14 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     private fun delete() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog)
-        (dialog.findViewById<View>(R.id.dialogText) as TextView).text = getString(R.string.dialog_question_delete)
-        dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
+        (dialog.findViewById<TextView>(R.id.dialogText)).setText(R.string.dialog_question_delete)
+        dialog.findViewById<Button>(R.id.yesButton).setOnClickListener {
             deleteContent()
             dialog.dismiss()
-            Toast.makeText(applicationContext, "Bereich gelöscht", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, R.string.objects_deleted, Toast.LENGTH_SHORT).show()
             displayContent()
         }
-        dialog.findViewById<View>(R.id.noButton).setOnClickListener { dialog.dismiss() }
+        dialog.findViewById<Button>(R.id.noButton).setOnClickListener { dialog.dismiss() }
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
         dialog.show()

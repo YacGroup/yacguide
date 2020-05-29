@@ -26,23 +26,28 @@ import org.json.JSONException
 
 class CountryParser(private val _db: DatabaseWrapper, listener: UpdateListener) : JSONWebParser(listener) {
 
+    private val _countries = mutableListOf<Country>()
+
     init {
         networkRequests.add(NetworkRequest(
-                NetworkRequestType.DATA_REQUEST_ID,
+                NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
                 "${baseUrl}jsonland.php?app=yacguide"))
     }
 
     @Throws(JSONException::class)
-    override fun parseData(requestId: NetworkRequestType, json: String) {
-        // We don't need to care about requestId here; we only have one
-        val countries = mutableListOf<Country>()
+    override fun parseData(requestId: NetworkRequestUId, json: String) {
         val jsonCountries = JSONArray(json)
         for (i in 0 until jsonCountries.length()) {
             val jsonCountry = jsonCountries.getJSONObject(i)
             val c = Country()
             c.name = jsonCountry.getString("land")
-            countries.add(c)
+            _countries.add(c)
         }
-        _db.refreshCountries(countries)
+    }
+
+    override fun onFinalTaskResolved() {
+        _db.deleteCountries()
+        _db.addCountries(_countries)
+        super.onFinalTaskResolved()
     }
 }

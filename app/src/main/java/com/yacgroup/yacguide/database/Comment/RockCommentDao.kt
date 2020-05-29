@@ -27,9 +27,6 @@ interface RockCommentDao {
     @Query("${RockComment.SELECT_ALL} ${RockComment.FOR_ROCK} :rockId")
     fun getAll(rockId: Int): List<RockComment>
 
-    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Rock.FOR_SECTOR} :sectorId")
-    fun getAllInSector(sectorId: Int): List<RockComment>
-
     @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
     fun getAllInRegion(regionId: Int): List<RockComment>
 
