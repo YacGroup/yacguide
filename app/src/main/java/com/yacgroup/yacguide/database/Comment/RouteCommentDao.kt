@@ -28,9 +28,6 @@ interface RouteCommentDao {
     @Query("${RouteComment.SELECT_ALL} ${RouteComment.FOR_ROUTE} :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 
-    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Rock.FOR_SECTOR} :sectorId")
-    fun getAllInSector(sectorId: Int): List<RouteComment>
-
     @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
     fun getAllInRegion(regionId: Int): List<RouteComment>
 

@@ -32,16 +32,16 @@ class RegionParser(
         private val _countryName: String)
     : JSONWebParser(listener) {
 
+    private val _regions = mutableListOf<Region>()
+
     init {
         networkRequests.add(NetworkRequest(
-                NetworkRequestType.DATA_REQUEST_ID,
+                NetworkRequestUId(RequestType.REGION_DATA, 0),
                 "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(_countryName)}"))
     }
 
     @Throws(JSONException::class)
-    override fun parseData(requestId: NetworkRequestType, json: String) {
-        // We don't need to care about requestId here; we only have one
-        val regions = mutableListOf<Region>()
+    override fun parseData(requestId: NetworkRequestUId, json: String) {
         val jsonRegions = JSONArray(json)
         for (i in 0 until jsonRegions.length()) {
             val jsonRegion = jsonRegions.getJSONObject(i)
@@ -49,8 +49,13 @@ class RegionParser(
             r.id = ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID")
             r.name = jsonRegion.getString("gebiet")
             r.country = _countryName
-            regions.add(r)
+            _regions.add(r)
         }
-        _db.refreshRegions(regions, _countryName)
+    }
+
+    override fun onFinalTaskResolved() {
+        _db.deleteRegions(_countryName)
+        _db.addRegions(_regions)
+        super.onFinalTaskResolved()
     }
 }

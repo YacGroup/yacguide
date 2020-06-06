@@ -53,7 +53,4 @@ interface RockDao {
 
     @Query(Rock.DELETE_ALL)
     fun deleteAll()
-
-    @Query("${Rock.DELETE_ALL} WHERE parentId = :parentId")
-    fun deleteAll(parentId: Int)
 }

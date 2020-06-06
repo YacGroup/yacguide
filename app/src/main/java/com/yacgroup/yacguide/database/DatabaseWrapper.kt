@@ -16,13 +16,9 @@ class DatabaseWrapper(private val _context: Context) {
 
     private var _db: AppDatabase = AppDatabase.getAppDatabase(_context)
 
-    private inline fun<Unit> _dbTransaction(func: () -> Unit) {
-        _db.beginTransaction()
-        try {
+    private inline fun<Unit> _dbTransaction(crossinline func: () -> Unit) {
+        _db.runInTransaction {
             func()
-            _db.setTransactionSuccessful()
-        } finally {
-            _db.endTransaction()
         }
     }
 
@@ -83,6 +79,42 @@ class DatabaseWrapper(private val _context: Context) {
 
     // Insertions
 
+    fun addCountries(countries: List<Country>) = _dbTransaction {
+        _db.countryDao().insert(countries)
+    }
+
+    fun addRegions(regions: List<Region>) = _dbTransaction {
+        _db.regionDao().insert(regions)
+    }
+
+    fun addSectors(sectors: List<Sector>) = _dbTransaction {
+        _db.sectorDao().insert(sectors)
+    }
+
+    fun addRocks(rocks: List<Rock>) = _dbTransaction {
+        _db.rockDao().insert(rocks)
+    }
+
+    fun addRoutes(routes: List<Route>) = _dbTransaction {
+        _db.routeDao().insert(routes)
+    }
+
+    fun addRegionComments(comments: List<RegionComment>) = _dbTransaction {
+        _db.regionCommentDao().insert(comments)
+    }
+
+    fun addSectorComments(comments: List<SectorComment>) = _dbTransaction {
+        _db.sectorCommentDao().insert(comments)
+    }
+
+    fun addRockComments(comments: List<RockComment>) = _dbTransaction {
+        _db.rockCommentDao().insert(comments)
+    }
+
+    fun addRouteComments(comments: List<RouteComment>) = _dbTransaction {
+        _db.routeCommentDao().insert(comments)
+    }
+
     fun addAscend(ascend: Ascend) = _dbTransaction {
         _db.ascendDao().insert(ascend)
         _checkBitMasks(ascend)
@@ -101,59 +133,17 @@ class DatabaseWrapper(private val _context: Context) {
         _db.partnerDao().insert(partners)
     }
 
-    // Refreshments
-
-    fun refreshCountries(countries: List<Country>) = _dbTransaction {
-        _db.countryDao().deleteAll()
-        _db.countryDao().insert(countries)
-    }
-
-    fun refreshRegions(regions: List<Region>, countryName: String) = _dbTransaction {
-        _db.regionDao().deleteAll(countryName)
-        _db.regionDao().insert(regions)
-    }
-
-    fun refreshRegionComments(comments: List<RegionComment>, regionId: Int) = _dbTransaction {
-        _db.regionCommentDao().deleteAll(regionId)
-        _db.regionCommentDao().insert(comments)
-    }
-
-    fun refreshSectors(sectors: List<Sector>, regionId: Int) = _dbTransaction {
-        _db.sectorDao().deleteAll(regionId)
-        _db.sectorDao().insert(sectors)
-    }
-
-    fun refreshSectorComments(comments: List<SectorComment>, sectorId: Int) = _dbTransaction {
-        _db.sectorCommentDao().deleteAll(sectorId)
-        _db.sectorCommentDao().insert(comments)
-    }
-
-    fun refreshRocks(rocks: List<Rock>, sectorId: Int) = _dbTransaction {
-        _db.rockDao().deleteAll(sectorId)
-        _db.rockDao().insert(rocks)
-    }
-
-    fun refreshRockComments(comments: List<RockComment>, sectorId: Int) = _dbTransaction {
-        val oldComments = _db.rockCommentDao().getAllInSector(sectorId)
-        _db.rockCommentDao().delete(oldComments)
-        _db.rockCommentDao().insert(comments)
-    }
-
-    fun refreshRoutes(routes: List<Route>, sectorId: Int) = _dbTransaction {
-        val oldRoutes = _db.routeDao().getAllInSector(sectorId)
-        _db.routeDao().delete(oldRoutes)
-        _db.routeDao().insert(routes)
-    }
-
-    fun refreshRouteComments(comments: List<RouteComment>, sectorId: Int) = _dbTransaction {
-        val oldComments = _db.routeCommentDao().getAllInSector(sectorId)
-        _db.routeCommentDao().delete(oldComments)
-        _db.routeCommentDao().insert(comments)
-    }
-
     // Deletions
 
     fun deleteCountries() = _dbTransaction {
+        _db.countryDao().deleteAll()
+    }
+
+    fun deleteRegions(countryName: String) = _dbTransaction {
+        _db.regionDao().deleteAll(countryName)
+    }
+
+    fun deleteCountriesRecursively() = _dbTransaction {
         _db.routeCommentDao().deleteAll()
         _db.routeDao().deleteAll()
 
@@ -169,7 +159,7 @@ class DatabaseWrapper(private val _context: Context) {
         _db.countryDao().deleteAll()
     }
 
-    fun deleteRegions(countryName: String) = _dbTransaction {
+    fun deleteRegionsRecursively(countryName: String) = _dbTransaction {
         val routeComments = _db.routeCommentDao().getAllInCountry(countryName)
         _db.routeCommentDao().delete(routeComments)
         val routes = _db.routeDao().getAllInCountry(countryName)
@@ -190,7 +180,7 @@ class DatabaseWrapper(private val _context: Context) {
         _db.regionDao().deleteAll(countryName)
     }
 
-    fun deleteSectors(regionId: Int) = _dbTransaction {
+    fun deleteSectorsRecursively(regionId: Int) = _dbTransaction {
         val routeComments = _db.routeCommentDao().getAllInRegion(regionId)
         _db.routeCommentDao().delete(routeComments)
         val routes = _db.routeDao().getAllInRegion(regionId)
@@ -206,19 +196,6 @@ class DatabaseWrapper(private val _context: Context) {
         _db.sectorDao().deleteAll(regionId)
 
         _db.regionCommentDao().deleteAll(regionId)
-    }
-
-    fun deleteRocks(sectorId: Int) = _dbTransaction {
-        val routeComments = _db.routeCommentDao().getAllInSector(sectorId)
-        _db.routeCommentDao().delete(routeComments)
-        val routes = _db.routeDao().getAllInSector(sectorId)
-        _db.routeDao().delete(routes)
-
-        val rockComments = _db.rockCommentDao().getAllInSector(sectorId)
-        _db.rockCommentDao().delete(rockComments)
-        _db.rockDao().deleteAll(sectorId)
-
-        _db.sectorCommentDao().deleteAll(sectorId)
     }
 
     fun deleteAscends() = _dbTransaction {

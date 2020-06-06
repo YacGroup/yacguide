@@ -43,7 +43,4 @@ interface SectorCommentDao {
 
     @Query(SectorComment.DELETE_ALL)
     fun deleteAll()
-
-    @Query("${SectorComment.DELETE_ALL} ${SectorComment.FOR_SECTOR} :sectorId")
-    fun deleteAll(sectorId: Int)
 }

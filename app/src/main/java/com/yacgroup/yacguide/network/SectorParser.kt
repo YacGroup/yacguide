@@ -18,41 +18,82 @@
 package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
+import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.Comment.RegionComment
-import com.yacgroup.yacguide.database.DatabaseWrapper
-import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.database.Comment.RockComment
+import com.yacgroup.yacguide.database.Comment.RouteComment
+import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException
+import java.util.HashSet
 
 class SectorParser(private val _db: DatabaseWrapper,
                    listener: UpdateListener,
                    private val _regionId: Int) : JSONWebParser(listener) {
 
+    private val _CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
+        init {
+            add(Rock.typeSummit)
+            add(Rock.typeMassif)
+            add(Rock.typeBoulder)
+            add(Rock.typeStonePit)
+            add(Rock.typeAlpine)
+            add(Rock.typeCave)
+            add(Rock.typeUnofficial)
+        }
+    }
+
+    private val _sectors = mutableListOf<Sector>()
+    private val _rocks = mutableListOf<Rock>()
+    private val _routes = mutableListOf<Route>()
+    private val _regionComments = mutableListOf<RegionComment>()
+    private val _sectorComments = mutableListOf<SectorComment>()
+    private val _rockComments = mutableListOf<RockComment>()
+    private val _routeComments = mutableListOf<RouteComment>()
+
     init {
         networkRequests.add(NetworkRequest(
-                NetworkRequestType.DATA_REQUEST_ID,
+                NetworkRequestUId(RequestType.SECTOR_DATA, 0),
                 "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"
         ))
         networkRequests.add(NetworkRequest(
-                NetworkRequestType.COMMENTS_REQUEST_ID,
+                NetworkRequestUId(RequestType.REGION_COMMENTS, 0),
                 "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId"
         ))
     }
 
     @Throws(JSONException::class)
-    override fun parseData(requestId: NetworkRequestType, json: String) {
-        if (requestId === NetworkRequestType.DATA_REQUEST_ID) {
-            parseSectors(json)
-        } else {
-            parseRegionComments(json)
+    override fun parseData(requestId: NetworkRequestUId, json: String) {
+        when (requestId.type) {
+            RequestType.SECTOR_DATA -> _parseSectors(json)
+            RequestType.REGION_COMMENTS -> _parseRegionComments(json)
+            RequestType.ROCK_DATA -> _parseRocks(json, requestId.id)
+            RequestType.ROUTE_DATA -> _parseRoutes(json, requestId.id)
+            RequestType.SECTOR_COMMENTS -> _parseComments(json)
         }
     }
 
+    override fun onFinalTaskResolved() {
+        _db.deleteSectorsRecursively(_regionId)
+
+        _db.addSectors(_sectors)
+        _db.addRocks(_rocks)
+        _db.addRoutes(_routes)
+        _db.addRegionComments(_regionComments)
+        _db.addSectorComments(_sectorComments)
+        _db.addRockComments(_rockComments)
+        _db.addRouteComments(_routeComments)
+
+        _updateAscendedRocks()
+
+        super.onFinalTaskResolved()
+    }
+
     @Throws(JSONException::class)
-    private fun parseSectors(json: String) {
-        val sectors = mutableListOf<Sector>()
+    private fun _parseSectors(json: String) {
         val jsonSectors = JSONArray(json)
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
@@ -61,14 +102,14 @@ class SectorParser(private val _db: DatabaseWrapper,
             s.name = ParserUtils.jsonField2String(jsonSector, "sektorname_d", "sektorname_cz")
             s.nr = ParserUtils.jsonField2Float(jsonSector, "sektornr")
             s.parentId = _regionId
-            sectors.add(s)
+
+            _sectors.add(s)
+            _requestRocks(s.id)
         }
-        _db.refreshSectors(sectors, _regionId)
     }
 
     @Throws(JSONException::class)
-    private fun parseRegionComments(json: String) {
-        val comments = mutableListOf<RegionComment>()
+    private fun _parseRegionComments(json: String) {
         val jsonComments = JSONArray(json)
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
@@ -77,8 +118,123 @@ class SectorParser(private val _db: DatabaseWrapper,
             comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
             comment.text = jsonComment.getString("kommentar")
             comment.regionId = _regionId
-            comments.add(comment)
+            _regionComments.add(comment)
         }
-        _db.refreshRegionComments(comments, _regionId)
+    }
+
+    private fun _requestRocks(sectorId: Int) {
+        val requests = listOf(
+            NetworkRequest(
+                    NetworkRequestUId(RequestType.ROCK_DATA, sectorId),
+                    "${baseUrl}jsongipfel.php?app=yacguide&sektorid=$sectorId"),
+            NetworkRequest(
+                    NetworkRequestUId(RequestType.ROUTE_DATA, sectorId),
+                    "${baseUrl}jsonwege.php?app=yacguide&sektorid=$sectorId"),
+            NetworkRequest(
+                    NetworkRequestUId(RequestType.SECTOR_COMMENTS, sectorId),
+                    "${baseUrl}jsonkomment.php?app=yacguide&sektorid=$sectorId")
+        )
+        networkRequests.addAll(requests)
+        requests.map {
+            NetworkTask(it.requestId, this).execute(it.url) }
+
+    }
+
+    @Throws(JSONException::class)
+    private fun _parseRocks(json: String, sectorId: Int) {
+        val jsonRocks = JSONArray(json)
+        for (i in 0 until jsonRocks.length()) {
+            val jsonRock = jsonRocks.getJSONObject(i)
+            val type = ParserUtils.jsonField2Char(jsonRock, "typ")
+            if (!_CLIMBING_OBJECT_TYPES.contains(type)) {
+                continue
+            }
+            val r = Rock()
+            r.id = ParserUtils.jsonField2Int(jsonRock, "gipfel_ID")
+            r.nr = ParserUtils.jsonField2Float(jsonRock, "gipfelnr")
+            r.name = ParserUtils.jsonField2String(jsonRock, "gipfelname_d", "gipfelname_cz")
+            r.type = type
+            r.status = ParserUtils.jsonField2Char(jsonRock, "status")
+            r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
+            r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
+            r.parentId = sectorId
+            _rocks.add(r)
+        }
+    }
+
+    @Throws(JSONException::class)
+    private fun _parseRoutes(json: String, sectorId: Int) {
+        val jsonRoutes = JSONArray(json)
+        for (i in 0 until jsonRoutes.length()) {
+            val jsonRoute = jsonRoutes.getJSONObject(i)
+            val r = Route()
+            val routeId = ParserUtils.jsonField2Int(jsonRoute, "weg_ID")
+            r.id = routeId
+            r.nr = ParserUtils.jsonField2Float(jsonRoute, "wegnr")
+            r.statusId = ParserUtils.jsonField2Int(jsonRoute, "wegstatus")
+            r.name = ParserUtils.jsonField2String(jsonRoute, "wegname_d", "wegname_cz")
+            r.grade = jsonRoute.getString("schwierigkeit")
+            r.firstAscendLeader = jsonRoute.getString("erstbegvorstieg")
+            r.firstAscendFollower = jsonRoute.getString("erstbegnachstieg")
+            r.firstAscendDate = jsonRoute.getString("erstbegdatum")
+            r.typeOfClimbing = jsonRoute.getString("kletterei")
+            r.description = ParserUtils.jsonField2String(jsonRoute, "wegbeschr_d", "wegbeschr_cz")
+            // if we re-add a route that has already been marked as ascended in the past:
+            _db.getRouteAscends(routeId).map { r.ascendsBitMask = (r.ascendsBitMask or AscendStyle.bitMask(it.styleId)) }
+            r.parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
+            _routes.add(r)
+        }
+    }
+
+    @Throws(JSONException::class)
+    private fun _parseComments(json: String) {
+        val jsonComments = JSONArray(json)
+        for (i in 0 until jsonComments.length()) {
+            val jsonComment = jsonComments.getJSONObject(i)
+            val routeId = ParserUtils.jsonField2Int(jsonComment, "wegid")
+            val rockId = ParserUtils.jsonField2Int(jsonComment, "gipfelid")
+            val sectorId = ParserUtils.jsonField2Int(jsonComment, "sektorid")
+            when {
+                routeId != 0 -> {
+                    val comment = RouteComment()
+                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
+                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
+                    comment.gradeId = ParserUtils.jsonField2Int(jsonComment, "schwer")
+                    comment.securityId = ParserUtils.jsonField2Int(jsonComment, "sicher")
+                    comment.wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass")
+                    comment.text = jsonComment.getString("kommentar")
+                    comment.routeId = routeId
+                    _routeComments.add(comment)
+                }
+                rockId != 0 -> {
+                    val comment = RockComment()
+                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
+                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
+                    comment.text = jsonComment.getString("kommentar")
+                    comment.rockId = rockId
+                    _rockComments.add(comment)
+                }
+                sectorId != 0 -> {
+                    val comment = SectorComment()
+                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
+                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
+                    comment.text = jsonComment.getString("kommentar")
+                    comment.sectorId = sectorId
+                    _sectorComments.add(comment)
+                }
+                else -> throw JSONException("Unknown comment origin")
+            }
+        }
+    }
+
+    private fun _updateAscendedRocks() {
+        // update already ascended rocks
+        val updatedRocks = _rocks.map {
+            for (ascend in _db.getRockAscends(it.id)) {
+                it.ascendsBitMask = it.ascendsBitMask or AscendStyle.bitMask(ascend.styleId)
+            }
+            it
+        }
+        _db.updateRocks(updatedRocks)
     }
 }
