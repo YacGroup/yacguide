@@ -92,7 +92,9 @@ class Release:
             version = datetime.now().strftime("%Y%m%d")
         tag_name = "dev-%s" % version
         self.update_dev_version(version)
-        self.repo.create_tag(tag_name)
+        self.repo.create_tag(
+            path=tag_name,
+            message="Daily dev %s" % version)
         print("""\n
 Next step:
 ----------
