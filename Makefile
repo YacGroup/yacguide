@@ -55,8 +55,8 @@ dists:
 	$(EXEC_CMD) "./gradlew \
 		--gradle-user-home $(GRADLE_USER_HOME) \
 		clean \
-		assembleDevRelease \
-		assembleStableRelease"
+		bundleDevRelease \
+		bundleStableRelease"
 
 help::
 	@echo "  distclean - clean everything not under version control"
