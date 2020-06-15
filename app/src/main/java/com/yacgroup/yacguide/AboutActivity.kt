@@ -19,6 +19,7 @@ package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -54,5 +55,12 @@ class AboutActivity : BaseNavigationActivity() {
     fun showPrivacyPolicy(v: View) {
         val intent = Intent(this, PrivacyPolicyActivity::class.java)
         startActivity(intent)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun showLicense(v: View) {
+        val openURL = Intent(android.content.Intent.ACTION_VIEW)
+        openURL.data = Uri.parse(getString(R.string.license_url))
+        startActivity(openURL)
     }
 }

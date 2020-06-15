@@ -37,7 +37,13 @@
 
     <!-- Activity names -->
     <string name="title_climbing_partner">Kletterpartner</string>
+
+    <!-- About view -->
+    <string name="opensource_project_yacgroup">Ein OpenSource-Projekt der YAC Group:</string>
+    <string name="source_code_and_support">Sourcecode und Support:</string>
+    <string name="data_src">Datenbezugsquelle:</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="license">Lizenz</string>
 
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
