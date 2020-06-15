@@ -42,7 +42,6 @@
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
-    <string name="dialog_question_update">Diesen Bereich aktualisieren?</string>
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>

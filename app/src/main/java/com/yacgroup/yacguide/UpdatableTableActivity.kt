@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.app.Dialog
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -64,20 +63,8 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
-        if (jsonParser != null) {
-            val dialog = Dialog(this)
-            dialog.setContentView(R.layout.dialog)
-            dialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_question_update)
-            dialog.findViewById<Button>(R.id.yesButton).setOnClickListener {
-                jsonParser?.fetchData()
-                showUpdateDialog()
-                dialog.dismiss()
-            }
-            dialog.findViewById<Button>(R.id.noButton).setOnClickListener { dialog.dismiss() }
-            dialog.setCancelable(false)
-            dialog.setCanceledOnTouchOutside(false)
-            dialog.show()
-        }
+        jsonParser?.fetchData()
+        showUpdateDialog()
     }
 
     private fun delete() {
