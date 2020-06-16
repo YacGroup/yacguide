@@ -20,9 +20,8 @@ package com.yacgroup.yacguide
 import android.app.Dialog
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.NetworkUtils
@@ -40,7 +39,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_download -> update()
-            R.id.action_delete -> delete()
+            R.id.action_delete -> _delete()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -58,7 +57,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         displayContent()
     }
 
-    private fun update() {
+    fun update(v: View = View(this)) {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
@@ -67,7 +66,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         showUpdateDialog()
     }
 
-    private fun delete() {
+    private fun _delete() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog)
         (dialog.findViewById<TextView>(R.id.dialogText)).setText(R.string.dialog_question_delete)
@@ -89,6 +88,12 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         _updateDialog?.setCancelable(false)
         _updateDialog?.setCanceledOnTouchOutside(false)
         _updateDialog?.show()
+    }
+
+    protected fun displayDownloadButton() {
+        val layout = findViewById<LinearLayout>(R.id.tableLayout)
+        val downloadButton = layoutInflater.inflate(R.layout.button_download, null) as ImageButton
+        layout.addView(downloadButton)
     }
 
     protected abstract fun deleteContent()
