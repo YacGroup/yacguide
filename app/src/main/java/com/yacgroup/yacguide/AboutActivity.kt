@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 
 class AboutActivity : BaseNavigationActivity() {
 
@@ -61,6 +62,10 @@ class AboutActivity : BaseNavigationActivity() {
     fun showLicense(v: View) {
         val openURL = Intent(android.content.Intent.ACTION_VIEW)
         openURL.data = Uri.parse(getString(R.string.license_url))
-        startActivity(openURL)
+        if (openURL.resolveActivity(packageManager) != null) {
+            startActivity(openURL)
+        } else {
+            Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
+        }
     }
 }

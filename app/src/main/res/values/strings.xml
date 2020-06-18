@@ -66,6 +66,7 @@
     <string name="hint_name_already_used">Name bereits vergeben</string>
     <string name="no_internet_connection">Keine Internetverbindung</string>
     <string name="no_map_app_available">Keine Karten-App verfügbar</string>
+    <string name="no_webbrowser_available">Keine Webbrowser verfügbar</string>
     <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
 
