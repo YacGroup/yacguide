@@ -104,6 +104,9 @@ class SectorActivity : UpdatableTableActivity() {
                     Typeface.BOLD))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
+        if (sectors.isEmpty()) {
+            displayDownloadButton()
+        }
     }
 
     override fun deleteContent() {

@@ -39,7 +39,8 @@ class CountryActivity : UpdatableTableActivity() {
         setTitle(R.string.app_name)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        for (country in db.getCountries()) {
+        val countries = db.getCountries()
+        for (country in countries) {
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@CountryActivity, RegionActivity::class.java)
                 intent.putExtra(IntentConstants.COUNTRY_KEY, country.name)
@@ -53,6 +54,9 @@ class CountryActivity : UpdatableTableActivity() {
                     Color.WHITE,
                     Typeface.BOLD))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
+        }
+        if (countries.isEmpty()) {
+            displayDownloadButton()
         }
     }
 
