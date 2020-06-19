@@ -51,12 +51,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:textStyle="bold"
-            android:text="Ein OpenSource-Projekt der YAC Group:"/>
+            android:text="@string/opensource_project_yacgroup"/>
         <TextView
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="https://github.com/YacGroup"/>
+            android:text="@string/github_group_url"/>
 
         <TextView
             android:layout_gravity="center_horizontal"
@@ -64,12 +64,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:textStyle="bold"
-            android:text="Sourcecode und Support:"/>
+            android:text="@string/source_code_and_support"/>
         <TextView
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="https://github.com/YacGroup/yacguide"/>
+            android:text="@string/github_url"/>
 
         <TextView
             android:layout_gravity="center_horizontal"
@@ -77,23 +77,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:textStyle="bold"
-            android:text="Datenbezugsquelle:"/>
+            android:text="@string/data_src"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="http://db-sandsteinklettern.gipfelbuch.de" />
+            android:text="@string/data_src_url"/>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/buttonPrivacyPolicy"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:onClick="showPrivacyPolicy"
             android:text="@string/privacy_policy" />
 
+        <Button
+            android:id="@+id/buttonLicense"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="showLicense"
+            android:text="@string/license"/>
     </LinearLayout>
 
 </ScrollView>
