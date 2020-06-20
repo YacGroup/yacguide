@@ -45,13 +45,20 @@ class RouteActivity : TableActivity() {
         val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, DatabaseWrapper.INVALID_ID)
 
         _rock = db.getRock(rockId)
-        val rockStatus = _rock?.status
-        when {
-            rockStatus == Rock.statusProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_fully_prohibited)
-            rockStatus == Rock.statusTemporarilyProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_temporarily_prohibited)
-            rockStatus == Rock.statusPartlyProhibited -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_partly_prohibited)
-            _rock?.type == Rock.typeUnofficial -> findViewById<TextView>(R.id.infoTextView).setText(R.string.rock_inofficial )
+        val rockStatus = when (_rock?.status){
+            Rock.statusCollapsed -> getString(R.string.rock_collapsed)
+            Rock.statusProhibited -> getString(R.string.rock_fully_prohibited)
+            Rock.statusTemporarilyProhibited -> getString(R.string.rock_temporarily_prohibited)
+            Rock.statusPartlyProhibited -> getString(R.string.rock_partly_prohibited)
+            else -> {
+                if (_rock?.type == Rock.typeUnofficial) {
+                    getString(R.string.rock_inofficial)
+                } else {
+                    ""
+                }
+            }
         }
+        findViewById<TextView>(R.id.infoTextView).text = rockStatus
     }
 
     fun showMap(v: View) {

@@ -102,6 +102,14 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/countCollapsedRocks"
+            android:text="@string/count_collapsed_rocks"
+            android:textSize="16dp"
+            android:layout_marginLeft="20dp"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/countOnlyLeadsCheckbox"
             android:text="@string/count_only_leads"
             android:textSize="16dp"

@@ -142,6 +142,9 @@ class SectorActivity : UpdatableTableActivity() {
         if (!customSettings.getBoolean(getString(R.string.count_prohibited_rocks), resources.getBoolean(R.bool.count_prohibited_rocks))) {
             filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
         }
+        if (!customSettings.getBoolean(getString(R.string.count_collapsed_rocks), resources.getBoolean(R.bool.count_collapsed_rocks))) {
+            filteredRocks = filteredRocks.filter { it.status != Rock.statusCollapsed }
+        }
         val allRockCount = filteredRocks.size
 
         filteredRocks = if (customSettings.getBoolean(getString(R.string.count_only_leads), resources.getBoolean(R.bool.count_only_leads))) {

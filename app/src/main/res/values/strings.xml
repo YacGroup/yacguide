@@ -90,6 +90,7 @@
     <string name="rock_temporarily_prohibited">Achtung: Der Felsen ist zeitweise gesperrt.</string>
     <string name="rock_partly_prohibited">Achtung: Der Felsen ist teilweise gesperrt.</string>
     <string name="rock_inofficial">Achtung: Der Felsen ist nicht anerkannt.</string>
+    <string name="rock_collapsed">Achtung: Der Felsen existiert nicht mehr.</string>
 
     <!-- Tourbook -->
     <string name="ascends">Begehungen</string>
@@ -125,6 +126,7 @@
     <string name="count_caves">Höhlen</string>
     <string name="count_unofficial_rocks">Inoffizielle Felsen</string>
     <string name="count_prohibited_rocks">Gesperrte Felsen</string>
+    <string name="count_collapsed_rocks">Eingestürzte/Abgetragene Felsen</string>
     <string name="count_only_leads">Nur Vorstiege</string>
 
     <string name="color_ascends">Markierung für bestiegene Felsen/Wege</string>

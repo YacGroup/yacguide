@@ -56,5 +56,6 @@ class Rock {
         const val statusTemporarilyProhibited = 'Z'
         const val statusProhibited = 'X'
         const val statusPartlyProhibited = 'T'
+        const val statusCollapsed = 'E'
     }
 }
