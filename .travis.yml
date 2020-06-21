@@ -32,6 +32,12 @@ deploy:
     on:
       tags: true
       condition: $TRAVIS_TAG =~ ^dev-[0-9]{8}$
+  - provider: script
+    skip_cleanup: true
+    script: make deploy-play-stable
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^v[0-9]+.[0-9]+.[0-9]+$
 
 after_deploy:
   - make docker-stop

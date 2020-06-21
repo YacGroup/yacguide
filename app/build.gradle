@@ -86,6 +86,10 @@ android {
         }
     }
     playConfigs {
+        stable {
+            track = "production"
+            enabled = true
+        }
         dev {
             track = "beta"
             enabled = true

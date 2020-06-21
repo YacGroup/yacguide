@@ -24,23 +24,24 @@ import re
 import argparse
 from datetime import datetime
 import git
+import packaging.version
+
+RELEASE_TYPES = ["dev", "stable"]
 
 
 def get_cli_parser():
     """Return argument parser object."""
     parser = argparse.ArgumentParser(description=__doc__)
     help_release_type = "release type (default: %(default)s)"
-    parser.add_argument("--release-type", choices=["dev"],
-                        default="dev", required=False,
-                        help=help_release_type)
+    parser.add_argument("--release-type", choices=RELEASE_TYPES,
+                        default="dev", help=help_release_type)
     help_version = """release version string. For release type 'dev'
-it is the date code in the format 'YYYYMMDD'."""
-    parser.add_argument("--version", required=False,
-                        help=help_version)
+it is the date code in the format 'YYYYMMDD'. For release type
+'stable' the format is expected to be 'X.Y.Y'."""
+    parser.add_argument("--version", help=help_version)
     help_skip_checks = "skip checks"
     parser.add_argument("--skip-checks", action="store_true",
-                        default=False, required=False,
-                        help=help_skip_checks)
+                        default=False, help=help_skip_checks)
     return parser
 
 
@@ -66,11 +67,18 @@ class Release:
             self.pre_checks()
         if self.cli_args.release_type == "dev":
             self.create_dev_release()
+        elif self.cli_args.release_type == "stable":
+            self.create_stable_release()
+
+    def error(self, msg):
+        """Print error message and exit with code 1."""
+        print("ERROR: %s" % msg)
+        exit(1)
 
     def pre_checks(self):
         """Run some checks before creating the release."""
         if self.repo.is_dirty():
-            raise Exception("Repo is dirty.")
+            self.error("Repo is dirty.")
 
     def update_dev_version(self, version):
         """Update development version code and name in Gradle file."""
@@ -88,7 +96,8 @@ class Release:
 
     def create_dev_release(self):
         """Create a development release"""
-        if not self.cli_args.version:
+        version = self.cli_args.version
+        if not version:
             version = datetime.now().strftime("%Y%m%d")
         tag_name = "dev-%s" % version
         self.update_dev_version(version)
@@ -101,7 +110,44 @@ Next step:
   Push the release commit and tag using 'git push --follow-tags'.
 """)
 
+    def check_stable_release(self, version):
+        """Check version string for stable release."""
+        # Version not specified?
+        if not version:
+            self.error("Empty version.")
+        # Format correct?
+        rexpr = re.compile(r'\d+\.\d+.\d+')
+        if not rexpr.match(version):
+            self.error("Invalid version format.")
+        # Release tag already exists?
+        try:
+            self.repo.tags["v" + version]
+        except IndexError:
+            # Tag does not exists.
+            pass
+        else:
+            self.error("Version '%s' already exists." % version)
+        # Version is increasing?
+        pkg_ver_parse = packaging.version.parse
+        for tag in self.repo.tags:
+            tag_version = tag.name[1:]
+            if pkg_ver_parse(version) < pkg_ver_parse(tag_version):
+                self.error("Version not increasing.")
+
+    def create_stable_release(self):
+        """Create a stable release"""
+        if not self.cli_args.skip_checks:
+            self.check_stable_release(version=self.cli_args.version)
+        tag_name = "v%s" % self.cli_args.version
+        self.repo.create_tag(
+            path=tag_name,
+            message="Release %s" % self.cli_args.version)
+        print("""\n
+Next step:
+----------
+  Push the release tag using 'git push --follow-tags'.
+""")
+
 
 if __name__ == "__main__":
-    RELEASE = Release()
-    RELEASE.main()
+    Release().main()

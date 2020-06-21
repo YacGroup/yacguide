@@ -217,3 +217,13 @@ deploy-play-dev:
 	$(EXEC_CMD) "./gradlew \
 		--gradle-user-home $(GRADLE_USER_HOME) \
 		publishDevReleaseBundle"
+
+help::
+	@echo "  deploy-play-stable - Deploy stable release to Google Play"
+
+.PHONY: deploy-play-stable
+deploy-play-stable:
+	@echo "Deploying stable release to Google Play ..."
+	$(EXEC_CMD) "./gradlew \
+		--gradle-user-home $(GRADLE_USER_HOME) \
+		publishStableReleaseBundle"
