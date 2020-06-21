@@ -127,22 +127,20 @@ class RockActivity : TableActivity() {
             if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {
                 continue
             }
-            val type = rock.type
-            val status = rock.status
             if (_onlySummits && !rockIsAnOfficialSummit(rock)) {
                 continue
             }
             var bgColor = Color.WHITE
             var typeface = Typeface.BOLD
             var typeAdd = ""
-            if (type != Rock.typeSummit) {
+            if (rock.type != Rock.typeSummit) {
                 typeface = Typeface.NORMAL
-                typeAdd = "  ($type)"
+                typeAdd = "  (${rock.type})"
             }
             val botchAdd = if (AscendStyle.isBotch(rock.ascendsBitMask)) getString(R.string.botch) else ""
             val projectAdd = if (AscendStyle.isProject(rock.ascendsBitMask)) getString(R.string.project) else ""
             val watchingAdd = if (AscendStyle.isWatching(rock.ascendsBitMask)) getString(R.string.watching) else ""
-            if (status == Rock.statusProhibited) {
+            if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
@@ -158,7 +156,7 @@ class RockActivity : TableActivity() {
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     "${rock.nr}  $rockName$typeAdd$botchAdd$projectAdd$watchingAdd",
-                    status.toString(),
+                    rock.status.toString(),
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     bgColor,
@@ -168,7 +166,9 @@ class RockActivity : TableActivity() {
     }
 
     private fun rockIsAnOfficialSummit(rock: Rock): Boolean {
-        return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine) && rock.status != Rock.statusProhibited
+        return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine)
+                && rock.status != Rock.statusProhibited
+                && rock.status != Rock.statusCollapsed
     }
 
     override fun getLayoutId(): Int {

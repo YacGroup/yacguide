@@ -44,6 +44,8 @@ class PreferencesActivity : BaseNavigationActivity() {
                                                                           R.bool.count_unofficial_rocks),
                                         R.id.countProhibitedRocks to Pair(R.string.count_prohibited_rocks,
                                                                           R.bool.count_prohibited_rocks),
+                                        R.id.countCollapsedRocks to Pair(R.string.count_collapsed_rocks,
+                                                                         R.bool.count_collapsed_rocks),
                                         R.id.countOnlyLeadsCheckbox to Pair(R.string.count_only_leads,
                                                                             R.bool.count_only_leads),
                                         R.id.colorizeTourbookEntriesCheckbox to Pair(R.string.colorize_tourbook_entries,
@@ -79,7 +81,7 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     fun changeColor(view: View) {
         val currColor = (view.background as ColorDrawable).color
-        val nextColor =_ascendColorsList.get((_ascendColorsList.indexOf(currColor) + 1) % _ascendColorsList.size)
+        val nextColor = _ascendColorsList[(_ascendColorsList.indexOf(currColor) + 1) % _ascendColorsList.size]
         view.setBackgroundColor(nextColor)
     }
 

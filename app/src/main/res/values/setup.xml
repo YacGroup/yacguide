@@ -50,6 +50,7 @@
     <bool name="count_caves">false</bool>
     <bool name="count_unofficial_rocks">false</bool>
     <bool name="count_prohibited_rocks">false</bool>
+    <bool name="count_collapsed_rocks">false</bool>
     <bool name="count_only_leads">false</bool>
 
     <color name="color_lead">@color/greenblue</color>
