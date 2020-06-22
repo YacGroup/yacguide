@@ -67,47 +67,41 @@ class DescriptionActivity : TableActivity() {
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
         val comments = _route?.let { db.getRouteComments(it.id) } ?: emptyList()
         for (comment in comments) {
-            val qualityId = comment.qualityId
-            val gradeId = comment.gradeId
-            val securityId = comment.securityId
-            val wetnessId = comment.wetnessId
-            val text = comment.text
-
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
-            if (RouteComment.QUALITY_MAP.containsKey(qualityId)) {
+            if (RouteComment.QUALITY_MAP.containsKey(comment.qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.route_quality),
-                        RouteComment.QUALITY_MAP[qualityId].orEmpty(),
+                        RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
-            if (RouteComment.GRADE_MAP.containsKey(gradeId)) {
+            if (RouteComment.GRADE_MAP.containsKey(comment.gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.grade),
-                        RouteComment.GRADE_MAP[gradeId].orEmpty(),
+                        RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
-            if (RouteComment.SECURITY_MAP.containsKey(securityId)) {
+            if (RouteComment.SECURITY_MAP.containsKey(comment.securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.protection),
-                        RouteComment.SECURITY_MAP[securityId].orEmpty(),
+                        RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
                         Color.WHITE,
                         Typeface.NORMAL,
                         10, 10, 10, 0))
             }
-            if (RouteComment.WETNESS_MAP.containsKey(wetnessId)) {
+            if (RouteComment.WETNESS_MAP.containsKey(comment.wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.drying),
-                        RouteComment.WETNESS_MAP[wetnessId].orEmpty(),
+                        RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
                         View.OnClickListener { },
                         Color.WHITE,
@@ -116,7 +110,7 @@ class DescriptionActivity : TableActivity() {
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text.orEmpty(),
+                    comment.text.orEmpty(),
                     "",
                     WidgetUtils.textFontSizeDp,
                     View.OnClickListener { },
@@ -167,7 +161,6 @@ class DescriptionActivity : TableActivity() {
                 ?.let { DateUtils.formatDate(it) }
                 ?: getString(R.string.date_unknown)
 
-
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 firstAscendClimbers,
                 firstAscendDate,
@@ -180,12 +173,20 @@ class DescriptionActivity : TableActivity() {
         _route?.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     getString(R.string.type_of_climbing),
+                    "",
+                    WidgetUtils.infoFontSizeDp,
+                    View.OnClickListener { },
+                    Color.WHITE,
+                    Typeface.BOLD,
+                    40, 20, 20, 0))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
                     it,
+                    "",
                     WidgetUtils.infoFontSizeDp,
                     View.OnClickListener { },
                     Color.WHITE,
                     Typeface.NORMAL,
-                    20, 20, 20, 0))
+                    40, 0, 20, 0))
         }
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
