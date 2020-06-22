@@ -4,3 +4,7 @@ Offline-Tool basierend auf den Daten von http://www.sandsteinklettern.de.
 
 * Offline-Zugriff auf Informationen zu Kletterrouten
 * Persönliches Tourenbuch
+
+
+<b>Die Entwicklerversion enthält regelmäßige Stände des Quellcodes
+was zu unangekündigten und unerwarteten Änderungen führen kann.</b>
