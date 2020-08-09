@@ -1,5 +1,4 @@
 plugins {
-    id 'com.gladed.androidgitversion' version '0.4.10'
     id 'com.github.triplet.play' version '2.7.5'
 }
 apply plugin: 'com.android.application'
@@ -26,13 +25,6 @@ def keystoreProperties = new Properties()
 // Load your keystore.properties file into the keystoreProperties object.
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
-androidGitVersion {
-    baseCode 1
-    prefix 'v'
-    tagPattern(/^$prefix[0-9]+.*/)
-    hideBranches = ['master']
-}
-
 play {
     serviceAccountCredentials = rootProject.file(keystoreProperties['playServicesFile'])
     // This disables GPP by default.
@@ -45,8 +37,6 @@ android {
         applicationId "com.yacgroup.yacguide"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode androidGitVersion.code()
-        versionName androidGitVersion.name()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "yacguide"
@@ -77,6 +67,8 @@ android {
     productFlavors {
         stable {
             dimension 'default'
+            versionCode 1000
+            versionName '0.1.0'
         }
         dev {
             dimension 'default'
