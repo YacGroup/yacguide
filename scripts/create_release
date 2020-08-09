@@ -80,17 +80,62 @@ class Release:
         if self.repo.is_dirty():
             self.error("Repo is dirty.")
 
+    def set_version_code(self, gradle_str, flavor, code):
+        rexpr = re.compile(
+            r'(%s\s*\{[^\}]*versionCode)\s+[\d\.]+' % flavor,
+            re.MULTILINE)
+        gradle_str_updated = rexpr.sub(
+            r'\1 %s' % code,
+            gradle_str)
+        return gradle_str_updated
+
+    def set_version_name(self, gradle_str, flavor, name):
+        rexpr = re.compile(
+            r'(%s\s*\{[^\}]*versionName)\s+\'[\d\.]+\'+' % flavor,
+            re.MULTILINE)
+        gradle_str_updated = rexpr.sub(
+            r"\1 '%s'" % name,
+            gradle_str)
+        return gradle_str_updated
+
+    def version_to_code(self, version, flavor="stable"):
+        """Convert version into corresponding code.
+
+        Args:
+            version (str): Version string
+            flavor (str, optional): Android flavor
+
+        Returns:
+            int: Version code
+        """
+        if flavor == "stable":
+            # Convert 'x.y.z' to 'XXXYYYZZZ'
+            major, minor, bug = version.split(".")
+            code_str = "{0:0>3}{1:0>3}{2:0>3}".format(
+                major, minor, bug
+            )
+            # Get rid of leading zeros.
+            code = int(code_str)
+        else:
+            NotImplementedError
+        return code
+
     def update_dev_version(self, version):
         """Update development version code and name in Gradle file."""
         with open(self._GRADLE_FILE) as fobj:
             build_gradle = fobj.read()
-        build_gradle_updated = re.sub(
-            r'(versionCode)\s+\d+', r'\1 %s' % version, build_gradle)
-        build_gradle_updated = re.sub(
-            r"(versionName)\s+'\d+'", r"\1 '%s'" % version,
-            build_gradle_updated)
+        build_gradle = self.set_version_code(
+            gradle_str=build_gradle,
+            flavor="dev",
+            code=version
+        )
+        build_gradle = self.set_version_name(
+            gradle_str=build_gradle,
+            flavor="dev",
+            name=version
+        )
         with open(self._GRADLE_FILE, "w") as fobj:
-            fobj.write(build_gradle_updated)
+            fobj.write(build_gradle)
         self.repo.index.add([self._GRADLE_FILE])
         self.repo.index.commit("Daily dev %s" % version)
 
@@ -109,6 +154,25 @@ Next step:
 ----------
   Push the release commit and tag using 'git push --follow-tags'.
 """)
+
+    def update_stable_version(self, version):
+        """Update stable version code and name in Gradle file."""
+        with open(self._GRADLE_FILE) as fobj:
+            build_gradle = fobj.read()
+        build_gradle = self.set_version_code(
+            gradle_str=build_gradle,
+            flavor="stable",
+            code=self.version_to_code(version)
+        )
+        build_gradle = self.set_version_name(
+            gradle_str=build_gradle,
+            flavor="stable",
+            name=version
+        )
+        with open(self._GRADLE_FILE, "w") as fobj:
+            fobj.write(build_gradle)
+        self.repo.index.add([self._GRADLE_FILE])
+        self.repo.index.commit("Release %s" % version)
 
     def check_stable_release(self, version):
         """Check version string for stable release."""
@@ -138,6 +202,7 @@ Next step:
         """Create a stable release"""
         if not self.cli_args.skip_checks:
             self.check_stable_release(version=self.cli_args.version)
+        self.update_stable_version(self.cli_args.version)
         tag_name = "v%s" % self.cli_args.version
         self.repo.create_tag(
             path=tag_name,

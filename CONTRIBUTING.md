@@ -192,9 +192,6 @@ make docker-shell
 
 # Releases
 
-**NOTE**: At the moment only the development version is available
-because there is no first stable release.
-
 ## Release Types
 
 ### Stable
@@ -218,7 +215,7 @@ step.
 
 ## Version Number
 
-### Stable Release
+### Stable Version
 
 The version number follows the [semantic version scheme] and consists
 of three digits `X.Y.Z`.
@@ -234,18 +231,16 @@ version number.
 
 ## Making Releases
 
-After performing the steps below, the [F-Droid] server will build and
-sign the app after some time and make it available in the app store.
+The release process is based on Git tags.
+
+The [F-Droid] server checks for new tags in the repo on a regular
+basis. If there is new matching tag, the server starts the build and
+sign process and makes the app available in the app store.
 
 The deployment of the app to the Google Play store is done by the CI,
-if a release tag is pushed to the GitHub repository.
+if a matching release tag is pushed to the GitHub repository.
 
-### Stable Release
-
-Create a annotated Git tag following the corresponding version scheme
-with a leading `v`. E.g. `v1.2.3`.
-
-### Development Version
+To create a release tag, do the following steps:
 
 1. Change into the `master` branch and sync your branch with the
    remote repository.
@@ -253,9 +248,11 @@ with a leading `v`. E.g. `v1.2.3`.
    uncommitted or untracked items.
 3. Prepare the Docker container, if necessary
    (see [Docker Environment](#docker-environment))
-4. Run the following command to create and commit the release:
-
-   `make release-dev`
+4. Run the following command to create and commit the release tag:
+```shell
+make release-dev  # Development release
+make release-stable VERSION=X.Y.Z  # Stable release
+```
 
 ## GitHub Page
 

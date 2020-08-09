@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMG_VER := 20200924
+DOCKER_IMG_VER := 20201005
 DOCKER_IMG := yacgroup/yacguide-build:$(DOCKER_IMG_VER)
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
@@ -207,6 +207,17 @@ help::
 release-dev:
 	@echo "Making development release ..."
 	$(EXEC_CMD) "scripts/create_release --release-type dev"
+
+help::
+	@echo "  release-stable - Make stable release (commit and tag)."
+	@echo "                   Specify the version using parameter VERSION."
+
+.PHONY: release-stable
+release-stable:
+	@echo "Making stable release ..."
+	$(EXEC_CMD) "scripts/create_release \
+		--release-type stable \
+		--version $(VERSION)"
 
 help::
 	@echo "  deploy-play-dev - Deploy development release to Google Play"
