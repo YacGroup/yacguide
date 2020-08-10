@@ -19,10 +19,7 @@ package com.yacgroup.yacguide.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.Uri
 import java.net.URLEncoder
-
-import java.util.HashMap
 
 object NetworkUtils {
     fun isNetworkAvailable(context: Context): Boolean {
@@ -32,6 +29,6 @@ object NetworkUtils {
     }
 
     fun encodeString2Url(str: String): String {
-        return URLEncoder.encode(str, "UTF-8")
+        return URLEncoder.encode(str, "ISO-8859-1")
     }
 }
