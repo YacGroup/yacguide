@@ -105,14 +105,12 @@
     <string name="import_impossible">Import nicht möglich ohne Leserechte</string>
     <string name="export_impossible">Export nicht möglich ohne Schreibrechte</string>
     <string name="file_not_existing">Datei existiert nicht</string>
-    <string name="override_file">Dies überschreibt eine bereits vorhandene Datei gleichen Namens.
-                                 Trotzdem exportieren?</string>
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.
                                      Trotzdem importieren?</string>
-    <string name="successfully_exported"> erfolgreich exportiert</string>
-    <string name="successfully_imported"> erfolgreich importiert</string>
-    <string name="import_export_error">Fehler beim Import/Export</string>
-
+    <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
+    <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
+    <string name="tourbook_import_error">Fehler beim Tourenbuch import</string>
+    <string name="tourbook_export_error">Fehler beim Tourenbuch export</string>
 
     <!-- Custom settings -->
     <string name="display_only_official_summits">Nur offizielle Gipfel</string>

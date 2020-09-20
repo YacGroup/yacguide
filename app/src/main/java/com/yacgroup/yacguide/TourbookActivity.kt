@@ -17,12 +17,13 @@
 
 package com.yacgroup.yacguide
 
-import android.Manifest
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import android.view.Menu
@@ -31,17 +32,15 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.yacgroup.yacguide.database.*
 
+import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.AscendStyle
-import com.yacgroup.yacguide.utils.FileChooser
-import com.yacgroup.yacguide.utils.FilesystemUtils
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 import org.json.JSONException
-import java.io.File
 
+import java.io.*
 import java.util.Arrays
 
 class TourbookActivity : BaseNavigationActivity() {
@@ -50,17 +49,11 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _availableYears: IntArray
     private var _currentYearIdx: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
-    private var _ioOption: IOOption? = null
 
     private lateinit var _customSettings: SharedPreferences
 
     override fun getLayoutId(): Int {
         return R.layout.activity_tourbook
-    }
-
-    private enum class IOOption {
-        eExport,
-        eImport
     }
 
     private enum class TourbookType {
@@ -76,8 +69,8 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_import -> _import()
-            R.id.action_export -> _export()
+            R.id.action_import -> _selectFileImport()
+            R.id.action_export -> _selectFileExport()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -101,18 +94,11 @@ class TourbookActivity : BaseNavigationActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (FilesystemUtils.permissionGranted(grantResults)) {
-            _showFileChooser()
-        } else {
-            val errorTextId = if (_ioOption == IOOption.eImport)
-                    R.string.import_impossible
-                else
-                    R.string.export_impossible
-            Toast.makeText(this, errorTextId, Toast.LENGTH_SHORT).show()
+        } else if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                IntentConstants.OPEN_TOURBOOK -> data?.data?.also { uri -> _import(uri) }
+                IntentConstants.SAVE_TOURBOOK -> data?.data?.also { uri -> _export(uri) }
+            }
         }
     }
 
@@ -132,17 +118,70 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun _import() {
-        _ioOption = IOOption.eImport
-        if (FilesystemUtils.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            _showFileChooser()
+    @Throws(IOException::class)
+    private fun _readTextFromUri(uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
+        }
+        return stringBuilder.toString()
+    }
+
+    private fun _writeTextToUri(uri: Uri, text: String) {
+        try {
+            contentResolver.openFileDescriptor(uri, "w")?.use {
+                FileOutputStream(it.fileDescriptor).use {
+                    it.write(text.toByteArray())
+                }
+            }
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    private fun _export() {
-        _ioOption = IOOption.eExport
-        if (FilesystemUtils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            _showFileChooser()
+    private fun _import(uri: Uri) {
+        val confirmDialog = Dialog(this)
+        confirmDialog.setContentView(R.layout.dialog)
+        confirmDialog.findViewById<TextView>(R.id.dialogText).text = getString(
+                R.string.override_tourbook)
+        confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
+            try {
+                val jsonString = _readTextFromUri(uri)
+                TourbookExporter(_db).importTourbook(jsonString)
+                Toast.makeText(this, getString(R.string.tourbook_import_successfull),
+                        Toast.LENGTH_SHORT).show()
+            } catch (e: JSONException) {
+                Toast.makeText(this, getString(R.string.tourbook_import_error),
+                        Toast.LENGTH_SHORT).show()
+            }
+            _initYears()
+            confirmDialog.dismiss()
+        }
+        confirmDialog.findViewById<View>(R.id.noButton).setOnClickListener {
+            confirmDialog.dismiss()
+        }
+        confirmDialog.setCanceledOnTouchOutside(false)
+        confirmDialog.setCancelable(false)
+        confirmDialog.show()
+    }
+
+    private fun _export(uri: Uri) {
+        try {
+            val jsonString = TourbookExporter(_db).exportTourbook()
+            _writeTextToUri(uri, jsonString)
+            Toast.makeText(this, getString(R.string.tourbook_export_successfull),
+                    Toast.LENGTH_SHORT).show()
+        } catch (e: JSONException) {
+            Toast.makeText(this, getString(R.string.tourbook_export_error),
+                    Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -249,54 +288,20 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun _showFileChooser() {
-        val defaultFileName = if (_ioOption == IOOption.eExport)
-            getString(R.string.tourbook_filename)
-        else
-            ""
-        FileChooser(this, defaultFileName).setFileListener(object : FileChooser.FileSelectedListener {
-            override fun fileSelected(file: File) {
-                val filePath = file.absolutePath
-                if (_ioOption == IOOption.eImport && !file.exists()) {
-                    Toast.makeText(this@TourbookActivity, R.string.file_not_existing, Toast.LENGTH_SHORT).show()
-                    return
-                }
-                _showConfirmDialog(filePath)
-            }
-        }).showDialog()
+    private fun _selectFileImport() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+        }
+        startActivityForResult(intent, IntentConstants.OPEN_TOURBOOK)
     }
 
-    private fun _showConfirmDialog(filePath: String) {
-        val confirmDialog = Dialog(this)
-        confirmDialog.setContentView(R.layout.dialog)
-        val infoText = getString(if (_ioOption == IOOption.eExport)
-            R.string.override_file
-        else
-            R.string.override_tourbook)
-        confirmDialog.findViewById<TextView>(R.id.dialogText).text = infoText
-        confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
-            try {
-                val exporter = TourbookExporter(_db)
-                var successMsg = filePath
-                successMsg += if (_ioOption == IOOption.eExport) {
-                    exporter.exportTourbook(filePath)
-                    getString(R.string.successfully_exported)
-                } else {
-                    exporter.importTourbook(filePath)
-                    getString(R.string.successfully_imported)
-                }
-                Toast.makeText(this@TourbookActivity, successMsg, Toast.LENGTH_SHORT).show()
-            } catch (e: JSONException) {
-                Toast.makeText(this@TourbookActivity, R.string.import_export_error, Toast.LENGTH_SHORT).show()
-            }
-
-            confirmDialog.dismiss()
-            _initYears()
+    private fun _selectFileExport() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
         }
-        confirmDialog.findViewById<View>(R.id.noButton).setOnClickListener { confirmDialog.dismiss() }
-        confirmDialog.setCanceledOnTouchOutside(false)
-        confirmDialog.setCancelable(false)
-        confirmDialog.show()
+        startActivityForResult(intent, IntentConstants.SAVE_TOURBOOK)
     }
 
     private fun _initYears() {

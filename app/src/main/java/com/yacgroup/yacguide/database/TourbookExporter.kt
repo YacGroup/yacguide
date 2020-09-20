@@ -23,10 +23,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 
 class TourbookExporter(private val _db: DatabaseWrapper) {
@@ -40,29 +36,10 @@ class TourbookExporter(private val _db: DatabaseWrapper) {
     private val _notesKey = "notes"
 
     @Throws(JSONException::class)
-    fun exportTourbook(filePath: String) {
+    fun exportTourbook(): String {
         val jsonAscends = JSONArray()
         _db.getAscends().map { jsonAscends.put(ascend2Json(it)) }
-        val file = File(filePath)
-        try {
-            val outStream = FileOutputStream(file)
-            outStream.write(jsonAscends.toString().toByteArray(StandardCharsets.UTF_8))
-            outStream.close()
-        } catch (e: Exception) {
-            throw JSONException("")
-        }
-    }
-
-    @Throws(JSONException::class)
-    fun importTourbook(filePath: String) {
-        val file = File(filePath)
-        val jsonString: String
-        try {
-            jsonString = FileInputStream(file).bufferedReader().readText()
-        } catch (e: Exception) {
-            throw JSONException("")
-        }
-        writeJsonStringToDatabase(jsonString)
+        return jsonAscends.toString()
     }
 
     @Throws(JSONException::class)
@@ -82,7 +59,7 @@ class TourbookExporter(private val _db: DatabaseWrapper) {
     }
 
     @Throws(JSONException::class)
-    private fun writeJsonStringToDatabase(jsonString: String) {
+    fun importTourbook(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
         _db.deletePartners()

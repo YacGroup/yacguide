@@ -27,7 +27,6 @@
     <string name="license_url">https://www.gnu.org/licenses/gpl-3.0.html</string>
 
     <!-- File names -->
-    <string name="tourbook_filename">Tourenbuch.json</string>
     <string name="preferences_filename">yacguide_settings</string>
 
     <!-- Colors -->
