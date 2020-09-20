@@ -60,7 +60,8 @@ class RegionActivity : UpdatableTableActivity() {
                     WidgetUtils.tableFontSizeDp,
                     onClickListener,
                     Color.WHITE,
-                    Typeface.BOLD))
+                    Typeface.BOLD,
+                    20,30,20,30))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (regions.isEmpty()) {

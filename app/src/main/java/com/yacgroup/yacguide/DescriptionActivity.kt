@@ -32,6 +32,7 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.DateUtils
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class DescriptionActivity : TableActivity() {
@@ -142,7 +143,8 @@ class DescriptionActivity : TableActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = "${_route?.name.orEmpty()}   ${_route?.grade.orEmpty()}"
+        val routeName = ParserUtils.decodeObjectNames(_route?.name.orEmpty())
+        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route?.grade.orEmpty()}"
 
         var firstAscendClimbers = _route
                 ?.firstAscendLeader

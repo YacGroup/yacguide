@@ -25,6 +25,8 @@ import java.util.regex.Pattern
 
 object ParserUtils {
 
+    private const val _WATERMARK : String = "\u0000"
+
     // There are some czech letters with ambiguous utf-8 encodings.
     // Map structure: < wrong_utf8_as_regex, correct_utf8 >
     private val _specialCzechCharacterUtf8Map = object : HashMap<String, String>() {
@@ -57,6 +59,18 @@ object ParserUtils {
         return result
     }
 
+    fun encodeObjectNames(name1st: String, name2nd: String): String {
+        return name1st.plus(_WATERMARK).plus(name2nd)
+    }
+
+    fun decodeObjectNames(encodedNames: String?): Pair<String, String> {
+        if (encodedNames == null) {
+            return Pair("", "")
+        }
+        val decodedNames= encodedNames.split(_WATERMARK)
+        return if (decodedNames.size > 1) Pair(decodedNames[0], decodedNames[1]) else Pair(decodedNames[0], "")
+    }
+
     @Throws(JSONException::class)
     fun jsonField2Int(jsonObject: JSONObject, fieldName: String): Int {
         return try {
@@ -85,11 +99,5 @@ object ParserUtils {
             ' '
         }
 
-    }
-
-    @Throws(JSONException::class)
-    fun jsonField2String(jsonObject: JSONObject, fieldName: String, defaultFieldName: String): String {
-        val value = jsonObject.getString(fieldName)
-        return if (value.isEmpty()) jsonObject.getString(defaultFieldName) else value
     }
 }

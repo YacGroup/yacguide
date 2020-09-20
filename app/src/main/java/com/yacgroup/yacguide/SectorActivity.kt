@@ -31,6 +31,7 @@ import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SectorActivity : UpdatableTableActivity() {
@@ -86,6 +87,7 @@ class SectorActivity : UpdatableTableActivity() {
         this.title = _region.name
         val sectors = db.getSectors(_region.id)
         for (sector in sectors) {
+            val sectorName = ParserUtils.decodeObjectNames(sector.name)
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@SectorActivity, RockActivity::class.java)
                 intent.putExtra(IntentConstants.SECTOR_KEY, sector.id)
@@ -96,9 +98,16 @@ class SectorActivity : UpdatableTableActivity() {
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    sector.name.orEmpty(),
+                    sectorName.first,
                     rockCountString,
                     WidgetUtils.tableFontSizeDp,
+                    onClickListener,
+                    Color.WHITE,
+                    Typeface.BOLD))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    sectorName.second,
+                    "",
+                    WidgetUtils.textFontSizeDp,
                     onClickListener,
                     Color.WHITE,
                     Typeface.BOLD))

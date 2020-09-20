@@ -39,24 +39,7 @@ object WidgetUtils {
                               onClickListener: View.OnClickListener,
                               bgColor: Int,
                               typeFace: Int): RelativeLayout {
-        val layout = RelativeLayout(context)
-        layout.setBackgroundColor(bgColor)
-        layout.setOnClickListener(onClickListener)
-
-        val textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, 20, 20, 20, 20)
-        layout.addView(textViewLeft)
-        textViewLeft.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
-
-        val textViewRight = createTextView(context, textRight, textSizeDp, typeFace, 20, 20, 20, 20)
-        layout.addView(textViewRight)
-        textViewRight.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT)
-
-        val paramsRight = textViewRight.layoutParams as RelativeLayout.LayoutParams
-        paramsRight.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
-        val paramsLeft = textViewLeft.layoutParams as RelativeLayout.LayoutParams
-        paramsLeft.addRule(RelativeLayout.LEFT_OF, textViewRight.id)
-
-        return layout
+        return createCommonRowLayout(context, textLeft, textRight, textSizeDp, onClickListener, bgColor, typeFace, 20, 20, 20, 10)
     }
 
     fun createCommonRowLayout(context: Context,

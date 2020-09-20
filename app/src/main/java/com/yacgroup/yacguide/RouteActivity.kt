@@ -33,6 +33,7 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RouteActivity : TableActivity() {
@@ -106,10 +107,12 @@ class RouteActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = "${_rock?.name}"
+        val rockName = ParserUtils.decodeObjectNames(_rock?.name.orEmpty())
+        this.title = if (rockName.first.isNotEmpty()) rockName.first else rockName.second
 
         val routes = _rock?.let { db.getRoutes(it.id) } ?: emptyList()
         for (route in routes) {
+            val routeName = ParserUtils.decodeObjectNames(route.name)
             val commentCount = db.getRouteCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             val botchAdd = if (AscendStyle.isBotch(route.ascendsBitMask)) getString(R.string.botch) else ""
@@ -134,9 +137,16 @@ class RouteActivity : TableActivity() {
                 bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${route.name.orEmpty()}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
+                    "${routeName.first}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
+                    onCLickListener,
+                    bgColor,
+                    typeface))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    routeName.second,
+                    "",
+                    WidgetUtils.textFontSizeDp,
                     onCLickListener,
                     bgColor,
                     typeface))
