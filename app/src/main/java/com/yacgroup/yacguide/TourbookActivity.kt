@@ -38,9 +38,8 @@ import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-import org.json.JSONException
+import java.io.IOException
 
-import java.io.*
 import java.util.Arrays
 
 class TourbookActivity : BaseNavigationActivity() {
@@ -96,8 +95,8 @@ class TourbookActivity : BaseNavigationActivity() {
             Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
         } else if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
-                IntentConstants.OPEN_TOURBOOK -> data?.data?.also { uri -> _import(uri) }
-                IntentConstants.SAVE_TOURBOOK -> data?.data?.also { uri -> _export(uri) }
+                IntentConstants.REQUEST_OPEN_TOURBOOK -> data?.data?.also { uri -> _import(uri) }
+                IntentConstants.REQUEST_SAVE_TOURBOOK -> data?.data?.also { uri -> _export(uri) }
             }
         }
     }
@@ -118,35 +117,6 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    @Throws(IOException::class)
-    private fun _readTextFromUri(uri: Uri): String {
-        val stringBuilder = StringBuilder()
-        contentResolver.openInputStream(uri)?.use { inputStream ->
-            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                var line: String? = reader.readLine()
-                while (line != null) {
-                    stringBuilder.append(line)
-                    line = reader.readLine()
-                }
-            }
-        }
-        return stringBuilder.toString()
-    }
-
-    private fun _writeTextToUri(uri: Uri, text: String) {
-        try {
-            contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use {
-                    it.write(text.toByteArray())
-                }
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
     private fun _import(uri: Uri) {
         val confirmDialog = Dialog(this)
         confirmDialog.setContentView(R.layout.dialog)
@@ -154,11 +124,10 @@ class TourbookActivity : BaseNavigationActivity() {
                 R.string.override_tourbook)
         confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
             try {
-                val jsonString = _readTextFromUri(uri)
-                TourbookExporter(_db).importTourbook(jsonString)
+                TourbookExporter(_db, contentResolver).importTourbook(uri)
                 Toast.makeText(this, getString(R.string.tourbook_import_successfull),
                         Toast.LENGTH_SHORT).show()
-            } catch (e: JSONException) {
+            } catch (e: IOException) {
                 Toast.makeText(this, getString(R.string.tourbook_import_error),
                         Toast.LENGTH_SHORT).show()
             }
@@ -175,11 +144,10 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _export(uri: Uri) {
         try {
-            val jsonString = TourbookExporter(_db).exportTourbook()
-            _writeTextToUri(uri, jsonString)
+            TourbookExporter(_db, contentResolver).exportTourbook(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
                     Toast.LENGTH_SHORT).show()
-        } catch (e: JSONException) {
+        } catch (e: IOException) {
             Toast.makeText(this, getString(R.string.tourbook_export_error),
                     Toast.LENGTH_SHORT).show()
         }
@@ -293,7 +261,7 @@ class TourbookActivity : BaseNavigationActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-        startActivityForResult(intent, IntentConstants.OPEN_TOURBOOK)
+        startActivityForResult(intent, IntentConstants.REQUEST_OPEN_TOURBOOK)
     }
 
     private fun _selectFileExport() {
@@ -301,7 +269,7 @@ class TourbookActivity : BaseNavigationActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-        startActivityForResult(intent, IntentConstants.SAVE_TOURBOOK)
+        startActivityForResult(intent, IntentConstants.REQUEST_SAVE_TOURBOOK)
     }
 
     private fun _initYears() {

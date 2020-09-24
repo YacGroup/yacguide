@@ -35,8 +35,6 @@ import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-import java.util.ArrayList
-
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
