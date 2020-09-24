@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------
 # Docker parameters
 # --------------------------------------------------------------------
-DOCKER_IMG_VER := 20200527
+DOCKER_IMG_VER := 20200924
 DOCKER_IMG := yacgroup/yacguide-build:$(DOCKER_IMG_VER)
 DOCKER_CONTAINER := yacguide-build
 DOCKER_MOUNT_TARGET := /mnt/yacguide-build
