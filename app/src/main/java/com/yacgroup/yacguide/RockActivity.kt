@@ -37,6 +37,7 @@ import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RockActivity : TableActivity() {
@@ -120,11 +121,12 @@ class RockActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _sector?.name.orEmpty()
+        val sectorName = ParserUtils.decodeObjectNames(_sector?.name.orEmpty())
+        this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
         val rocks = _sector?.let { db.getRocks(it.id) } ?: emptyList()
         for (rock in rocks) {
-            val rockName = rock.name.orEmpty()
-            if (!rockName.toLowerCase().contains(_rockNamePart.toLowerCase())) {
+            val rockName = ParserUtils.decodeObjectNames(rock.name)
+            if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
                 continue
             }
             if (_onlySummits && !rockIsAnOfficialSummit(rock)) {
@@ -155,9 +157,16 @@ class RockActivity : TableActivity() {
                 startActivityForResult(intent, 0)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rock.nr}  $rockName$typeAdd$botchAdd$projectAdd$watchingAdd",
+                    "${rock.nr}  ${rockName.first}$typeAdd$botchAdd$projectAdd$watchingAdd",
                     rock.status.toString(),
                     WidgetUtils.tableFontSizeDp,
+                    onClickListener,
+                    bgColor,
+                    typeface))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    rockName.second,
+                    "",
+                    WidgetUtils.textFontSizeDp,
                     onClickListener,
                     bgColor,
                     typeface))
