@@ -109,7 +109,7 @@ class AscendActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun cancel(v: View) {
         val resultIntent = Intent()
-        setResult(IntentConstants.RESULT_NO_UPDATE, resultIntent)
+        setResult(Activity.RESULT_CANCELED, resultIntent)
         finish()
     }
 

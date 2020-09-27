@@ -28,5 +28,8 @@ object IntentConstants {
 
     // Result codes
     const val RESULT_UPDATED = 1000
-    const val RESULT_NO_UPDATE = 1001
+
+    // Request codes
+    const val REQUEST_OPEN_TOURBOOK = 2002
+    const val REQUEST_SAVE_TOURBOOK = 2003
 }

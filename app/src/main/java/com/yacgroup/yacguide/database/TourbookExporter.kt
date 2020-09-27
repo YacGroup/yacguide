@@ -17,19 +17,21 @@
 
 package com.yacgroup.yacguide.database
 
+import android.content.ContentResolver
+import android.net.Uri
+
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.nio.charset.StandardCharsets
+import java.io.*
 import java.util.ArrayList
 
-class TourbookExporter(private val _db: DatabaseWrapper) {
+class TourbookExporter(
+        private val _db: DatabaseWrapper,
+        private val _contentResolver: ContentResolver) {
 
     private val _routeIdKey = "routeId"
     private val _styleIdKey = "styleId"
@@ -39,30 +41,41 @@ class TourbookExporter(private val _db: DatabaseWrapper) {
     private val _partnersKey = "partners"
     private val _notesKey = "notes"
 
-    @Throws(JSONException::class)
-    fun exportTourbook(filePath: String) {
+    @Throws(IOException::class)
+    fun exportTourbook(uri: Uri) {
         val jsonAscends = JSONArray()
         _db.getAscends().map { jsonAscends.put(ascend2Json(it)) }
-        val file = File(filePath)
-        try {
-            val outStream = FileOutputStream(file)
-            outStream.write(jsonAscends.toString().toByteArray(StandardCharsets.UTF_8))
-            outStream.close()
-        } catch (e: Exception) {
-            throw JSONException("")
+        _writeStrToUri(uri, jsonAscends.toString())
+    }
+
+    @Throws(IOException::class)
+    private fun _writeStrToUri(uri: Uri, str: String) {
+        _contentResolver.openFileDescriptor(uri, "w")?.use {
+            FileOutputStream(it.fileDescriptor).use {
+                it.write(str.toByteArray(Charsets.UTF_8))
+            }
         }
     }
 
-    @Throws(JSONException::class)
-    fun importTourbook(filePath: String) {
-        val file = File(filePath)
-        val jsonString: String
-        try {
-            jsonString = FileInputStream(file).bufferedReader().readText()
-        } catch (e: Exception) {
-            throw JSONException("")
+    @Throws(JSONException::class, IOException::class)
+    fun importTourbook(uri: Uri) {
+        val jsonString = _readTextFromUri(uri)
+        _writeJsonStringToDatabase(jsonString)
+    }
+
+    @Throws(IOException::class)
+    private fun _readTextFromUri(uri: Uri): String {
+        val stringBuilder = StringBuilder()
+        _contentResolver.openInputStream(uri)?.use { inputStream ->
+            BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                var line: String? = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line)
+                    line = reader.readLine()
+                }
+            }
         }
-        writeJsonStringToDatabase(jsonString)
+        return stringBuilder.toString()
     }
 
     @Throws(JSONException::class)
@@ -82,7 +95,7 @@ class TourbookExporter(private val _db: DatabaseWrapper) {
     }
 
     @Throws(JSONException::class)
-    private fun writeJsonStringToDatabase(jsonString: String) {
+    private fun _writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
         _db.deletePartners()
