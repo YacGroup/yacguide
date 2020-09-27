@@ -41,6 +41,7 @@ class TourbookExporter(
     private val _partnersKey = "partners"
     private val _notesKey = "notes"
 
+    @Throws(IOException::class)
     fun exportTourbook(uri: Uri) {
         val jsonAscends = JSONArray()
         _db.getAscends().map { jsonAscends.put(ascend2Json(it)) }
@@ -49,21 +50,17 @@ class TourbookExporter(
 
     @Throws(IOException::class)
     private fun _writeStrToUri(uri: Uri, str: String) {
-        try {
-            _contentResolver.openFileDescriptor(uri, "w")?.use {
-                FileOutputStream(it.fileDescriptor).use {
-                    it.write(str.toByteArray(Charsets.UTF_8))
-                }
+        _contentResolver.openFileDescriptor(uri, "w")?.use {
+            FileOutputStream(it.fileDescriptor).use {
+                it.write(str.toByteArray(Charsets.UTF_8))
             }
-        } catch (e: IOException) {
-            throw IOException("Write to URI '${uri}' failed.")
         }
     }
 
-    @Throws(JSONException::class)
+    @Throws(JSONException::class, IOException::class)
     fun importTourbook(uri: Uri) {
         val jsonString = _readTextFromUri(uri)
-        writeJsonStringToDatabase(jsonString)
+        _writeJsonStringToDatabase(jsonString)
     }
 
     @Throws(IOException::class)
@@ -98,7 +95,7 @@ class TourbookExporter(
     }
 
     @Throws(JSONException::class)
-    fun writeJsonStringToDatabase(jsonString: String) {
+    private fun _writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
         _db.deletePartners()

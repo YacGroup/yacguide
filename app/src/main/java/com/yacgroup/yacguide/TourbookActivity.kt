@@ -127,7 +127,7 @@ class TourbookActivity : BaseNavigationActivity() {
                 TourbookExporter(_db, contentResolver).importTourbook(uri)
                 Toast.makeText(this, getString(R.string.tourbook_import_successfull),
                         Toast.LENGTH_SHORT).show()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 Toast.makeText(this, getString(R.string.tourbook_import_error),
                         Toast.LENGTH_SHORT).show()
             }
