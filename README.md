@@ -1,6 +1,6 @@
 # [YacGuide] - Yet Another Climbing Guide
 
-[![Build Status](https://travis-ci.org/YacGroup/YacGuide.svg?branch=master)](https://travis-ci.org/YacGroup/YacGuide)
+[![Build Status](https://travis-ci.com/YacGroup/yacguide.svg?branch=master)](https://travis-ci.com/YacGroup/yacguide)
 
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
       alt="Get it on Google Play"
