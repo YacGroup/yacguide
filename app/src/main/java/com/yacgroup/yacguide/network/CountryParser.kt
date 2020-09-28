@@ -23,15 +23,18 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 
 import org.json.JSONArray
 import org.json.JSONException
+import java.util.*
 
 class CountryParser(private val _db: DatabaseWrapper, listener: UpdateListener) : JSONWebParser(listener) {
 
     private val _countries = mutableListOf<Country>()
 
-    init {
-        networkRequests.add(NetworkRequest(
-                NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
-                "${baseUrl}jsonland.php?app=yacguide"))
+    override fun initNetworkRequests() {
+        networkRequests = LinkedList(listOf(
+                NetworkRequest(
+                    NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
+                    "${baseUrl}jsonland.php?app=yacguide")
+        ))
     }
 
     @Throws(JSONException::class)

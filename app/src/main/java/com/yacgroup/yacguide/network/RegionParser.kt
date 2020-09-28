@@ -25,6 +25,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException
+import java.util.*
 
 class RegionParser(
         private val _db: DatabaseWrapper,
@@ -34,10 +35,12 @@ class RegionParser(
 
     private val _regions = mutableListOf<Region>()
 
-    init {
-        networkRequests.add(NetworkRequest(
-                NetworkRequestUId(RequestType.REGION_DATA, 0),
-                "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(_countryName)}"))
+    override fun initNetworkRequests() {
+        networkRequests = LinkedList(listOf(
+                NetworkRequest(
+                    NetworkRequestUId(RequestType.REGION_DATA, 0),
+                    "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(_countryName)}")
+        ))
     }
 
     @Throws(JSONException::class)

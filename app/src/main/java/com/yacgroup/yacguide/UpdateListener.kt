@@ -19,5 +19,6 @@ package com.yacgroup.yacguide
 
 interface UpdateListener {
 
-    fun onEvent(success: Boolean)
+    fun onUpdateStatus(statusMessage: String)
+    fun onUpdateFinished(success: Boolean)
 }
