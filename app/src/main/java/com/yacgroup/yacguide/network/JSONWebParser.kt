@@ -55,6 +55,7 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
 
     fun fetchData() {
         _processedRequestsCount = 0
+        initNetworkRequests()
         for (request in networkRequests) {
             NetworkTask(request.requestId, this).execute(request.url)
         }
@@ -63,7 +64,10 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
     @Throws(JSONException::class)
     protected abstract fun parseData(requestId: NetworkRequestUId, json: String)
 
+    protected abstract fun initNetworkRequests()
+
+    // NetworkListener
     protected open fun onFinalTaskResolved() {
-        _listener.onEvent(_success)
+        _listener.onUpdateFinished(_success)
     }
 }

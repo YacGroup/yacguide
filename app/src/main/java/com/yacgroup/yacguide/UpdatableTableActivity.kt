@@ -46,7 +46,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     // UpdateListener
-    override fun onEvent(success: Boolean) {
+    override fun onUpdateFinished(success: Boolean) {
         _updateDialog?.dismiss()
 
         if (success) {
@@ -55,6 +55,12 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
             Toast.makeText(this, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
         }
         displayContent()
+    }
+
+    override fun onUpdateStatus(statusMessage: String) {
+        runOnUiThread {
+            _updateDialog?.findViewById<TextView>(R.id.dialogText)?.text = statusMessage
+        }
     }
 
     fun update(v: View = View(this)) {
