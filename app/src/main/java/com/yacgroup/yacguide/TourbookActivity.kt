@@ -36,6 +36,7 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.io.IOException
@@ -217,10 +218,9 @@ class TourbookActivity : BaseNavigationActivity() {
                         "$day.$month.$year",
                         region.name.orEmpty(),
                         WidgetUtils.infoFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         WidgetUtils.tourHeaderColor,
-                        Typeface.BOLD,
-                        5, 10, 5, 0))
+                        Typeface.BOLD))
                 layout.addView(WidgetUtils.createHorizontalLine(this, 5))
                 currentMonth = month
                 currentDay = day
@@ -237,10 +237,19 @@ class TourbookActivity : BaseNavigationActivity() {
                 AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)) -> followColor
                 else -> defaultColor
             }
+            val rockName = ParserUtils.decodeObjectNames(rock.name)
+            val routeName = ParserUtils.decodeObjectNames(route.name)
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rock.name.orEmpty()} - ${route.name.orEmpty()}",
+                    "${rockName.first} - ${routeName.first}",
                     route.grade.orEmpty(),
                     WidgetUtils.tableFontSizeDp,
+                    onClickListener,
+                    bgColor,
+                    Typeface.BOLD))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    "${rockName.second} - ${routeName.second}",
+                    "",
+                    WidgetUtils.textFontSizeDp,
                     onClickListener,
                     bgColor,
                     Typeface.NORMAL))

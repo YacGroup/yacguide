@@ -33,6 +33,7 @@ import com.yacgroup.yacguide.database.*
 
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class TourbookAscendActivity : BaseNavigationActivity() {
@@ -158,112 +159,102 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 "${ascend.day}.${ascend.month}.${ascend.year}",
                 region.name.orEmpty(),
                 WidgetUtils.infoFontSizeDp,
-                View.OnClickListener { },
+                { },
                 WidgetUtils.tourHeaderColor,
-                Typeface.BOLD,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 getString(R.string.region),
                 "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
+        val sectorName = ParserUtils.decodeObjectNames(sector.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                sector.name.orEmpty(),
-                "",
+                sectorName.first,
+                sectorName.second,
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 getString(R.string.rock),
                 "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
+        val rockName = ParserUtils.decodeObjectNames(rock.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                rock.name.orEmpty(),
-                "",
+                rockName.first,
+                rockName.second,
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 getString(R.string.route),
                 "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
+        val routeName = ParserUtils.decodeObjectNames(route.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "${route.name}   ${route.grade}",
-                "",
+                routeName.first,
+                routeName.second,
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
+                getString(R.string.grade),
                 getString(R.string.style),
-                "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
+                route.grade.orEmpty(),
                 AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty(),
-                "",
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 getString(R.string.partner),
                 "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 partnersString.takeUnless { it.isEmpty() } ?: " - ",
                 "",
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 getString(R.string.notes),
                 "",
                 WidgetUtils.textFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 0, 0))
+                Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 ascend.notes?.takeUnless { it.isBlank() } ?: " - ",
                 "",
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
-                Typeface.NORMAL,
-                10, 10, 10, 10))
+                Typeface.BOLD))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
     }
 

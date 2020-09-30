@@ -88,19 +88,17 @@ class RouteActivity : TableActivity() {
                         getString(R.string.nature),
                         RockComment.QUALITY_MAP[qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        Typeface.NORMAL))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     text.orEmpty(),
                     "",
                     WidgetUtils.textFontSizeDp,
-                    View.OnClickListener { },
+                    { },
                     Color.WHITE,
-                    Typeface.NORMAL,
-                    10, 10, 10, 10))
+                    Typeface.NORMAL))
         }
     }
 

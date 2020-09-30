@@ -74,50 +74,45 @@ class DescriptionActivity : TableActivity() {
                         getString(R.string.route_quality),
                         RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        Typeface.NORMAL))
             }
             if (RouteComment.GRADE_MAP.containsKey(comment.gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.grade),
                         RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        Typeface.NORMAL))
             }
             if (RouteComment.SECURITY_MAP.containsKey(comment.securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.protection),
                         RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        Typeface.NORMAL))
             }
             if (RouteComment.WETNESS_MAP.containsKey(comment.wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
                         getString(R.string.drying),
                         RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
                         WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
+                        { },
                         Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        Typeface.NORMAL))
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     comment.text.orEmpty(),
                     "",
                     WidgetUtils.textFontSizeDp,
-                    View.OnClickListener { },
+                    { },
                     Color.WHITE,
-                    Typeface.NORMAL,
-                    10, 10, 10, 10))
+                    Typeface.NORMAL))
         }
     }
 
@@ -167,7 +162,7 @@ class DescriptionActivity : TableActivity() {
                 firstAscendClimbers,
                 firstAscendDate,
                 WidgetUtils.infoFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
                 Typeface.BOLD,
                 20, 20, 20, 0))
@@ -177,7 +172,7 @@ class DescriptionActivity : TableActivity() {
                     getString(R.string.type_of_climbing),
                     "",
                     WidgetUtils.infoFontSizeDp,
-                    View.OnClickListener { },
+                    { },
                     Color.WHITE,
                     Typeface.BOLD,
                     40, 20, 20, 0))
@@ -185,7 +180,7 @@ class DescriptionActivity : TableActivity() {
                     it,
                     "",
                     WidgetUtils.infoFontSizeDp,
-                    View.OnClickListener { },
+                    { },
                     Color.WHITE,
                     Typeface.NORMAL,
                     40, 0, 20, 0))
@@ -195,7 +190,7 @@ class DescriptionActivity : TableActivity() {
                 _route?.description.orEmpty(),
                 "",
                 WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
+                { },
                 Color.WHITE,
                 Typeface.BOLD))
     }
