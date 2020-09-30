@@ -21,7 +21,7 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
+import android.widget.*
 
 import com.yacgroup.yacguide.database.Comment.RegionComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -86,7 +86,7 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
-            val rocks = db.getRocks(sector.id)
+            val rocks = db.getRocksForSector(sector.id)
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
@@ -106,6 +106,10 @@ class SectorActivity : UpdatableTableActivity() {
 
     override fun deleteContent() {
         db.deleteSectorsRecursively(_region.id)
+    }
+
+    override fun searchRocks(rockName: String): List<Rock> {
+        return db.getRocksForRegion(_region.id).filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
     }
 
     private fun _generateRockCountString(rocks: List<Rock>): String {

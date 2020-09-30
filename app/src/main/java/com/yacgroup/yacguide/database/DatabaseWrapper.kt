@@ -39,7 +39,13 @@ class DatabaseWrapper(private val _context: Context) {
 
     fun getSectorComments(sectorId: Int) = _db.sectorCommentDao().getAll(sectorId)
 
-    fun getRocks(sectorId: Int) = _db.rockDao().getAll(sectorId)
+    fun getRocksForSector(sectorId: Int) = _db.rockDao().getAll(sectorId)
+
+    fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
+
+    fun getRocksForCountry(countryName: String) = _db.rockDao().getAllInCountry(countryName)
+
+    fun getRocks() = _db.rockDao().all
 
     fun getRock(rockId: Int) =_db.rockDao().getRock(rockId)
 

@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import com.yacgroup.yacguide.database.Rock
 
 import com.yacgroup.yacguide.network.CountryParser
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -57,6 +58,10 @@ class CountryActivity : UpdatableTableActivity() {
 
     override fun deleteContent() {
         db.deleteCountriesRecursively()
+    }
+
+    override fun searchRocks(rockName: String): List<Rock> {
+        return db.getRocks().filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
     }
 
     override fun getLayoutId(): Int {

@@ -23,6 +23,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 import org.json.JSONException
 
 import java.util.LinkedList
+import kotlin.jvm.Throws
 
 abstract class JSONWebParser(private var _listener: UpdateListener): NetworkListener {
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"

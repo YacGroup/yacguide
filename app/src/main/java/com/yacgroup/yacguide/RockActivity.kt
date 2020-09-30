@@ -116,7 +116,7 @@ class RockActivity : TableActivity() {
         layout.removeAllViews()
         val sectorName = ParserUtils.decodeObjectNames(_sector?.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        val rocks = _sector?.let { db.getRocks(it.id) } ?: emptyList()
+        val rocks = _sector?.let { db.getRocksForSector(it.id) } ?: emptyList()
         for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
