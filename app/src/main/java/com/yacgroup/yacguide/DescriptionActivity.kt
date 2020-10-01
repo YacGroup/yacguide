@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
@@ -71,53 +70,37 @@ class DescriptionActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RouteComment.QUALITY_MAP.containsKey(comment.qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.route_quality),
-                        RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        textLeft = getString(R.string.route_quality),
+                        textRight = RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             if (RouteComment.GRADE_MAP.containsKey(comment.gradeId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.grade),
-                        RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        textLeft = getString(R.string.grade),
+                        textRight = RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             if (RouteComment.SECURITY_MAP.containsKey(comment.securityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.protection),
-                        RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        textLeft = getString(R.string.protection),
+                        textRight = RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             if (RouteComment.WETNESS_MAP.containsKey(comment.wetnessId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.drying),
-                        RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        View.OnClickListener { },
-                        Color.WHITE,
-                        Typeface.NORMAL,
-                        10, 10, 10, 0))
+                        textLeft = getString(R.string.drying),
+                        textRight = RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    comment.text.orEmpty(),
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    View.OnClickListener { },
-                    Color.WHITE,
-                    Typeface.NORMAL,
-                    10, 10, 10, 10))
+                    textLeft = comment.text.orEmpty(),
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    typeface = Typeface.NORMAL))
         }
     }
 
@@ -143,7 +126,7 @@ class DescriptionActivity : TableActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val routeName = ParserUtils.decodeObjectNames(_route?.name.orEmpty())
+        val routeName = ParserUtils.decodeObjectNames(_route?.name)
         this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route?.grade.orEmpty()}"
 
         var firstAscendClimbers = _route
@@ -164,40 +147,24 @@ class DescriptionActivity : TableActivity() {
                 ?: getString(R.string.date_unknown)
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                firstAscendClimbers,
-                firstAscendDate,
-                WidgetUtils.infoFontSizeDp,
-                View.OnClickListener { },
-                Color.WHITE,
-                Typeface.BOLD,
-                20, 20, 20, 0))
+                textLeft = firstAscendClimbers,
+                textRight = firstAscendDate,
+                textSizeDp = WidgetUtils.infoFontSizeDp))
 
         _route?.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    getString(R.string.type_of_climbing),
-                    "",
-                    WidgetUtils.infoFontSizeDp,
-                    View.OnClickListener { },
-                    Color.WHITE,
-                    Typeface.BOLD,
-                    40, 20, 20, 0))
+                    textLeft = getString(R.string.type_of_climbing),
+                    textSizeDp = WidgetUtils.infoFontSizeDp,
+                    padding = WidgetUtils.Padding(40, 20, 20, 0)))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    it,
-                    "",
-                    WidgetUtils.infoFontSizeDp,
-                    View.OnClickListener { },
-                    Color.WHITE,
-                    Typeface.NORMAL,
-                    40, 0, 20, 0))
+                    textLeft = it,
+                    textSizeDp = WidgetUtils.infoFontSizeDp,
+                    typeface = Typeface.NORMAL,
+                    padding = WidgetUtils.Padding(40, 0, 20, 0)))
         }
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                _route?.description.orEmpty(),
-                "",
-                WidgetUtils.tableFontSizeDp,
-                View.OnClickListener { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = _route?.description.orEmpty()))
     }
 
     override fun getLayoutId(): Int {

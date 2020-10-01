@@ -36,6 +36,7 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.io.IOException
@@ -214,13 +215,10 @@ class TourbookActivity : BaseNavigationActivity() {
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "$day.$month.$year",
-                        region.name.orEmpty(),
-                        WidgetUtils.infoFontSizeDp,
-                        View.OnClickListener { },
-                        WidgetUtils.tourHeaderColor,
-                        Typeface.BOLD,
-                        5, 10, 5, 0))
+                        textLeft = "$day.$month.$year",
+                        textRight = region.name.orEmpty(),
+                        textSizeDp = WidgetUtils.infoFontSizeDp,
+                        bgColor = WidgetUtils.tourHeaderColor))
                 layout.addView(WidgetUtils.createHorizontalLine(this, 5))
                 currentMonth = month
                 currentDay = day
@@ -237,13 +235,19 @@ class TourbookActivity : BaseNavigationActivity() {
                 AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)) -> followColor
                 else -> defaultColor
             }
+            val rockName = ParserUtils.decodeObjectNames(rock.name)
+            val routeName = ParserUtils.decodeObjectNames(route.name)
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rock.name.orEmpty()} - ${route.name.orEmpty()}",
-                    route.grade.orEmpty(),
-                    WidgetUtils.tableFontSizeDp,
-                    onClickListener,
-                    bgColor,
-                    Typeface.NORMAL))
+                    textLeft = "${rockName.first} - ${routeName.first}",
+                    textRight = route.grade.orEmpty(),
+                    onClickListener = onClickListener,
+                    bgColor = bgColor))
+            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    textLeft = "${rockName.second} - ${routeName.second}",
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    onClickListener = onClickListener,
+                    bgColor = bgColor,
+                    typeface = Typeface.NORMAL))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }

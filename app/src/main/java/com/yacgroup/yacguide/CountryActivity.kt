@@ -18,8 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -47,13 +45,9 @@ class CountryActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    country.name,
-                    "",
-                    WidgetUtils.tableFontSizeDp,
-                    onClickListener,
-                    Color.WHITE,
-                    Typeface.BOLD,
-                    20,30,20,30))
+                    textLeft = country.name,
+                    onClickListener = onClickListener,
+                    padding = WidgetUtils.Padding(20, 30, 20, 30)))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (countries.isEmpty()) {
