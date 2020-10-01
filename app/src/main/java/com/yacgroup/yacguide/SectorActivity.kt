@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
@@ -62,20 +61,15 @@ class SectorActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.relevance),
-                        RegionComment.QUALITY_MAP[qualityId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        { },
-                        Color.WHITE,
-                        Typeface.NORMAL))
+                        textLeft = getString(R.string.relevance),
+                        textRight = RegionComment.QUALITY_MAP[qualityId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    comment.text.orEmpty(),
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    { },
-                    Color.WHITE,
-                    Typeface.NORMAL))
+                    textLeft = comment.text.orEmpty(),
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    typeface = Typeface.NORMAL))
         }
     }
 
@@ -96,19 +90,13 @@ class SectorActivity : UpdatableTableActivity() {
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    sectorName.first,
-                    rockCountString,
-                    WidgetUtils.tableFontSizeDp,
-                    onClickListener,
-                    Color.WHITE,
-                    Typeface.BOLD))
+                    textLeft = sectorName.first,
+                    textRight = rockCountString,
+                    onClickListener = onClickListener))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    sectorName.second,
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    onClickListener,
-                    Color.WHITE,
-                    Typeface.BOLD))
+                    textLeft = sectorName.second,
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    onClickListener = onClickListener))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (sectors.isEmpty()) {

@@ -19,6 +19,7 @@ package com.yacgroup.yacguide.utils
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -32,37 +33,25 @@ object WidgetUtils {
     const val textFontSizeDp = 14
     const val tourHeaderColor = -0x444445
 
-    fun createCommonRowLayout(context: Context,
-                              textLeft: String,
-                              textRight: String,
-                              textSizeDp: Int,
-                              onClickListener: View.OnClickListener,
-                              bgColor: Int,
-                              typeFace: Int): RelativeLayout {
-        return createCommonRowLayout(context, textLeft, textRight, textSizeDp, onClickListener, bgColor, typeFace, 20, 20, 20, 10)
-    }
+    class Padding (val left: Int, val top: Int, val right: Int, val bottom: Int)
 
     fun createCommonRowLayout(context: Context,
                               textLeft: String,
-                              textRight: String,
-                              textSizeDp: Int,
-                              onClickListener: View.OnClickListener,
-                              bgColor: Int,
-                              typeFace: Int,
-                              vararg padding: Int): RelativeLayout {
+                              textRight: String = "",
+                              textSizeDp: Int = tableFontSizeDp,
+                              onClickListener: View.OnClickListener = View.OnClickListener {},
+                              bgColor: Int = Color.WHITE,
+                              typeface: Int = Typeface.BOLD,
+                              padding: Padding = Padding(20, 20, 20, 10)): RelativeLayout {
         val layout = RelativeLayout(context)
         layout.setBackgroundColor(bgColor)
         layout.setOnClickListener(onClickListener)
 
-        if (padding.size != 4) {
-            return layout
-        }
-
-        val textViewLeft = createTextView(context, textLeft, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3])
+        val textViewLeft = createTextView(context, textLeft, textSizeDp, typeface, padding)
         layout.addView(textViewLeft)
         textViewLeft.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
 
-        val textViewRight = createTextView(context, textRight, textSizeDp, typeFace, padding[0], padding[1], padding[2], padding[3])
+        val textViewRight = createTextView(context, textRight, textSizeDp, typeface, padding)
         layout.addView(textViewRight)
         textViewRight.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.MATCH_PARENT)
 
@@ -85,17 +74,14 @@ object WidgetUtils {
     private fun createTextView(context: Context,
                                text: String,
                                textSizeDp: Int,
-                               typeFace: Int,
-                               paddingLeft: Int,
-                               paddingTop: Int,
-                               paddingRight: Int,
-                               paddingBottom: Int): TextView {
+                               typeface: Int,
+                               padding: Padding): TextView {
         val textView = TextView(context)
         textView.id = View.generateViewId()
         textView.text = text
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSizeDp.toFloat())
-        textView.setTypeface(textView.typeface, typeFace)
-        textView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+        textView.setTypeface(textView.typeface, typeface)
+        textView.setPadding(padding.left, padding.top, padding.right, padding.bottom)
 
         return textView
     }

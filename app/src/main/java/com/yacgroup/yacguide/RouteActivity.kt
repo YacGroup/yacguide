@@ -85,27 +85,22 @@ class RouteActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.nature),
-                        RockComment.QUALITY_MAP[qualityId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        { },
-                        Color.WHITE,
-                        Typeface.NORMAL))
+                        textLeft = getString(R.string.nature),
+                        textRight = RockComment.QUALITY_MAP[qualityId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text.orEmpty(),
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    { },
-                    Color.WHITE,
-                    Typeface.NORMAL))
+                    textLeft = text.orEmpty(),
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    typeface = Typeface.NORMAL))
         }
     }
 
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val rockName = ParserUtils.decodeObjectNames(_rock?.name.orEmpty())
+        val rockName = ParserUtils.decodeObjectNames(_rock?.name)
         this.title = if (rockName.first.isNotEmpty()) rockName.first else rockName.second
 
         val routes = _rock?.let { db.getRoutes(it.id) } ?: emptyList()
@@ -135,19 +130,17 @@ class RouteActivity : TableActivity() {
                 bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${routeName.first}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
-                    route.grade.orEmpty(),
-                    WidgetUtils.tableFontSizeDp,
-                    onCLickListener,
-                    bgColor,
-                    typeface))
+                    textLeft = "${routeName.first}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
+                    textRight = route.grade.orEmpty(),
+                    onClickListener = onCLickListener,
+                    bgColor = bgColor,
+                    typeface = typeface))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    routeName.second,
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    onCLickListener,
-                    bgColor,
-                    typeface))
+                    textLeft = routeName.second,
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    onClickListener = onCLickListener,
+                    bgColor = bgColor,
+                    typeface = typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }

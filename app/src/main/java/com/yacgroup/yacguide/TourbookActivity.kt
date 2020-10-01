@@ -215,12 +215,10 @@ class TourbookActivity : BaseNavigationActivity() {
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        "$day.$month.$year",
-                        region.name.orEmpty(),
-                        WidgetUtils.infoFontSizeDp,
-                        { },
-                        WidgetUtils.tourHeaderColor,
-                        Typeface.BOLD))
+                        textLeft = "$day.$month.$year",
+                        textRight = region.name.orEmpty(),
+                        textSizeDp = WidgetUtils.infoFontSizeDp,
+                        bgColor = WidgetUtils.tourHeaderColor))
                 layout.addView(WidgetUtils.createHorizontalLine(this, 5))
                 currentMonth = month
                 currentDay = day
@@ -240,19 +238,16 @@ class TourbookActivity : BaseNavigationActivity() {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             val routeName = ParserUtils.decodeObjectNames(route.name)
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rockName.first} - ${routeName.first}",
-                    route.grade.orEmpty(),
-                    WidgetUtils.tableFontSizeDp,
-                    onClickListener,
-                    bgColor,
-                    Typeface.BOLD))
+                    textLeft = "${rockName.first} - ${routeName.first}",
+                    textRight = route.grade.orEmpty(),
+                    onClickListener = onClickListener,
+                    bgColor = bgColor))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rockName.second} - ${routeName.second}",
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    onClickListener,
-                    bgColor,
-                    Typeface.NORMAL))
+                    textLeft = "${rockName.second} - ${routeName.second}",
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    onClickListener = onClickListener,
+                    bgColor = bgColor,
+                    typeface = Typeface.NORMAL))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }

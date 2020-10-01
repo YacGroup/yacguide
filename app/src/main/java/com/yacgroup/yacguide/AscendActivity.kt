@@ -37,6 +37,7 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
 import java.util.Calendar
@@ -140,7 +141,8 @@ class AscendActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun _displayContent() {
-        title = _route?.let { "${it.name}   ${it.grade}" } ?: DatabaseWrapper.UNKNOWN_NAME
+        val routeName = ParserUtils.decodeObjectNames(_route?.name)
+        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route?.grade.orEmpty()}"
 
         val spinner = findViewById<Spinner>(R.id.styleSpinner)
         val adapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.names)

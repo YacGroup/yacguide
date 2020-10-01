@@ -94,20 +94,15 @@ class RockActivity : TableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 5))
             if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        getString(R.string.relevance),
-                        SectorComment.QUALITY_MAP[qualityId].orEmpty(),
-                        WidgetUtils.textFontSizeDp,
-                        { },
-                        Color.WHITE,
-                        Typeface.NORMAL))
+                        textLeft = getString(R.string.relevance),
+                        textRight = SectorComment.QUALITY_MAP[qualityId].orEmpty(),
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        typeface = Typeface.NORMAL))
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    text.orEmpty(),
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    { },
-                    Color.WHITE,
-                    Typeface.NORMAL))
+                    textLeft = text.orEmpty(),
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    typeface = Typeface.NORMAL))
         }
     }
 
@@ -119,7 +114,7 @@ class RockActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val sectorName = ParserUtils.decodeObjectNames(_sector?.name.orEmpty())
+        val sectorName = ParserUtils.decodeObjectNames(_sector?.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
         val rocks = _sector?.let { db.getRocks(it.id) } ?: emptyList()
         for (rock in rocks) {
@@ -155,19 +150,17 @@ class RockActivity : TableActivity() {
                 startActivityForResult(intent, 0)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    "${rock.nr}  ${rockName.first}$typeAdd$botchAdd$projectAdd$watchingAdd",
-                    rock.status.toString(),
-                    WidgetUtils.tableFontSizeDp,
-                    onClickListener,
-                    bgColor,
-                    typeface))
+                    textLeft = "${rock.nr}  ${rockName.first}$typeAdd$botchAdd$projectAdd$watchingAdd",
+                    textRight = rock.status.toString(),
+                    onClickListener = onClickListener,
+                    bgColor = bgColor,
+                    typeface = typeface))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    rockName.second,
-                    "",
-                    WidgetUtils.textFontSizeDp,
-                    onClickListener,
-                    bgColor,
-                    typeface))
+                    textLeft = rockName.second,
+                    textSizeDp = WidgetUtils.textFontSizeDp,
+                    onClickListener = onClickListener,
+                    bgColor = bgColor,
+                    typeface = typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }

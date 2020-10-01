@@ -19,7 +19,6 @@ package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.TextUtils
@@ -156,105 +155,60 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         val partnersString = TextUtils.join(", ", partnerNames)
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                "${ascend.day}.${ascend.month}.${ascend.year}",
-                region.name.orEmpty(),
-                WidgetUtils.infoFontSizeDp,
-                { },
-                WidgetUtils.tourHeaderColor,
-                Typeface.BOLD))
+                textLeft = "${ascend.day}.${ascend.month}.${ascend.year}",
+                textRight = region.name.orEmpty(),
+                textSizeDp = WidgetUtils.infoFontSizeDp,
+                bgColor = WidgetUtils.tourHeaderColor))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.region),
-                "",
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.region),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         val sectorName = ParserUtils.decodeObjectNames(sector.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                sectorName.first,
-                sectorName.second,
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = sectorName.first,
+                textRight = sectorName.second))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.rock),
-                "",
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.rock),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         val rockName = ParserUtils.decodeObjectNames(rock.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                rockName.first,
-                rockName.second,
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = rockName.first,
+                textRight = rockName.second))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.route),
-                "",
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.route),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         val routeName = ParserUtils.decodeObjectNames(route.name)
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                routeName.first,
-                routeName.second,
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = routeName.first,
+                textRight = routeName.second))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.grade),
-                getString(R.string.style),
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.grade),
+                textRight = getString(R.string.style),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                route.grade.orEmpty(),
-                AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty(),
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = route.grade.orEmpty(),
+                textRight = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.partner),
-                "",
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.partner),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                partnersString.takeUnless { it.isEmpty() } ?: " - ",
-                "",
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = partnersString.takeUnless { it.isEmpty() } ?: " - "))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                getString(R.string.notes),
-                "",
-                WidgetUtils.textFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.NORMAL))
+                textLeft = getString(R.string.notes),
+                textSizeDp = WidgetUtils.textFontSizeDp,
+                typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                ascend.notes?.takeUnless { it.isBlank() } ?: " - ",
-                "",
-                WidgetUtils.tableFontSizeDp,
-                { },
-                Color.WHITE,
-                Typeface.BOLD))
+                textLeft = ascend.notes?.takeUnless { it.isBlank() } ?: " - "))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
     }
 
