@@ -43,7 +43,7 @@ class RegionActivity : UpdatableTableActivity() {
     }
 
     override fun displayContent() {
-        this.title = _countryName.orEmpty()
+        this.title = _countryName
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         val regions = db.getRegions(_countryName)

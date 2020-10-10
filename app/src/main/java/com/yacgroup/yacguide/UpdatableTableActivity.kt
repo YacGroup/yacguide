@@ -19,7 +19,6 @@ package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Typeface
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,8 +28,6 @@ import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
@@ -125,7 +122,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
                 if (rocks.isEmpty()) {
                     Toast.makeText(searchDialog.context, R.string.hint_name_not_found, Toast.LENGTH_SHORT).show()
                 } else {
-                    _displaySelectedRocks(rocks)
+                    val rockIds = ArrayList(rocks.map{ it.id })
+                    val intent = Intent(this, SelectedRockActivity::class.java)
+                    intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
+                    startActivity(intent)
                     searchDialog.dismiss()
                 }
             }
@@ -134,35 +134,5 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         searchDialog.setCancelable(false)
         searchDialog.setCanceledOnTouchOutside(false)
         searchDialog.show()
-    }
-
-    private fun _displaySelectedRocks(rocks: List<Rock>) {
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
-        for (rock in rocks) {
-            val rockName = ParserUtils.decodeObjectNames(rock.name)
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this, RouteActivity::class.java)
-                intent.putExtra(IntentConstants.ROCK_KEY, rock.id)
-                startActivity(intent)
-            }
-            val sector = db.getSector(rock.parentId)!!
-            val sectorName = ParserUtils.decodeObjectNames(sector.name)
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = db.getRegion(sector.parentId)?.name.orEmpty(),
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener,
-                    typeface = Typeface.NORMAL))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = sectorName.first,
-                    textRight = sectorName.second,
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = rockName.first,
-                    textRight = rockName.second,
-                    onClickListener = onClickListener))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
     }
 }

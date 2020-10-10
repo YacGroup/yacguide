@@ -25,6 +25,7 @@ object IntentConstants {
     const val ROUTE_KEY = "RouteId"
     const val ASCEND_KEY = "AscendId"
     const val ASCEND_PARTNER_IDS = "AscendPartnerIds"
+    const val SELECTED_ROCK_IDS = "SelectedRockIds"
 
     // Result codes
     const val RESULT_UPDATED = 1000

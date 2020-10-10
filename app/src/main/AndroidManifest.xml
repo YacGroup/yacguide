@@ -50,6 +50,8 @@
         <activity android:name=".RockActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".SectorActivity"/>
+        <activity android:name=".SelectedRockActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".RouteActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".RockActivity"/>
