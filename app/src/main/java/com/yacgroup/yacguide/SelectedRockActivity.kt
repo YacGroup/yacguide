@@ -23,9 +23,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.utils.AscendStyle
 
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -49,6 +47,7 @@ class SelectedRockActivity : TableActivity() {
         for (rockId in _rockIds) {
             val rock = db.getRock(rockId)!!
             val rockName = ParserUtils.decodeObjectNames(rock.name)
+
             var bgColor = Color.WHITE
             var typeface = Typeface.BOLD
             var typeAdd = ""
@@ -56,20 +55,14 @@ class SelectedRockActivity : TableActivity() {
                 typeface = Typeface.NORMAL
                 typeAdd = "  (${rock.type})"
             }
-            val botchAdd = if (AscendStyle.isBotch(rock.ascendsBitMask)) getString(R.string.botch) else ""
-            val projectAdd = if (AscendStyle.isProject(rock.ascendsBitMask)) getString(R.string.project) else ""
-            val watchingAdd = if (AscendStyle.isWatching(rock.ascendsBitMask)) getString(R.string.watching) else ""
             if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
-            if (AscendStyle.isLead(rock.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-            } else if (AscendStyle.isFollow(rock.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
-            }
+            bgColor = colorizeEntry(rock.ascendsBitMask, bgColor)
+            val decorationAdd = decorateEntry(rock.ascendsBitMask)
             val onClickListener = View.OnClickListener {
-                val intent = Intent(this, RouteActivity::class.java)
+                val intent = Intent(this@SelectedRockActivity, RouteActivity::class.java)
                 intent.putExtra(IntentConstants.ROCK_KEY, rockId)
                 startActivityForResult(intent, 0)
             }
@@ -88,7 +81,7 @@ class SelectedRockActivity : TableActivity() {
                     onClickListener = onClickListener,
                     bgColor = bgColor))
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${rockName.first}$typeAdd$botchAdd$projectAdd$watchingAdd",
+                    textLeft = "${rockName.first}$typeAdd$decorationAdd",
                     textRight = rockName.second,
                     onClickListener = onClickListener,
                     bgColor = bgColor,

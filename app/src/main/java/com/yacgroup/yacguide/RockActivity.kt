@@ -22,7 +22,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -35,7 +34,6 @@ import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -132,25 +130,19 @@ class RockActivity : TableActivity() {
                 typeface = Typeface.NORMAL
                 typeAdd = "  (${rock.type})"
             }
-            val botchAdd = if (AscendStyle.isBotch(rock.ascendsBitMask)) getString(R.string.botch) else ""
-            val projectAdd = if (AscendStyle.isProject(rock.ascendsBitMask)) getString(R.string.project) else ""
-            val watchingAdd = if (AscendStyle.isWatching(rock.ascendsBitMask)) getString(R.string.watching) else ""
             if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
-            if (AscendStyle.isLead(rock.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-            } else if (AscendStyle.isFollow(rock.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
-            }
+            bgColor = colorizeEntry(rock.ascendsBitMask, bgColor)
+            val decorationAdd = decorateEntry(rock.ascendsBitMask)
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@RockActivity, RouteActivity::class.java)
                 intent.putExtra(IntentConstants.ROCK_KEY, rock.id)
                 startActivityForResult(intent, 0)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${rock.nr}  ${rockName.first}$typeAdd$botchAdd$projectAdd$watchingAdd",
+                    textLeft = "${rock.nr}  ${rockName.first}$typeAdd$decorationAdd",
                     textRight = rock.status.toString(),
                     onClickListener = onClickListener,
                     bgColor = bgColor,

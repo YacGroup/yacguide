@@ -22,8 +22,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.utils.AscendStyle
 
 abstract class TableActivity : BaseNavigationActivity() {
     protected lateinit var db: DatabaseWrapper
@@ -52,6 +54,21 @@ abstract class TableActivity : BaseNavigationActivity() {
         dialog.show()
 
         return dialog
+    }
+
+    protected fun colorizeEntry(ascendsBitMask: Int, defaultColor: Int): Int {
+        return when {
+            AscendStyle.isLead(ascendsBitMask) -> customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
+            AscendStyle.isFollow(ascendsBitMask) -> customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
+            else -> defaultColor
+        }
+    }
+
+    protected fun decorateEntry(ascendsBitMask: Int): String {
+        val botchAdd = if (AscendStyle.isBotch(ascendsBitMask)) getString(R.string.botch) else ""
+        val projectAdd = if (AscendStyle.isProject(ascendsBitMask)) getString(R.string.project) else ""
+        val watchingAdd = if (AscendStyle.isWatching(ascendsBitMask)) getString(R.string.watching) else ""
+        return "$botchAdd$projectAdd$watchingAdd"
     }
 
     protected abstract fun displayContent()
