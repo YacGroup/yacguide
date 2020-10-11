@@ -47,7 +47,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _availableYears: IntArray
-    private var _currentYearIdx: Int = 0
+    private var _currentYear: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
 
     private lateinit var _customSettings: SharedPreferences
@@ -88,7 +88,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onResume() {
         super.onResume()
-        _initYears()
+        _initYears(resetCurrentYear = false)
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -103,19 +103,13 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     fun goToNext(v: View) {
-        if (++_currentYearIdx < _availableYears.size) {
-            findViewById<View>(R.id.prevButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.nextButton).visibility = if (_currentYearIdx == _availableYears.size - 1) View.INVISIBLE else View.VISIBLE
-            _displayContent(_availableYears[_currentYearIdx])
-        }
+        _currentYear = _availableYears[_availableYears.indexOf(_currentYear) + 1]
+        _displayContent()
     }
 
     fun goToPrevious(v: View) {
-        if (--_currentYearIdx >= 0) {
-            findViewById<View>(R.id.nextButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.prevButton).visibility = if (_currentYearIdx == 0) View.INVISIBLE else View.VISIBLE
-            _displayContent(_availableYears[_currentYearIdx])
-        }
+        _currentYear = _availableYears[_availableYears.indexOf(_currentYear) - 1]
+        _displayContent()
     }
 
     private fun _import(uri: Uri) {
@@ -172,15 +166,18 @@ class TourbookActivity : BaseNavigationActivity() {
         _initYears()
     }
 
-    private fun _displayContent(year: Int) {
-        val ascends = _getAscends(year).toMutableList()
+    private fun _displayContent() {
+        findViewById<View>(R.id.nextButton).visibility = if (_isLastYear()) View.INVISIBLE else View.VISIBLE
+        findViewById<View>(R.id.prevButton).visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
+
+        val ascends = _getAscends().toMutableList()
         if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        (findViewById<View>(R.id.currentTextView) as TextView).text = if (year == 0) "" else year.toString()
+        (findViewById<View>(R.id.currentTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
 
         var currentMonth = -1
         var currentDay = -1
@@ -215,7 +212,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = "$day.$month.$year",
+                        textLeft = "$day.$month.$_currentYear",
                         textRight = region.name.orEmpty(),
                         textSizeDp = WidgetUtils.infoFontSizeDp,
                         bgColor = WidgetUtils.tourHeaderColor))
@@ -252,11 +249,19 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun _getAscends(year: Int): List<Ascend> {
+    private fun _isFirstYear(): Boolean {
+        return _availableYears.isEmpty() || _currentYear == _availableYears.first()
+    }
+
+    private fun _isLastYear(): Boolean {
+        return _availableYears.isEmpty() || _currentYear == _availableYears.last()
+    }
+
+    private fun _getAscends(): List<Ascend> {
         return when (_tourbookType) {
-            TourbookType.eAscends -> _db.getAscendsBelowStyleId(year, AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db.getAscendsOfStyle(year, AscendStyle.eBOTCHED.id)
-            else -> _db.getAscendsOfStyle(year, AscendStyle.ePROJECT.id)
+            TourbookType.eAscends -> _db.getAscendsBelowStyleId(_currentYear, AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.getAscendsOfStyle(_currentYear, AscendStyle.eBOTCHED.id)
+            else -> _db.getAscendsOfStyle(_currentYear, AscendStyle.ePROJECT.id)
         }
     }
 
@@ -276,7 +281,7 @@ class TourbookActivity : BaseNavigationActivity() {
         startActivityForResult(intent, IntentConstants.REQUEST_SAVE_TOURBOOK)
     }
 
-    private fun _initYears() {
+    private fun _initYears(resetCurrentYear: Boolean = true) {
         _availableYears = when (_tourbookType) {
             TourbookType.eAscends -> _db.getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.getYearsOfStyle(AscendStyle.eBOTCHED.id)
@@ -284,15 +289,9 @@ class TourbookActivity : BaseNavigationActivity() {
         }
 
         Arrays.sort(_availableYears)
-        _currentYearIdx = _availableYears.size - 1
-        if (_currentYearIdx >= 0) {
-            findViewById<View>(R.id.nextButton).visibility = View.INVISIBLE
-            findViewById<View>(R.id.prevButton).visibility = if (_availableYears.size > 1) View.VISIBLE else View.INVISIBLE
-            _displayContent(_availableYears[_currentYearIdx])
-        } else {
-            findViewById<View>(R.id.nextButton).visibility = View.INVISIBLE
-            findViewById<View>(R.id.prevButton).visibility = View.INVISIBLE
-            _displayContent(0)
+        if (resetCurrentYear && _availableYears.isNotEmpty()) {
+            _currentYear = _availableYears.last()
         }
+        _displayContent()
     }
 }
