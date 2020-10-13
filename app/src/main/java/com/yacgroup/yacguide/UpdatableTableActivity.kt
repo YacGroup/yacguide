@@ -18,12 +18,15 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
+import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import com.yacgroup.yacguide.database.Rock
 
 import com.yacgroup.yacguide.network.JSONWebParser
+import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
 
 abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
@@ -38,6 +41,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_search -> _searchRockGlobally()
             R.id.action_download -> update()
             R.id.action_delete -> _delete()
             else -> return super.onOptionsItemSelected(item)
@@ -103,4 +107,32 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     protected abstract fun deleteContent()
+
+    protected abstract fun searchRocks(rockName: String): List<Rock>
+
+    private fun _searchRockGlobally() {
+        val searchDialog = Dialog(this)
+        searchDialog.setContentView(R.layout.search_dialog)
+        searchDialog.findViewById<Button>(R.id.searchButton).setOnClickListener {
+            val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText).text.toString()
+            if (rockName.isEmpty()) {
+                Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
+            } else {
+                val rocks = searchRocks(rockName)
+                if (rocks.isEmpty()) {
+                    Toast.makeText(searchDialog.context, R.string.hint_name_not_found, Toast.LENGTH_SHORT).show()
+                } else {
+                    val rockIds = ArrayList(rocks.map{ it.id })
+                    val intent = Intent(this, SelectedRockActivity::class.java)
+                    intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
+                    startActivity(intent)
+                    searchDialog.dismiss()
+                }
+            }
+        }
+        searchDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener { searchDialog.dismiss() }
+        searchDialog.setCancelable(false)
+        searchDialog.setCanceledOnTouchOutside(false)
+        searchDialog.show()
+    }
 }

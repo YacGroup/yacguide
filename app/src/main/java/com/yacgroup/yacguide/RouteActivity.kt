@@ -22,7 +22,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -31,7 +30,6 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.Comment.RockComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -108,10 +106,6 @@ class RouteActivity : TableActivity() {
             val routeName = ParserUtils.decodeObjectNames(route.name)
             val commentCount = db.getRouteCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
-            val botchAdd = if (AscendStyle.isBotch(route.ascendsBitMask)) getString(R.string.botch) else ""
-            val projectAdd = if (AscendStyle.isProject(route.ascendsBitMask)) getString(R.string.project) else ""
-            val watchingAdd = if (AscendStyle.isWatching(route.ascendsBitMask)) getString(R.string.watching) else ""
-
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
                 intent.putExtra(IntentConstants.ROUTE_KEY, route.id)
@@ -124,13 +118,10 @@ class RouteActivity : TableActivity() {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
-            if (AscendStyle.isLead(route.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-            } else if (AscendStyle.isFollow(route.ascendsBitMask)) {
-                bgColor = customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
-            }
+            bgColor = colorizeEntry(route.ascendsBitMask, bgColor)
+            val decorationAdd = decorateEntry(route.ascendsBitMask)
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${routeName.first}$commentCountAdd$botchAdd$projectAdd$watchingAdd",
+                    textLeft = "${routeName.first}$commentCountAdd$decorationAdd",
                     textRight = route.grade.orEmpty(),
                     onClickListener = onCLickListener,
                     bgColor = bgColor,

@@ -29,6 +29,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
+import kotlin.jvm.Throws
 
 class SectorParser(private val _db: DatabaseWrapper,
                    private val _listener: UpdateListener,
