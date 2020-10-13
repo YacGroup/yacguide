@@ -118,10 +118,10 @@ class AscendActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun enterDate(v: View) {
         val calendar = Calendar.getInstance()
-        val yy = calendar.get(Calendar.YEAR)
-        val mm = calendar.get(Calendar.MONTH)
-        val dd = calendar.get(Calendar.DAY_OF_MONTH)
-        val datePicker = DatePickerDialog(this@AscendActivity, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+        val yy = _ascend?.year.takeIf { it != 0 } ?: calendar.get(Calendar.YEAR)
+        val mm = _ascend?.month.takeIf { it != 0 }.let { it?.minus(1) } ?: calendar.get(Calendar.MONTH)
+        val dd = _ascend?.day.takeIf { it != 0 } ?: calendar.get(Calendar.DAY_OF_MONTH)
+        val datePicker = DatePickerDialog(this@AscendActivity, { _, year, monthOfYear, dayOfMonth ->
             _year = year
             _month = monthOfYear + 1
             _day = dayOfMonth
