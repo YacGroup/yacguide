@@ -1,3 +1,4 @@
 _site
 vendor
 .sass-cache
+.jekyll-cache
