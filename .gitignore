@@ -4,6 +4,8 @@
 
 ### General
 *.html
+*.pyc
+__pycache__
 
 ### Backup files from editors
 *~
