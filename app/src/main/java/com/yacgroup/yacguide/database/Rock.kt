@@ -42,6 +42,7 @@ class Rock {
         const val SELECT_ALL = "SELECT Rock.* FROM Rock"
         const val DELETE_ALL = "DELETE FROM Rock"
         const val JOIN_ON = "JOIN Rock ON Rock.id ="
+        const val FOR_SECTOR = "WHERE Rock.parentId ="
 
         // This needs to be in sync with sandsteinklettern.de!
         const val typeSummit = 'G'

@@ -7,14 +7,14 @@ import com.yacgroup.yacguide.database.Comment.RouteComment
 import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.utils.AscendStyle
 
-class DatabaseWrapper(private val _context: Context) {
+class DatabaseWrapper(context: Context) {
 
     companion object {
         const val UNKNOWN_NAME = "???"
         const val INVALID_ID = -1
     }
 
-    private var _db: AppDatabase = AppDatabase.getAppDatabase(_context)
+    private var _db: AppDatabase = AppDatabase.getAppDatabase(context)
 
     private inline fun<Unit> _dbTransaction(crossinline func: () -> Unit) {
         _db.runInTransaction {
@@ -39,7 +39,9 @@ class DatabaseWrapper(private val _context: Context) {
 
     fun getSectorComments(sectorId: Int) = _db.sectorCommentDao().getAll(sectorId)
 
-    fun getRocksForSector(sectorId: Int) = _db.rockDao().getAll(sectorId)
+    fun getRocksForSector(sectorId: Int, styleId: Int?) =
+            styleId?.let { _db.rockDao().getAllForStyle(sectorId, it) }
+                    ?: _db.rockDao().getAll(sectorId)
 
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
 

@@ -39,6 +39,7 @@ class Ascend {
     companion object {
         const val SELECT_ALL = "SELECT Ascend.* FROM Ascend"
         const val DELETE_ALL = "DELETE FROM Ascend"
+        const val JOIN_UP_ON = "JOIN Ascend ON Ascend.routeId ="
         const val ORDER_CHRONOLOGICALLY = "ORDER BY year, month, day"
     }
 

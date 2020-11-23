@@ -34,6 +34,7 @@ import com.yacgroup.yacguide.database.Comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -42,6 +43,7 @@ class RockActivity : TableActivity() {
 
     private var _sector: Sector? = null
     private var _onlySummits: Boolean = false
+    private var _onlyProjects: Boolean = false
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,18 +111,24 @@ class RockActivity : TableActivity() {
         displayContent()
     }
 
+    fun onlyProjectsCheck(v: View) {
+        _onlyProjects = findViewById<CheckBox>(R.id.onlyProjectsCheckbox).isChecked
+        displayContent()
+    }
+
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
         val sectorName = ParserUtils.decodeObjectNames(_sector?.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        val rocks = _sector?.let { db.getRocksForSector(it.id) } ?: emptyList()
+        val requestedStyleId = if (_onlyProjects) AscendStyle.ePROJECT.id else null
+        val rocks = _sector?.let { db.getRocksForSector(it.id, requestedStyleId) } ?: emptyList()
         for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
                 continue
             }
-            if (_onlySummits && !rockIsAnOfficialSummit(rock)) {
+            if (_onlySummits && !_rockIsAnOfficialSummit(rock)) {
                 continue
             }
             var bgColor = Color.WHITE
@@ -157,7 +165,7 @@ class RockActivity : TableActivity() {
         }
     }
 
-    private fun rockIsAnOfficialSummit(rock: Rock): Boolean {
+    private fun _rockIsAnOfficialSummit(rock: Rock): Boolean {
         return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine)
                 && rock.status != Rock.statusProhibited
                 && rock.status != Rock.statusCollapsed

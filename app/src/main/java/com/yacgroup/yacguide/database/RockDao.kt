@@ -27,6 +27,9 @@ interface RockDao {
     @Query("${Rock.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
     fun getAll(parentId: Int): List<Rock>
 
+    @Query("SELECT DISTINCT Rock.* FROM Rock ${Route.JOIN_UP_ON} Rock.id ${Ascend.JOIN_UP_ON} Route.id ${Rock.FOR_SECTOR} :parentId AND Ascend.styleId = :styleId")
+    fun getAllForStyle(parentId: Int, styleId: Int): List<Rock>
+
     @Query("${Rock.SELECT_ALL} ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
     fun getAllInRegion(regionId: Int): List<Rock>
 

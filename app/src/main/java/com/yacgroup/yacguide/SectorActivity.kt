@@ -86,7 +86,7 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
-            val rocks = db.getRocksForSector(sector.id)
+            val rocks = db.getRocksForSector(sector.id, null)
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
