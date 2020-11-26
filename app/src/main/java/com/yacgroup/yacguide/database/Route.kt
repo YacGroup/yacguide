@@ -47,6 +47,7 @@ class Route {
         const val SELECT_ALL = "SELECT Route.* FROM Route"
         const val DELETE_ALL = "DELETE FROM Route"
         const val JOIN_ON = "JOIN Route ON Route.id ="
+        const val JOIN_UP_ON = "JOIN Route ON Route.parentId ="
         const val FOR_ROCK = "WHERE Route.parentId ="
 
         // This needs to be in sync with sandsteinklettern.de!

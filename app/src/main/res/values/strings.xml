@@ -112,7 +112,7 @@
 
     <!-- Custom settings -->
     <string name="display_only_official_summits">Nur offizielle Gipfel</string>
-
+    <string name="display_only_project_summits">Nur projektierte Felsen \u2117</string>
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
 
     <string name="collect_rocks">Felsen sammeln</string>
