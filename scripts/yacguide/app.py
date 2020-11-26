@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-#
 # YacGuide Android Application
 #
 # Copyright (C) 2020 Christian Sommer
@@ -17,70 +15,104 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Script for creating releases."""
+"""App related stuff"""
 
 import os
 import re
-import argparse
 from datetime import datetime
+import shlex
+# https://gitpython.readthedocs.io/en/stable/index.html
 import git
 import packaging.version
 
+from . import utils
+from . import docker
+
+
 RELEASE_TYPES = ["dev", "stable"]
+GRADLE_FILE = os.path.join(os.getcwd(), "app", "build.gradle")
 
 
-def get_cli_parser():
-    """Return argument parser object."""
-    parser = argparse.ArgumentParser(description=__doc__)
-    help_release_type = "release type (default: %(default)s)"
-    parser.add_argument("--release-type", choices=RELEASE_TYPES,
-                        default="dev", help=help_release_type)
-    help_version = """release version string. For release type 'dev'
-it is the date code in the format 'YYYYMMDD'. For release type
-'stable' the format is expected to be 'X.Y.Y'."""
-    parser.add_argument("--version", help=help_version)
-    help_skip_checks = "skip checks"
-    parser.add_argument("--skip-checks", action="store_true",
-                        default=False, help=help_skip_checks)
-    return parser
+class App():
+    """App class"""
+
+    def __init__(self):
+        self.container = docker.BuildContainer()
+
+    def exec_gradle_cmd(self, args):
+        """Execute Gradle command with given arguments.
+
+        Args:
+            args (str, list(str)): Gradle command arguments
+        """
+        cmd = ["./gradlew"]
+        cmd += ["--gradle-user-home"]
+        cmd += [os.path.join("$(pwd)", ".gradle")]
+        if isinstance(args, list):
+            cmd += args
+        else:
+            cmd += [args]
+        cmd_str = shlex.join(cmd)
+        self.container.execute_user(cmd_str)
+
+    def run_tests(self):
+        """Run tests."""
+        self.exec_gradle_cmd("test")
+
+    def build_dists(self, releases=None):
+        """Build distributions.
+
+        Args:
+            releases (list(str), optional): Releases to build.
+                If not specified, all release are built.
+        """
+        targets = ["clean"]
+        if releases:
+            for release in releases:
+                target = "bundle" + release.capitalize() + "Release"
+                targets.append(target)
+        self.exec_gradle_cmd(targets)
+
+    def deploy(self, release=None):
+        """Deploy app to Google Play Store.
+
+        Args:
+            release (str, optional): Releases to deploy.
+        """
+        target = "publish{0}ReleaseBundle".\
+            format(release.capitalize())
+        self.exec_gradle_cmd(target)
 
 
-class Release:
+class Release():
     """Release Class
 
     Attributes:
-        cli_parser (argparse.ArgumentParser): Command line interface
-            parser
-        cli_args (argparse.Namespace): Parsed CLI arguments
         repo (git.Repo): Git repo object
+        skip_checks (bool): Skip checks
     """
-    _GRADLE_FILE = "app/build.gradle"
-
-    def __init__(self):
-        self.cli_parser = get_cli_parser()
-        self.cli_args = self.cli_parser.parse_args()
+    def __init__(self, skip_checks=False):
         self.repo = git.Repo(os.getcwd())
-
-    def main(self):
-        """Main function"""
-        if not self.cli_args.skip_checks:
-            self.pre_checks()
-        if self.cli_args.release_type == "dev":
-            self.create_dev_release()
-        elif self.cli_args.release_type == "stable":
-            self.create_stable_release()
-
-    def error(self, msg):
-        """Print error message and exit with code 1."""
-        print("ERROR: %s" % msg)
-        exit(1)
+        self.skip_checks = skip_checks
 
     def pre_checks(self):
         """Run some checks before creating the release."""
-        if self.repo.is_dirty():
-            self.error("Repo is dirty.")
+        if not self.skip_checks:
+            if self.repo.is_dirty():
+                utils.error("Repo is dirty.")
 
-    def set_version_code(self, gradle_str, flavor, code):
+    @classmethod
+    def set_version_code(cls, gradle_str, flavor, code):
+        """Set version code inside the given Gradle file string.
+
+        Args:
+            gradle_str (str): Content of Gradle file to be updated.
+            flavor (str): App flavor to be considered.
+            code (str): Version to be set.
+
+        Returns:
+           str: Update Gradle string.
+        """
         rexpr = re.compile(
             r'(%s\s*\{[^\}]*versionCode)\s+[\d\.]+' % flavor,
             re.MULTILINE)
@@ -89,7 +121,18 @@ class Release:
             gradle_str)
         return gradle_str_updated
 
-    def set_version_name(self, gradle_str, flavor, name):
+    @classmethod
+    def set_version_name(cls, gradle_str, flavor, name):
+        """Set version name inside given Gradle file string.
+
+        Args:
+            gradle_str (str): Content of Gradle file to be updated.
+            flavor (str): App flavor to be considered
+            name (str): Wersion to be set
+
+        Returns:
+            str: Updated Gradle string.
+        """
         rexpr = re.compile(
             r'(%s\s*\{[^\}]*versionName)\s+\'[\d\.]+\'+' % flavor,
             re.MULTILINE)
@@ -98,7 +141,8 @@ class Release:
             gradle_str)
         return gradle_str_updated
 
-    def version_to_code(self, version, flavor="stable"):
+    @classmethod
+    def version_to_code(cls, version, flavor="stable"):
         """Convert version into corresponding code.
 
         Args:
@@ -117,12 +161,16 @@ class Release:
             # Get rid of leading zeros.
             code = int(code_str)
         else:
-            NotImplementedError
+            raise NotImplementedError
         return code
 
     def update_dev_version(self, version):
-        """Update development version code and name in Gradle file."""
-        with open(self._GRADLE_FILE) as fobj:
+        """Update development version code and name in Gradle file.
+
+        Args:
+            version (str): Version code
+        """
+        with open(GRADLE_FILE) as fobj:
             build_gradle = fobj.read()
         build_gradle = self.set_version_code(
             gradle_str=build_gradle,
@@ -134,14 +182,17 @@ class Release:
             flavor="dev",
             name=version
         )
-        with open(self._GRADLE_FILE, "w") as fobj:
+        with open(GRADLE_FILE, "w") as fobj:
             fobj.write(build_gradle)
-        self.repo.index.add([self._GRADLE_FILE])
+        self.repo.index.add([GRADLE_FILE])
         self.repo.index.commit("Daily dev %s" % version)
 
-    def create_dev_release(self):
-        """Create a development release"""
-        version = self.cli_args.version
+    def create_dev_release(self, version=None):
+        """Create a development release for given version.
+
+        Args:
+            version (str, optional): Version identifier
+        """
         if not version:
             version = datetime.now().strftime("%Y%m%d")
         tag_name = "dev-%s" % version
@@ -157,7 +208,7 @@ Next step:
 
     def update_stable_version(self, version):
         """Update stable version code and name in Gradle file."""
-        with open(self._GRADLE_FILE) as fobj:
+        with open(GRADLE_FILE) as fobj:
             build_gradle = fobj.read()
         build_gradle = self.set_version_code(
             gradle_str=build_gradle,
@@ -169,20 +220,20 @@ Next step:
             flavor="stable",
             name=version
         )
-        with open(self._GRADLE_FILE, "w") as fobj:
+        with open(GRADLE_FILE, "w") as fobj:
             fobj.write(build_gradle)
-        self.repo.index.add([self._GRADLE_FILE])
+        self.repo.index.add([GRADLE_FILE])
         self.repo.index.commit("Release %s" % version)
 
     def check_stable_release(self, version):
         """Check version string for stable release."""
         # Version not specified?
         if not version:
-            self.error("Empty version.")
+            utils.error("Empty version.")
         # Format correct?
         rexpr = re.compile(r'\d+\.\d+.\d+')
         if not rexpr.match(version):
-            self.error("Invalid version format.")
+            utils.error("Invalid version format.")
         # Release tag already exists?
         try:
             self.repo.tags["v" + version]
@@ -190,29 +241,29 @@ Next step:
             # Tag does not exists.
             pass
         else:
-            self.error("Version '%s' already exists." % version)
+            utils.error("Version '%s' already exists." % version)
         # Version is increasing?
         pkg_ver_parse = packaging.version.parse
         for tag in self.repo.tags:
             tag_version = tag.name[1:]
             if pkg_ver_parse(version) < pkg_ver_parse(tag_version):
-                self.error("Version not increasing.")
+                utils.error("Version not increasing.")
 
-    def create_stable_release(self):
-        """Create a stable release"""
-        if not self.cli_args.skip_checks:
-            self.check_stable_release(version=self.cli_args.version)
-        self.update_stable_version(self.cli_args.version)
-        tag_name = "v%s" % self.cli_args.version
+    def create_stable_release(self, version):
+        """Create a stable release.
+
+        Args:
+            version (str): Version to be created
+        """
+        if not self.skip_checks:
+            self.check_stable_release(version=version)
+        self.update_stable_version(version)
+        tag_name = "v%s" % version
         self.repo.create_tag(
             path=tag_name,
-            message="Release %s" % self.cli_args.version)
+            message="Release %s" % version)
         print("""\n
 Next step:
 ----------
   Push the release tag using 'git push --follow-tags'.
 """)
-
-
-if __name__ == "__main__":
-    Release().main()
