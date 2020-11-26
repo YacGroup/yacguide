@@ -31,19 +31,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
 
-    <CheckBox
-        android:id="@+id/onlySummitsCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onlySummitsCheck"
-        android:text="@string/display_only_official_summits"/>
+        <CheckBox
+            android:id="@+id/onlySummitsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onlySummitsCheck"
+            android:text="@string/display_only_official_summits"/>
 
-    <CheckBox
-        android:id="@+id/onlyProjectsCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onlyProjectsCheck"
-        android:text="@string/display_only_project_summits"/>
+        <CheckBox
+            android:id="@+id/onlyProjectsCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onlyProjectsCheck"
+            android:text="@string/display_only_project_summits"/>
+        
     </LinearLayout>
 
     <EditText
