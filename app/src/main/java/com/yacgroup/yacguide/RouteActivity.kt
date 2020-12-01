@@ -27,7 +27,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.yacgroup.yacguide.database.Comment.RockComment
+import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.utils.IntentConstants

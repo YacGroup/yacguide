@@ -15,26 +15,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
-import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.database.Route
-import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.database.SqlMacros.Companion.COUNT_ROUTE_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTE_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTE_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_ROUTE
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RouteCommentDao {
-    @Query("${RouteComment.SELECT_ALL} ${RouteComment.FOR_ROUTE} :routeId")
+    @Query("$SELECT_ROUTE_COMMENTS WHERE RouteComment.routeId = :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 
-    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<RouteComment>
 
-    @Query("${RouteComment.SELECT_ALL} ${Route.JOIN_ON} RouteComment.routeId ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<RouteComment>
 
-    @Query("SELECT COUNT(*) FROM RouteComment ${RouteComment.FOR_ROUTE} :routeId")
+    @Query("$COUNT_ROUTE_COMMENTS WHERE RouteComment.routeId = :routeId")
     fun getCommentCount(routeId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -43,6 +46,6 @@ interface RouteCommentDao {
     @Delete
     fun delete(comments: List<RouteComment>)
 
-    @Query(RouteComment.DELETE_ALL)
+    @Query(DELETE_ROUTE_COMMENTS)
     fun deleteAll()
 }

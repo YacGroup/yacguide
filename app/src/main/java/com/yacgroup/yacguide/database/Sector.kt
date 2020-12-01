@@ -29,12 +29,4 @@ class Sector {
     var nr: Float = 0f
     var name: String? = null
     var parentId: Int = 0
-
-    companion object {
-        const val SELECT_ALL = "SELECT Sector.* FROM Sector"
-        const val DELETE_ALL = "DELETE FROM Sector"
-        const val JOIN_ON = "JOIN Sector ON Sector.id ="
-        const val FOR_REGION = "WHERE Sector.parentId ="
-    }
-
 }

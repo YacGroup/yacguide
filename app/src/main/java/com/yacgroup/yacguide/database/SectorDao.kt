@@ -18,16 +18,20 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_SECTORS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_SECTORS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface SectorDao {
-    @Query("${Sector.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
+    @Query("$SELECT_SECTORS WHERE Sector.parentId = :parentId $ORDERED_BY_NR")
     fun getAll(parentId: Int): List<Sector>
 
-    @Query("${Sector.SELECT_ALL} ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_SECTORS $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Sector>
 
-    @Query("${Sector.SELECT_ALL} WHERE id = :id")
+    @Query("$SELECT_SECTORS WHERE Sector.id = :id")
     fun getSector(id: Int): Sector?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -36,9 +40,9 @@ interface SectorDao {
     @Delete
     fun delete(sectors: List<Sector>)
 
-    @Query(Sector.DELETE_ALL)
+    @Query(DELETE_SECTORS)
     fun deleteAll()
 
-    @Query("${Sector.DELETE_ALL} WHERE parentId = :parentId")
+    @Query("$DELETE_SECTORS WHERE Sector.parentId = :parentId")
     fun deleteAll(parentId: Int)
 }

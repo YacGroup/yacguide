@@ -15,21 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
-import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_REGION_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_REGION_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_REGION
 
 @Dao
 interface RegionCommentDao {
-    @Query("${RegionComment.SELECT_ALL} ${RegionComment.FOR_REGION} :regionId")
+    @Query("$SELECT_REGION_COMMENTS WHERE RegionComment.regionId = :regionId")
     fun getAll(regionId: Int): List<RegionComment>
 
-    @Query("${RegionComment.SELECT_ALL} ${Region.JOIN_ON} RegionComment.regionId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_REGION_COMMENTS $VIA_COMMENTS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<RegionComment>
-
-    @Query("SELECT COUNT(*) FROM RegionComment ${RegionComment.FOR_REGION} :regionId")
-    fun getCommentCount(regionId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(comments: List<RegionComment>)
@@ -37,9 +36,9 @@ interface RegionCommentDao {
     @Delete
     fun delete(regionComments: List<RegionComment>)
 
-    @Query(RegionComment.DELETE_ALL)
+    @Query(DELETE_REGION_COMMENTS)
     fun deleteAll()
 
-    @Query("${RegionComment.DELETE_ALL} ${RegionComment.FOR_REGION} :regionId")
+    @Query("$DELETE_REGION_COMMENTS WHERE RegionComment.regionId = :regionId")
     fun deleteAll(regionId: Int)
 }

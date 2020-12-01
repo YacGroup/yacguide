@@ -18,21 +18,23 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_REGIONS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_REGIONS
 
 @Dao
 interface RegionDao {
-    @Query("${Region.SELECT_ALL} ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_REGIONS WHERE Region.country = :countryName")
     fun getAll(countryName: String): List<Region>
 
-    @Query("${Region.SELECT_ALL} WHERE id = :id")
+    @Query("$SELECT_REGIONS WHERE Region.id = :id")
     fun getRegion(id: Int): Region?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(regions: List<Region>)
 
-    @Query(Region.DELETE_ALL)
+    @Query(DELETE_REGIONS)
     fun deleteAll()
 
-    @Query("${Region.DELETE_ALL} ${Region.FOR_COUNTRY} :countryName")
+    @Query("$DELETE_REGIONS WHERE Region.country = :countryName")
     fun deleteAll(countryName: String)
 }

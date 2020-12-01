@@ -28,11 +28,4 @@ class Region {
 
     var name: String? = null
     var country: String? = null
-
-    companion object {
-        const val SELECT_ALL = "SELECT Region.* FROM Region"
-        const val DELETE_ALL = "DELETE FROM Region"
-        const val JOIN_ON = "JOIN Region ON Region.id ="
-        const val FOR_COUNTRY = "WHERE Region.country ="
-    }
 }

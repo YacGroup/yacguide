@@ -15,25 +15,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
-import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_SECTOR_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_SECTOR_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface SectorCommentDao {
-    @Query("${SectorComment.SELECT_ALL} ${SectorComment.FOR_SECTOR} :sectorId")
+    @Query("$SELECT_SECTOR_COMMENTS WHERE SectorComment.sectorId = :sectorId")
     fun getAll(sectorId: Int): List<SectorComment>
 
-    @Query("${SectorComment.SELECT_ALL} ${Sector.JOIN_ON} SectorComment.sectorId ${Sector.FOR_REGION} :regionId")
+    @Query("$SELECT_SECTOR_COMMENTS $VIA_COMMENTS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<SectorComment>
 
-    @Query("${SectorComment.SELECT_ALL} ${Sector.JOIN_ON} SectorComment.sectorId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_SECTOR_COMMENTS $VIA_COMMENTS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<SectorComment>
-
-    @Query("SELECT COUNT(*) FROM SectorComment ${SectorComment.FOR_SECTOR} :sectorId")
-    fun getCommentCount(sectorId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(comments: List<SectorComment>)
@@ -41,6 +40,6 @@ interface SectorCommentDao {
     @Delete
     fun delete(comments: List<SectorComment>)
 
-    @Query(SectorComment.DELETE_ALL)
+    @Query(DELETE_SECTOR_COMMENTS)
     fun deleteAll()
 }

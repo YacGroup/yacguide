@@ -26,7 +26,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
-import com.yacgroup.yacguide.database.Comment.RouteComment
+import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.DateUtils
