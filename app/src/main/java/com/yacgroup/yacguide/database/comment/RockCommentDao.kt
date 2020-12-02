@@ -18,11 +18,12 @@
 package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
+
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROCK_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROCK_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_ROCK
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_REGION
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
-import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RockCommentDao {
@@ -32,7 +33,7 @@ interface RockCommentDao {
     @Query("$SELECT_ROCK_COMMENTS $VIA_COMMENTS_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<RockComment>
 
-    @Query("$SELECT_ROCK_COMMENTS $VIA_COMMENTS_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
+    @Query("$SELECT_ROCK_COMMENTS $VIA_COMMENTS_ROCK $VIA_ROCKS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<RockComment>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

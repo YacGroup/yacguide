@@ -34,7 +34,6 @@ import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -121,8 +120,10 @@ class RockActivity : TableActivity() {
         layout.removeAllViews()
         val sectorName = ParserUtils.decodeObjectNames(_sector?.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        val requestedStyleId = if (_onlyProjects) AscendStyle.ePROJECT.id else null
-        val rocks = _sector?.let { db.getRocksForSector(it.id, requestedStyleId) } ?: emptyList()
+        val rocks = _sector?.let {
+                if (_onlyProjects) db.getProjectedRocksForSector(it.id)
+                else db.getRocksForSector(it.id)
+            } ?: emptyList()
         for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {

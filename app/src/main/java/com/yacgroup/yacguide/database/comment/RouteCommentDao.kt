@@ -18,23 +18,23 @@
 package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
+
 import com.yacgroup.yacguide.database.SqlMacros.Companion.COUNT_ROUTE_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTE_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTE_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_ROUTE
-import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
-import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
-import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_REGION
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_SECTOR
 
 @Dao
 interface RouteCommentDao {
     @Query("$SELECT_ROUTE_COMMENTS WHERE RouteComment.routeId = :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 
-    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
+    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<RouteComment>
 
-    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
+    @Query("$SELECT_ROUTE_COMMENTS $VIA_COMMENTS_ROUTE $VIA_ROUTES_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<RouteComment>
 
     @Query("$COUNT_ROUTE_COMMENTS WHERE RouteComment.routeId = :routeId")

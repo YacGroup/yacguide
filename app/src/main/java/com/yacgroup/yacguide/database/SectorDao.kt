@@ -18,14 +18,15 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_SECTORS
-import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_SECTORS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface SectorDao {
-    @Query("$SELECT_SECTORS WHERE Sector.parentId = :parentId $ORDERED_BY_NR")
+    @Query("$SELECT_SECTORS WHERE Sector.parentId = :parentId $ORDERED_BY_SECTOR")
     fun getAll(parentId: Int): List<Sector>
 
     @Query("$SELECT_SECTORS $VIA_SECTORS_REGION WHERE Region.country = :countryName")

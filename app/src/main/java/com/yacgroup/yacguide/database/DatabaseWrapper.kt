@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide.database
 
 import android.content.Context
+
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.comment.RouteComment
@@ -56,15 +57,21 @@ class DatabaseWrapper(context: Context) {
 
     fun getSectorComments(sectorId: Int) = _db.sectorCommentDao().getAll(sectorId)
 
-    fun getRocksForSector(sectorId: Int, styleId: Int?) =
-            styleId?.let { _db.rockDao().getAllForStyle(sectorId, it) }
-                    ?: _db.rockDao().getAll(sectorId)
+    fun getRocksForSector(sectorId: Int) = _db.rockDao().getAllInSector(sectorId)
+
+    fun getProjectedRocksForSector(sectorId: Int) = _db.rockDao().getAllInSectorForStyle(sectorId, AscendStyle.ePROJECT.id)
 
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
 
+    fun getProjectedRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegionForStyle(regionId, AscendStyle.ePROJECT.id)
+
     fun getRocksForCountry(countryName: String) = _db.rockDao().getAllInCountry(countryName)
 
+    fun getProjectedRocksForCountry(countryName: String) = _db.rockDao().getAllInCountryForStyle(countryName, AscendStyle.ePROJECT.id)
+
     fun getRocks() = _db.rockDao().all
+
+    fun getProjectedRocks() = _db.rockDao().getAllForStyle(AscendStyle.ePROJECT.id)
 
     fun getRock(rockId: Int) =_db.rockDao().getRock(rockId)
 

@@ -23,8 +23,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import com.yacgroup.yacguide.database.Rock
 
+import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
@@ -108,21 +108,23 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     protected abstract fun deleteContent()
 
-    protected abstract fun searchRocks(rockName: String): List<Rock>
+    protected abstract fun searchRocks(onlyProjects: Boolean): List<Rock>
 
     private fun _searchRockGlobally() {
         val searchDialog = Dialog(this)
         searchDialog.setContentView(R.layout.search_dialog)
         searchDialog.findViewById<Button>(R.id.searchButton).setOnClickListener {
             val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText).text.toString()
-            if (rockName.isEmpty()) {
+            val onlyProjects = searchDialog.findViewById<CheckBox>(R.id.searchProjectsCheckbox).isChecked
+            if (rockName.isEmpty() && !onlyProjects) {
                 Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
             } else {
-                val rocks = searchRocks(rockName)
-                if (rocks.isEmpty()) {
+                val rocks = searchRocks(onlyProjects)
+                val filteredRocks = if (rockName.isEmpty()) rocks else rocks.filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
+                if (filteredRocks.isEmpty()) {
                     Toast.makeText(searchDialog.context, R.string.hint_name_not_found, Toast.LENGTH_SHORT).show()
                 } else {
-                    val rockIds = ArrayList(rocks.map{ it.id })
+                    val rockIds = ArrayList(filteredRocks.map{ it.id })
                     val intent = Intent(this, SelectedRockActivity::class.java)
                     intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
                     startActivity(intent)

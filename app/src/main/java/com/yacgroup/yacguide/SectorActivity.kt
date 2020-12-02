@@ -86,7 +86,7 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
-            val rocks = db.getRocksForSector(sector.id, null)
+            val rocks = db.getRocksForSector(sector.id)
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,
@@ -108,8 +108,8 @@ class SectorActivity : UpdatableTableActivity() {
         db.deleteSectorsRecursively(_region.id)
     }
 
-    override fun searchRocks(rockName: String): List<Rock> {
-        return db.getRocksForRegion(_region.id).filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
+    override fun searchRocks(onlyProjects: Boolean): List<Rock> {
+        return if (onlyProjects) db.getProjectedRocksForRegion(_region.id) else db.getRocksForRegion(_region.id)
     }
 
     private fun _generateRockCountString(rocks: List<Rock>): String {

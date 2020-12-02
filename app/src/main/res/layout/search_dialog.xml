@@ -33,6 +33,12 @@
         android:singleLine="true"
     />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/searchProjectsCheckbox"
+        android:text="@string/display_only_project_summits"/>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal"
         android:layout_width="wrap_content"

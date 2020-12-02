@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
+
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_REGION_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_REGION_COMMENTS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_REGION

@@ -21,6 +21,7 @@ class SqlMacros {
 
     companion object {
 
+        // selects
         const val SELECT_COUNTRIES = "SELECT DISTINCT Country.* FROM Country"
         const val SELECT_REGIONS = "SELECT DISTINCT Region.* FROM Region"
         const val SELECT_REGION_COMMENTS = "SELECT DISTINCT RegionComment.* FROM RegionComment"
@@ -35,8 +36,10 @@ class SqlMacros {
         const val SELECT_PARTNERS = "SELECT DISTINCT Partner.* FROM Partner"
         const val SELECT_PARTNER_ID = "SELECT Partner.Id FROM Partner"
 
+        // counts
         const val COUNT_ROUTE_COMMENTS = "SELECT COUNT(*) FROM RouteComment"
 
+        // deletions
         const val DELETE_COUNTRIES = "DELETE FROM Country"
         const val DELETE_REGIONS = "DELETE FROM Region"
         const val DELETE_REGION_COMMENTS = "DELETE FROM RegionComment"
@@ -49,9 +52,15 @@ class SqlMacros {
         const val DELETE_ASCENDS = "DELETE FROM Ascend"
         const val DELETE_PARTNERS = "DELETE FROM Partner"
 
-        const val ORDERED_BY_NR = "ORDER BY nr"
+        // orderings
+        const val ORDERED_BY_REGION_SECTOR_ROCK = "ORDER BY Region.id, Sector.nr, Rock.nr"
+        const val ORDERED_BY_SECTOR_ROCK = "ORDER BY Sector.nr, Rock.nr"
+        const val ORDERED_BY_SECTOR = "ORDER BY Sector.nr"
+        const val ORDERED_BY_ROCK = "ORDER BY Rock.nr"
+        const val ORDERED_BY_ROUTE = "ORDER BY Route.nr"
         const val ORDERED_BY_DATE = "ORDER BY Ascend.year, Ascend.month, Ascend.day"
 
+        // joins
         const val VIA_ROUTES_ASCENDS = "JOIN Ascend ON Ascend.routeId = Route.id"
         const val VIA_ROCKS_ROUTES = "JOIN Route ON Route.parentId = Rock.id"
         const val VIA_ASCENDS_ROUTE = "JOIN Route ON Route.id = Ascend.routeId"
@@ -62,5 +71,11 @@ class SqlMacros {
         const val VIA_COMMENTS_SECTOR = "JOIN Sector ON Sector.id = SectorComment.sectorId"
         const val VIA_SECTORS_REGION = "JOIN Region ON Region.id = Sector.parentId"
         const val VIA_COMMENTS_REGION = "JOIN Region ON Region.id = RegionComment.regionId"
+
+        // multi-level joins
+        const val VIA_ROCKS_ASCENDS = "$VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS"
+        const val VIA_ROCKS_REGION = "$VIA_ROCKS_SECTOR $VIA_SECTORS_REGION"
+        const val VIA_ROUTES_SECTOR = "$VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR"
+        const val VIA_ROUTES_REGION = "$VIA_ROUTES_SECTOR $VIA_SECTORS_REGION"
     }
 }
