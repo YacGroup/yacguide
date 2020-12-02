@@ -18,22 +18,28 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RouteDao {
-    @get:Query(Route.SELECT_ALL)
+    @get:Query(SELECT_ROUTES)
     val all: List<Route>
 
-    @Query("${Route.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
+    @Query("$SELECT_ROUTES WHERE Route.parentId = :parentId $ORDERED_BY_NR")
     fun getAll(parentId: Int): List<Route>
 
-    @Query("${Route.SELECT_ALL} ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Route>
 
-    @Query("${Route.SELECT_ALL} ${Rock.JOIN_ON} Route.parentId ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Route>
 
-    @Query("${Route.SELECT_ALL} WHERE id = :id")
+    @Query("$SELECT_ROUTES WHERE Route.id = :id")
     fun getRoute(id: Int): Route?
 
     @Update
@@ -48,6 +54,6 @@ interface RouteDao {
     @Delete
     fun delete(routes: List<Route>)
 
-    @Query(Route.DELETE_ALL)
+    @Query(DELETE_ROUTES)
     fun deleteAll()
 }

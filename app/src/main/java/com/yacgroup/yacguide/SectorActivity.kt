@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 
-import com.yacgroup.yacguide.database.Comment.RegionComment
+import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.database.Rock

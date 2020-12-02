@@ -15,35 +15,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class SectorComment {
+class RockComment {
 
     @PrimaryKey
     var id: Int = 0
 
     var qualityId: Int = 0
     var text: String? = null
-    var sectorId: Int = 0
+    var rockId: Int = 0
 
     companion object {
-
-        const val SELECT_ALL = "SELECT SectorComment.* FROM SectorComment"
-        const val DELETE_ALL = "DELETE FROM SectorComment"
-        const val FOR_SECTOR = "WHERE SectorComment.sectorId ="
 
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
             init {
-                put(1, "Hauptteilgebiet")
-                put(2, "lohnendes Gebiet")
-                put(3, "kann man mal hingehen")
-                put(4, "weniger bedeutend")
-                put(5, "unbedeutend")
+                put(1, "Hauptgipfel")
+                put(2, "lohnender Gipfel")
+                put(3, "Durchschnittsgipfel")
+                put(4, "Quacke")
+                put(5, "Dreckhaufen")
             }
         }
     }

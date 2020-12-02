@@ -18,16 +18,19 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_PARTNERS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_PARTNERS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_PARTNER_ID
 
 @Dao
 interface PartnerDao {
-    @get:Query(Partner.SELECT_ALL)
+    @get:Query(SELECT_PARTNERS)
     val all: List<Partner>
 
-    @Query("SELECT Id FROM Partner WHERE Name = :name")
+    @Query("$SELECT_PARTNER_ID WHERE Partner.name = :name")
     fun getId(name: String): Int
 
-    @Query("${Partner.SELECT_ALL} WHERE Id = :id")
+    @Query("$SELECT_PARTNERS WHERE Partner.id = :id")
     fun getPartner(id: Int): Partner?
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -39,6 +42,6 @@ interface PartnerDao {
     @Delete
     fun delete(partner: Partner)
 
-    @Query(Partner.DELETE_ALL)
+    @Query(DELETE_PARTNERS)
     fun deleteAll()
 }

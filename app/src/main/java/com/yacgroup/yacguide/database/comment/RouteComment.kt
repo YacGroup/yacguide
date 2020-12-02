@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -34,10 +34,6 @@ class RouteComment {
     var routeId: Int = 0
 
     companion object {
-
-        const val SELECT_ALL = "SELECT RouteComment.* FROM RouteComment"
-        const val DELETE_ALL = "DELETE FROM RouteComment"
-        const val FOR_ROUTE = "WHERE RouteComment.routeId ="
 
         // This needs to be in sync with sandsteinklettern.de!
         val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {

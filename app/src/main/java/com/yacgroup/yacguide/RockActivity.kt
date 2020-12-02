@@ -30,7 +30,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 
-import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector

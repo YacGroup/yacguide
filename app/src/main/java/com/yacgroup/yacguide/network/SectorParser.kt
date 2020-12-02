@@ -19,10 +19,10 @@ package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.database.Comment.RegionComment
-import com.yacgroup.yacguide.database.Comment.RockComment
-import com.yacgroup.yacguide.database.Comment.RouteComment
-import com.yacgroup.yacguide.database.Comment.SectorComment
+import com.yacgroup.yacguide.database.comment.RegionComment
+import com.yacgroup.yacguide.database.comment.RockComment
+import com.yacgroup.yacguide.database.comment.RouteComment
+import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 

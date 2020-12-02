@@ -18,31 +18,36 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ASCENDS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_DATE
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS_YEARS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ASCENDS_ROUTE
 
 @Dao
 interface AscendDao {
-    @get:Query(Ascend.SELECT_ALL)
+    @get:Query(SELECT_ASCENDS)
     val all: List<Ascend>
 
-    @Query("${Ascend.SELECT_ALL} WHERE year = :year AND styleId = :styleId ${Ascend.ORDER_CHRONOLOGICALLY}")
+    @Query("$SELECT_ASCENDS WHERE Ascend.year = :year AND Ascend.styleId = :styleId $ORDERED_BY_DATE")
     fun getAll(year: Int, styleId: Int): List<Ascend>
 
-    @Query("${Ascend.SELECT_ALL} WHERE year = :year AND styleId < :styleIdLimit ${Ascend.ORDER_CHRONOLOGICALLY}")
+    @Query("$SELECT_ASCENDS WHERE Ascend.year = :year AND Ascend.styleId < :styleIdLimit $ORDERED_BY_DATE")
     fun getAllBelowStyleId(year: Int, styleIdLimit: Int): List<Ascend>
 
-    @Query("${Ascend.SELECT_ALL} WHERE routeId = :routeId ${Ascend.ORDER_CHRONOLOGICALLY}")
+    @Query("$SELECT_ASCENDS WHERE Ascend.routeId = :routeId $ORDERED_BY_DATE")
     fun getAscendsForRoute(routeId: Int): List<Ascend>
 
-    @Query("${Ascend.SELECT_ALL} ${Route.JOIN_ON} Ascend.routeId ${Route.FOR_ROCK} :rockId")
+    @Query("$SELECT_ASCENDS $VIA_ASCENDS_ROUTE WHERE Route.parentId = :rockId")
     fun getAscendsForRock(rockId: Int): List<Ascend>
 
-    @Query("${Ascend.SELECT_ALL} WHERE id = :id")
+    @Query("$SELECT_ASCENDS WHERE Ascend.id = :id")
     fun getAscend(id: Int): Ascend?
 
-    @Query("SELECT DISTINCT year FROM Ascend WHERE styleId = :styleId")
+    @Query("$SELECT_ASCENDS_YEARS WHERE Ascend.styleId = :styleId")
     fun getYears(styleId: Int): IntArray
 
-    @Query("SELECT DISTINCT year FROM Ascend WHERE styleId < :styleIdLimit")
+    @Query("$SELECT_ASCENDS_YEARS WHERE Ascend.styleId < :styleIdLimit")
     fun getYearsBelowStyleId(styleIdLimit: Int): IntArray
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -54,6 +59,6 @@ interface AscendDao {
     @Delete
     fun delete(ascend: Ascend)
 
-    @Query(Ascend.DELETE_ALL)
+    @Query(DELETE_ASCENDS)
     fun deleteAll()
 }

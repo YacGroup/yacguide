@@ -23,14 +23,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-import com.yacgroup.yacguide.database.Comment.RegionComment
-import com.yacgroup.yacguide.database.Comment.RegionCommentDao
-import com.yacgroup.yacguide.database.Comment.RockComment
-import com.yacgroup.yacguide.database.Comment.RockCommentDao
-import com.yacgroup.yacguide.database.Comment.RouteComment
-import com.yacgroup.yacguide.database.Comment.RouteCommentDao
-import com.yacgroup.yacguide.database.Comment.SectorComment
-import com.yacgroup.yacguide.database.Comment.SectorCommentDao
+import com.yacgroup.yacguide.database.comment.RegionComment
+import com.yacgroup.yacguide.database.comment.RegionCommentDao
+import com.yacgroup.yacguide.database.comment.RockComment
+import com.yacgroup.yacguide.database.comment.RockCommentDao
+import com.yacgroup.yacguide.database.comment.RouteComment
+import com.yacgroup.yacguide.database.comment.RouteCommentDao
+import com.yacgroup.yacguide.database.comment.SectorComment
+import com.yacgroup.yacguide.database.comment.SectorCommentDao
 import com.yacgroup.yacguide.utils.Converters
 
 /*

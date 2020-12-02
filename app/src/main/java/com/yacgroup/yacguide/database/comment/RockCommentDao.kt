@@ -15,26 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database.Comment
+package com.yacgroup.yacguide.database.comment
 
 import androidx.room.*
-import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROCK_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROCK_COMMENTS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_ROCK
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RockCommentDao {
-    @Query("${RockComment.SELECT_ALL} ${RockComment.FOR_ROCK} :rockId")
+    @Query("$SELECT_ROCK_COMMENTS WHERE RockComment.rockId = :rockId")
     fun getAll(rockId: Int): List<RockComment>
 
-    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    @Query("$SELECT_ROCK_COMMENTS $VIA_COMMENTS_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<RockComment>
 
-    @Query("${RockComment.SELECT_ALL} ${Rock.JOIN_ON} RockComment.rockId ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_ROCK_COMMENTS $VIA_COMMENTS_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<RockComment>
-
-    @Query("SELECT COUNT(*) FROM RockComment ${RockComment.FOR_ROCK} :rockId")
-    fun getCommentCount(rockId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(comments: List<RockComment>)
@@ -42,6 +41,6 @@ interface RockCommentDao {
     @Delete
     fun delete(comments: List<RockComment>)
 
-    @Query(RockComment.DELETE_ALL)
+    @Query(DELETE_ROCK_COMMENTS)
     fun deleteAll()
 }

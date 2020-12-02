@@ -27,9 +27,4 @@ class Partner {
     var id: Int = 0
 
     var name: String? = null
-
-    companion object {
-        const val SELECT_ALL = "SELECT Partner.* FROM Partner"
-        const val DELETE_ALL = "DELETE FROM Partner"
-    }
 }

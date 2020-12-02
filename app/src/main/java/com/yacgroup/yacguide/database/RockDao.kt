@@ -18,28 +18,35 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.*
+import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROCKS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROCKS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_ROUTES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RockDao {
-    @get:Query(Rock.SELECT_ALL)
+    @get:Query(SELECT_ROCKS)
     val all: List<Rock>
 
-    @Query("${Rock.SELECT_ALL} WHERE parentId = :parentId ORDER BY nr")
+    @Query("$SELECT_ROCKS WHERE Rock.parentId = :parentId $ORDERED_BY_NR")
     fun getAll(parentId: Int): List<Rock>
 
-    @Query("SELECT DISTINCT Rock.* FROM Rock ${Route.JOIN_UP_ON} Rock.id ${Ascend.JOIN_UP_ON} Route.id ${Rock.FOR_SECTOR} :parentId AND Ascend.styleId = :styleId")
+    @Query("$SELECT_ROCKS $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Rock.parentId = :parentId AND Ascend.styleId = :styleId $ORDERED_BY_NR")
     fun getAllForStyle(parentId: Int, styleId: Int): List<Rock>
 
-    @Query("${Rock.SELECT_ALL} ${Sector.JOIN_ON} Rock.parentId ${Sector.FOR_REGION} :regionId")
+    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Rock>
 
-    @Query("${Rock.SELECT_ALL} ${Sector.JOIN_ON} Rock.parentId ${Region.JOIN_ON} Sector.parentId ${Region.FOR_COUNTRY} :countryName")
+    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Rock>
 
-    @Query("${Rock.SELECT_ALL} WHERE id = :id")
+    @Query("$SELECT_ROCKS WHERE Rock.id = :id")
     fun getRock(id: Int): Rock?
 
-    @Query("${Rock.SELECT_ALL} JOIN Route ON Rock.id = Route.parentId JOIN Ascend ON Route.id = Ascend.routeId WHERE Ascend.id = :ascendId")
+    @Query("$SELECT_ROCKS $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Ascend.id = :ascendId")
     fun getRockForAscend(ascendId: Int): Rock?
 
     @Update
@@ -54,6 +61,6 @@ interface RockDao {
     @Delete
     fun delete(rocks: List<Rock>)
 
-    @Query(Rock.DELETE_ALL)
+    @Query(DELETE_ROCKS)
     fun deleteAll()
 }
