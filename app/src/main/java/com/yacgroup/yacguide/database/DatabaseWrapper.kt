@@ -48,7 +48,7 @@ class DatabaseWrapper(context: Context) {
 
     fun getRegion(regionId: Int) = _db.regionDao().getRegion(regionId)
 
-    fun getRegionsComments(regionId: Int) = _db.regionCommentDao().getAll(regionId)
+    fun getRegionComments(regionId: Int) = _db.regionCommentDao().getAll(regionId)
 
     fun getSectors(regionId: Int) = _db.sectorDao().getAll(regionId)
 
@@ -56,9 +56,9 @@ class DatabaseWrapper(context: Context) {
 
     fun getSectorComments(sectorId: Int) = _db.sectorCommentDao().getAll(sectorId)
 
-    fun getRocksForSector(sectorId: Int, styleId: Int?) =
-            styleId?.let { _db.rockDao().getAllForStyle(sectorId, it) }
-                    ?: _db.rockDao().getAll(sectorId)
+    fun getRocksForSector(sectorId: Int) = _db.rockDao().getAll(sectorId)
+
+    fun getProjectedRocksForSector(sectorId: Int) = _db.rockDao().getAllForStyle(sectorId, AscendStyle.ePROJECT.id)
 
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
 

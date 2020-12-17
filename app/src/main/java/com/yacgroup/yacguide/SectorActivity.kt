@@ -54,7 +54,7 @@ class SectorActivity : UpdatableTableActivity() {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
-        val comments = db.getRegionsComments(_region.id)
+        val comments = db.getRegionComments(_region.id)
         for (comment in comments) {
             val qualityId = comment.qualityId
 
@@ -86,7 +86,7 @@ class SectorActivity : UpdatableTableActivity() {
                 startActivity(intent)
             }
 
-            val rocks = db.getRocksForSector(sector.id, null)
+            val rocks = db.getRocksForSector(sector.id)
             val rockCountString = _generateRockCountString(rocks)
 
             layout.addView(WidgetUtils.createCommonRowLayout(this,

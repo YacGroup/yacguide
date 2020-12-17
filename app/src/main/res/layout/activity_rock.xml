@@ -33,7 +33,7 @@
 
         <include layout="@layout/appbar_info"/>
 
-        <include layout="@layout/searchbar_rock"/>
+        <include layout="@layout/searchbar"/>
 
         <include layout="@layout/content_table" />
 

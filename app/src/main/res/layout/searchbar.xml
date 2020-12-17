@@ -19,33 +19,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/baseLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#bbbbbb">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        android:background="@drawable/spinner_shape"
+        tools:ignore="MissingConstraints">
 
-        <CheckBox
-            android:id="@+id/onlySummitsCheckBox"
+        <Spinner
+            android:id="@+id/filterSpinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onlySummitsCheck"
-            android:text="@string/display_only_official_summits"/>
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:spinnerMode="dropdown"
+            android:popupBackground="@drawable/spinner_shape"
+            tools:ignore="MissingConstraints" />
 
-        <CheckBox
-            android:id="@+id/onlyProjectsCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onlyProjectsCheck"
-            android:text="@string/display_only_project_summits"/>
-        
-    </LinearLayout>
+    </FrameLayout>
 
     <EditText
         android:id="@+id/searchEditText"
