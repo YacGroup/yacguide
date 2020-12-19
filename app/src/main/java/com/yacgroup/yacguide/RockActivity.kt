@@ -26,24 +26,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.*
 
 import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RockActivity : TableActivity() {
+class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
 
-    private var _sector: Sector? = null
-    private var _onlySummits: Boolean = false
-    private var _onlyProjects: Boolean = false
+    private lateinit var _sector: Sector
+    private lateinit var _rocks: List<Rock>
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +47,19 @@ class RockActivity : TableActivity() {
 
         val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
 
-        _sector = db.getSector(sectorId)
+        _sector = db.getSector(sectorId)!!
+        _rocks = db.getRocksForSector(sectorId)
+
+        val filterSpinner: Spinner = findViewById(R.id.filterSpinner)
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.rockFilters,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            filterSpinner.adapter = adapter
+            filterSpinner.onItemSelectedListener = this
+        }
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
@@ -68,25 +76,13 @@ class RockActivity : TableActivity() {
                 displayContent()
             }
         })
-
-        _onlySummits = customSettings.getBoolean(
-                getString(R.string.display_only_official_summits),
-                resources.getBoolean(R.bool.display_only_official_summits))
-        findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked = _onlySummits
-    }
-
-    override fun onStop() {
-        val editor = customSettings.edit()
-        editor.putBoolean(getString(R.string.display_only_official_summits), findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked)
-        editor.commit()
-        super.onStop()
     }
 
     override fun showComments(v: View) {
         val dialog = prepareCommentDialog()
 
         val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
-        val comments = _sector?.let { db.getSectorComments(it.id) } ?: emptyList()
+        val comments = db.getSectorComments(_sector.id)
         for (comment in comments) {
             val qualityId = comment.qualityId
             val text = comment.text
@@ -106,29 +102,14 @@ class RockActivity : TableActivity() {
         }
     }
 
-    fun onlySummitsCheck(v: View) {
-        _onlySummits = findViewById<CheckBox>(R.id.onlySummitsCheckBox).isChecked
-        displayContent()
-    }
-
-    fun onlyProjectsCheck(v: View) {
-        _onlyProjects = findViewById<CheckBox>(R.id.onlyProjectsCheckbox).isChecked
-        displayContent()
-    }
-
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val sectorName = ParserUtils.decodeObjectNames(_sector?.name)
+        val sectorName = ParserUtils.decodeObjectNames(_sector.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        val requestedStyleId = if (_onlyProjects) AscendStyle.ePROJECT.id else null
-        val rocks = _sector?.let { db.getRocksForSector(it.id, requestedStyleId) } ?: emptyList()
-        for (rock in rocks) {
+        for (rock in _rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
-                continue
-            }
-            if (_onlySummits && !_rockIsAnOfficialSummit(rock)) {
                 continue
             }
             var bgColor = Color.WHITE
@@ -174,4 +155,17 @@ class RockActivity : TableActivity() {
     override fun getLayoutId(): Int {
         return R.layout.activity_rock
     }
+
+    // AdapterView.OnItemSelectedListener
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        // item order is defined in resource "rockFilters" (see strings.xml)
+        _rocks = when (position) {
+            1 -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
+            2 -> db.getProjectedRocksForSector(_sector.id)
+            else -> db.getRocksForSector(_sector.id)
+        }
+        displayContent()
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {}
 }
