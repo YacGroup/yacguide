@@ -29,6 +29,9 @@
     <!-- File names -->
     <string name="preferences_filename">yacguide_settings</string>
 
+    <!-- Preference keys -->
+    <string name="preference_key_version_code">version_code</string>
+
     <!-- Colors -->
     <color name="greenblue">#00cc99</color>
     <color name="green">#66ff33</color>

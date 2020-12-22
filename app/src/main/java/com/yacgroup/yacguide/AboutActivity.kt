@@ -22,7 +22,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.webkit.URLUtil
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -42,6 +41,8 @@ class AboutActivity : BaseNavigationActivity() {
         _createEntry(getString(R.string.privacy_policy), callback = { _showPrivacyPolicy() })
         _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
         _createEntry(getString(R.string.license), getString(R.string.license_url))
+        _createEntry(getString(R.string.whats_new),
+                callback = { WhatsNewInfo(this).showDialog() })
         _createEntry(getString(R.string.version), _getAppVersion())
     }
 
