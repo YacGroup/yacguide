@@ -110,6 +110,15 @@
     <string name="tourbook_import_error">Fehler beim Import des Tourenbuchs</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
 
+    <!-- Ascend edit -->
+    <string name="ascend_edit_note">Bemerkung:</string>
+    <string name="ascend_edit_partner">Seilpartner:</string>
+    <string name="ascend_edit_date">Datum:</string>
+    <string name="ascend_edit_style">Stil:</string>
+    <string name="ascend_edit_title">Begehung bearbeiten</string>
+    <string name="ascend_edit_ok">OK</string>
+    <string name="ascend_edit_cancel">Abbrechen</string>
+
     <!-- Custom settings -->
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
 
