@@ -17,6 +17,10 @@
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
@@ -116,8 +120,6 @@
     <string name="ascend_edit_date">Datum:</string>
     <string name="ascend_edit_style">Stil:</string>
     <string name="ascend_edit_title">Begehung bearbeiten</string>
-    <string name="ascend_edit_ok">OK</string>
-    <string name="ascend_edit_cancel">Abbrechen</string>
 
     <!-- Custom settings -->
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>

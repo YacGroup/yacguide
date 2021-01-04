@@ -109,14 +109,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/ascend_edit_ok"
+                android:text="@string/ok"
                 android:onClick="enter"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/ascend_edit_cancel"
+                android:text="@string/cancel"
                 android:onClick="cancel"/>
 
         </LinearLayout>
