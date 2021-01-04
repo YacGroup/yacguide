@@ -142,10 +142,10 @@ class AscendActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun _displayContent() {
         val routeName = ParserUtils.decodeObjectNames(_route?.name)
-        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route?.grade.orEmpty()}"
+        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second} ${_route?.grade.orEmpty()}"
 
         val spinner = findViewById<Spinner>(R.id.styleSpinner)
-        val adapter = ArrayAdapter<CharSequence>(this, android.R.layout.simple_list_item_1, AscendStyle.names)
+        val adapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

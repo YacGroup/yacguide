@@ -17,6 +17,10 @@
   -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
@@ -109,6 +113,13 @@
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
     <string name="tourbook_import_error">Fehler beim Import des Tourenbuchs</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
+
+    <!-- Ascend edit -->
+    <string name="ascend_edit_note">Bemerkung:</string>
+    <string name="ascend_edit_partner">Seilpartner:</string>
+    <string name="ascend_edit_date">Datum:</string>
+    <string name="ascend_edit_style">Stil:</string>
+    <string name="ascend_edit_title">Begehung bearbeiten</string>
 
     <!-- Custom settings -->
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
