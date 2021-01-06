@@ -38,30 +38,24 @@ class AboutActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         this.title = getString(R.string.menu_about, getString(R.string.app_name))
 
-        _createEntry(getString(R.string.data_src), getString(R.string.data_src_url),null)
-        _createEntry(getString(R.string.privacy_policy), null) { _showPrivacyPolicy() }
-        _createEntry(
-                getString(R.string.source_code_and_support),
-                getString(R.string.github_url),
-                null )
-        _createEntry(getString(R.string.license), getString(R.string.license_url),null)
-        _createEntry(getString(R.string.version), _getAppVersion(), null)
+        _createEntry(getString(R.string.data_src), getString(R.string.data_src_url))
+        _createEntry(getString(R.string.privacy_policy), callback = { _showPrivacyPolicy() })
+        _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
+        _createEntry(getString(R.string.license), getString(R.string.license_url))
+        _createEntry(getString(R.string.version), _getAppVersion())
     }
 
     private fun _createEntry(
             title: String,
-            description: String?,
-            callback: ((view: View) -> Unit)?) {
-        val contentAbout: LinearLayout = findViewById(R.id.aboutContent)
-        val entry = layoutInflater.inflate(R.layout.about_entry, null)
-        if (callback == null && URLUtil.isValidUrl(description)) {
-            entry.setOnClickListener { description?.let { url -> _openUrl(url) } }
-        } else {
-            entry.setOnClickListener(callback)
+            description: String = "",
+            callback: (() -> Unit)? = null) {
+        layoutInflater.inflate(R.layout.about_entry, null).let {
+            val contentAbout = findViewById<LinearLayout>(R.id.aboutContent)
+            it.setOnClickListener { callback?.invoke() ?: _openUrl(description) }
+            it.findViewById<TextView>(R.id.aboutEntryTitle).text = title
+            it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
+            contentAbout.addView(it)
         }
-        entry.findViewById<TextView>(R.id.aboutEntryTitle).text = title
-        entry.findViewById<TextView>(R.id.aboutEntryDescription).text = description
-        contentAbout.addView(entry)
     }
 
     private fun _getAppVersion(): String {
@@ -81,12 +75,14 @@ class AboutActivity : BaseNavigationActivity() {
     }
 
     private fun _openUrl(url: String) {
-        val openURL = Intent(android.content.Intent.ACTION_VIEW)
-        openURL.data = Uri.parse(url)
-        if (openURL.resolveActivity(packageManager) != null) {
-            startActivity(openURL)
-        } else {
-            Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
+        if (URLUtil.isValidUrl(url)) {
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(url)
+            if (openURL.resolveActivity(packageManager) != null) {
+                startActivity(openURL)
+            } else {
+                Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
