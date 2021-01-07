@@ -44,11 +44,11 @@
     <string name="title_rock_search_results">Gefundene Felsen</string>
 
     <!-- About view -->
-    <string name="opensource_project_yacgroup">Ein OpenSource-Projekt der YAC Group:</string>
-    <string name="source_code_and_support">Sourcecode und Support:</string>
-    <string name="data_src">Datenbezugsquelle:</string>
+    <string name="source_code_and_support">Sourcecode und Support</string>
+    <string name="data_src">Datenbezugsquelle</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="license">Lizenz</string>
+    <string name="version">Version</string>
 
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>

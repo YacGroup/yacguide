@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Axel Paetzold
+ *               2020 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +22,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
+import android.webkit.URLUtil
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
@@ -36,12 +38,27 @@ class AboutActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         this.title = getString(R.string.menu_about, getString(R.string.app_name))
 
-        val textViewAppVersion: TextView = findViewById(R.id.textViewAppVersion)
-        textViewAppVersion.text = "Version ${getAppVersion()}"
-        textViewAppVersion.gravity = Gravity.CENTER_HORIZONTAL
+        _createEntry(getString(R.string.data_src), getString(R.string.data_src_url))
+        _createEntry(getString(R.string.privacy_policy), callback = { _showPrivacyPolicy() })
+        _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
+        _createEntry(getString(R.string.license), getString(R.string.license_url))
+        _createEntry(getString(R.string.version), _getAppVersion())
     }
 
-    private fun getAppVersion() : String {
+    private fun _createEntry(
+            title: String,
+            description: String = "",
+            callback: (() -> Unit)? = null) {
+        layoutInflater.inflate(R.layout.about_entry, null).let {
+            val contentAbout = findViewById<LinearLayout>(R.id.aboutContent)
+            it.setOnClickListener { callback?.invoke() ?: _openUrl(description) }
+            it.findViewById<TextView>(R.id.aboutEntryTitle).text = title
+            it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
+            contentAbout.addView(it)
+        }
+    }
+
+    private fun _getAppVersion(): String {
         try {
             val pkgManager = this.packageManager
             val pkgInfo = pkgManager.getPackageInfo(this.packageName, 0)
@@ -52,20 +69,20 @@ class AboutActivity : BaseNavigationActivity() {
         return "0.0"
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun showPrivacyPolicy(v: View) {
+    private fun _showPrivacyPolicy() {
         val intent = Intent(this, PrivacyPolicyActivity::class.java)
         startActivity(intent)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun showLicense(v: View) {
-        val openURL = Intent(android.content.Intent.ACTION_VIEW)
-        openURL.data = Uri.parse(getString(R.string.license_url))
-        if (openURL.resolveActivity(packageManager) != null) {
-            startActivity(openURL)
-        } else {
-            Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
+    private fun _openUrl(url: String) {
+        if (URLUtil.isValidUrl(url)) {
+            val openURL = Intent(Intent.ACTION_VIEW)
+            openURL.data = Uri.parse(url)
+            if (openURL.resolveActivity(packageManager) != null) {
+                startActivity(openURL)
+            } else {
+                Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
