@@ -39,7 +39,7 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     private var _numReleaseNotesShow: Int = 1
     private var _releaseNoteFiles: Array<String>?
     private var _markwonBuilder: Markwon
-    private  lateinit var _view: View
+    private lateinit var _view: View
 
     init {
         _activity.let {
