@@ -20,6 +20,7 @@
     <!-- General -->
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
+    <string name="more">Mehr</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
@@ -145,5 +146,8 @@
         <item>Offizielle Gipfel</item>
         <item>Projektierte Felsen \u2117</item>
     </string-array>
+
+    <!-- What's New dialog -->
+    <string name="whats_new">Neuigkeiten</string>
 
 </resources>

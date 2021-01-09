@@ -22,16 +22,22 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import com.yacgroup.yacguide.database.Rock
-
 import com.yacgroup.yacguide.network.CountryParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class CountryActivity : UpdatableTableActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         jsonParser = CountryParser(db, this)
+
+        WhatsNewInfo(this).let {
+            if (it.checkForVersionUpdate()) {
+                it.showDialog()
+            }
+        }
     }
 
     override fun displayContent() {

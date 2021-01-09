@@ -21,9 +21,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.widget.TextView
-import io.noties.markwon.AbstractMarkwonPlugin
+import com.yacgroup.yacguide.markwon.PrivacyPolicyMarkwonPlugin
 import io.noties.markwon.Markwon
-import io.noties.markwon.core.MarkwonTheme
 
 class PrivacyPolicyActivity : AppCompatActivity() {
 
@@ -44,20 +43,10 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     }
 
     private fun _displayContent() {
-        class MyMarkwonPlugin: AbstractMarkwonPlugin() {
-            override fun configureTheme(builder: MarkwonTheme.Builder) {
-                // Set default heading break height to 0.
-                builder.headingBreakHeight(0)
-            }
-            override fun processMarkdown(markdown: String): String {
-                // Repace front matter from markdown file by markdown section.
-                val regex =  Regex("^---.*---$",
-                        setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
-                return markdown.replace(regex, "# ".plus(getString(R.string.privacy_policy)))
-            }
-        }
-        val markwon = Markwon.builder(this).usePlugin(MyMarkwonPlugin()).build()
-        val rawResource = getResources().openRawResource(R.raw.privacy_policy)
+        val markwon = Markwon.builder(this)
+                .usePlugin(PrivacyPolicyMarkwonPlugin(getString(R.string.privacy_policy)))
+                .build()
+        val rawResource = resources.openRawResource(R.raw.privacy_policy)
         val privacyStr = rawResource.bufferedReader().use  { it.readText() }
         val privacyTextView = findViewById<TextView>(R.id.privacyPolicyTextView)
         markwon.setMarkdown(privacyTextView, privacyStr)
