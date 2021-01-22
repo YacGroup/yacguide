@@ -23,8 +23,10 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
@@ -45,13 +47,9 @@ import java.util.Calendar
 class AscendActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private var _ascend: Ascend? = null
+    private lateinit var _ascend: Ascend
+    private var _existingAscend: Ascend? = null
     private var _route: Route? = null
-    private var _partnerIds: ArrayList<Int>? = null
-    private var _styleId: Int = 0
-    private var _year: Int = 0
-    private var _month: Int = 0
-    private var _day: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,18 +57,29 @@ class AscendActivity : AppCompatActivity() {
 
         _db = DatabaseWrapper(this)
 
-        _ascend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID))
+        // The database query is null, if this activity is called from the route DescriptionActivity.
+        _existingAscend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY,
+                DatabaseWrapper.INVALID_ID))
+        _ascend = _existingAscend ?: Ascend().apply { routeId = DatabaseWrapper.INVALID_ID }
+        // The intent constant ROUTE_KEY is only available, if this activity is called from
+        // the route DescriptionActivity.
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
-
         _route = _db.getRoute(routeId.takeUnless { it == DatabaseWrapper.INVALID_ID }
-                ?: _ascend?.routeId ?: DatabaseWrapper.INVALID_ID)
+                ?: _ascend.routeId)
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
-        _partnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
-                ?: _ascend?.partnerIds ?: ArrayList()
 
-        findViewById<View>(R.id.notesEditText).onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        findViewById<EditText>(R.id.notesEditText).let {
+            it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
+                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+            it.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    _ascend.notes = s.toString()
+                }
+            })
         }
 
         _displayContent()
@@ -78,30 +87,20 @@ class AscendActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            _partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS) ?: ArrayList()
+            _ascend.partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS) ?: ArrayList()
             _displayContent()
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun enter(v: View) {
-        val existingAscend = _ascend
-
-        val ascend = Ascend()
-        ascend.routeId = _route?.id ?: existingAscend?.routeId ?: DatabaseWrapper.INVALID_ID
-        ascend.styleId = _styleId
-        ascend.year = _year
-        ascend.month = _month
-        ascend.day = _day
-        ascend.partnerIds = _partnerIds
-        ascend.notes = findViewById<EditText>(R.id.notesEditText).text.toString()
-
-        if (existingAscend != null) {
-            ascend.id = existingAscend.id
+        val existingAscend = _existingAscend
+        _ascend.routeId = _route?.id ?: _ascend.routeId
+        existingAscend?.let {
+            _ascend.id = existingAscend.id
             _db.deleteAscend(existingAscend)
         }
-
-        _db.addAscend(ascend)
+        _db.addAscend(_ascend)
         val resultIntent = Intent()
         setResult(IntentConstants.RESULT_UPDATED, resultIntent)
         finish()
@@ -118,14 +117,15 @@ class AscendActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun enterDate(v: View) {
         val calendar = Calendar.getInstance()
-        val yy = _ascend?.year.takeIf { it != 0 } ?: calendar.get(Calendar.YEAR)
-        val mm = _ascend?.month.takeIf { it != 0 }.let { it?.minus(1) } ?: calendar.get(Calendar.MONTH)
-        val dd = _ascend?.day.takeIf { it != 0 } ?: calendar.get(Calendar.DAY_OF_MONTH)
+        val yy = _ascend.year.takeIf { it != 0 } ?: calendar.get(Calendar.YEAR)
+        val mm = _ascend.month.takeIf { it != 0 }.let { it?.minus(1) } ?: calendar.get(Calendar.MONTH)
+        val dd = _ascend.day.takeIf { it != 0 } ?: calendar.get(Calendar.DAY_OF_MONTH)
         val datePicker = DatePickerDialog(this@AscendActivity, { _, year, monthOfYear, dayOfMonth ->
-            _year = year
-            _month = monthOfYear + 1
-            _day = dayOfMonth
-            (findViewById<View>(R.id.dateEditText) as EditText).setText("$_day.$_month.$_year")
+            _ascend.year = year
+            _ascend.month = monthOfYear + 1
+            _ascend.day = dayOfMonth
+            (findViewById<View>(R.id.dateEditText) as EditText).setText(
+                    "${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }, yy, mm, dd)
         datePicker.show()
     }
@@ -150,27 +150,24 @@ class AscendActivity : AppCompatActivity() {
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                _styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: 0
+                _ascend.styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: 0
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                _styleId = 0
+                _ascend.styleId = 0
             }
         }
+        spinner.setSelection(adapter.getPosition(
+                AscendStyle.fromId(if (_ascend.styleId != 0) _ascend.styleId else 0)?.styleName))
 
-        val existingAscend = _ascend
-        if (existingAscend != null) {
-            _day = existingAscend.day
-            _month = existingAscend.month
-            _year = existingAscend.year
-            findViewById<EditText>(R.id.dateEditText).setText("$_day.$_month.$_year")
-            findViewById<EditText>(R.id.notesEditText).setText(existingAscend.notes)
-            spinner.setSelection(adapter.getPosition(AscendStyle.fromId(if (_styleId == 0) existingAscend.styleId else _styleId)?.styleName))
-        } else {
-            spinner.setSelection(if (_styleId != 0) adapter.getPosition(AscendStyle.fromId(_styleId)?.styleName) else 0)
+        if (_ascend.day != 0 && _ascend.month != 0 && _ascend.year != 0) {
+            findViewById<EditText>(R.id.dateEditText).setText(
+                    "${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }
 
-        val partnerNames = _db.getPartnerNames(_partnerIds.orEmpty().toList())
+        findViewById<EditText>(R.id.notesEditText).setText(_ascend.notes)
+
+        val partnerNames = _db.getPartnerNames(_ascend.partnerIds.orEmpty().toList())
         findViewById<EditText>(R.id.partnersEditText).setText(TextUtils.join(", ", partnerNames))
     }
 }
