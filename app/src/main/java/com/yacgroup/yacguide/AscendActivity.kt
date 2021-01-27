@@ -48,7 +48,6 @@ class AscendActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
-    private var _existingAscend: Ascend? = null
     private var _route: Route? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,10 +56,10 @@ class AscendActivity : AppCompatActivity() {
 
         _db = DatabaseWrapper(this)
 
-        // The database query is null, if this activity is called from the route DescriptionActivity.
-        _existingAscend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY,
-                DatabaseWrapper.INVALID_ID))
-        _ascend = _existingAscend ?: Ascend().apply { routeId = DatabaseWrapper.INVALID_ID }
+        // The database query is different from null,
+        // if this activity is called from the TourbookActivity or TourbookAscendActivity.
+        _ascend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY,
+                DatabaseWrapper.INVALID_ID)) ?: Ascend()
         // The intent constant ROUTE_KEY is only available, if this activity is called from
         // the route DescriptionActivity.
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
@@ -87,18 +86,18 @@ class AscendActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            _ascend.partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS) ?: ArrayList()
+            _ascend.partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
+                    ?: ArrayList()
             _displayContent()
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun enter(v: View) {
-        val existingAscend = _existingAscend
         _ascend.routeId = _route?.id ?: _ascend.routeId
-        existingAscend?.let {
-            _ascend.id = existingAscend.id
-            _db.deleteAscend(existingAscend)
+        // For new ascends id == 0!
+        if (_ascend.id != 0) {
+            _db.deleteAscend(_ascend)
         }
         _db.addAscend(_ascend)
         val resultIntent = Intent()
@@ -157,8 +156,7 @@ class AscendActivity : AppCompatActivity() {
                 _ascend.styleId = 0
             }
         }
-        spinner.setSelection(adapter.getPosition(
-                AscendStyle.fromId(if (_ascend.styleId != 0) _ascend.styleId else 0)?.styleName))
+        spinner.setSelection(adapter.getPosition(AscendStyle.fromId(_ascend.styleId)?.styleName))
 
         if (_ascend.day != 0 && _ascend.month != 0 && _ascend.year != 0) {
             findViewById<EditText>(R.id.dateEditText).setText(
