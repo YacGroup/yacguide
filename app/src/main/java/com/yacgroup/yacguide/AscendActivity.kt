@@ -59,7 +59,7 @@ class AscendActivity : AppCompatActivity() {
         // The database query is different from null,
         // if this activity is called from the TourbookActivity or TourbookAscendActivity.
         _ascend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY,
-                DatabaseWrapper.INVALID_ID)) ?: Ascend()
+                DatabaseWrapper.INVALID_ID)) ?: Ascend().apply { partnerIds = ArrayList() }
         // The intent constant ROUTE_KEY is only available, if this activity is called from
         // the route DescriptionActivity.
         val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
