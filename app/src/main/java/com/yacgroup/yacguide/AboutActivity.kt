@@ -43,6 +43,8 @@ class AboutActivity : BaseNavigationActivity() {
         _createEntry(getString(R.string.license), getString(R.string.license_url))
         _createEntry(getString(R.string.whats_new),
                 callback = { WhatsNewInfo(this).showDialog() })
+        _createEntry(getString(R.string.contact), getString(R.string.contact_email_address),
+                callback = { _openEmailIntent() })
         _createEntry(getString(R.string.version), _getAppVersion())
     }
 
@@ -84,6 +86,19 @@ class AboutActivity : BaseNavigationActivity() {
             } else {
                 Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun _openEmailIntent() {
+        val emailIndent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "plain/text"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.contact_email_address)))
+        }
+        if (emailIndent.resolveActivity(packageManager) != null) {
+            startActivity(emailIndent)
+        } else {
+            Toast.makeText(this, R.string.no_email_app_available, Toast.LENGTH_SHORT).show()
         }
     }
 }

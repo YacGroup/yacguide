@@ -50,6 +50,7 @@
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="license">Lizenz</string>
     <string name="version">Version</string>
+    <string name="contact">Kontakt</string>
 
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
@@ -73,7 +74,8 @@
     <string name="hint_name_not_found">Keine Felsen gefunden</string>
     <string name="no_internet_connection">Keine Internetverbindung</string>
     <string name="no_map_app_available">Keine Karten-App verfügbar</string>
-    <string name="no_webbrowser_available">Keine Webbrowser verfügbar</string>
+    <string name="no_webbrowser_available">Kein Webbrowser verfügbar</string>
+    <string name="no_email_app_available">Keine Email-App verfügbar</string>
     <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
 
