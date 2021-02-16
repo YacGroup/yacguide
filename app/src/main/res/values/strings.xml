@@ -22,6 +22,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="more">Mehr</string>
     <string name="warning">Warnung</string>
+    <string name="error">Fehler</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
@@ -114,7 +115,7 @@
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
-    <string name="tourbook_import_error">Fehler beim Import des Tourenbuchs</string>
+    <string name="tourbook_import_error">Fehler beim Import</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
 
     <!-- Ascend edit -->
