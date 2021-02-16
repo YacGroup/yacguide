@@ -39,6 +39,8 @@ import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
+import org.json.JSONException
+
 import java.io.IOException
 
 import java.util.Arrays
@@ -122,13 +124,35 @@ class TourbookActivity : BaseNavigationActivity() {
                 try {
                     TourbookExporter(_db, contentResolver).importTourbook(uri)
                     _makeToast(getString(R.string.tourbook_import_successfull))
-                } catch (e: Exception) {
-                    _makeToast(getString(R.string.tourbook_import_error))
+                } catch (e: JSONException) {
+                    // Show only the first part of the detailed error message because
+                    // the whole JSON string is contained.
+                    _showImportError(e.message.toString(), 200)
+                } catch (e: IOException) {
+                    // Show the full message because at the moment it is not clear
+                    // how the message looks like.
+                    _showImportError(e.message.toString())
                 }
                 _initYears()
             }
         }
         confirmDialog.show()
+    }
+
+    // Show dialog with given message. Optionally, limit the number of characters to show.
+    private fun _showImportError(errMsg: String, maxCharsShow: Int? = null) {
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.tourbook_import_error)
+            if (maxCharsShow == null) {
+                setMessage(errMsg)
+            } else {
+                setMessage(errMsg.take(maxCharsShow)
+                        + if (errMsg.length > maxCharsShow) " ..." else "")
+            }
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setPositiveButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
+        }
+        dialog.show()
     }
 
     private fun _makeToast(msg: String) {
