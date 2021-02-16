@@ -21,6 +21,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>
     <string name="more">Mehr</string>
+    <string name="warning">Warnung</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
@@ -110,8 +111,7 @@
     <string name="project_text_symbol">Projekte \u2117</string>
 
     <!-- Tourbook IO -->
-    <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.
-                                     Trotzdem importieren?</string>
+    <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
     <string name="tourbook_import_error">Fehler beim Import des Tourenbuchs</string>

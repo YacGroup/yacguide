@@ -18,7 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.app.Activity
-import android.app.Dialog
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -113,28 +113,26 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _import(uri: Uri) {
-        val confirmDialog = Dialog(this)
-        confirmDialog.setContentView(R.layout.dialog)
-        confirmDialog.findViewById<TextView>(R.id.dialogText).text = getString(
-                R.string.override_tourbook)
-        confirmDialog.findViewById<View>(R.id.yesButton).setOnClickListener {
-            try {
-                TourbookExporter(_db, contentResolver).importTourbook(uri)
-                Toast.makeText(this, getString(R.string.tourbook_import_successfull),
-                        Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Toast.makeText(this, getString(R.string.tourbook_import_error),
-                        Toast.LENGTH_SHORT).show()
+        val confirmDialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.warning)
+            setMessage(getString(R.string.override_tourbook))
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setPositiveButton(R.string.ok) { dialog, _ ->
+                try {
+                    TourbookExporter(_db, contentResolver).importTourbook(uri)
+                    _makeToast(getString(R.string.tourbook_import_successfull))
+                } catch (e: Exception) {
+                    _makeToast(getString(R.string.tourbook_import_error))
+                }
+                _initYears()
             }
-            _initYears()
-            confirmDialog.dismiss()
         }
-        confirmDialog.findViewById<View>(R.id.noButton).setOnClickListener {
-            confirmDialog.dismiss()
-        }
-        confirmDialog.setCanceledOnTouchOutside(false)
-        confirmDialog.setCancelable(false)
         confirmDialog.show()
+    }
+
+    private fun _makeToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun _export(uri: Uri) {
