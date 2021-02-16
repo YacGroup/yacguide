@@ -50,8 +50,8 @@ class TourbookExporter(
 
     @Throws(IOException::class)
     private fun _writeStrToUri(uri: Uri, str: String) {
-        _contentResolver.openFileDescriptor(uri, "w")?.use {
-            FileOutputStream(it.fileDescriptor).use {
+        _contentResolver.openFileDescriptor(uri, "w")?.use { fileDescriptor ->
+            FileOutputStream(fileDescriptor.fileDescriptor).use {
                 it.write(str.toByteArray(Charsets.UTF_8))
             }
         }
@@ -80,12 +80,13 @@ class TourbookExporter(
 
     @Throws(JSONException::class)
     private fun ascend2Json(ascend: Ascend): JSONObject {
-        val jsonAscend = JSONObject()
-        jsonAscend.put(_routeIdKey, ascend.routeId.toString())
-        jsonAscend.put(_styleIdKey, ascend.styleId.toString())
-        jsonAscend.put(_yearKey, ascend.year.toString())
-        jsonAscend.put(_monthKey, ascend.month.toString())
-        jsonAscend.put(_dayKey, ascend.day.toString())
+        val jsonAscend = JSONObject().apply {
+            put(_routeIdKey, ascend.routeId.toString())
+            put(_styleIdKey, ascend.styleId.toString())
+            put(_yearKey, ascend.year.toString())
+            put(_monthKey, ascend.month.toString())
+            put(_dayKey, ascend.day.toString())
+        }
         val partnerList = JSONArray()
         _db.getPartnerNames(ascend.partnerIds.orEmpty()).map { partnerList.put(it) }
         jsonAscend.put(_partnersKey, partnerList)
@@ -105,15 +106,15 @@ class TourbookExporter(
         var partnerId = 1
         for (i in 0 until jsonAscends.length()) {
             val jsonAscend = jsonAscends.getJSONObject(i)
-            val routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey)
-            val ascend = Ascend()
-            ascend.id = ascendId++
-            ascend.routeId = routeId
-            ascend.styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey)
-            ascend.year = ParserUtils.jsonField2Int(jsonAscend, _yearKey)
-            ascend.month = ParserUtils.jsonField2Int(jsonAscend, _monthKey)
-            ascend.day = ParserUtils.jsonField2Int(jsonAscend, _dayKey)
-            ascend.notes = jsonAscend.getString(_notesKey)
+            val ascend = Ascend().apply {
+                id = ascendId++
+                routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey)
+                styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey)
+                year = ParserUtils.jsonField2Int(jsonAscend, _yearKey)
+                month = ParserUtils.jsonField2Int(jsonAscend, _monthKey)
+                day = ParserUtils.jsonField2Int(jsonAscend, _dayKey)
+                notes = jsonAscend.getString(_notesKey)
+            }
             val partnerNames = jsonAscend.getJSONArray(_partnersKey)
             val partnerIds = ArrayList<Int>()
             for (j in 0 until partnerNames.length()) {
