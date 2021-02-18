@@ -18,13 +18,14 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import com.yacgroup.yacguide.database.Rock
 
+import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
@@ -67,6 +68,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun update(v: View = View(this)) {
         if (!NetworkUtils.isNetworkAvailable(this)) {
             Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
@@ -77,18 +79,20 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     private fun _delete() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.dialog)
-        (dialog.findViewById<TextView>(R.id.dialogText)).setText(R.string.dialog_question_delete)
-        dialog.findViewById<Button>(R.id.yesButton).setOnClickListener {
-            deleteContent()
-            dialog.dismiss()
-            Toast.makeText(applicationContext, R.string.objects_deleted, Toast.LENGTH_SHORT).show()
-            displayContent()
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.dialog_question_delete)
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setPositiveButton(R.string.ok) { _, _ ->
+                deleteContent()
+                Toast.makeText(
+                        this@UpdatableTableActivity,
+                        R.string.objects_deleted,
+                        Toast.LENGTH_SHORT
+                ).show()
+                displayContent()
+            }
         }
-        dialog.findViewById<Button>(R.id.noButton).setOnClickListener { dialog.dismiss() }
-        dialog.setCancelable(false)
-        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 
