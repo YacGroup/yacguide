@@ -17,7 +17,7 @@
 
 package com.yacgroup.yacguide
 
-import android.app.Dialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -26,10 +26,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import com.yacgroup.yacguide.database.*
 
+import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -83,6 +82,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun goToNext(v: View) {
         if (++_currentAscendIdx <= _maxAscendIdx) {
             findViewById<View>(R.id.prevButton).visibility = View.VISIBLE
@@ -91,6 +91,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun goToPrevious(v: View) {
         if (--_currentAscendIdx >= 0) {
             findViewById<View>(R.id.nextButton).visibility = View.VISIBLE
@@ -115,19 +116,17 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     private fun delete() {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.dialog)
-        (dialog.findViewById<View>(R.id.dialogText) as TextView).setText(R.string.dialog_question_delete_ascend)
-        dialog.findViewById<View>(R.id.yesButton).setOnClickListener {
-            _db.deleteAscend(_ascends[_currentAscendIdx])
-            dialog.dismiss()
-            val resultIntent = Intent()
-            setResult(IntentConstants.RESULT_UPDATED, resultIntent)
-            finish()
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.dialog_question_delete_ascend)
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setPositiveButton(R.string.ok) { _, _ ->
+                _db.deleteAscend(_ascends[_currentAscendIdx])
+                val resultIntent = Intent()
+                setResult(IntentConstants.RESULT_UPDATED, resultIntent)
+                finish()
+            }
         }
-        dialog.findViewById<View>(R.id.noButton).setOnClickListener { dialog.dismiss() }
-        dialog.setCancelable(false)
-        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 

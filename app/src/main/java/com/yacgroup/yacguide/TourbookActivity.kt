@@ -18,7 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.app.Activity
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -104,11 +104,13 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun goToNext(v: View) {
         _currentYear = _availableYears[_availableYears.indexOf(_currentYear) + 1]
         _displayContent()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun goToPrevious(v: View) {
         _currentYear = _availableYears[_availableYears.indexOf(_currentYear) - 1]
         _displayContent()
@@ -120,10 +122,14 @@ class TourbookActivity : BaseNavigationActivity() {
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
-            setPositiveButton(R.string.ok) { dialog, _ ->
+            setPositiveButton(R.string.ok) { _, _ ->
                 try {
                     TourbookExporter(_db, contentResolver).importTourbook(uri)
-                    _makeToast(getString(R.string.tourbook_import_successfull))
+                    Toast.makeText(
+                            this@TourbookActivity,
+                            R.string.tourbook_import_successfull,
+                            Toast.LENGTH_SHORT
+                    ).show()
                 } catch (e: JSONException) {
                     // Show only the first part of the detailed error message because
                     // the whole JSON string is contained.
@@ -155,10 +161,6 @@ class TourbookActivity : BaseNavigationActivity() {
         dialog.show()
     }
 
-    private fun _makeToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-    }
-
     private fun _export(uri: Uri) {
         try {
             TourbookExporter(_db, contentResolver).exportTourbook(uri)
@@ -170,18 +172,21 @@ class TourbookActivity : BaseNavigationActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun showAscends(v: View) {
         setTitle(R.string.ascends)
         _tourbookType = TourbookType.eAscends
         _initYears()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun showBotches(v: View) {
         setTitle(R.string.botch_text_symbol)
         _tourbookType = TourbookType.eBotches
         _initYears()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun showProjects(v: View) {
         setTitle(R.string.project_text_symbol)
         _tourbookType = TourbookType.eProjects

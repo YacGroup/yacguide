@@ -19,6 +19,7 @@ package com.yacgroup.yacguide
 
 import android.app.Activity
 import android.app.Dialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -37,10 +38,9 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import android.widget.TextView
 import android.widget.Toast
-import com.yacgroup.yacguide.database.DatabaseWrapper
 
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
@@ -90,6 +90,7 @@ class PartnersActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun addPartner(v: View) {
         val dialog = Dialog(this)
         dialog.setTitle(R.string.dialog_text_add_partner)
@@ -179,20 +180,7 @@ class PartnersActivity : AppCompatActivity() {
             deleteButton.id = View.generateViewId()
             deleteButton.setImageResource(android.R.drawable.ic_menu_delete)
             deleteButton.setOnClickListener {
-                val dialog = Dialog(this@PartnersActivity)
-                dialog.setContentView(R.layout.dialog)
-                dialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_text_delete_partner)
-                val okButton = dialog.findViewById<Button>(R.id.yesButton)
-                okButton.setOnClickListener {
-                    _db.deletePartner(partner)
-                    dialog.dismiss()
-                    _displayContent()
-                }
-                val cancelButton = dialog.findViewById<Button>(R.id.noButton)
-                cancelButton.setOnClickListener { dialog.dismiss() }
-                dialog.setCanceledOnTouchOutside(false)
-                dialog.setCancelable(false)
-                dialog.show()
+                _deletePartner(partner)
             }
             innerLayout.addView(deleteButton)
 
@@ -210,6 +198,19 @@ class PartnersActivity : AppCompatActivity() {
             layout.addView(innerLayout)
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
+    }
+
+    private fun _deletePartner(partner: Partner) {
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.dialog_text_delete_partner)
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setPositiveButton(R.string.ok) { _, _ ->
+                _db.deletePartner(partner)
+                _displayContent()
+            }
+        }
+        dialog.show()
     }
 
     private fun _updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
