@@ -31,7 +31,10 @@ object WidgetUtils {
     const val tableFontSizeDp = 18
     const val infoFontSizeDp = 16
     const val textFontSizeDp = 14
-    const val tourHeaderColor = -0x444445
+    // That must be in sync with the color definition colorSecondaryLight.
+    // FIXME: Find a better solution to get this color string.
+    val tourHeaderColor: Int
+        get() = Color.parseColor("#cfcfcf")
 
     class Padding (val left: Int, val top: Int, val right: Int, val bottom: Int)
 
