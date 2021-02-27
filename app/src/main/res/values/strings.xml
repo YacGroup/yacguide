@@ -23,6 +23,9 @@
     <string name="more">Mehr</string>
     <string name="warning">Warnung</string>
     <string name="error">Fehler</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="search">Suchen</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
