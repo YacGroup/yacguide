@@ -20,14 +20,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@color/colorSecondaryLight">
 
     <RadioButton
         android:id="@+id/ascendsRadioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:buttonTint="@android:color/black"
+        style="@style/AppTheme.Secondary.RadioButton"
         android:checked="true"
         android:onClick="showAscends"
         android:text="@string/ascends" />
@@ -37,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:buttonTint="@android:color/black"
+        style="@style/AppTheme.Secondary.RadioButton"
         android:onClick="showBotches"
         android:text="@string/botch_text_symbol"/>
 
@@ -46,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:buttonTint="@android:color/black"
+        style="@style/AppTheme.Secondary.RadioButton"
         android:onClick="showProjects"
         android:text="@string/project_text_symbol"/>
 

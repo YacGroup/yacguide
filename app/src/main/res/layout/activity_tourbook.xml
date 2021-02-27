@@ -22,7 +22,6 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bbbbbb"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
@@ -38,7 +37,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"/>
+            android:background="@color/colorSecondaryDark"/>
 
         <include layout="@layout/nav_tourbook"/>
 

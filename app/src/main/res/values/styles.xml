@@ -1,5 +1,6 @@
 <!--
   Copyright (C) 2018 Axel Paetzold
+                2021 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,20 +17,50 @@
   -->
 
 <resources>
-
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryLight</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryLight</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryText</item>
+        <item name="android:textColorSecondary">@color/colorSecondaryText</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="AppTheme.ActionBar" parent="AppTheme">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="AppTheme.AppBar" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorControlNormal">@color/colorOnPrimary</item>
+    </style>
+
+    <style name="AppTheme.Popup" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="AppTheme.Secondary.TextView" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@color/colorSecondaryLight</item>
+        <item name="android:textColor">@color/colorOnSecondaryLight</item>
+    </style>
+
+    <style name="AppTheme.Secondary.RadioButton"
+        parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/colorOnSecondaryLight</item>
+    </style>
+
+    <style name="AppTheme.Secondary.ImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/colorSecondaryLight</item>
+        <item name="android:tint">@color/colorSecondaryDark</item>
+    </style>
 
     <style name="ThinDivider">
         <item name="android:layout_width">match_parent</item>
@@ -39,7 +70,7 @@
 
     <style name="FatDivider">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">3dp</item>
+        <item name="android:layout_height">2dp</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
 </resources>

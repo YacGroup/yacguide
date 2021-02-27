@@ -21,9 +21,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent">
+    app:layout_constraintTop_toTopOf="parent"
+    android:background="@color/colorSecondaryLight">
 
     <ImageButton
+        style="@style/AppTheme.Secondary.ImageButton"
         android:id="@+id/prevButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -31,7 +33,7 @@
         android:layout_alignParentStart="true"
         android:visibility="invisible"
         android:onClick="goToPrevious"
-        app:srcCompat="@android:drawable/ic_media_rew"/>
+        app:srcCompat="@drawable/ic_baseline_arrow_back_24"/>
 
     <TextView
         android:id="@+id/currentTextView"
@@ -42,6 +44,7 @@
         android:textSize="20sp"/>
 
     <ImageButton
+        style="@style/AppTheme.Secondary.ImageButton"
         android:id="@+id/nextButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -49,6 +52,7 @@
         android:layout_alignParentEnd="true"
         android:visibility="invisible"
         android:onClick="goToNext"
-        app:srcCompat="@android:drawable/ic_media_ff"/>
+        android:layoutDirection="rtl"
+        app:srcCompat="@drawable/ic_baseline_arrow_back_24"/>
 
 </RelativeLayout>

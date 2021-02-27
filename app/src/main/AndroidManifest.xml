@@ -34,43 +34,43 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CountryActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".CountryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegionActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".RegionActivity"
             android:parentActivityName=".CountryActivity"/>
-        <activity android:name=".SectorActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".SectorActivity"
             android:parentActivityName=".RegionActivity"/>
-        <activity android:name=".RockActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".RockActivity"
             android:parentActivityName=".SectorActivity"/>
-        <activity android:name=".SelectedRockActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".RouteActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity android:name=".SelectedRockActivity"/>
+        <activity
+            android:name=".RouteActivity"
             android:parentActivityName=".RockActivity"/>
-        <activity android:name=".DescriptionActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".DescriptionActivity"
             android:parentActivityName=".RouteActivity"/>
-        <activity android:name=".AscendActivity" />
-        <activity android:name=".PartnersActivity"
-            android:parentActivityName=".AscendActivity"/>
-        <activity android:name=".TourbookActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".TourbookAscendActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".PreferencesActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".AboutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".PrivacyPolicyActivity"
-            android:parentActivityName=".AboutActivity">
+        <activity
+            android:name=".AscendActivity"
+            android:theme="@style/AppTheme.ActionBar"/>
+        <activity
+            android:name=".PartnersActivity"
+            android:parentActivityName=".AscendActivity"
+            android:theme="@style/AppTheme.ActionBar"/>
+        <activity android:name=".TourbookActivity"/>
+        <activity android:name=".TourbookAscendActivity"/>
+        <activity android:name=".PreferencesActivity"/>
+        <activity android:name=".AboutActivity"/>
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.ActionBar">
         </activity>
     </application>
 </manifest>
