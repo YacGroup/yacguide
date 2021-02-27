@@ -28,10 +28,10 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:visibility="invisible"
         android:onClick="goToPrevious"
-        app:srcCompat="@android:drawable/ic_media_rew" />
+        app:srcCompat="@android:drawable/ic_media_rew"/>
 
     <TextView
         android:id="@+id/currentTextView"
@@ -39,16 +39,16 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textStyle="bold"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
 
     <ImageButton
         android:id="@+id/nextButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:visibility="invisible"
         android:onClick="goToNext"
-        app:srcCompat="@android:drawable/ic_media_ff" />
+        app:srcCompat="@android:drawable/ic_media_ff"/>
 
 </RelativeLayout>
