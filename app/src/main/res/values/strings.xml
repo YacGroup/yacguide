@@ -145,6 +145,7 @@
 
     <!-- filters -->
     <string-array name="rockFilters">
+        <!-- item order must be in line with static filterMap in TableActivity -->
         <item>Alle Felsen</item>
         <item>Offizielle Gipfel</item>
         <item>Projektierte Felsen \u2117</item>
