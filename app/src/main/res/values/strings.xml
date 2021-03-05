@@ -57,6 +57,8 @@
     <string name="license">Lizenz</string>
     <string name="version">Version</string>
     <string name="contact">Kontakt</string>
+    <string name="contact_details">"Generelles Feedback und Fehler melden"</string>
+    <string name="contact_concern">Was ist dein Anliegen?</string>
 
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
@@ -64,6 +66,7 @@
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>
+    <string name="report_error">Fehler melden</string>
 
     <!-- Widgets -->
     <string name="rock_search">Felsen suchen</string>
@@ -85,6 +88,7 @@
     <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
     <string name="no_comment_available">Kein Kommentar vorhanden.</string>
+    <string name="cannot_create_logfile">Fehler beim Erzeugen der Log-Datei</string>
 
     <!-- Data -->
     <string name="region">Teilgebiet</string>
@@ -154,6 +158,12 @@
         <item>Alle Felsen</item>
         <item>Offizielle Gipfel</item>
         <item>Projektierte Felsen \u2117</item>
+    </string-array>
+
+    <!-- IMPORTANT: This list must be in sync with the code in the AboutActivity class. -->
+    <string-array name="contactConcerns">
+        <item>Allgemeines Anliegen</item>
+        <item>Fehler melden</item>
     </string-array>
 
     <!-- What's New dialog -->
