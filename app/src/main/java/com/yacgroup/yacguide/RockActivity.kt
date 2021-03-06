@@ -39,7 +39,7 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
 
     private lateinit var _sector: Sector
-    private lateinit var _rocks: List<Rock>
+    private var _rockFilter = ElementFilter.eNone;
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +48,6 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
 
         _sector = db.getSector(sectorId)!!
-        _rocks = db.getRocksForSector(sectorId)
 
         val filterSpinner: Spinner = findViewById(R.id.filterSpinner)
         ArrayAdapter.createFromResource(
@@ -107,7 +106,12 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         layout.removeAllViews()
         val sectorName = ParserUtils.decodeObjectNames(_sector.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        for (rock in _rocks) {
+        val rocks = when (_rockFilter) {
+            ElementFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
+            ElementFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
+            else -> db.getRocksForSector(_sector.id)
+        }
+        for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
                 continue
@@ -158,12 +162,7 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
 
     // AdapterView.OnItemSelectedListener
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        // item order is defined in resource "rockFilters" (see strings.xml)
-        _rocks = when (position) {
-            1 -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
-            2 -> db.getProjectedRocksForSector(_sector.id)
-            else -> db.getRocksForSector(_sector.id)
-        }
+        _rockFilter = filterMap[position] ?: ElementFilter.eNone
         displayContent()
     }
 
