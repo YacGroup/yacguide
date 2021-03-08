@@ -17,11 +17,12 @@
 
 package com.yacgroup.yacguide
 
-import android.app.Dialog
+import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -56,15 +57,21 @@ abstract class TableActivity : BaseNavigationActivity() {
         displayContent()
     }
 
-    protected fun prepareCommentDialog(): Dialog {
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.comment_dialog)
-        dialog.findViewById<View>(R.id.closeButton).setOnClickListener { dialog.dismiss() }
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.setCancelable(false)
+    protected fun prepareCommentDialog(): AlertDialog {
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.comments)
+            setPositiveButton(R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+            setView(R.layout.comment_dialog)
+        }.create()
+        // we need to call show() before findViewById can be used.
         dialog.show()
-
         return dialog
+    }
+
+    protected fun showNoCommentToast() {
+        Toast.makeText(this, R.string.no_comment_available, Toast.LENGTH_SHORT).show()
     }
 
     protected fun colorizeEntry(ascendsBitMask: Int, defaultColor: Int): Int {

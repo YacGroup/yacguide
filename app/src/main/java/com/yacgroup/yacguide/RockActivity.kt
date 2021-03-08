@@ -78,26 +78,31 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
     }
 
     override fun showComments(v: View) {
-        val dialog = prepareCommentDialog()
-
-        val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
         val comments = db.getSectorComments(_sector.id)
-        for (comment in comments) {
-            val qualityId = comment.qualityId
-            val text = comment.text
+        if (comments.isNotEmpty()) {
+            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
+                for ((idx, comment) in comments.withIndex()) {
+                    val qualityId = comment.qualityId
+                    val text = comment.text
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5))
-            if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.relevance),
-                        textRight = SectorComment.QUALITY_MAP[qualityId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
+                    if (idx > 0) {
+                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
+                    }
+                    if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.relevance),
+                                textRight = SectorComment.QUALITY_MAP[qualityId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
+                    it.addView(WidgetUtils.createCommonRowLayout(this,
+                            textLeft = text.orEmpty(),
+                            textSizeDp = WidgetUtils.textFontSizeDp,
+                            typeface = Typeface.NORMAL))
+                }
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = text.orEmpty(),
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    typeface = Typeface.NORMAL))
+        } else {
+            showNoCommentToast()
         }
     }
 
