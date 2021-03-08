@@ -62,48 +62,54 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun showComments(v: View) {
-        val dialog = prepareCommentDialog()
-
-        val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
         val comments = _route?.let { db.getRouteComments(it.id) } ?: emptyList()
-        for (comment in comments) {
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5))
-            if (RouteComment.QUALITY_MAP.containsKey(comment.qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.route_quality),
-                        textRight = RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
-            }
-            if (RouteComment.GRADE_MAP.containsKey(comment.gradeId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.grade),
-                        textRight = RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
-            }
-            if (RouteComment.SECURITY_MAP.containsKey(comment.securityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.protection),
-                        textRight = RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
-            }
-            if (RouteComment.WETNESS_MAP.containsKey(comment.wetnessId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.drying),
-                        textRight = RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
-            }
+        if (comments.isNotEmpty()) {
+            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let { it ->
+                for ((idx, comment) in comments.withIndex()) {
+                    if (idx > 0) {
+                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
+                    }
+                    if (RouteComment.QUALITY_MAP.containsKey(comment.qualityId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.route_quality),
+                                textRight = RouteComment.QUALITY_MAP[comment.qualityId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
+                    if (RouteComment.GRADE_MAP.containsKey(comment.gradeId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.grade),
+                                textRight = RouteComment.GRADE_MAP[comment.gradeId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
+                    if (RouteComment.SECURITY_MAP.containsKey(comment.securityId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.protection),
+                                textRight = RouteComment.SECURITY_MAP[comment.securityId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
+                    if (RouteComment.WETNESS_MAP.containsKey(comment.wetnessId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.drying),
+                                textRight = RouteComment.WETNESS_MAP[comment.wetnessId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
 
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = comment.text.orEmpty(),
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    typeface = Typeface.NORMAL))
+                    it.addView(WidgetUtils.createCommonRowLayout(this,
+                            textLeft = comment.text.orEmpty(),
+                            textSizeDp = WidgetUtils.textFontSizeDp,
+                            typeface = Typeface.NORMAL))
+                }
+            }
+        } else {
+            showNoCommentToast()
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun enterAscend(v: View) {
         _route?.let {
             val intent = Intent(this@DescriptionActivity, AscendActivity::class.java)
@@ -113,6 +119,7 @@ class DescriptionActivity : TableActivity() {
 
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun goToAscends(v: View) {
         _route?.let {
             val intent = Intent(this@DescriptionActivity, TourbookAscendActivity::class.java)

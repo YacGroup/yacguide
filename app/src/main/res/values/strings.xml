@@ -26,6 +26,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="search">Suchen</string>
+    <string name="comments">Kommentare</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
@@ -83,6 +84,7 @@
     <string name="no_email_app_available">Keine Email-App verfügbar</string>
     <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
+    <string name="no_comment_available">Kein Kommentar vorhanden.</string>
 
     <!-- Data -->
     <string name="region">Teilgebiet</string>

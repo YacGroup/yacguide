@@ -51,25 +51,30 @@ class SectorActivity : UpdatableTableActivity() {
     }
 
     override fun showComments(v: View) {
-        val dialog = prepareCommentDialog()
-
-        val layout = dialog.findViewById<View>(R.id.commentLayout) as LinearLayout
         val comments = db.getRegionComments(_region.id)
-        for (comment in comments) {
-            val qualityId = comment.qualityId
+        if (comments.isNotEmpty()) {
+            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
+                for ((idx, comment) in comments.withIndex()) {
+                    val qualityId = comment.qualityId
 
-            layout.addView(WidgetUtils.createHorizontalLine(this, 5))
-            if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = getString(R.string.relevance),
-                        textRight = RegionComment.QUALITY_MAP[qualityId].orEmpty(),
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        typeface = Typeface.NORMAL))
+                    if (idx > 0) {
+                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
+                    }
+                    if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
+                        it.addView(WidgetUtils.createCommonRowLayout(this,
+                                textLeft = getString(R.string.relevance),
+                                textRight = RegionComment.QUALITY_MAP[qualityId].orEmpty(),
+                                textSizeDp = WidgetUtils.textFontSizeDp,
+                                typeface = Typeface.NORMAL))
+                    }
+                    it.addView(WidgetUtils.createCommonRowLayout(this,
+                            textLeft = comment.text.orEmpty(),
+                            textSizeDp = WidgetUtils.textFontSizeDp,
+                            typeface = Typeface.NORMAL))
+                }
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = comment.text.orEmpty(),
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    typeface = Typeface.NORMAL))
+        } else {
+            showNoCommentToast()
         }
     }
 
