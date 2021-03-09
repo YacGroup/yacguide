@@ -32,65 +32,51 @@ import com.yacgroup.yacguide.R
 
 class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
 
-    private var _sdkVersion: Int = android.os.Build.VERSION.SDK_INT
-    private var _androidRelease: String = android.os.Build.VERSION.RELEASE
+    private val _sdkVersion: Int = android.os.Build.VERSION.SDK_INT
+    private val _androidRelease: String = android.os.Build.VERSION.RELEASE
 
+    /*
+     * Send an email, if an tour book import error occurs.
+     */
     fun reportImportError(errMsg: String, jsonFile: Uri) {
-        val subject = "Fehler beim Tourenbuch-Import"
-
-        val body = """
-            |Hallo YacGuide Team,
-            |
-            |Bei mir tritt der folgende Fehler beim Import des angehängten Tourenbuchs auf:
-            |
-            |
-            |App Version: $appVersion
-            |Android SDK: $_sdkVersion ($_androidRelease)
-            |
-            |Grüße
-            |""".trimMargin()
-        val logFileDir = File(activity.cacheDir, "logfiles").apply {
-            mkdirs()
-        }
-        try {
-            val calendar = Calendar.getInstance()
-            val timestamp = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss",
-                    Locale.GERMAN).format(calendar.time)
-            val logFile = File(logFileDir, "import_error.$timestamp.log")
-            FileOutputStream(logFile).use {
-                it.write(errMsg.toByteArray(Charsets.UTF_8))
-            }
-            /* We have to use the content provider at this point because otherwise apps cannot
-             * access the internal app directories.
-             */
-            val logFileContentUri = getUriForFile(
-                    activity,
-                    "com.yacgroup.yacguide.fileprovider",
-                    logFile)
-            _sendEmail(subject, body, arrayListOf(logFileContentUri, jsonFile))
-        } catch (e: Exception) {
-            Toast.makeText(activity, activity.getString(R.string.cannot_create_logfile),
-                    Toast.LENGTH_LONG).show()
+        _errMsgToUri(errMsg, "import_error")?.let { logFile ->
+            _sendBugReport(
+                    "Fehler beim Tourenbuch-Import",
+                    "Bei mir tritt ein Fehler beim Import des angehängten Tourenbuchs auf.",
+                    arrayListOf(logFile, jsonFile)
+            )
         }
     }
 
-    fun reportBug() {
-        val subject = "[Fehler] ..."
-        val body = """
-            |Hallo YacGuide Team,
-            |
-            |Bitte den Fehler hier so genau wie möglich beschreiben.
-            |
-            |App Version: $appVersion
-            |Android SDK: $_sdkVersion ($_androidRelease)
-            |
-            |Grüße
-            |""".trimMargin()
-        _sendEmail(subject, body)
+    /*
+     * Send a general bug report.
+     */
+    fun sendBugReport() {
+        _sendBugReport(
+                "Fehler ...",
+                "Bitte den Fehler hier so genau wie möglich beschreiben."
+        )
     }
 
+    /*
+     * Send a general feedback email.
+     */
     fun sendFeedback() {
         _sendEmail()
+    }
+
+    private fun _sendBugReport(subject: String, bugDescr: String,
+                               attachments: ArrayList<Uri>? = null) {
+        val emailBody = """
+            |Hallo YacGuide Team,
+            |
+            |$bugDescr
+            |
+            |App Version: $appVersion
+            |Android SDK: $_sdkVersion ($_androidRelease)
+            |
+            |Grüße""".trimMargin()
+        _sendEmail(subject, emailBody, attachments)
     }
 
     private fun _sendEmail(subject: String? = null, body: String? = null,
@@ -110,5 +96,35 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         } else {
             Toast.makeText(activity, R.string.no_email_app_available, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    /*
+     * Save error message to a file with the given prefix and return URI to this file.
+     */
+    private fun _errMsgToUri(errMsg: String, fileNamePrfx: String): Uri? {
+        val logFileDir = File(activity.cacheDir, "logfiles").apply {
+            mkdirs()
+        }
+        var fileUri: Uri? = null
+        try {
+            val calendar = Calendar.getInstance()
+            val timestamp = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss",
+                    Locale.GERMAN).format(calendar.time)
+            val logFile = File(logFileDir, "$fileNamePrfx.$timestamp.log")
+            FileOutputStream(logFile).use {
+                it.write(errMsg.toByteArray(Charsets.UTF_8))
+            }
+            /* We have to use the content provider at this point because otherwise apps cannot
+             * access the internal app directories.
+             */
+            fileUri = getUriForFile(
+                    activity,
+                    "com.yacgroup.yacguide.fileprovider",
+                    logFile)
+        } catch (e: Exception) {
+            Toast.makeText(activity, activity.getString(R.string.cannot_create_logfile),
+                    Toast.LENGTH_LONG).show()
+        }
+        return fileUri
     }
 }

@@ -57,7 +57,7 @@
     <string name="license">Lizenz</string>
     <string name="version">Version</string>
     <string name="contact">Kontakt</string>
-    <string name="contact_details">"Generelles Feedback und Fehler melden"</string>
+    <string name="contact_details">Generelles Feedback und Fehler melden</string>
     <string name="contact_concern">Was ist dein Anliegen?</string>
 
     <!-- Dialogs -->
@@ -163,7 +163,7 @@
     <!-- IMPORTANT: This list must be in sync with the code in the AboutActivity class. -->
     <string-array name="contactConcerns">
         <item>Allgemeines Anliegen</item>
-        <item>Fehler melden</item>
+        <item>@string/report_error</item>
     </string-array>
 
     <!-- What's New dialog -->

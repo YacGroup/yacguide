@@ -20,7 +20,7 @@ package com.yacgroup.yacguide.utils
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 
-open class ActivityUtils(var activity: AppCompatActivity) {
+open class ActivityUtils(protected val activity: AppCompatActivity) {
 
     val appVersion: String
         get() = _getAppVersion()

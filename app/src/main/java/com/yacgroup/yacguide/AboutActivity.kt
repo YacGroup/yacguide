@@ -81,13 +81,13 @@ class AboutActivity : BaseNavigationActivity() {
     }
 
     private fun _selectContactConcern() {
-        val sendFeedback = ContactUtils(this)
+        val contactInterface = ContactUtils(this)
         val dialog = AlertDialog.Builder(this).apply {
             setTitle(getString(R.string.contact_concern))
             setItems(R.array.contactConcerns) { _, which ->
                 when (which) {
-                    0 -> sendFeedback.sendFeedback()
-                    1 -> sendFeedback.reportBug()
+                    0 -> contactInterface.sendFeedback()
+                    1 -> contactInterface.sendBugReport()
                 }
             }
             setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
