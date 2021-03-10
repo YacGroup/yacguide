@@ -34,10 +34,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.utils.AscendStyle
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.utils.*
 
 import org.json.JSONException
 
@@ -133,11 +130,11 @@ class TourbookActivity : BaseNavigationActivity() {
                 } catch (e: JSONException) {
                     // Show only the first part of the detailed error message because
                     // the whole JSON string is contained.
-                    _showImportError(e.message.toString(), 200)
+                    _showImportError(e.message.toString(), uri, 200)
                 } catch (e: IOException) {
                     // Show the full message because at the moment it is not clear
                     // how the message looks like.
-                    _showImportError(e.message.toString())
+                    _showImportError(e.message.toString(), uri)
                 }
                 _initYears()
             }
@@ -146,7 +143,8 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     // Show dialog with given message. Optionally, limit the number of characters to show.
-    private fun _showImportError(errMsg: String, maxCharsShow: Int? = null) {
+    private fun _showImportError(errMsg: String, jsonFile: Uri, maxCharsShow: Int? = null) {
+        val contactUtils = ContactUtils(this)
         val dialog = AlertDialog.Builder(this).apply {
             setTitle(R.string.tourbook_import_error)
             if (maxCharsShow == null) {
@@ -156,6 +154,9 @@ class TourbookActivity : BaseNavigationActivity() {
                         + if (errMsg.length > maxCharsShow) " ..." else "")
             }
             setIcon(android.R.drawable.ic_dialog_alert)
+            setNeutralButton(getString(R.string.report_error)) {_, _ ->
+                contactUtils.reportImportError(errMsg, jsonFile)
+            }
             setPositiveButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
         }
         dialog.show()

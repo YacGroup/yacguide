@@ -19,13 +19,15 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.URLUtil
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.yacgroup.yacguide.utils.ActivityUtils
+import com.yacgroup.yacguide.utils.ContactUtils
 
 class AboutActivity : BaseNavigationActivity() {
 
@@ -43,9 +45,9 @@ class AboutActivity : BaseNavigationActivity() {
         _createEntry(getString(R.string.license), getString(R.string.license_url))
         _createEntry(getString(R.string.whats_new),
                 callback = { WhatsNewInfo(this).showDialog() })
-        _createEntry(getString(R.string.contact), getString(R.string.contact_email_address),
-                callback = { _openEmailIntent() })
-        _createEntry(getString(R.string.version), _getAppVersion())
+        _createEntry(getString(R.string.contact), getString(R.string.contact_details),
+                callback = { _selectContactConcern() })
+        _createEntry(getString(R.string.version), ActivityUtils(this).appVersion)
     }
 
     private fun _createEntry(
@@ -59,17 +61,6 @@ class AboutActivity : BaseNavigationActivity() {
             it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
             contentAbout.addView(it)
         }
-    }
-
-    private fun _getAppVersion(): String {
-        try {
-            val pkgManager = this.packageManager
-            val pkgInfo = pkgManager.getPackageInfo(this.packageName, 0)
-            return pkgInfo.versionName
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
-        return "0.0"
     }
 
     private fun _showPrivacyPolicy() {
@@ -89,16 +80,18 @@ class AboutActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun _openEmailIntent() {
-        val emailIndent = Intent().apply {
-            action = Intent.ACTION_SEND
-            type = "plain/text"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.contact_email_address)))
+    private fun _selectContactConcern() {
+        val contactInterface = ContactUtils(this)
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(getString(R.string.contact_concern))
+            setItems(R.array.contactConcerns) { _, which ->
+                when (which) {
+                    0 -> contactInterface.sendFeedback()
+                    1 -> contactInterface.sendBugReport()
+                }
+            }
+            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
         }
-        if (emailIndent.resolveActivity(packageManager) != null) {
-            startActivity(emailIndent)
-        } else {
-            Toast.makeText(this, R.string.no_email_app_available, Toast.LENGTH_SHORT).show()
-        }
+        dialog.show()
     }
 }
