@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.triplet.play' version '2.7.5'
+    id 'com.github.triplet.play' version '3.3.0'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -26,9 +26,9 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 play {
-    serviceAccountCredentials = rootProject.file(keystoreProperties['playServicesFile'])
+    serviceAccountCredentials.set(rootProject.file(keystoreProperties['playServicesFile']))
     // This disables GPP by default.
-    enabled = false
+    enabled.set(false)
 }
 
 android {
@@ -79,12 +79,12 @@ android {
     }
     playConfigs {
         stable {
-            track = "production"
-            enabled = true
+            track.set("production")
+            enabled.set(true)
         }
         dev {
-            track = "beta"
-            enabled = true
+            track.set("beta")
+            enabled.set(true)
         }
     }
 }
