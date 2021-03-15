@@ -94,20 +94,18 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         val appList = activity.packageManager.queryIntentActivities(
                 possibleEmailIntents, PackageManager.MATCH_DEFAULT_ONLY)
         if (appList.isNotEmpty()) {
-            val finalIntent: Intent
             // Create a list of all target intents
             // but initialize them with our email intent.
-            val targetIntents: ArrayList<Intent> = arrayListOf()
-            appList.forEach {
+            val targetIntents = appList.map {
                 it?.let {
                     val packageName = it.activityInfo.packageName
-                    val targetIntent = _getEmailIntent(subject, body, attachments)
-                    targetIntent.component = ComponentName(packageName, it.activityInfo.name)
-                    targetIntent.setPackage(packageName)
-                    targetIntents.add(targetIntent)
+                    _getEmailIntent(subject, body, attachments).apply {
+                        component = ComponentName(packageName, it.activityInfo.name)
+                        setPackage(packageName)
+                    }
                 }
-            }
-            finalIntent = if (targetIntents.isNotEmpty()) {
+            }.toMutableList()
+            val finalIntent = if (targetIntents.isNotEmpty()) {
                 // Prepare an intent chooser with the first item in the list and add all other apps
                 // as alternatives.
                 val startIntent = targetIntents.removeFirst()
