@@ -119,7 +119,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
              */
             fileUri = getUriForFile(
                     activity,
-                    "com.yacgroup.yacguide.fileprovider",
+                    activity.packageName.plus(".fileprovider"),
                     logFile)
         } catch (e: Exception) {
             Toast.makeText(activity, activity.getString(R.string.cannot_create_logfile),
