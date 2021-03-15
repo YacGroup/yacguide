@@ -17,7 +17,9 @@
 
 package com.yacgroup.yacguide.utils
 
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +64,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
      * Send a general feedback email.
      */
     fun sendFeedback() {
-        _sendEmail()
+        _openEmailIntent()
     }
 
     private fun _sendBugReport(subject: String, bugDescr: String,
@@ -76,12 +78,58 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
             |Android SDK: $_sdkVersion ($_androidRelease)
             |
             |Grüße""".trimMargin()
-        _sendEmail(subject, emailBody, attachments)
+        _openEmailIntent(subject, emailBody, attachments)
     }
 
-    private fun _sendEmail(subject: String? = null, body: String? = null,
-                           attachments: ArrayList<Uri>? = null ) {
-        val emailIndent = Intent().apply {
+    /*
+     * Create a custom chooser because there will be a lot of "useless" app answers
+     * for for action = Intent.ACTION_SEND_MULTIPLE.
+     */
+    private fun _openEmailIntent(subject: String? = null, body: String? = null,
+                                 attachments: ArrayList<Uri>? = null) {
+        // Find all apps that can handle emails
+        val possibleEmailIntents = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+        }
+        val appList = activity.packageManager.queryIntentActivities(
+                possibleEmailIntents, PackageManager.MATCH_DEFAULT_ONLY)
+        if (appList.isNotEmpty()) {
+            // Create a list of all target intents
+            // but initialize them with our email intent.
+            val targetIntents = appList.map {
+                it?.let {
+                    val packageName = it.activityInfo.packageName
+                    _getEmailIntent(subject, body, attachments).apply {
+                        component = ComponentName(packageName, it.activityInfo.name)
+                        setPackage(packageName)
+                    }
+                }
+            }.toMutableList()
+            val finalIntent = if (targetIntents.isNotEmpty()) {
+                // Prepare an intent chooser with the first item in the list and add all other apps
+                // as alternatives.
+                val startIntent = targetIntents.removeFirst()
+                Intent.createChooser(
+                        startIntent,
+                        activity.getString(R.string.choose_email_app)).apply {
+                    putExtra(Intent.EXTRA_INITIAL_INTENTS, targetIntents.toTypedArray())
+                }
+            } else {
+                // If everything above fails
+                _getEmailIntent(subject, body, attachments)
+            }
+            activity.startActivity(finalIntent)
+        } else {
+            Toast.makeText(activity, R.string.no_email_app_available, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /*
+     * Create our email intent
+     */
+    private fun _getEmailIntent(subject: String? = null, body: String? = null,
+                                attachments: ArrayList<Uri>? = null): Intent {
+        return Intent().apply {
             action = Intent.ACTION_SEND_MULTIPLE
             type = "text/plain"
             putExtra(Intent.EXTRA_EMAIL, arrayOf(activity.getString(R.string.contact_email_address)))
@@ -90,11 +138,6 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
             // Grant temporary access to the internal directories specified by the content provider.
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             putParcelableArrayListExtra(Intent.EXTRA_STREAM, attachments)
-        }
-        if (emailIndent.resolveActivity(activity.packageManager) != null) {
-            activity.startActivity(emailIndent)
-        } else {
-            Toast.makeText(activity, R.string.no_email_app_available, Toast.LENGTH_SHORT).show()
         }
     }
 

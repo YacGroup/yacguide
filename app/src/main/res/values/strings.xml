@@ -59,6 +59,7 @@
     <string name="contact">Kontakt</string>
     <string name="contact_details">Generelles Feedback und Fehler melden</string>
     <string name="contact_concern">Was ist dein Anliegen?</string>
+    <string name="choose_email_app">Wähle eine Email-App.</string>
 
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
