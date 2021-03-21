@@ -159,6 +159,7 @@
         <item>Alle Felsen</item>
         <item>Offizielle Gipfel</item>
         <item>Projektierte Felsen \u2117</item>
+        <item>Gesackte Felsen \u26A1</item>
     </string-array>
 
     <!-- IMPORTANT: This list must be in sync with the code in the AboutActivity class. -->

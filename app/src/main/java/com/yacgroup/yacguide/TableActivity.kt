@@ -35,12 +35,14 @@ abstract class TableActivity : BaseNavigationActivity() {
     protected enum class ElementFilter {
         eNone,
         eOfficial,
-        eProject
+        eProject,
+        eBotch
     }
     protected val filterMap = mapOf(
         0 to ElementFilter.eNone,
         1 to ElementFilter.eOfficial,
-        2 to ElementFilter.eProject
+        2 to ElementFilter.eProject,
+        3 to ElementFilter.eBotch
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
