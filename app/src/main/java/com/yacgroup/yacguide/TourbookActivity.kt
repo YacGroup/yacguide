@@ -116,15 +116,16 @@ class TourbookActivity : BaseNavigationActivity() {
         }.create()
         // we need to call show() before findViewById can be used.
         dialog.show()
-        val yearPicker = dialog.findViewById<NumberPicker>(R.id.yearPicker)!!
-        yearPicker.minValue = 0
-        yearPicker.maxValue = _availableYears.size - 1
-        yearPicker.displayedValues = _availableYears.map { if (it == 0) getString(R.string.undefined) else it.toString() }.toTypedArray()
-        yearPicker.value = _availableYears.indexOf(_currentYear)
-        yearPicker.setOnClickListener {
-            _currentYear = _availableYears[yearPicker.value]
-            _displayContent()
-            dialog.dismiss()
+        dialog.findViewById<NumberPicker>(R.id.yearPicker)?.apply {
+            minValue = 0
+            maxValue = _availableYears.size - 1
+            displayedValues = _availableYears.map { if (it == 0) getString(R.string.undefined) else it.toString() }.toTypedArray()
+            value = _availableYears.indexOf(_currentYear)
+            setOnClickListener {
+                _currentYear = _availableYears[value]
+                _displayContent()
+                dialog.dismiss()
+            }
         }
     }
 
@@ -236,7 +237,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        (findViewById<View>(R.id.currentTextView) as TextView).text = if (_currentYear == 0) getString(R.string.undefined) else _currentYear.toString()
+        (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
 
         var currentMonth = -1
         var currentDay = -1
