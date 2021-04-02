@@ -349,6 +349,6 @@ class TourbookActivity : BaseNavigationActivity() {
         }
         Arrays.sort(_availableYears)
 
-        return _availableYears.last()
+        return if (_availableYears.isEmpty()) 0 else _availableYears.last()
     }
 }
