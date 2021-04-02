@@ -114,6 +114,7 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         val rocks = when (_rockFilter) {
             ElementFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
             ElementFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
+            ElementFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
             else -> db.getRocksForSector(_sector.id)
         }
         for (rock in rocks) {

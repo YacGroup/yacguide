@@ -60,6 +60,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getProjectedRocksForSector(sectorId: Int) = _db.rockDao().getAllForStyle(sectorId, AscendStyle.ePROJECT.id)
 
+    fun getBotchedRocksForSector(sectorId: Int) = _db.rockDao().getAllForStyle(sectorId, AscendStyle.eBOTCHED.id)
+
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
 
     fun getRocksForCountry(countryName: String) = _db.rockDao().getAllInCountry(countryName)
