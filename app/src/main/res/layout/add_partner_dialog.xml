@@ -16,40 +16,17 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
     <EditText
         android:id="@+id/addPartnerEditText"
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="Name"/>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <Button
-            android:id="@+id/okButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/ok"/>
-
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/cancel"/>
-
-    </LinearLayout>
+        android:layout_marginVertical="@dimen/activity_vertical_margin"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:hint="@string/name"/>
 
 </LinearLayout>
