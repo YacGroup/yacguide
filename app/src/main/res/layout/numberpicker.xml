@@ -21,11 +21,11 @@
     android:layout_width="match_parent"
     android:gravity="center">
 
-<NumberPicker
-    android:id="@+id/yearPicker"
-    android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
-    android:descendantFocusability="blocksDescendants"/>
+    <NumberPicker
+        android:id="@+id/yearPicker"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:descendantFocusability="blocksDescendants"/>
 
 </LinearLayout>
 
