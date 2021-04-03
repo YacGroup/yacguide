@@ -30,6 +30,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 
@@ -82,12 +83,18 @@ class TourbookActivity : BaseNavigationActivity() {
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
-        _initYears()
+        _currentYear = _initYears()
+        _displayContent()
     }
 
     override fun onResume() {
         super.onResume()
-        _initYears(resetCurrentYear = false)
+        val mostRecentYear = _initYears()
+        if (!_availableYears.contains(_currentYear)) {
+            // This happens if the current year's only ascend has been removed
+            _currentYear = mostRecentYear
+        }
+        _displayContent()
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -97,6 +104,27 @@ class TourbookActivity : BaseNavigationActivity() {
             when (requestCode) {
                 IntentConstants.REQUEST_OPEN_TOURBOOK -> data?.data?.also { uri -> _import(uri) }
                 IntentConstants.REQUEST_SAVE_TOURBOOK -> data?.data?.also { uri -> _export(uri) }
+            }
+        }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun chooseYear(v: View) {
+        val dialog = AlertDialog.Builder(this).apply {
+            setTitle(R.string.select_year)
+            setView(R.layout.numberpicker)
+        }.create()
+        // we need to call show() before findViewById can be used.
+        dialog.show()
+        dialog.findViewById<NumberPicker>(R.id.yearPicker)?.apply {
+            minValue = 0
+            maxValue = _availableYears.size - 1
+            displayedValues = _availableYears.map { if (it == 0) getString(R.string.undefined) else it.toString() }.toTypedArray()
+            value = _availableYears.indexOf(_currentYear)
+            setOnClickListener {
+                _currentYear = _availableYears[value]
+                _displayContent()
+                dialog.dismiss()
             }
         }
     }
@@ -136,7 +164,8 @@ class TourbookActivity : BaseNavigationActivity() {
                     // how the message looks like.
                     _showImportError(e.message.toString(), uri)
                 }
-                _initYears()
+                _currentYear = _initYears()
+                _displayContent()
             }
         }
         confirmDialog.show()
@@ -177,21 +206,24 @@ class TourbookActivity : BaseNavigationActivity() {
     fun showAscends(v: View) {
         setTitle(R.string.ascends)
         _tourbookType = TourbookType.eAscends
-        _initYears()
+        _currentYear = _initYears()
+        _displayContent()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun showBotches(v: View) {
         setTitle(R.string.botch_text_symbol)
         _tourbookType = TourbookType.eBotches
-        _initYears()
+        _currentYear = _initYears()
+        _displayContent()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun showProjects(v: View) {
         setTitle(R.string.project_text_symbol)
         _tourbookType = TourbookType.eProjects
-        _initYears()
+        _currentYear = _initYears()
+        _displayContent()
     }
 
     private fun _displayContent() {
@@ -205,7 +237,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        (findViewById<View>(R.id.currentTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
+        (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
 
         var currentMonth = -1
         var currentDay = -1
@@ -240,7 +272,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
                 layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = "$day.$month.$_currentYear",
+                        textLeft = if (_currentYear == 0) "" else "$day.$month.$_currentYear",
                         textRight = region.name.orEmpty(),
                         textSizeDp = WidgetUtils.infoFontSizeDp,
                         bgColor = WidgetUtils.tourHeaderColor))
@@ -309,17 +341,14 @@ class TourbookActivity : BaseNavigationActivity() {
         startActivityForResult(intent, IntentConstants.REQUEST_SAVE_TOURBOOK)
     }
 
-    private fun _initYears(resetCurrentYear: Boolean = true) {
+    private fun _initYears(): Int {
         _availableYears = when (_tourbookType) {
             TourbookType.eAscends -> _db.getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.getYearsOfStyle(AscendStyle.eBOTCHED.id)
             else -> _db.getYearsOfStyle(AscendStyle.ePROJECT.id)
         }
-
         Arrays.sort(_availableYears)
-        if (resetCurrentYear && _availableYears.isNotEmpty()) {
-            _currentYear = _availableYears.last()
-        }
-        _displayContent()
+
+        return if (_availableYears.isEmpty()) 0 else _availableYears.last()
     }
 }

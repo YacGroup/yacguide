@@ -36,12 +36,13 @@
         app:srcCompat="@drawable/ic_baseline_arrow_back_24"/>
 
     <TextView
-        android:id="@+id/currentTextView"
+        android:id="@+id/currentYearTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textStyle="bold"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:onClick="chooseYear"/>
 
     <ImageButton
         style="@style/AppTheme.Secondary.ImageButton"
