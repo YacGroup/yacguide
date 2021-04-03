@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.app.Activity
-import android.app.Dialog
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -32,7 +31,6 @@ import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
@@ -92,19 +90,7 @@ class PartnersActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun addPartner(v: View) {
-        val dialog = Dialog(this)
-        dialog.setTitle(R.string.dialog_text_add_partner)
-        dialog.setContentView(R.layout.add_partner_dialog)
-        val okButton = dialog.findViewById<Button>(R.id.okButton)
-        okButton.setOnClickListener {
-            val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
-            _updatePartner(dialog, newName, null)
-        }
-        val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
-        cancelButton.setOnClickListener { dialog.dismiss() }
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.setCancelable(false)
-        dialog.show()
+        _updatePartner(null, getString(R.string.dialog_text_add_partner))
     }
 
     private fun _saveAndLeave() {
@@ -160,19 +146,7 @@ class PartnersActivity : AppCompatActivity() {
             editButton.id = View.generateViewId()
             editButton.setImageResource(android.R.drawable.ic_menu_edit)
             editButton.setOnClickListener {
-                val dialog = Dialog(this@PartnersActivity)
-                dialog.setContentView(R.layout.add_partner_dialog)
-                dialog.findViewById<EditText>(R.id.addPartnerEditText).setText(partnerName)
-                val okButton = dialog.findViewById<Button>(R.id.okButton)
-                okButton.setOnClickListener {
-                    val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText).text.toString().trim { it <= ' ' }
-                    _updatePartner(dialog, newName, partner)
-                }
-                val cancelButton = dialog.findViewById<Button>(R.id.cancelButton)
-                cancelButton.setOnClickListener { dialog.dismiss() }
-                dialog.setCanceledOnTouchOutside(false)
-                dialog.setCancelable(false)
-                dialog.show()
+                _updatePartner(partner, getString(R.string.dialog_text_change_partner))
             }
             innerLayout.addView(editButton)
 
@@ -201,31 +175,59 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _deletePartner(partner: Partner) {
-        val dialog = AlertDialog.Builder(this).apply {
+        val builder = AlertDialog.Builder(this).apply {
             setTitle(R.string.dialog_text_delete_partner)
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setCancelable(false)
+            setNegativeButton(R.string.cancel, null)
             setPositiveButton(R.string.ok) { _, _ ->
                 _db.deletePartner(partner)
                 _displayContent()
             }
         }
-        dialog.show()
+        builder.show()
     }
 
-    private fun _updatePartner(dialog: Dialog, newName: String, partner: Partner?) {
-        when {
-            newName == "" ->
-                Toast.makeText(dialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
-            _db.getPartnerId(newName) > 0 ->
-                Toast.makeText(dialog.context, R.string.hint_name_already_used, Toast.LENGTH_SHORT).show()
-            else -> {
-                val updatedPartner = partner ?: Partner()
-                updatedPartner.name = newName
-                _db.addPartner(updatedPartner)
-                dialog.dismiss()
-                _displayContent()
+    private fun _updatePartner(partner: Partner?, dialogTitle: String) {
+        val view = layoutInflater.inflate(R.layout.add_partner_dialog, null).let { view ->
+            partner?.let {
+                view.findViewById<EditText>(R.id.addPartnerEditText).setText(it.name)
+            }
+            view
+        }
+        val builder = AlertDialog.Builder(this).apply {
+            setTitle(dialogTitle)
+            setView(view)
+            setCancelable(false)
+            setNegativeButton(R.string.cancel, null)
+            // Set to null. We override the onclick below.
+            setPositiveButton(R.string.ok, null)
+        }
+        // This solution prevents that the dialog is closed automatically,
+        // if the OK button is pressed even if no name is given or the name already exists.
+        val dialog = builder.create()
+        dialog.setOnShowListener {
+            val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            okButton.setOnClickListener{
+                val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText)
+                        ?.text.toString().trim { it <= ' ' }
+                when {
+                    newName == "" ->
+                        Toast.makeText(dialog.context, R.string.hint_no_name,
+                                Toast.LENGTH_SHORT).show()
+                    _db.getPartnerId(newName) > 0 ->
+                        Toast.makeText(dialog.context, R.string.hint_name_already_used,
+                                Toast.LENGTH_SHORT).show()
+                    else -> {
+                        val updatedPartner = partner ?: Partner()
+                        updatedPartner.name = newName
+                        _db.addPartner(updatedPartner)
+                        dialog.dismiss()
+                        _displayContent()
+                    }
+                }
             }
         }
+        dialog.show()
     }
 }

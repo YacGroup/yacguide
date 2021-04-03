@@ -27,6 +27,7 @@
     <string name="no">Nein</string>
     <string name="search">Suchen</string>
     <string name="comments">Kommentare</string>
+    <string name="name">Name</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>
@@ -64,6 +65,7 @@
     <!-- Dialogs -->
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
+    <string name="dialog_text_change_partner">Kletterpartner ändern</string>
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>
