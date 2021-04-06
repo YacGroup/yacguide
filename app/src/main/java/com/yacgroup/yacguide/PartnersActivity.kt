@@ -44,13 +44,11 @@ import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 import java.util.ArrayList
-import java.util.HashMap
 
 class PartnersActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private var _checkboxMap: MutableMap<Int, CheckBox> = HashMap()
-    private lateinit var _selectedPartnerIds: List<Int>
+    private lateinit var _selectedPartnerIds: MutableList<Int>
     private var _partnerNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +56,8 @@ class PartnersActivity : AppCompatActivity() {
         setContentView(R.layout.activity_partners)
 
         _db = DatabaseWrapper(this)
-        _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS).orEmpty()
+        _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
+                .orEmpty().toMutableList()
 
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
@@ -94,23 +93,27 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _saveAndLeave() {
-        val selectedIds = ArrayList<Int>()
-        for ((key, cb) in _checkboxMap) {
-            if (cb.isChecked) {
-                selectedIds.add(key)
-            }
+        Intent().let {
+            it.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS,
+                    _selectedPartnerIds as ArrayList<Int>)
+            setResult(Activity.RESULT_OK, it)
         }
-        val resultIntent = Intent()
-        resultIntent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, selectedIds)
-        setResult(Activity.RESULT_OK, resultIntent)
         finish()
+    }
+
+    // Method is called, if the partner check box changes.
+    private fun _checkPartner(partnerId: Int, isChecked: Boolean) {
+        if (isChecked) {
+            _selectedPartnerIds.add(partnerId)
+        } else {
+            _selectedPartnerIds.remove(partnerId)
+        }
     }
 
     private fun _displayContent() {
         this.setTitle(R.string.title_climbing_partner)
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        _checkboxMap.clear()
 
         // We need to sort the partners according to the number of ascends you have done with them
         val ascendPartnerCount = SparseIntArray()
@@ -130,17 +133,19 @@ class PartnersActivity : AppCompatActivity() {
         }
 
         for (partner in sortedPartners) {
-            val partnerName = partner.name.orEmpty()
             val innerLayout = RelativeLayout(this)
             innerLayout.setBackgroundColor(Color.WHITE)
 
-            val checkBox = CheckBox(this)
-            checkBox.text = partnerName
-            if (_selectedPartnerIds.contains(partner.id)) {
-                checkBox.isChecked = true
+            CheckBox(this).let {
+                it.text = partner.name.orEmpty()
+                it.isChecked = _selectedPartnerIds.contains(partner.id)
+                // Associate partner ID to button ID for later identification.
+                it.id = partner.id
+                it.setOnCheckedChangeListener { buttonView, isChecked ->
+                    _checkPartner(buttonView.id, isChecked)
+                }
+                innerLayout.addView(it)
             }
-            _checkboxMap[partner.id] = checkBox
-            innerLayout.addView(checkBox)
 
             val editButton = ImageButton(this)
             editButton.id = View.generateViewId()
@@ -182,6 +187,7 @@ class PartnersActivity : AppCompatActivity() {
             setNegativeButton(R.string.cancel, null)
             setPositiveButton(R.string.ok) { _, _ ->
                 _db.deletePartner(partner)
+                _selectedPartnerIds.remove(partner.id)
                 _displayContent()
             }
         }
