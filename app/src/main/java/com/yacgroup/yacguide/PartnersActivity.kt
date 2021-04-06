@@ -147,32 +147,37 @@ class PartnersActivity : AppCompatActivity() {
                 innerLayout.addView(it)
             }
 
-            val editButton = ImageButton(this)
-            editButton.id = View.generateViewId()
-            editButton.setImageResource(android.R.drawable.ic_menu_edit)
-            editButton.setOnClickListener {
-                _updatePartner(partner, getString(R.string.dialog_text_change_partner))
+            val editButton = ImageButton(this).apply {
+                id = View.generateViewId()
+                setImageResource(android.R.drawable.ic_menu_edit)
+                setOnClickListener {
+                    _updatePartner(partner, getString(R.string.dialog_text_change_partner))
+                }
             }
             innerLayout.addView(editButton)
 
-            val deleteButton = ImageButton(this)
-            deleteButton.id = View.generateViewId()
-            deleteButton.setImageResource(android.R.drawable.ic_menu_delete)
-            deleteButton.setOnClickListener {
-                _deletePartner(partner)
+            val deleteButton = ImageButton(this).apply {
+                id = View.generateViewId()
+                setImageResource(android.R.drawable.ic_menu_delete)
+                setOnClickListener {
+                    _deletePartner(partner)
+                }
             }
             innerLayout.addView(deleteButton)
 
-            val buttonWidthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f, resources.displayMetrics).toInt()
-            val paramsDelete = deleteButton.layoutParams as RelativeLayout.LayoutParams
-            paramsDelete.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
-            paramsDelete.height = buttonWidthPx
-            paramsDelete.width = paramsDelete.height
+            val buttonWidthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f,
+                    resources.displayMetrics).toInt()
+            (deleteButton.layoutParams as RelativeLayout.LayoutParams).let {
+                it.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
+                it.height = buttonWidthPx
+                it.width = it.height
+            }
 
-            val paramsEdit = editButton.layoutParams as RelativeLayout.LayoutParams
-            paramsEdit.addRule(RelativeLayout.LEFT_OF, deleteButton.id)
-            paramsEdit.height = buttonWidthPx
-            paramsEdit.width = paramsEdit.height
+            (editButton.layoutParams as RelativeLayout.LayoutParams).let {
+                it.addRule(RelativeLayout.LEFT_OF, deleteButton.id)
+                it.height = buttonWidthPx
+                it.width = it.height
+            }
 
             layout.addView(innerLayout)
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
