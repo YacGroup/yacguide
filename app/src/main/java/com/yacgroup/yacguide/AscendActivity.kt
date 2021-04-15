@@ -58,7 +58,7 @@ class AscendActivity : AppCompatActivity() {
         _db = DatabaseWrapper(this)
 
         // The database query is different from null,
-        // if this activity is called from the TourbookActivity or TourbookAscendActivity.
+        // if this activity is called from the TourbookAscendActivity.
         _outdatedAscend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID))
         // The intent constant ROUTE_KEY is only available, if this activity is called from
         // the route DescriptionActivity.
