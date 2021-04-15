@@ -48,6 +48,7 @@ class AscendActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
+    private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,18 +58,23 @@ class AscendActivity : AppCompatActivity() {
         _db = DatabaseWrapper(this)
 
         // The database query is different from null,
-        // if this activity is called from the TourbookActivity or TourbookAscendActivity.
-        _ascend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID))
-                ?: Ascend().apply {
-                    partnerIds = ArrayList()
-                    notes = ""
-                }
+        // if this activity is called from the TourbookAscendActivity.
+        _outdatedAscend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID))
         // The intent constant ROUTE_KEY is only available, if this activity is called from
         // the route DescriptionActivity.
-        val routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
-        _route = _db.getRoute(routeId.takeUnless { it == DatabaseWrapper.INVALID_ID }
-                ?: _ascend.routeId)
+        _route = _db.getRoute(_outdatedAscend?.routeId
+                    ?: intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID))
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
+        _ascend = Ascend().apply {
+                    id = _outdatedAscend?.id ?: 0
+                    routeId = _outdatedAscend?.routeId ?: _route!!.id
+                    styleId = _outdatedAscend?.styleId ?: 0
+                    year = _outdatedAscend?.year ?: 0
+                    month = _outdatedAscend?.month ?: 0
+                    day = _outdatedAscend?.day ?: 0
+                    partnerIds = _outdatedAscend?.partnerIds ?: ArrayList()
+                    notes = _outdatedAscend?.notes ?: ""
+                }
 
         findViewById<EditText>(R.id.notesEditText).let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
@@ -97,11 +103,7 @@ class AscendActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun enter(v: View) {
-        _ascend.routeId = _route?.id ?: _ascend.routeId
-        // For new ascends id == 0!
-        if (_ascend.id != 0) {
-            _db.deleteAscend(_ascend)
-        }
+        _outdatedAscend?.let { _db.deleteAscend(it) }
         _db.addAscend(_ascend)
         val resultIntent = Intent()
         setResult(IntentConstants.RESULT_UPDATED, resultIntent)
