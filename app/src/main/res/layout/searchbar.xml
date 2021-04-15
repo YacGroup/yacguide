@@ -23,7 +23,9 @@
     android:id="@+id/baseLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorSecondaryLight">
+    android:background="@color/colorSecondaryLight"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <FrameLayout
         android:layout_width="wrap_content"
