@@ -129,7 +129,7 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility = if (_route!!.ascendsBitMask > 0) View.VISIBLE else View.INVISIBLE
+        findViewById<View>(R.id.ascendsButton).visibility = if (_route!!.ascendsBitMask != 0) View.VISIBLE else View.INVISIBLE
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()

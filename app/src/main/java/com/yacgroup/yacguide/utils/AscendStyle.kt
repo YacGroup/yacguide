@@ -24,6 +24,7 @@ import java.util.TreeSet
 enum class AscendStyle (val id: Int, val styleName: String) {
 
     // This needs to be in sync with sandsteinklettern.de!
+    eUNKNOWN(0, "Unbekannt"),
     eSOLO(1, "Solo"),
     eONSIGHT(2, "Onsight"),
     eREDPOINT(3, "Rotpunkt"),
