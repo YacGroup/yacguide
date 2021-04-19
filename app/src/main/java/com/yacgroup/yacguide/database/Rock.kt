@@ -34,7 +34,8 @@ class Rock {
     var latitude: Float = 0f
     var ascendsBitMask: Int = 0 // a 13bit number for 13 ascend styles.
                                 // Bit index == (style id - 1).
-                                // Bit value == 1 if rock has been ascended with this style
+                                // Bit value == 1 if rock has been ascended with this style.
+                                // Note: styleId == 0 ("Unknown") corresponds to mask 0b10000...0 = -IntMax.
     var parentId: Int = 0
 
     companion object {

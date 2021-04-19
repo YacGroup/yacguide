@@ -54,9 +54,7 @@ class DescriptionActivity : TableActivity() {
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             _route = db.getRoute(_route!!.id) // update route instance
-
-            val ascendsButton = findViewById<ImageButton>(R.id.ascendsButton)
-            ascendsButton.visibility = if (_route!!.ascendsBitMask > 0) View.VISIBLE else View.INVISIBLE
+            displayContent()
             Toast.makeText(this, R.string.ascends_refreshed, Toast.LENGTH_SHORT).show()
         }
     }
