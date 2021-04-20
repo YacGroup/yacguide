@@ -185,11 +185,10 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _deletePartner(partner: Partner) {
-        val builder = AlertDialog.Builder(this).apply {
+        val builder = DialogWidgetBuilder(this).apply {
             setTitle(R.string.dialog_text_delete_partner)
             setIcon(android.R.drawable.ic_dialog_alert)
-            setCancelable(false)
-            setNegativeButton(R.string.cancel, null)
+            setNegativeButton()
             setPositiveButton(R.string.ok) { _, _ ->
                 _db.deletePartner(partner)
                 _selectedPartnerIds.remove(partner.id)
@@ -206,11 +205,10 @@ class PartnersActivity : AppCompatActivity() {
             }
             view
         }
-        val builder = AlertDialog.Builder(this).apply {
+        val builder = DialogWidgetBuilder(this).apply {
             setTitle(dialogTitle)
             setView(view)
-            setCancelable(false)
-            setNegativeButton(R.string.cancel, null)
+            setNegativeButton()
             // Set to null. We override the onclick below.
             setPositiveButton(R.string.ok, null)
         }

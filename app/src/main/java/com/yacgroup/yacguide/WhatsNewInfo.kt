@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide
 
-import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
@@ -86,7 +85,7 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     fun showDialog() {
         _numReleaseNotesShow = 1
         _activity.let {
-            val builder = AlertDialog.Builder(it)
+            val builder = DialogWidgetBuilder(it)
             val inflater = it.layoutInflater
             // Pass null as the parent view because its going in the dialog layout.
             _view = inflater.inflate(R.layout.whats_new, null)

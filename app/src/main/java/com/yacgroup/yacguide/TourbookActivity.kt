@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -110,7 +109,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun chooseYear(v: View) {
-        val dialog = AlertDialog.Builder(this).apply {
+        val dialog = DialogWidgetBuilder(this).apply {
             setTitle(R.string.select_year)
             setView(R.layout.numberpicker)
         }.create()
@@ -142,11 +141,11 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _import(uri: Uri) {
-        val confirmDialog = AlertDialog.Builder(this).apply {
+        val confirmDialog = DialogWidgetBuilder(this).apply {
             setTitle(R.string.warning)
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setNegativeButton()
             setPositiveButton(R.string.ok) { _, _ ->
                 try {
                     TourbookExporter(_db, contentResolver).importTourbook(uri)
@@ -174,7 +173,7 @@ class TourbookActivity : BaseNavigationActivity() {
     // Show dialog with given message. Optionally, limit the number of characters to show.
     private fun _showImportError(errMsg: String, jsonFile: Uri, maxCharsShow: Int? = null) {
         val contactUtils = ContactUtils(this)
-        val dialog = AlertDialog.Builder(this).apply {
+        val dialog = DialogWidgetBuilder(this).apply {
             setTitle(R.string.tourbook_import_error)
             if (maxCharsShow == null) {
                 setMessage(errMsg)

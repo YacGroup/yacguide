@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
-import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
@@ -79,10 +78,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     private fun _delete() {
-        val dialog = AlertDialog.Builder(this).apply {
+        val builder = DialogWidgetBuilder(this).apply {
             setTitle(R.string.dialog_question_delete)
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
+            setNegativeButton()
             setPositiveButton(R.string.ok) { _, _ ->
                 deleteContent()
                 Toast.makeText(
@@ -93,7 +92,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
                 displayContent()
             }
         }
-        dialog.show()
+        builder.show()
     }
 
     private fun showUpdateDialog() {

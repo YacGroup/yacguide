@@ -60,7 +60,7 @@ abstract class TableActivity : BaseNavigationActivity() {
     }
 
     protected fun prepareCommentDialog(): AlertDialog {
-        val dialog = AlertDialog.Builder(this).apply {
+        val dialog = DialogWidgetBuilder(this).apply {
             setTitle(R.string.comments)
             setPositiveButton(R.string.ok) { dialog, _ ->
                 dialog.dismiss()
