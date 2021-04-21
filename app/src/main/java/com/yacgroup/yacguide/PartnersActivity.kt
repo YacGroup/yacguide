@@ -40,6 +40,7 @@ import android.widget.Toast
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
@@ -185,11 +186,10 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _deletePartner(partner: Partner) {
-        val builder = DialogWidgetBuilder(this).apply {
-            setTitle(R.string.dialog_text_delete_partner)
+        val builder = DialogWidgetBuilder(this, R.string.dialog_text_delete_partner).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
-            setPositiveButton(R.string.ok) { _, _ ->
+            setPositiveButton { _, _ ->
                 _db.deletePartner(partner)
                 _selectedPartnerIds.remove(partner.id)
                 _displayContent()
@@ -205,12 +205,11 @@ class PartnersActivity : AppCompatActivity() {
             }
             view
         }
-        val builder = DialogWidgetBuilder(this).apply {
-            setTitle(dialogTitle)
+        val builder = DialogWidgetBuilder(this, dialogTitle).apply {
             setView(view)
             setNegativeButton()
             // Set to null. We override the onclick below.
-            setPositiveButton(R.string.ok, null)
+            setPositiveButton(null)
         }
         // This solution prevents that the dialog is closed automatically,
         // if the OK button is pressed even if no name is given or the name already exists.

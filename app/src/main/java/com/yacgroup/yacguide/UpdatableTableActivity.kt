@@ -26,6 +26,7 @@ import android.widget.*
 
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
 
@@ -78,11 +79,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     private fun _delete() {
-        val builder = DialogWidgetBuilder(this).apply {
-            setTitle(R.string.dialog_question_delete)
+        val builder = DialogWidgetBuilder(this, R.string.dialog_question_delete).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
-            setPositiveButton(R.string.ok) { _, _ ->
+            setPositiveButton { _, _ ->
                 deleteContent()
                 Toast.makeText(
                         this@UpdatableTableActivity,

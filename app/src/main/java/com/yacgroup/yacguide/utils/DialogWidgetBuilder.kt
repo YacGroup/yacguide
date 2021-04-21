@@ -15,23 +15,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide
+package com.yacgroup.yacguide.utils
 
 import androidx.appcompat.app.AlertDialog
+import androidx.annotation.StringRes
 import android.content.Context
+import android.content.DialogInterface
+
+import com.yacgroup.yacguide.R
 
 /*
  * Use this class for each dialog in the app because it sets some reasonable defaults
  * and avoids repeating code.
  */
-class DialogWidgetBuilder(private var _context: Context): AlertDialog.Builder(_context) {
+class DialogWidgetBuilder(context: Context, title: String): AlertDialog.Builder(context) {
 
     init {
-        setCancelable(false)
+        super.setCancelable(false)
+        super.setTitle(title)
     }
+
+    constructor(context: Context, @StringRes titleId: Int): this(context, context.getString(titleId))
 
     fun setNegativeButton() {
         // Closing the dialog is the default behaviour. Hence we don't implement a listener here.
-        setNegativeButton(_context.getString(R.string.cancel), null)
+        super.setNegativeButton(R.string.cancel, null)
+    }
+
+    fun setPositiveButton(listener: DialogInterface.OnClickListener?) {
+        super.setPositiveButton(R.string.ok, listener)
     }
 }

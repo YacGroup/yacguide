@@ -27,6 +27,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.yacgroup.yacguide.utils.ActivityUtils
 import com.yacgroup.yacguide.utils.ContactUtils
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class AboutActivity : BaseNavigationActivity() {
 
@@ -81,8 +82,7 @@ class AboutActivity : BaseNavigationActivity() {
 
     private fun _selectContactConcern() {
         val contactInterface = ContactUtils(this)
-        val builder = DialogWidgetBuilder(this).apply {
-            setTitle(getString(R.string.contact_concern))
+        val builder = DialogWidgetBuilder(this, R.string.contact_concern).apply {
             setItems(R.array.contactConcerns) { _, which ->
                 when (which) {
                     0 -> contactInterface.sendFeedback()
