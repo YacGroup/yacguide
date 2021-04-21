@@ -41,6 +41,20 @@ enum class AscendStyle (val id: Int, val styleName: String) {
 
     companion object {
 
+        private val _LEAD_BIT_MASK = (_bitMask(eSOLO)
+                                   or _bitMask(eONSIGHT)
+                                   or _bitMask(eREDPOINT)
+                                   or _bitMask(eALLFREE)
+                                   or _bitMask(eHOCHGESCHLEUDERT))
+        private val _FOLLOW_BIT_MASK = (_bitMask(eUNKNOWN)
+                                     or _bitMask(eALTERNATINGLEADS)
+                                     or _bitMask(eFOLLOWED)
+                                     or _bitMask(eHINTERHERGEHAMPELT))
+        private val _BOTCH_BIT_MASK = _bitMask(eBOTCHED)
+        private val _WATCHING_BIT_MASK = (_bitMask(eSEEN)
+                                       or _bitMask(eVISITED)
+                                       or _bitMask(eHEARD))
+        private val _PROJECT_BIT_MASK = _bitMask(ePROJECT)
         private val _BY_ID = HashMap<Int, AscendStyle>()
         private val _BY_NAME = HashMap<String, AscendStyle>()
 
@@ -67,33 +81,28 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             return 0b1 shl (styleId - 1)
         }
 
+        fun hasAscendBit(mask: Int): Boolean {
+            return mask != 0
+        }
+
         fun isLead(mask: Int): Boolean {
-            return mask and (_bitMask(eSOLO)
-                          or _bitMask(eONSIGHT)
-                          or _bitMask(eREDPOINT)
-                          or _bitMask(eALLFREE)
-                          or _bitMask(eHOCHGESCHLEUDERT)) != 0
+            return hasAscendBit(mask and _LEAD_BIT_MASK)
         }
 
         fun isFollow(mask: Int): Boolean {
-            return mask and (_bitMask(eUNKNOWN)
-                          or _bitMask(eALTERNATINGLEADS)
-                          or _bitMask(eFOLLOWED)
-                          or _bitMask(eHINTERHERGEHAMPELT)) != 0
+            return hasAscendBit(mask and _FOLLOW_BIT_MASK)
         }
 
         fun isBotch(mask: Int): Boolean {
-            return mask and _bitMask(eBOTCHED) != 0
+            return hasAscendBit(mask and _BOTCH_BIT_MASK)
         }
 
         fun isWatching(mask: Int): Boolean {
-            return mask and (_bitMask(eSEEN)
-                          or _bitMask(eVISITED)
-                          or _bitMask(eHEARD)) != 0
+            return hasAscendBit(mask and _WATCHING_BIT_MASK)
         }
 
         fun isProject(mask: Int): Boolean {
-            return mask and _bitMask(ePROJECT) != 0
+            return hasAscendBit(mask and _PROJECT_BIT_MASK)
         }
 
         // We need to preserve order given by IDs

@@ -29,10 +29,7 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
-import com.yacgroup.yacguide.utils.DateUtils
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.utils.*
 
 class DescriptionActivity : TableActivity() {
 
@@ -127,7 +124,11 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility = if (_route!!.ascendsBitMask != 0) View.VISIBLE else View.INVISIBLE
+        findViewById<View>(R.id.ascendsButton).visibility =
+                if (AscendStyle.hasAscendBit(_route!!.ascendsBitMask))
+                    View.VISIBLE
+                else
+                    View.INVISIBLE
 
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
