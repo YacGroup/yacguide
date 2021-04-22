@@ -112,7 +112,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     private fun delete() {
-        val builder = DialogWidgetBuilder(this, R.string.dialog_question_delete_ascend).apply {
+        DialogWidgetBuilder(this, R.string.dialog_question_delete_ascend).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
@@ -121,8 +121,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 setResult(IntentConstants.RESULT_UPDATED, resultIntent)
                 finish()
             }
-        }
-        builder.show()
+        }.show()
     }
 
     private fun _displayContent(ascend: Ascend) {

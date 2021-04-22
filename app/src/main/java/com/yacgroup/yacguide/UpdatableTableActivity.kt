@@ -79,7 +79,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     private fun _delete() {
-        val builder = DialogWidgetBuilder(this, R.string.dialog_question_delete).apply {
+        DialogWidgetBuilder(this, R.string.dialog_question_delete).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
@@ -91,8 +91,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
                 ).show()
                 displayContent()
             }
-        }
-        builder.show()
+        }.show()
     }
 
     private fun showUpdateDialog() {

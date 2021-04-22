@@ -82,7 +82,7 @@ class AboutActivity : BaseNavigationActivity() {
 
     private fun _selectContactConcern() {
         val contactInterface = ContactUtils(this)
-        val builder = DialogWidgetBuilder(this, R.string.contact_concern).apply {
+        DialogWidgetBuilder(this, R.string.contact_concern).apply {
             setItems(R.array.contactConcerns) { _, which ->
                 when (which) {
                     0 -> contactInterface.sendFeedback()
@@ -90,7 +90,6 @@ class AboutActivity : BaseNavigationActivity() {
                 }
             }
             setNegativeButton()
-        }
-        builder.show()
+        }.show()
     }
 }

@@ -186,7 +186,7 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _deletePartner(partner: Partner) {
-        val builder = DialogWidgetBuilder(this, R.string.dialog_text_delete_partner).apply {
+        DialogWidgetBuilder(this, R.string.dialog_text_delete_partner).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
@@ -194,8 +194,7 @@ class PartnersActivity : AppCompatActivity() {
                 _selectedPartnerIds.remove(partner.id)
                 _displayContent()
             }
-        }
-        builder.show()
+        }.show()
     }
 
     private fun _updatePartner(partner: Partner?, dialogTitle: String) {
@@ -205,15 +204,14 @@ class PartnersActivity : AppCompatActivity() {
             }
             view
         }
-        val builder = DialogWidgetBuilder(this, dialogTitle).apply {
+        val dialog = DialogWidgetBuilder(this, dialogTitle).apply {
             setView(view)
             setNegativeButton()
             // Set to null. We override the onclick below.
             setPositiveButton(null)
-        }
+        }.create()
         // This solution prevents that the dialog is closed automatically,
         // if the OK button is pressed even if no name is given or the name already exists.
-        val dialog = builder.create()
         dialog.setOnShowListener {
             val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             okButton.setOnClickListener{

@@ -86,7 +86,6 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     fun showDialog() {
         _numReleaseNotesShow = 1
         _activity.let {
-            val builder = DialogWidgetBuilder(it, it.getString(R.string.whats_new) + " ...")
             val inflater = it.layoutInflater
             // Pass null as the parent view because its going in the dialog layout.
             _view = inflater.inflate(R.layout.whats_new, null)
@@ -96,13 +95,12 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
                 setOnClickListener { _showMore() }
             }
             _setTextView()
-            builder.apply {
+            DialogWidgetBuilder(it, it.getString(R.string.whats_new) + " ...").apply {
                 setView(_view)
                 setPositiveButton { dialog, _ ->
                     dialog.dismiss()
                 }
-            }
-            builder.show()
+            }.show()
         }
     }
 
