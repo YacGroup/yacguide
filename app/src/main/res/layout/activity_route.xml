@@ -32,6 +32,8 @@
 
         <include layout="@layout/appbar_info_and_map"/>
 
+        <include layout="@layout/searchbar"/>
+
         <include layout="@layout/textview_info"/>
 
         <include layout="@layout/content_table"/>

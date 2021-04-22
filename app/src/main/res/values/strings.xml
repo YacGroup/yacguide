@@ -73,6 +73,7 @@
 
     <!-- Widgets -->
     <string name="rock_search">Felsen suchen</string>
+    <string name="route_search">Weg suchen</string>
     <string name="partner_search">Partner suchen</string>
 
     <!-- Toasts -->
@@ -164,6 +165,13 @@
         <item>Offizielle Gipfel</item>
         <item>Projektierte Felsen \u2117</item>
         <item>Gesackte Felsen \u26A1</item>
+    </string-array>
+    <string-array name="routeFilters">
+        <!-- item order must be in line with static filterMap in TableActivity -->
+        <item>Alle Wege</item>
+        <item>Offizielle Wege</item>
+        <item>Projektierte Wege \u2117</item>
+        <item>Gesackte Wege \u26A1</item>
     </string-array>
 
     <!-- IMPORTANT: This list must be in sync with the code in the AboutActivity class. -->

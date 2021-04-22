@@ -32,19 +32,6 @@ abstract class TableActivity : BaseNavigationActivity() {
     protected lateinit var db: DatabaseWrapper
     protected lateinit var customSettings: SharedPreferences
 
-    protected enum class ElementFilter {
-        eNone,
-        eOfficial,
-        eProject,
-        eBotch
-    }
-    protected val filterMap = mapOf(
-        0 to ElementFilter.eNone,
-        1 to ElementFilter.eOfficial,
-        2 to ElementFilter.eProject,
-        3 to ElementFilter.eBotch
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = DatabaseWrapper(this)

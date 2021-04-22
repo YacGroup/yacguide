@@ -22,6 +22,7 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
@@ -32,6 +33,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES WHERE Route.parentId = :parentId $ORDERED_BY_NR")
     fun getAll(parentId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :parentId AND Ascend.styleId = :styleId $ORDERED_BY_NR")
+    fun getAllForStyle(parentId: Int, styleId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Route>
