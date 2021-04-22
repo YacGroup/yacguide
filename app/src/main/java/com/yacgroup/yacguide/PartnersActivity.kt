@@ -40,6 +40,7 @@ import android.widget.Toast
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
@@ -185,18 +186,15 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _deletePartner(partner: Partner) {
-        val builder = AlertDialog.Builder(this).apply {
-            setTitle(R.string.dialog_text_delete_partner)
+        DialogWidgetBuilder(this, R.string.dialog_text_delete_partner).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
-            setCancelable(false)
-            setNegativeButton(R.string.cancel, null)
-            setPositiveButton(R.string.ok) { _, _ ->
+            setNegativeButton()
+            setPositiveButton { _, _ ->
                 _db.deletePartner(partner)
                 _selectedPartnerIds.remove(partner.id)
                 _displayContent()
             }
-        }
-        builder.show()
+        }.show()
     }
 
     private fun _updatePartner(partner: Partner?, dialogTitle: String) {
@@ -206,17 +204,14 @@ class PartnersActivity : AppCompatActivity() {
             }
             view
         }
-        val builder = AlertDialog.Builder(this).apply {
-            setTitle(dialogTitle)
+        val dialog = DialogWidgetBuilder(this, dialogTitle).apply {
             setView(view)
-            setCancelable(false)
-            setNegativeButton(R.string.cancel, null)
+            setNegativeButton()
             // Set to null. We override the onclick below.
-            setPositiveButton(R.string.ok, null)
-        }
+            setPositiveButton(null)
+        }.create()
         // This solution prevents that the dialog is closed automatically,
         // if the OK button is pressed even if no name is given or the name already exists.
-        val dialog = builder.create()
         dialog.setOnShowListener {
             val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             okButton.setOnClickListener{

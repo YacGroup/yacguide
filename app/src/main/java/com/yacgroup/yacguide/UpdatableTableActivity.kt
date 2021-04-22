@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
-import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +26,7 @@ import android.widget.*
 
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
 
@@ -79,11 +79,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
     }
 
     private fun _delete() {
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.dialog_question_delete)
+        DialogWidgetBuilder(this, R.string.dialog_question_delete).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
-            setPositiveButton(R.string.ok) { _, _ ->
+            setNegativeButton()
+            setPositiveButton { _, _ ->
                 deleteContent()
                 Toast.makeText(
                         this@UpdatableTableActivity,
@@ -92,8 +91,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
                 ).show()
                 displayContent()
             }
-        }
-        dialog.show()
+        }.show()
     }
 
     private fun showUpdateDialog() {

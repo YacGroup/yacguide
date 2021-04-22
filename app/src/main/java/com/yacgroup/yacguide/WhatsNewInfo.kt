@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide
 
-import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
@@ -25,6 +24,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.markwon.WhatsNewMarkwonPlugin
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import io.noties.markwon.Markwon
 import io.noties.markwon.linkify.LinkifyPlugin
 import java.io.File
@@ -86,7 +86,6 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     fun showDialog() {
         _numReleaseNotesShow = 1
         _activity.let {
-            val builder = AlertDialog.Builder(it)
             val inflater = it.layoutInflater
             // Pass null as the parent view because its going in the dialog layout.
             _view = inflater.inflate(R.layout.whats_new, null)
@@ -96,14 +95,12 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
                 setOnClickListener { _showMore() }
             }
             _setTextView()
-            builder.apply {
-                setTitle(_activity.getString(R.string.whats_new) + " ...")
+            DialogWidgetBuilder(it, it.getString(R.string.whats_new) + " ...").apply {
                 setView(_view)
-                setPositiveButton(it.getString(R.string.ok)) { dialog, _ ->
+                setPositiveButton { dialog, _ ->
                     dialog.dismiss()
                 }
-            }
-            builder.show()
+            }.show()
         }
     }
 

@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide
 
-import androidx.appcompat.app.AlertDialog
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -29,10 +28,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 
 import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.utils.AscendStyle
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.utils.*
 
 class TourbookAscendActivity : BaseNavigationActivity() {
 
@@ -116,18 +112,16 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     private fun delete() {
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.dialog_question_delete_ascend)
+        DialogWidgetBuilder(this, R.string.dialog_question_delete_ascend).apply {
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
-            setPositiveButton(R.string.ok) { _, _ ->
+            setNegativeButton()
+            setPositiveButton { _, _ ->
                 _db.deleteAscend(_ascends[_currentAscendIdx])
                 val resultIntent = Intent()
                 setResult(IntentConstants.RESULT_UPDATED, resultIntent)
                 finish()
             }
-        }
-        dialog.show()
+        }.show()
     }
 
     private fun _displayContent(ascend: Ascend) {

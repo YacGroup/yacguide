@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -110,8 +109,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun chooseYear(v: View) {
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.select_year)
+        val dialog = DialogWidgetBuilder(this, R.string.select_year).apply {
             setView(R.layout.numberpicker)
         }.create()
         // we need to call show() before findViewById can be used.
@@ -142,12 +140,11 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _import(uri: Uri) {
-        val confirmDialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.warning)
+        DialogWidgetBuilder(this, R.string.warning).apply {
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
-            setPositiveButton(R.string.ok) { _, _ ->
+            setNegativeButton()
+            setPositiveButton { _, _ ->
                 try {
                     TourbookExporter(_db, contentResolver).importTourbook(uri)
                     Toast.makeText(
@@ -167,15 +164,13 @@ class TourbookActivity : BaseNavigationActivity() {
                 _currentYear = _initYears()
                 _displayContent()
             }
-        }
-        confirmDialog.show()
+        }.show()
     }
 
     // Show dialog with given message. Optionally, limit the number of characters to show.
     private fun _showImportError(errMsg: String, jsonFile: Uri, maxCharsShow: Int? = null) {
         val contactUtils = ContactUtils(this)
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.tourbook_import_error)
+        DialogWidgetBuilder(this, R.string.tourbook_import_error).apply {
             if (maxCharsShow == null) {
                 setMessage(errMsg)
             } else {
@@ -186,9 +181,8 @@ class TourbookActivity : BaseNavigationActivity() {
             setNeutralButton(getString(R.string.report_error)) {_, _ ->
                 contactUtils.reportImportError(errMsg, jsonFile)
             }
-            setPositiveButton(R.string.ok) { dialog, _ -> dialog.dismiss() }
-        }
-        dialog.show()
+            setPositiveButton { dialog, _ -> dialog.dismiss() }
+        }.show()
     }
 
     private fun _export(uri: Uri) {

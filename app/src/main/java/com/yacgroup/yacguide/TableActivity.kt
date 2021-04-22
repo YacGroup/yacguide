@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 abstract class TableActivity : BaseNavigationActivity() {
     protected lateinit var db: DatabaseWrapper
@@ -60,9 +61,8 @@ abstract class TableActivity : BaseNavigationActivity() {
     }
 
     protected fun prepareCommentDialog(): AlertDialog {
-        val dialog = AlertDialog.Builder(this).apply {
-            setTitle(R.string.comments)
-            setPositiveButton(R.string.ok) { dialog, _ ->
+        val dialog = DialogWidgetBuilder(this, R.string.comments).apply {
+            setPositiveButton { dialog, _ ->
                 dialog.dismiss()
             }
             setView(R.layout.comment_dialog)
