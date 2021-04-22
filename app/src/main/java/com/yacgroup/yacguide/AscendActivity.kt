@@ -154,11 +154,11 @@ class AscendActivity : AppCompatActivity() {
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                _ascend.styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: 0
+                _ascend.styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: AscendStyle.eUNKNOWN.id
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                _ascend.styleId = 0
+                _ascend.styleId = AscendStyle.eUNKNOWN.id
             }
         }
         spinner.setSelection(adapter.getPosition(AscendStyle.fromId(_ascend.styleId)?.styleName))
