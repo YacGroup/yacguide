@@ -89,19 +89,16 @@ class AscendActivity : AppCompatActivity() {
                 }
             })
         }
+
+        _displayContent()
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             _ascend.partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                     ?: ArrayList()
+            _displayContent()
         }
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        _displayContent()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -140,7 +137,7 @@ class AscendActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun selectPartners(v: View) {
         val partnerNames = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val partnerIds = _db.getPartnerIds(partnerNames.toList()).filter { it > 0 } as ArrayList<Int>
+        val partnerIds = _db.getPartnerIds(partnerNames.toList()) as ArrayList<Int>
         val intent = Intent(this@AscendActivity, PartnersActivity::class.java)
         intent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
         startActivityForResult(intent, 0)
