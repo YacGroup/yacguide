@@ -29,9 +29,9 @@ import android.widget.Spinner
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.yacgroup.yacguide.R
 
-class SearchBarHandler(_searchBarLayout: ConstraintLayout,
-                       _searchHintResource: Int,
-                       _filterNamesResource: Int,
+class SearchBarHandler(searchBarLayout: ConstraintLayout,
+                       searchHintResource: Int,
+                       filterNamesResource: Int,
                        private val _updateCallback: (String, ElementFilter) -> Unit) : AdapterView.OnItemSelectedListener {
 
     enum class ElementFilter() {
@@ -50,10 +50,10 @@ class SearchBarHandler(_searchBarLayout: ConstraintLayout,
     private var _namePart: String = ""
 
     init {
-        val filterSpinner: Spinner = _searchBarLayout.findViewById(R.id.filterSpinner)
+        val filterSpinner: Spinner = searchBarLayout.findViewById(R.id.filterSpinner)
         ArrayAdapter.createFromResource(
-                _searchBarLayout.context,
-                _filterNamesResource,
+                searchBarLayout.context,
+                filterNamesResource,
                 android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -61,8 +61,8 @@ class SearchBarHandler(_searchBarLayout: ConstraintLayout,
             filterSpinner.onItemSelectedListener = this
         }
 
-        val searchEditText = _searchBarLayout.findViewById<EditText>(R.id.searchEditText)
-        searchEditText.setHint(_searchHintResource)
+        val searchEditText = searchBarLayout.findViewById<EditText>(R.id.searchEditText)
+        searchEditText.setHint(searchHintResource)
         searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
             val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)

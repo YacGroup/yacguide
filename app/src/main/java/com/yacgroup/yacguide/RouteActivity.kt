@@ -80,7 +80,7 @@ class RouteActivity : TableActivity() {
     }
 
     override fun showComments(v: View) {
-        val comments = _rock.let { db.getRockComments(it.id) } ?: emptyList()
+        val comments = _rock.let { db.getRockComments(it.id) }
         if (comments.isNotEmpty()) {
             prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
                 for ((idx, comment) in comments.withIndex()) {
@@ -135,7 +135,7 @@ class RouteActivity : TableActivity() {
             val statusId = route.statusId
             var typeface = Typeface.BOLD
             var bgColor = Color.WHITE
-            if (statusId == Route.statusClosed) {
+            if (statusId == Route.STATUS_CLOSED) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
@@ -164,9 +164,9 @@ class RouteActivity : TableActivity() {
     }
 
     private fun _isOfficialRoute(route: Route): Boolean {
-        return route.statusId != Route.statusClosed
-            && route.statusId != Route.statusUnacknowledged
-            && route.statusId != Route.statusUnfinished
+        return route.statusId != Route.STATUS_CLOSED
+            && route.statusId != Route.STATUS_UNACKNOWLEDGED
+            && route.statusId != Route.STATUS_UNFINISHED
     }
 
     override fun getLayoutId(): Int {
