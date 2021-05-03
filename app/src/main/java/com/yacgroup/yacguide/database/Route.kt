@@ -45,16 +45,24 @@ class Route {
 
     companion object {
 
+        const val STATUS_ACKNOWLEDGED = 1
+        const val STATUS_TEMP_CLOSED = 2
+        const val STATUS_CLOSED = 3
+        const val STATUS_FIRST_ASCEND = 4
+        const val STATUS_UNACKNOWLEDGED = 5
+        const val STATUS_MENTION = 6
+        const val STATUS_UNFINISHED = 7
+
         // This needs to be in sync with sandsteinklettern.de!
         val STATUS: Map<Int, String> = object : HashMap<Int, String>() {
             init {
-                put(1, "anerkannt.")
-                put(2, "zeitlich gesperrt.")
-                put(3, "voll gesperrt.")
-                put(4, "eine Erstbegehung.")
-                put(5, "nicht anerkannt.")
-                put(6, "nur eine Erwähnung.")
-                put(7, "ein Projekt.")
+                put(STATUS_ACKNOWLEDGED, "anerkannt.")
+                put(STATUS_TEMP_CLOSED, "zeitlich gesperrt.")
+                put(STATUS_CLOSED, "voll gesperrt.")
+                put(STATUS_FIRST_ASCEND, "eine Erstbegehung.")
+                put(STATUS_UNACKNOWLEDGED, "nicht anerkannt.")
+                put(STATUS_MENTION, "nur eine Erwähnung.")
+                put(STATUS_UNFINISHED, "ein Projekt.")
             }
         }
     }

@@ -23,34 +23,41 @@ import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.utils.SearchBarHandler
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RouteActivity : TableActivity() {
 
-    private var _rock: Rock? = null
+    private lateinit var _rock: Rock
+    private lateinit var _searchBarHandler: SearchBarHandler
+    private var _routeFilter: SearchBarHandler.ElementFilter = SearchBarHandler.ElementFilter.eNone
+    private var _routeNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, DatabaseWrapper.INVALID_ID)
 
-        _rock = db.getRock(rockId)
-        val rockStatus = when (_rock?.status){
+        _rock = db.getRock(rockId)!!
+        _searchBarHandler = SearchBarHandler(findViewById(R.id.searchBarLayout), R.string.route_search, R.array.routeFilters) {
+            routeNamePart, routeFilter -> _onSearchBarUpdate(routeNamePart, routeFilter)
+        }
+
+        val rockStatus = when (_rock.status){
             Rock.statusCollapsed -> getString(R.string.rock_collapsed)
             Rock.statusProhibited -> getString(R.string.rock_fully_prohibited)
             Rock.statusTemporarilyProhibited -> getString(R.string.rock_temporarily_prohibited)
             Rock.statusPartlyProhibited -> getString(R.string.rock_partly_prohibited)
             else -> {
-                if (_rock?.type == Rock.typeUnofficial) {
+                if (_rock.type == Rock.typeUnofficial) {
                     getString(R.string.rock_inofficial)
                 } else {
                     ""
@@ -62,7 +69,7 @@ class RouteActivity : TableActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun showMap(v: View) {
-        val gmmIntentUri = Uri.parse("geo:${_rock?.latitude},${_rock?.longitude}")
+        val gmmIntentUri = Uri.parse("geo:${_rock.latitude},${_rock.longitude}")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
 
         if (mapIntent.resolveActivity(packageManager) == null) {
@@ -73,7 +80,7 @@ class RouteActivity : TableActivity() {
     }
 
     override fun showComments(v: View) {
-        val comments = _rock?.let { db.getRockComments(it.id) } ?: emptyList()
+        val comments = _rock.let { db.getRockComments(it.id) }
         if (comments.isNotEmpty()) {
             prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
                 for ((idx, comment) in comments.withIndex()) {
@@ -104,12 +111,20 @@ class RouteActivity : TableActivity() {
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val rockName = ParserUtils.decodeObjectNames(_rock?.name)
+        val rockName = ParserUtils.decodeObjectNames(_rock.name)
         this.title = if (rockName.first.isNotEmpty()) rockName.first else rockName.second
 
-        val routes = _rock?.let { db.getRoutes(it.id) } ?: emptyList()
+        val routes = when (_routeFilter) {
+            SearchBarHandler.ElementFilter.eOfficial -> db.getRoutes(_rock.id).filter { _isOfficialRoute(it) }
+            SearchBarHandler.ElementFilter.eProject -> db.getProjectedRoutes(_rock.id)
+            SearchBarHandler.ElementFilter.eBotch -> db.getBotchedRoutes(_rock.id)
+            else -> db.getRoutes(_rock.id)
+        }
         for (route in routes) {
             val routeName = ParserUtils.decodeObjectNames(route.name)
+            if (_routeNamePart.isNotEmpty() && routeName.toList().none{ it.toLowerCase().contains(_routeNamePart.toLowerCase()) }) {
+                continue
+            }
             val commentCount = db.getRouteCommentCount(route.id)
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             val onCLickListener = View.OnClickListener {
@@ -120,7 +135,7 @@ class RouteActivity : TableActivity() {
             val statusId = route.statusId
             var typeface = Typeface.BOLD
             var bgColor = Color.WHITE
-            if (statusId == 3) { // prohibited
+            if (statusId == Route.STATUS_CLOSED) {
                 typeface = Typeface.ITALIC
                 bgColor = Color.LTGRAY
             }
@@ -140,6 +155,18 @@ class RouteActivity : TableActivity() {
                     typeface = typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
+    }
+
+    private fun _onSearchBarUpdate(routeNamePart: String, routeFilter: SearchBarHandler.ElementFilter) {
+        _routeNamePart = routeNamePart
+        _routeFilter = routeFilter
+        displayContent()
+    }
+
+    private fun _isOfficialRoute(route: Route): Boolean {
+        return route.statusId != Route.STATUS_CLOSED
+            && route.statusId != Route.STATUS_UNACKNOWLEDGED
+            && route.statusId != Route.STATUS_UNFINISHED
     }
 
     override fun getLayoutId(): Int {

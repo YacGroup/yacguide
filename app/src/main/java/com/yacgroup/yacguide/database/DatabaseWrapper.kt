@@ -72,6 +72,10 @@ class DatabaseWrapper(context: Context) {
 
     fun getRockComments(rockId: Int) = _db.rockCommentDao().getAll(rockId)
 
+    fun getProjectedRoutes(rockId: Int) = _db.routeDao().getAllForStyle(rockId, AscendStyle.ePROJECT.id)
+
+    fun getBotchedRoutes(rockId: Int) = _db.routeDao().getAllForStyle(rockId, AscendStyle.eBOTCHED.id)
+
     fun getRoutes(rockId: Int) = _db.routeDao().getAll(rockId)
 
     fun getRoute(routeId: Int) = _db.routeDao().getRoute(routeId)

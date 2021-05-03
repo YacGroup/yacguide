@@ -17,15 +17,11 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 
 import com.yacgroup.yacguide.database.comment.SectorComment
@@ -34,12 +30,14 @@ import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.utils.SearchBarHandler
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
+class RockActivity : TableActivity() {
 
     private lateinit var _sector: Sector
-    private var _rockFilter = ElementFilter.eNone;
+    private lateinit var _searchBarHandler: SearchBarHandler
+    private var _rockFilter = SearchBarHandler.ElementFilter.eNone;
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,33 +46,9 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
 
         _sector = db.getSector(sectorId)!!
-
-        val filterSpinner: Spinner = findViewById(R.id.filterSpinner)
-        ArrayAdapter.createFromResource(
-                this,
-                R.array.rockFilters,
-                android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            filterSpinner.adapter = adapter
-            filterSpinner.onItemSelectedListener = this
+        _searchBarHandler = SearchBarHandler(findViewById(R.id.searchBarLayout), R.string.rock_search, R.array.rockFilters) {
+            rockNamePart, rockFilter -> _onSearchBarUpdate(rockNamePart, rockFilter)
         }
-
-        val searchEditText = findViewById<EditText>(R.id.searchEditText)
-        searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable) {
-                _rockNamePart = searchEditText.text.toString()
-                displayContent()
-            }
-        })
     }
 
     override fun showComments(v: View) {
@@ -112,9 +86,9 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         val sectorName = ParserUtils.decodeObjectNames(_sector.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
         val rocks = when (_rockFilter) {
-            ElementFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
-            ElementFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
-            ElementFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
+            SearchBarHandler.ElementFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
+            SearchBarHandler.ElementFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
+            SearchBarHandler.ElementFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
             else -> db.getRocksForSector(_sector.id)
         }
         for (rock in rocks) {
@@ -156,6 +130,13 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
         }
     }
 
+    private fun _onSearchBarUpdate(rockNamePart: String, rockFilter: SearchBarHandler.ElementFilter)
+    {
+        _rockNamePart = rockNamePart
+        _rockFilter = rockFilter
+        displayContent()
+    }
+
     private fun _rockIsAnOfficialSummit(rock: Rock): Boolean {
         return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine)
                 && rock.status != Rock.statusProhibited
@@ -165,12 +146,4 @@ class RockActivity : TableActivity(), AdapterView.OnItemSelectedListener {
     override fun getLayoutId(): Int {
         return R.layout.activity_rock
     }
-
-    // AdapterView.OnItemSelectedListener
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        _rockFilter = filterMap[position] ?: ElementFilter.eNone
-        displayContent()
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {}
 }
