@@ -37,7 +37,7 @@ class RockActivity : TableActivity() {
 
     private lateinit var _sector: Sector
     private lateinit var _searchBarHandler: SearchBarHandler
-    private var _rockFilter = SearchBarHandler.ElementFilter.eNone;
+    private var _rockFilter = ClimbingObjectFilter.eNone;
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,9 +86,9 @@ class RockActivity : TableActivity() {
         val sectorName = ParserUtils.decodeObjectNames(_sector.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
         val rocks = when (_rockFilter) {
-            SearchBarHandler.ElementFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
-            SearchBarHandler.ElementFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
-            SearchBarHandler.ElementFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
+            ClimbingObjectFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
+            ClimbingObjectFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
+            ClimbingObjectFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
             else -> db.getRocksForSector(_sector.id)
         }
         for (rock in rocks) {
@@ -130,7 +130,7 @@ class RockActivity : TableActivity() {
         }
     }
 
-    private fun _onSearchBarUpdate(rockNamePart: String, rockFilter: SearchBarHandler.ElementFilter)
+    private fun _onSearchBarUpdate(rockNamePart: String, rockFilter: ClimbingObjectFilter)
     {
         _rockNamePart = rockNamePart
         _rockFilter = rockFilter

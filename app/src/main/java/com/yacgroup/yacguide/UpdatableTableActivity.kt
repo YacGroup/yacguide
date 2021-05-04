@@ -42,8 +42,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_search -> _searchRockGlobally()
             R.id.action_download -> update()
+            R.id.action_filter_projects -> _searchRockGlobally(ClimbingObjectFilter.eProject)
+            R.id.action_filter_botches -> _searchRockGlobally(ClimbingObjectFilter.eBotch)
+            R.id.action_search -> _searchRockGlobally()
             R.id.action_delete -> _delete()
             else -> return super.onOptionsItemSelected(item)
         }
@@ -110,31 +112,48 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     protected abstract fun deleteContent()
 
-    protected abstract fun searchRocks(rockName: String): List<Rock>
+    protected abstract fun searchRocks(): List<Rock>
 
-    private fun _searchRockGlobally() {
-        val searchDialog = Dialog(this)
-        searchDialog.setContentView(R.layout.search_dialog)
-        searchDialog.findViewById<Button>(R.id.searchButton).setOnClickListener {
-            val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText).text.toString()
-            if (rockName.isEmpty()) {
-                Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
-            } else {
-                val rocks = searchRocks(rockName)
-                if (rocks.isEmpty()) {
-                    Toast.makeText(searchDialog.context, R.string.hint_name_not_found, Toast.LENGTH_SHORT).show()
-                } else {
-                    val rockIds = ArrayList(rocks.map{ it.id })
-                    val intent = Intent(this, SelectedRockActivity::class.java)
-                    intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
-                    startActivity(intent)
-                    searchDialog.dismiss()
+    protected abstract fun searchProjects(): List<Rock>
+
+    protected abstract fun searchBotches(): List<Rock>
+
+    private fun _searchRockGlobally(filter: ClimbingObjectFilter = ClimbingObjectFilter.eNone) {
+        when (filter) {
+            ClimbingObjectFilter.eProject -> _goToFilteredRocksView(searchProjects())
+            ClimbingObjectFilter.eBotch -> _goToFilteredRocksView(searchBotches())
+            else -> {
+                val searchDialog = Dialog(this)
+                searchDialog.setContentView(R.layout.search_dialog)
+                searchDialog.findViewById<Button>(R.id.searchButton).setOnClickListener {
+                    val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText).text.toString().trim { it <= ' ' }
+                    if (rockName.isEmpty()) {
+                        Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
+                    } else {
+                        val rocks = searchRocks().filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
+                        if (_goToFilteredRocksView(rocks)) {
+                            searchDialog.dismiss()
+                        }
+                    }
                 }
+                searchDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener { searchDialog.dismiss() }
+                searchDialog.setCancelable(false)
+                searchDialog.setCanceledOnTouchOutside(false)
+                searchDialog.show()
             }
         }
-        searchDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener { searchDialog.dismiss() }
-        searchDialog.setCancelable(false)
-        searchDialog.setCanceledOnTouchOutside(false)
-        searchDialog.show()
+    }
+
+    private fun _goToFilteredRocksView(rocks: List<Rock>): Boolean {
+        if (rocks.isEmpty()) {
+            Toast.makeText(this, R.string.hint_rock_not_found, Toast.LENGTH_SHORT).show()
+            return false
+        }
+        val rockIds = ArrayList(rocks.map { it.id })
+        val intent = Intent(this, SelectedRockActivity::class.java)
+        intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
+        startActivity(intent)
+
+        return true
     }
 }

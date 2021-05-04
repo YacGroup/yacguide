@@ -44,6 +44,7 @@
     <string name="import_tourbook">Import</string>
     <string name="export_tourbook">Export</string>
     <string name="download">Aktualisieren</string>
+    <string name="filter">Filtern</string>
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
 
@@ -84,7 +85,7 @@
     <string name="ascend_deleted">Begehung gelöscht</string>
     <string name="hint_no_name">Kein Name eingegeben</string>
     <string name="hint_name_already_used">Name bereits vergeben</string>
-    <string name="hint_name_not_found">Keine Felsen gefunden</string>
+    <string name="hint_rock_not_found">Keine Felsen gefunden</string>
     <string name="no_internet_connection">Keine Internetverbindung</string>
     <string name="no_map_app_available">Keine Karten-App verfügbar</string>
     <string name="no_webbrowser_available">Kein Webbrowser verfügbar</string>
@@ -159,12 +160,16 @@
     <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
 
     <!-- filters -->
+    <string name="all_rocks">Alle Felsen</string>
+    <string name="official_summits">Offizielle Gipfel</string>
+    <string name="projected_rocks">Projektierte Felsen \u2117</string>
+    <string name="botched_rocks">Gesackte Felsen \u26A1</string>
     <string-array name="rockFilters">
         <!-- item order must be in line with static filterMap in TableActivity -->
-        <item>Alle Felsen</item>
-        <item>Offizielle Gipfel</item>
-        <item>Projektierte Felsen \u2117</item>
-        <item>Gesackte Felsen \u26A1</item>
+        <item>@string/all_rocks</item>
+        <item>@string/official_summits</item>
+        <item>@string/projected_rocks</item>
+        <item>@string/botched_rocks</item>
     </string-array>
     <string-array name="routeFilters">
         <!-- item order must be in line with static filterMap in TableActivity -->

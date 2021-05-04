@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import com.yacgroup.yacguide.database.Rock
 
 import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -38,9 +37,7 @@ class RegionActivity : UpdatableTableActivity() {
         jsonParser = RegionParser(db, this, _countryName)
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_region
-    }
+    override fun getLayoutId() = R.layout.activity_region
 
     override fun displayContent() {
         this.title = _countryName
@@ -64,11 +61,11 @@ class RegionActivity : UpdatableTableActivity() {
         }
     }
 
-    override fun deleteContent() {
-        db.deleteRegionsRecursively(_countryName)
-    }
+    override fun deleteContent() = db.deleteRegionsRecursively(_countryName)
 
-    override fun searchRocks(rockName: String): List<Rock> {
-        return db.getRocksForCountry(_countryName).filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
-    }
+    override fun searchRocks() = db.getRocksForCountry(_countryName)
+
+    override fun searchProjects() = db.getProjectedRocksForCounty(_countryName)
+
+    override fun searchBotches() = db.getBotchedRocksForCountry(_countryName)
 }

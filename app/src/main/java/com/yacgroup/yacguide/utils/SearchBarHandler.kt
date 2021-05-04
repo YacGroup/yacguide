@@ -27,26 +27,21 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.yacgroup.yacguide.ClimbingObjectFilter
 import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
                        filterNamesResource: Int,
-                       private val _updateCallback: (String, ElementFilter) -> Unit) : AdapterView.OnItemSelectedListener {
+                       private val _updateCallback: (String, ClimbingObjectFilter) -> Unit) : AdapterView.OnItemSelectedListener {
 
-    enum class ElementFilter() {
-        eNone,
-        eOfficial,
-        eProject,
-        eBotch
-    }
     private val _filterMap = mapOf(
-        0 to ElementFilter.eNone,
-        1 to ElementFilter.eOfficial,
-        2 to ElementFilter.eProject,
-        3 to ElementFilter.eBotch
+        0 to ClimbingObjectFilter.eNone,
+        1 to ClimbingObjectFilter.eOfficial,
+        2 to ClimbingObjectFilter.eProject,
+        3 to ClimbingObjectFilter.eBotch
     )
-    private var _filter: ElementFilter = ElementFilter.eNone
+    private var _filter: ClimbingObjectFilter = ClimbingObjectFilter.eNone
     private var _namePart: String = ""
 
     init {
@@ -81,7 +76,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
 
     // AdapterView.OnItemSelectedListener
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        _filter = _filterMap[position] ?: ElementFilter.eNone
+        _filter = _filterMap[position] ?: ClimbingObjectFilter.eNone
         _updateCallback(_namePart, _filter)
     }
 
