@@ -17,25 +17,30 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/action_download"
-        android:title="@string/download" />
-    <item
-        android:title="@string/filter" >
-        <menu>
-            <item
-                android:id="@+id/action_filter_projects"
-                android:title="@string/projected_rocks" />
-            <item
-                android:id="@+id/action_filter_botches"
-                android:title="@string/botched_rocks" />
-            <item
-                android:id="@+id/action_search"
-                android:title="@string/rock_search" />
-        </menu>
-    </item>
-    <item
-        android:id="@+id/action_delete"
-        android:title="@string/delete" />
+    <group android:id="@+id/group_search">
+        <item
+            android:id="@+id/action_search"
+            android:icon="@drawable/ic_menu_search"
+            android:title="@string/rock_search" />
+    </group>
+    <group android:id="@+id/group_filter">
+        <item
+            android:id="@+id/action_filter_projects"
+            android:icon="@drawable/ic_menu_project"
+            android:title="@string/my_projects" />
+        <item
+            android:id="@+id/action_filter_botches"
+            android:icon="@drawable/ic_menu_flash"
+            android:title="@string/my_botches" />
+    </group>
+    <group android:id="@+id/group_update">
+        <item
+            android:id="@+id/action_download"
+            android:icon="@drawable/ic_menu_download"
+            android:title="@string/download"/>
+        <item
+            android:id="@+id/action_delete"
+            android:icon="@drawable/ic_menu_delete"
+            android:title="@string/delete" />
+    </group>
 </menu>

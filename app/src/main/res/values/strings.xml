@@ -160,23 +160,23 @@
     <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
 
     <!-- filters -->
-    <string name="all_rocks">Alle Felsen</string>
-    <string name="official_summits">Offizielle Gipfel</string>
-    <string name="projected_rocks">Projektierte Felsen \u2117</string>
-    <string name="botched_rocks">Gesackte Felsen \u26A1</string>
+    <string name="my_projects">Meine Projekte</string>
+    <string name="my_projects_with_symbol">Meine Projekte \u2117</string>
+    <string name="my_botches">Meine Säcke</string>
+    <string name="my_botches_with_symbol">Meine Säcke \u26A1</string>
     <string-array name="rockFilters">
         <!-- item order must be in line with static filterMap in TableActivity -->
-        <item>@string/all_rocks</item>
-        <item>@string/official_summits</item>
-        <item>@string/projected_rocks</item>
-        <item>@string/botched_rocks</item>
+        <item>Alle Felsen</item>
+        <item>Offizielle Gipfel</item>
+        <item>@string/my_projects_with_symbol</item>
+        <item>@string/my_botches_with_symbol</item>
     </string-array>
     <string-array name="routeFilters">
         <!-- item order must be in line with static filterMap in TableActivity -->
         <item>Alle Wege</item>
         <item>Offizielle Wege</item>
-        <item>Projektierte Wege \u2117</item>
-        <item>Gesackte Wege \u26A1</item>
+        <item>@string/my_projects_with_symbol</item>
+        <item>@string/my_botches_with_symbol</item>
     </string-array>
 
     <!-- IMPORTANT: This list must be in sync with the code in the AboutActivity class. -->

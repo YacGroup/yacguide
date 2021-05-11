@@ -17,26 +17,35 @@
 
 package com.yacgroup.yacguide
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-
+import androidx.appcompat.app.AppCompatDialog
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.view.MenuCompat
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
 
+
 abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     private var _updateDialog: Dialog? = null
     protected var jsonParser: JSONWebParser? = null
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.sync_delete, menu)
+        MenuCompat.setGroupDividerEnabled(menu, true);
+        if (menu is MenuBuilder) {
+            menu.setOptionalIconsVisible(true)
+        }
         return true
     }
 
@@ -123,10 +132,10 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
             ClimbingObjectFilter.eProject -> _goToFilteredRocksView(searchProjects())
             ClimbingObjectFilter.eBotch -> _goToFilteredRocksView(searchBotches())
             else -> {
-                val searchDialog = Dialog(this)
+                val searchDialog = AppCompatDialog(this)
                 searchDialog.setContentView(R.layout.search_dialog)
-                searchDialog.findViewById<Button>(R.id.searchButton).setOnClickListener {
-                    val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText).text.toString().trim { it <= ' ' }
+                searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
+                    val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
                     if (rockName.isEmpty()) {
                         Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
                     } else {
@@ -136,7 +145,7 @@ abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
                         }
                     }
                 }
-                searchDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener { searchDialog.dismiss() }
+                searchDialog.findViewById<Button>(R.id.cancelButton)?.setOnClickListener { searchDialog.dismiss() }
                 searchDialog.setCancelable(false)
                 searchDialog.setCanceledOnTouchOutside(false)
                 searchDialog.show()

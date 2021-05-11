@@ -65,7 +65,7 @@ class RegionActivity : UpdatableTableActivity() {
 
     override fun searchRocks() = db.getRocksForCountry(_countryName)
 
-    override fun searchProjects() = db.getProjectedRocksForCounty(_countryName)
+    override fun searchProjects() = db.getProjectedRocksForCountry(_countryName)
 
     override fun searchBotches() = db.getBotchedRocksForCountry(_countryName)
 }
