@@ -33,7 +33,6 @@ import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.NetworkUtils
 
-
 abstract class UpdatableTableActivity : TableActivity(), UpdateListener {
 
     private var _updateDialog: Dialog? = null
