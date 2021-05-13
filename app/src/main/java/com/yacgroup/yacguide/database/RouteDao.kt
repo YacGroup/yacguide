@@ -19,7 +19,7 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTES
-import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_NR
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_ROUTE
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
@@ -31,10 +31,10 @@ interface RouteDao {
     @get:Query(SELECT_ROUTES)
     val all: List<Route>
 
-    @Query("$SELECT_ROUTES WHERE Route.parentId = :parentId $ORDERED_BY_NR")
+    @Query("$SELECT_ROUTES WHERE Route.parentId = :parentId $ORDERED_BY_ROUTE")
     fun getAll(parentId: Int): List<Route>
 
-    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :parentId AND Ascend.styleId = :styleId $ORDERED_BY_NR")
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :parentId AND Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
     fun getAllForStyle(parentId: Int, styleId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")

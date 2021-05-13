@@ -49,7 +49,10 @@ class SqlMacros {
         const val DELETE_ASCENDS = "DELETE FROM Ascend"
         const val DELETE_PARTNERS = "DELETE FROM Partner"
 
-        const val ORDERED_BY_NR = "ORDER BY nr"
+        const val ORDERED_BY_REGION = "ORDER BY Region.name"
+        const val ORDERED_BY_SECTOR = "ORDER BY Sector.nr"
+        const val ORDERED_BY_ROCK = "ORDER BY Rock.nr"
+        const val ORDERED_BY_ROUTE = "ORDER BY Route.nr"
         const val ORDERED_BY_DATE = "ORDER BY Ascend.year, Ascend.month, Ascend.day"
 
         const val VIA_ROUTES_ASCENDS = "JOIN Ascend ON Ascend.routeId = Route.id"

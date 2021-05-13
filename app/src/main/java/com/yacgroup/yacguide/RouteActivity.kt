@@ -38,7 +38,7 @@ class RouteActivity : TableActivity() {
 
     private lateinit var _rock: Rock
     private lateinit var _searchBarHandler: SearchBarHandler
-    private var _routeFilter: SearchBarHandler.ElementFilter = SearchBarHandler.ElementFilter.eNone
+    private var _routeFilter: ClimbingObjectFilter = ClimbingObjectFilter.eNone
     private var _routeNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,9 +115,9 @@ class RouteActivity : TableActivity() {
         this.title = if (rockName.first.isNotEmpty()) rockName.first else rockName.second
 
         val routes = when (_routeFilter) {
-            SearchBarHandler.ElementFilter.eOfficial -> db.getRoutes(_rock.id).filter { _isOfficialRoute(it) }
-            SearchBarHandler.ElementFilter.eProject -> db.getProjectedRoutes(_rock.id)
-            SearchBarHandler.ElementFilter.eBotch -> db.getBotchedRoutes(_rock.id)
+            ClimbingObjectFilter.eOfficial -> db.getRoutes(_rock.id).filter { _isOfficialRoute(it) }
+            ClimbingObjectFilter.eProject -> db.getProjectedRoutes(_rock.id)
+            ClimbingObjectFilter.eBotch -> db.getBotchedRoutes(_rock.id)
             else -> db.getRoutes(_rock.id)
         }
         for (route in routes) {
@@ -157,7 +157,7 @@ class RouteActivity : TableActivity() {
         }
     }
 
-    private fun _onSearchBarUpdate(routeNamePart: String, routeFilter: SearchBarHandler.ElementFilter) {
+    private fun _onSearchBarUpdate(routeNamePart: String, routeFilter: ClimbingObjectFilter) {
         _routeNamePart = routeNamePart
         _routeFilter = routeFilter
         displayContent()

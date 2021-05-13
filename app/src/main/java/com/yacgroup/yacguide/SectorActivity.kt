@@ -46,9 +46,7 @@ class SectorActivity : UpdatableTableActivity() {
         _region = db.getRegion(regionId)!!
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_sector
-    }
+    override fun getLayoutId() = R.layout.activity_sector
 
     override fun showComments(v: View) {
         val comments = db.getRegionComments(_region.id)
@@ -109,13 +107,13 @@ class SectorActivity : UpdatableTableActivity() {
         }
     }
 
-    override fun deleteContent() {
-        db.deleteSectorsRecursively(_region.id)
-    }
+    override fun deleteContent() = db.deleteSectorsRecursively(_region.id)
 
-    override fun searchRocks(rockName: String): List<Rock> {
-        return db.getRocksForRegion(_region.id).filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
-    }
+    override fun searchRocks() = db.getRocksForRegion(_region.id)
+
+    override fun searchProjects() = db.getProjectedRocksForRegion(_region.id)
+
+    override fun searchBotches() = db.getBotchedRocksForRegion(_region.id)
 
     private fun _generateRockCountString(rocks: List<Rock>): String {
         val countSummits = customSettings.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
