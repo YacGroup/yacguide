@@ -44,7 +44,6 @@
     <string name="import_tourbook">Import</string>
     <string name="export_tourbook">Export</string>
     <string name="download">Aktualisieren</string>
-    <string name="filter">Filtern</string>
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
 
@@ -92,7 +91,7 @@
     <string name="no_email_app_available">Keine Email-App verfügbar</string>
     <string name="corresponding_route_not_found">Zugehöriger Weg nicht gefunden.
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
-    <string name="no_comment_available">Kein Kommentar vorhanden.</string>
+    <string name="no_comment_available">Kein Kommentar vorhanden</string>
     <string name="cannot_create_logfile">Fehler beim Erzeugen der Log-Datei</string>
 
     <!-- Data -->
@@ -118,15 +117,6 @@
     <string name="rock_collapsed">Achtung: Der Felsen existiert nicht mehr.</string>
 
     <!-- Tourbook -->
-    <string name="ascends">Begehungen</string>
-    <string name="botch">\u0020\u26A1</string>
-    <string name="botch_text_symbol">Säcke \u26A1</string>
-    <string name="watching">\u0020\u261D</string>
-    <string name="project">\u0020\u2117</string>
-    <string name="project_text_symbol">Projekte \u2117</string>
-    <string name="undefined">unbestimmt</string>
-
-    <!-- Tourbook IO -->
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
@@ -159,11 +149,18 @@
     <string name="follow">Nachstieg</string>
     <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
 
-    <!-- filters -->
+    <!-- Ascend styles -->
+    <string name="my_ascends">Meine Begehungen</string>
+    <string name="project">\u0020\u2117</string>
     <string name="my_projects">Meine Projekte</string>
     <string name="my_projects_with_symbol">Meine Projekte \u2117</string>
+    <string name="botch">\u0020\u26A1</string>
     <string name="my_botches">Meine Säcke</string>
     <string name="my_botches_with_symbol">Meine Säcke \u26A1</string>
+    <string name="watching">\u0020\u261D</string>
+    <string name="undefined">unbestimmt</string>
+
+    <!-- Filters -->
     <string-array name="rockFilters">
         <!-- item order must be in line with static filterMap in TableActivity -->
         <item>Alle Felsen</item>

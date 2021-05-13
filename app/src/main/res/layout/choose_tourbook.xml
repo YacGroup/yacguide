@@ -31,7 +31,7 @@
         style="@style/AppTheme.Secondary.RadioButton"
         android:checked="true"
         android:onClick="showAscends"
-        android:text="@string/ascends" />
+        android:text="@string/my_ascends" />
 
     <RadioButton
         android:id="@+id/botchesRadioButton"
@@ -40,15 +40,6 @@
         android:layout_weight="1"
         style="@style/AppTheme.Secondary.RadioButton"
         android:onClick="showBotches"
-        android:text="@string/botch_text_symbol"/>
-
-    <RadioButton
-        android:id="@+id/projectsRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        style="@style/AppTheme.Secondary.RadioButton"
-        android:onClick="showProjects"
-        android:text="@string/project_text_symbol"/>
+        android:text="@string/my_botches_with_symbol"/>
 
 </RadioGroup>

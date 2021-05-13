@@ -51,15 +51,23 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private lateinit var _customSettings: SharedPreferences
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_tourbook
-    }
-
     private enum class TourbookType {
         eAscends,
-        eBotches,
-        eProjects
+        eBotches
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setTitle(R.string.my_ascends)
+
+        _db = DatabaseWrapper(this)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+
+        _currentYear = _initYears()
+        _displayContent()
+    }
+
+    override fun getLayoutId() = R.layout.activity_tourbook
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.import_export, menu)
@@ -75,17 +83,6 @@ class TourbookActivity : BaseNavigationActivity() {
         return true
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setTitle(R.string.ascends)
-
-        _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-
-        _currentYear = _initYears()
-        _displayContent()
-    }
-
     override fun onResume() {
         super.onResume()
         val mostRecentYear = _initYears()
@@ -97,6 +94,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
         } else if (resultCode == Activity.RESULT_OK) {
@@ -198,7 +196,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun showAscends(v: View) {
-        setTitle(R.string.ascends)
+        setTitle(R.string.my_ascends)
         _tourbookType = TourbookType.eAscends
         _currentYear = _initYears()
         _displayContent()
@@ -206,16 +204,8 @@ class TourbookActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun showBotches(v: View) {
-        setTitle(R.string.botch_text_symbol)
+        setTitle(R.string.my_botches_with_symbol)
         _tourbookType = TourbookType.eBotches
-        _currentYear = _initYears()
-        _displayContent()
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun showProjects(v: View) {
-        setTitle(R.string.project_text_symbol)
-        _tourbookType = TourbookType.eProjects
         _currentYear = _initYears()
         _displayContent()
     }
@@ -315,7 +305,6 @@ class TourbookActivity : BaseNavigationActivity() {
         return when (_tourbookType) {
             TourbookType.eAscends -> _db.getAscendsBelowStyleId(_currentYear, AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.getAscendsOfStyle(_currentYear, AscendStyle.eBOTCHED.id)
-            else -> _db.getAscendsOfStyle(_currentYear, AscendStyle.ePROJECT.id)
         }
     }
 
@@ -339,7 +328,6 @@ class TourbookActivity : BaseNavigationActivity() {
         _availableYears = when (_tourbookType) {
             TourbookType.eAscends -> _db.getYearsBelowStyleId(AscendStyle.eBOTCHED.id)
             TourbookType.eBotches -> _db.getYearsOfStyle(AscendStyle.eBOTCHED.id)
-            else -> _db.getYearsOfStyle(AscendStyle.ePROJECT.id)
         }
         Arrays.sort(_availableYears)
 
