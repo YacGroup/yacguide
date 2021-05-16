@@ -1,0 +1,32 @@
+# https://github.com/release-drafter/release-drafter
+
+name-template: 'YacGuide dev-YYYYMMDD'
+tag-template: 'dev-YYYYMMDD'
+prerelease: true
+change-template: '* $TITLE ([#$NUMBER]($URL))'
+categories:
+  - title: "What's Changed"
+    labels:
+      - 'feature'
+  - title: 'Bugfixes'
+    labels:
+      - 'bug'
+  - title: 'Maintenance'
+    labels:
+      - 'ktlo'
+autolabeler:
+  - label: 'feature'
+    branch:
+      - '/feature\/.+/'
+  - label: 'bug'
+    branch:
+      - '/bug\/.+/'
+  - label: 'ktlo'
+    branch:
+      - '/ktlo\/.+/'
+include-labels:
+  - 'feature'
+  - 'bug'
+  - 'ktlo'
+template: |
+  $CHANGES
