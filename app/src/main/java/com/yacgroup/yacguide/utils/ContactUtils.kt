@@ -90,6 +90,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         // Find all apps that can handle emails
         val possibleEmailIntents = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         val appList = activity.packageManager.queryIntentActivities(
                 possibleEmailIntents, PackageManager.MATCH_DEFAULT_ONLY)

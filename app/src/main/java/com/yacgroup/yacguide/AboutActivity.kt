@@ -18,6 +18,7 @@
 
 package com.yacgroup.yacguide
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -70,11 +71,13 @@ class AboutActivity : BaseNavigationActivity() {
 
     private fun _openUrl(url: String) {
         if (URLUtil.isValidUrl(url)) {
-            val openURL = Intent(Intent.ACTION_VIEW)
-            openURL.data = Uri.parse(url)
-            if (openURL.resolveActivity(packageManager) != null) {
-                startActivity(openURL)
-            } else {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(url)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
                 Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
             }
         }

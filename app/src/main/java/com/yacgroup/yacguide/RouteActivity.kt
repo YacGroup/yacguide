@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -69,13 +70,14 @@ class RouteActivity : TableActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun showMap(v: View) {
-        val gmmIntentUri = Uri.parse("geo:${_rock.latitude},${_rock.longitude}")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
-        if (mapIntent.resolveActivity(packageManager) == null) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("geo:${_rock.latitude},${_rock.longitude}")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, R.string.no_map_app_available, Toast.LENGTH_SHORT).show()
-        } else {
-            startActivity(mapIntent)
         }
     }
 

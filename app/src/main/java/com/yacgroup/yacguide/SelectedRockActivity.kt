@@ -31,12 +31,12 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SelectedRockActivity : TableActivity() {
 
-    private var _rockIds: ArrayList<Int> = ArrayList<Int>()
+    private var _rockIds: ArrayList<Int> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _rockIds = intent.getIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS)
+        _rockIds = intent.getIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS) as ArrayList<Int>
         displayContent()
     }
 

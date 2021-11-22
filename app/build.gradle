@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.triplet.play' version '3.4.0-agp4.2'
+    id 'com.github.triplet.play' version '3.6.0'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -32,15 +32,16 @@ play {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.yacgroup.yacguide"
         minSdkVersion 22
-        targetSdkVersion 29
+        targetSdkVersion 31
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "yacguide"
     }
+    buildToolsVersion = "31.0.0"
     signingConfigs {
         gplay {
             keyAlias keystoreProperties['keyAlias']
@@ -92,11 +93,11 @@ android {
 dependencies {
     // Room
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
 
     def room_version = '2.3.0'
 
