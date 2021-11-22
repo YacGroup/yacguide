@@ -33,7 +33,7 @@ class RegionActivity : UpdatableTableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY)
+        _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY).toString()
         jsonParser = RegionParser(db, this, _countryName)
     }
 
