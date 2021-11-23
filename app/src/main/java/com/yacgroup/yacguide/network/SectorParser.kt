@@ -125,7 +125,8 @@ class SectorParser(private val _db: DatabaseWrapper,
             val comment = RegionComment()
             comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
             comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-            comment.text = jsonComment.getString("kommentar")
+            val user = jsonComment.getString("username")
+            comment.text = jsonComment.getString("kommentar") + "   [$user]"
             comment.regionId = _regionId
             _regionComments.add(comment)
         }
@@ -208,6 +209,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             val routeId = ParserUtils.jsonField2Int(jsonComment, "wegid")
             val rockId = ParserUtils.jsonField2Int(jsonComment, "gipfelid")
             val sectorId = ParserUtils.jsonField2Int(jsonComment, "sektorid")
+            val user = jsonComment.getString("username")
             when {
                 routeId != 0 -> {
                     val comment = RouteComment()
@@ -216,7 +218,7 @@ class SectorParser(private val _db: DatabaseWrapper,
                     comment.gradeId = ParserUtils.jsonField2Int(jsonComment, "schwer")
                     comment.securityId = ParserUtils.jsonField2Int(jsonComment, "sicher")
                     comment.wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass")
-                    comment.text = jsonComment.getString("kommentar")
+                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
                     comment.routeId = routeId
                     _routeComments.add(comment)
                 }
@@ -224,7 +226,7 @@ class SectorParser(private val _db: DatabaseWrapper,
                     val comment = RockComment()
                     comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
                     comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-                    comment.text = jsonComment.getString("kommentar")
+                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
                     comment.rockId = rockId
                     _rockComments.add(comment)
                 }
@@ -232,7 +234,7 @@ class SectorParser(private val _db: DatabaseWrapper,
                     val comment = SectorComment()
                     comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
                     comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-                    comment.text = jsonComment.getString("kommentar")
+                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
                     comment.sectorId = sectorId
                     _sectorComments.add(comment)
                 }
