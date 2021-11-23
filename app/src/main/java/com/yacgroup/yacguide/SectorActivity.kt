@@ -22,6 +22,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import com.yacgroup.yacguide.activity_properties.*
 
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -33,17 +34,30 @@ import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class SectorActivity : UpdatableTableActivity() {
+class SectorActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _region: Region
+    private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, DatabaseWrapper.INVALID_ID)
-
-        jsonParser = SectorParser(db, this, regionId)
         _region = db.getRegion(regionId)!!
+
+        val rockSearchable = RockSearchable(
+            this
+        ) { db.getRocksForRegion(regionId) }
+        val ascentFilterable = AscentFilterable(
+            this,
+            { db.getProjectedRocksForRegion(regionId) },
+            { db.getBotchedRocksForRegion(regionId) }
+        )
+        _updatable = Updatable(
+            this,
+            SectorParser(db, regionId)
+        ) { db.deleteSectorsRecursively(_region.id) }
+        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
     }
 
     override fun getLayoutId() = R.layout.activity_sector
@@ -103,17 +117,9 @@ class SectorActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (sectors.isEmpty()) {
-            displayDownloadButton()
+            layout.addView(_updatable.getDownloadButton())
         }
     }
-
-    override fun deleteContent() = db.deleteSectorsRecursively(_region.id)
-
-    override fun searchRocks() = db.getRocksForRegion(_region.id)
-
-    override fun searchProjects() = db.getProjectedRocksForRegion(_region.id)
-
-    override fun searchBotches() = db.getBotchedRocksForRegion(_region.id)
 
     private fun _generateRockCountString(rocks: List<Rock>): String {
         val countSummits = customSettings.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))

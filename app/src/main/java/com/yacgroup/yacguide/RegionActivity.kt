@@ -21,20 +21,35 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import com.yacgroup.yacguide.activity_properties.*
 
 import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RegionActivity : UpdatableTableActivity() {
+class RegionActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _countryName: String
+    private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY).toString()
-        jsonParser = RegionParser(db, this, _countryName)
+
+        val rockSearchable = RockSearchable(
+            this
+        ) { db.getRocksForCountry(_countryName) }
+        val ascentFilterable = AscentFilterable(
+            this,
+            { db.getProjectedRocksForCountry(_countryName) },
+            { db.getBotchedRocksForCountry(_countryName) }
+        )
+        _updatable = Updatable(
+            this,
+            RegionParser(db, _countryName)
+        ) { db.deleteRegionsRecursively(_countryName) }
+        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
     }
 
     override fun getLayoutId() = R.layout.activity_region
@@ -57,15 +72,7 @@ class RegionActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (regions.isEmpty()) {
-            displayDownloadButton()
+            layout.addView(_updatable.getDownloadButton())
         }
     }
-
-    override fun deleteContent() = db.deleteRegionsRecursively(_countryName)
-
-    override fun searchRocks() = db.getRocksForCountry(_countryName)
-
-    override fun searchProjects() = db.getProjectedRocksForCountry(_countryName)
-
-    override fun searchBotches() = db.getBotchedRocksForCountry(_countryName)
 }

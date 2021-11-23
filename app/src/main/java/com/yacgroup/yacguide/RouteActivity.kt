@@ -68,6 +68,8 @@ class RouteActivity : TableActivity() {
         findViewById<TextView>(R.id.infoTextView).text = rockStatus
     }
 
+    override fun getLayoutId() = R.layout.activity_route
+
     @Suppress("UNUSED_PARAMETER")
     fun showMap(v: View) {
         try {
@@ -169,10 +171,6 @@ class RouteActivity : TableActivity() {
         return route.statusId != Route.STATUS_CLOSED
             && route.statusId != Route.STATUS_UNACKNOWLEDGED
             && route.statusId != Route.STATUS_UNFINISHED
-    }
-
-    override fun getLayoutId(): Int {
-        return R.layout.activity_route
     }
 }
 

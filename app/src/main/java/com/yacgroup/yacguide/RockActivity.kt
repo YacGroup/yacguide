@@ -23,6 +23,8 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import com.yacgroup.yacguide.activity_properties.AscentFilterable
+import com.yacgroup.yacguide.activity_properties.RockSearchable
 
 import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -33,7 +35,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RockActivity : TableActivity() {
+class RockActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _sector: Sector
     private lateinit var _searchBarHandler: SearchBarHandler
@@ -44,12 +46,24 @@ class RockActivity : TableActivity() {
         super.onCreate(savedInstanceState)
 
         val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
-
         _sector = db.getSector(sectorId)!!
+
+        val rockSearchable = RockSearchable(
+            this
+        ) { db.getRocksForSector(sectorId) }
+        val ascentFilterable = AscentFilterable(
+            this,
+            { db.getProjectedRocksForSector(sectorId) },
+            { db.getBotchedRocksForSector(sectorId) }
+        )
+        properties = arrayListOf(rockSearchable, ascentFilterable)
+
         _searchBarHandler = SearchBarHandler(findViewById(R.id.searchBarLayout), R.string.rock_search, R.array.rockFilters) {
             rockNamePart, rockFilter -> _onSearchBarUpdate(rockNamePart, rockFilter)
         }
     }
+
+    override fun getLayoutId() = R.layout.activity_rock
 
     override fun showComments(v: View) {
         val comments = db.getSectorComments(_sector.id)
@@ -141,9 +155,5 @@ class RockActivity : TableActivity() {
         return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine)
                 && rock.status != Rock.statusProhibited
                 && rock.status != Rock.statusCollapsed
-    }
-
-    override fun getLayoutId(): Int {
-        return R.layout.activity_rock
     }
 }

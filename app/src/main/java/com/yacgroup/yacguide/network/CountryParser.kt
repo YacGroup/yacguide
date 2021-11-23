@@ -25,7 +25,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
 
-class CountryParser(private val _db: DatabaseWrapper, listener: UpdateListener) : JSONWebParser(listener) {
+class CountryParser(private val _db: DatabaseWrapper) : JSONWebParser() {
 
     private val _countries = mutableListOf<Country>()
 

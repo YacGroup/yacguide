@@ -30,9 +30,8 @@ import kotlin.jvm.Throws
 
 class RegionParser(
         private val _db: DatabaseWrapper,
-        listener: UpdateListener,
         private val _countryName: String)
-    : JSONWebParser(listener) {
+    : JSONWebParser() {
 
     private val _regions = mutableListOf<Region>()
 
