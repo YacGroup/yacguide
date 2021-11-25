@@ -32,8 +32,7 @@ import java.util.*
 import kotlin.jvm.Throws
 
 class SectorParser(private val _db: DatabaseWrapper,
-                   private val _listener: UpdateListener,
-                   private val _regionId: Int) : JSONWebParser(_listener) {
+                   private val _regionId: Int) : JSONWebParser() {
 
     private val _CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
         init {
@@ -101,7 +100,7 @@ class SectorParser(private val _db: DatabaseWrapper,
         val jsonSectors = JSONArray(json)
         _sectorCount = jsonSectors.length()
         _parsedSectorCount = 0
-        _listener.onUpdateStatus("0 %")
+        listener?.onUpdateStatus("0 %")
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
             val s = Sector()
@@ -172,7 +171,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             r.parentId = sectorId
             _rocks.add(r)
         }
-        _listener.onUpdateStatus("${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
+        listener?.onUpdateStatus("${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
 
     @Throws(JSONException::class)

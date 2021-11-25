@@ -25,7 +25,8 @@ import org.json.JSONException
 import java.util.LinkedList
 import kotlin.jvm.Throws
 
-abstract class JSONWebParser(private var _listener: UpdateListener): NetworkListener {
+abstract class JSONWebParser : NetworkListener {
+    var listener: UpdateListener? = null
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
     private var _success: Boolean = true
@@ -69,6 +70,6 @@ abstract class JSONWebParser(private var _listener: UpdateListener): NetworkList
 
     // NetworkListener
     protected open fun onFinalTaskResolved() {
-        _listener.onUpdateFinished(_success)
+        listener?.onUpdateFinished(_success)
     }
 }

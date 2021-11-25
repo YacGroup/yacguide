@@ -21,16 +21,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.network.CountryParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class CountryActivity : UpdatableTableActivity() {
+class CountryActivity : TableActivityWithOptionsMenu() {
+
+    private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        jsonParser = CountryParser(db, this)
+        val rockSearchable = RockSearchable(
+            this,
+        ) { db.getRocks() }
+        val ascentFilterable = AscentFilterable(
+            this,
+            { db.getProjectedRocks() },
+            { db.getBotchedRocks() }
+        )
+        _updatable = Updatable(
+            this,
+            CountryParser(db)
+        ) { db.deleteCountriesRecursively() }
+        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
 
         WhatsNewInfo(this).let {
             if (it.checkForVersionUpdate()) {
@@ -59,15 +74,7 @@ class CountryActivity : UpdatableTableActivity() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (countries.isEmpty()) {
-            displayDownloadButton()
+            layout.addView(_updatable.getDownloadButton())
         }
     }
-
-    override fun deleteContent() = db.deleteCountriesRecursively()
-
-    override fun searchRocks() = db.getRocks()
-
-    override fun searchProjects() = db.getProjectedRocks()
-
-    override fun searchBotches() = db.getBotchedRocks()
 }

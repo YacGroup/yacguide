@@ -78,5 +78,5 @@ abstract class TableActivity : BaseNavigationActivity() {
         return "$botchAdd$projectAdd$watchingAdd"
     }
 
-    protected abstract fun displayContent()
+    abstract fun displayContent()
 }
