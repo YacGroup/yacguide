@@ -39,7 +39,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _sector: Sector
     private lateinit var _searchBarHandler: SearchBarHandler
-    private var _rockFilter = ClimbingObjectFilter.eNone;
+    private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +58,13 @@ class RockActivity : TableActivityWithOptionsMenu() {
         )
         properties = arrayListOf(rockSearchable, ascentFilterable)
 
-        _searchBarHandler = SearchBarHandler(findViewById(R.id.searchBarLayout), R.string.rock_search, R.array.rockFilters) {
-            rockNamePart, rockFilter -> _onSearchBarUpdate(rockNamePart, rockFilter)
-        }
+        _searchBarHandler = SearchBarHandler(
+            findViewById(R.id.searchBarLayout),
+            R.string.rock_search,
+            getString(R.string.only_official_summits),
+            resources.getBoolean(R.bool.only_official_summits),
+            customSettings
+        ) { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) }
     }
 
     override fun getLayoutId() = R.layout.activity_rock
@@ -99,15 +103,14 @@ class RockActivity : TableActivityWithOptionsMenu() {
         layout.removeAllViews()
         val sectorName = ParserUtils.decodeObjectNames(_sector.name)
         this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
-        val rocks = when (_rockFilter) {
-            ClimbingObjectFilter.eOfficial -> db.getRocksForSector(_sector.id).filter { _rockIsAnOfficialSummit(it) }
-            ClimbingObjectFilter.eProject -> db.getProjectedRocksForSector(_sector.id)
-            ClimbingObjectFilter.eBotch -> db.getBotchedRocksForSector(_sector.id)
-            else -> db.getRocksForSector(_sector.id)
+
+        var rocks = db.getRocksForSector(_sector.id)
+        if (_onlyOfficialSummits) {
+            rocks = rocks.filter { _rockIsAnOfficialSummit(it) }
         }
         for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
-            if (_rockNamePart.isNotEmpty() && rockName.toList().none{ it.toLowerCase().contains(_rockNamePart.toLowerCase()) }) {
+            if (_rockNamePart.isNotEmpty() && rockName.toList().none { it.lowercase().contains(_rockNamePart.lowercase()) }) {
                 continue
             }
             var bgColor = Color.WHITE
@@ -128,26 +131,39 @@ class RockActivity : TableActivityWithOptionsMenu() {
                 intent.putExtra(IntentConstants.ROCK_KEY, rock.id)
                 startActivityForResult(intent, 0)
             }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+            layout.addView(
+                WidgetUtils.createCommonRowLayout(
+                    this,
                     textLeft = "${rock.nr}  ${rockName.first}$typeAdd$decorationAdd",
                     textRight = rock.status.toString(),
                     onClickListener = onClickListener,
                     bgColor = bgColor,
-                    typeface = typeface))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
+                    typeface = typeface
+                )
+            )
+            layout.addView(
+                WidgetUtils.createCommonRowLayout(
+                    this,
                     textLeft = rockName.second,
                     textSizeDp = WidgetUtils.textFontSizeDp,
                     onClickListener = onClickListener,
                     bgColor = bgColor,
-                    typeface = typeface))
+                    typeface = typeface
+                )
+            )
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
     }
 
-    private fun _onSearchBarUpdate(rockNamePart: String, rockFilter: ClimbingObjectFilter)
+    override fun onStop() {
+        _searchBarHandler.storeCustomSettings(getString(R.string.only_official_summits))
+        super.onStop()
+    }
+
+    private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean)
     {
         _rockNamePart = rockNamePart
-        _rockFilter = rockFilter
+        _onlyOfficialSummits = onlyOfficialSummits
         displayContent()
     }
 

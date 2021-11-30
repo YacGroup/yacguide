@@ -44,6 +44,8 @@
 
     <!-- Default settings -->
     <bool name="order_tourbook_chronologically">false</bool>
+    <bool name="only_official_summits">false</bool>
+    <bool name="only_official_routes">false</bool>
 
     <bool name="count_summits">true</bool>
     <bool name="count_massifs">false</bool>
