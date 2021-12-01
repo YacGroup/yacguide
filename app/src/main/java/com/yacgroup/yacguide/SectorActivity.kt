@@ -18,15 +18,10 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import com.yacgroup.yacguide.activity_properties.*
-
-import com.yacgroup.yacguide.database.comment.RegionComment
-import com.yacgroup.yacguide.database.DatabaseWrapper
-import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.AscendStyle
@@ -36,70 +31,36 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SectorActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _region: Region
     private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val regionId = intent.getIntExtra(IntentConstants.REGION_KEY, DatabaseWrapper.INVALID_ID)
-        _region = db.getRegion(regionId)!!
-
-        val rockSearchable = RockSearchable(
-            this
-        ) { db.getRocksForRegion(regionId) }
-        val ascentFilterable = AscentFilterable(
-            this,
-            { db.getProjectedRocksForRegion(regionId) },
-            { db.getBotchedRocksForRegion(regionId) }
-        )
         _updatable = Updatable(
             this,
-            SectorParser(db, regionId)
-        ) { db.deleteSectorsRecursively(_region.id) }
-        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
+            SectorParser(db, activityLevel.parentId)
+        ) { db.deleteSectorsRecursively(activityLevel.parentId) }
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
     }
 
     override fun getLayoutId() = R.layout.activity_sector
 
     override fun showComments(v: View) {
-        val comments = db.getRegionComments(_region.id)
-        if (comments.isNotEmpty()) {
-            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for ((idx, comment) in comments.withIndex()) {
-                    val qualityId = comment.qualityId
-
-                    if (idx > 0) {
-                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    }
-                    if (RegionComment.QUALITY_MAP.containsKey(qualityId)) {
-                        it.addView(WidgetUtils.createCommonRowLayout(this,
-                                textLeft = getString(R.string.relevance),
-                                textRight = RegionComment.QUALITY_MAP[qualityId].orEmpty(),
-                                textSizeDp = WidgetUtils.textFontSizeDp,
-                                typeface = Typeface.NORMAL))
-                    }
-                    it.addView(WidgetUtils.createCommonRowLayout(this,
-                            textLeft = comment.text.orEmpty(),
-                            textSizeDp = WidgetUtils.textFontSizeDp,
-                            typeface = Typeface.NORMAL))
-                }
-            }
-        } else {
-            showNoCommentToast()
-        }
+        showRegionComments(activityLevel.parentId)
     }
 
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        this.title = _region.name
-        val sectors = db.getSectors(_region.id)
+        this.title = activityLevel.parentName
+        val sectors = db.getSectors(activityLevel.parentId)
         for (sector in sectors) {
             val sectorName = ParserUtils.decodeObjectNames(sector.name)
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@SectorActivity, RockActivity::class.java)
-                intent.putExtra(IntentConstants.SECTOR_KEY, sector.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRock.value)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, sector.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, sector.name)
                 startActivity(intent)
             }
 

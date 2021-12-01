@@ -18,36 +18,28 @@
 package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
-import android.widget.Toast
 import com.yacgroup.yacguide.R
-import com.yacgroup.yacguide.SelectedRockActivity
-import com.yacgroup.yacguide.TableActivity
-import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.RockActivity
+import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class AscentFilterable(private val _activity: TableActivity,
-                       private val _searchProjects: () -> List<Rock>,
-                       private val _searchBotches: () -> List<Rock>) : ActivityProperty {
+class AscentFilterable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
 
     override fun getMenuGroupId() = R.id.group_filter
 
     override fun onMenuAction(menuItemId: Int) {
         when (menuItemId) {
-            R.id.action_filter_projects -> _goToFilteredRocksView(_searchProjects())
-            R.id.action_filter_botches -> _goToFilteredRocksView(_searchBotches())
+            R.id.action_filter_projects -> _goToFilteredRocksView(IntentConstants.FILTER_PROJECTS)
+            R.id.action_filter_botches -> _goToFilteredRocksView(IntentConstants.FILTER_BOTCHES)
         }
     }
 
-    private fun _goToFilteredRocksView(rocks: List<Rock>): Boolean {
-        if (rocks.isEmpty()) {
-            Toast.makeText(_activity, R.string.hint_rock_not_found, Toast.LENGTH_SHORT).show()
-            return false
-        }
-        val rockIds = ArrayList(rocks.map { it.id })
-        val intent = Intent(_activity, SelectedRockActivity::class.java)
-        intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
+    private fun _goToFilteredRocksView(filterIntent: String) {
+        val intent = Intent(_activity, RockActivity::class.java)
+        intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
+        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
+        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+        intent.putExtra(filterIntent, true)
         _activity.startActivity(intent)
-
-        return true
     }
 }

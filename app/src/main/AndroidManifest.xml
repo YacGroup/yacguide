@@ -51,7 +51,6 @@
         <activity
             android:name=".RockActivity"
             android:parentActivityName=".SectorActivity"/>
-        <activity android:name=".SelectedRockActivity"/>
         <activity
             android:name=".RouteActivity"
             android:parentActivityName=".RockActivity"/>

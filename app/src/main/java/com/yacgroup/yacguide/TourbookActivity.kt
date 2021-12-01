@@ -267,7 +267,7 @@ class TourbookActivity : BaseNavigationActivity() {
             }
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@TourbookActivity, TourbookAscendActivity::class.java)
-                intent.putExtra(IntentConstants.ASCEND_KEY, ascend.id)
+                intent.putExtra(IntentConstants.ASCEND_ID, ascend.id)
                 startActivityForResult(intent, 0)
             }
 

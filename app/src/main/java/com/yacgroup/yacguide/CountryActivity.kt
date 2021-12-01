@@ -33,19 +33,11 @@ class CountryActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val rockSearchable = RockSearchable(
-            this,
-        ) { db.getRocks() }
-        val ascentFilterable = AscentFilterable(
-            this,
-            { db.getProjectedRocks() },
-            { db.getBotchedRocks() }
-        )
         _updatable = Updatable(
             this,
             CountryParser(db)
         ) { db.deleteCountriesRecursively() }
-        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
 
         WhatsNewInfo(this).let {
             if (it.checkForVersionUpdate()) {
@@ -64,7 +56,8 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         for (country in countries) {
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@CountryActivity, RegionActivity::class.java)
-                intent.putExtra(IntentConstants.COUNTRY_KEY, country.name)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, country.name)
                 startActivity(intent)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,

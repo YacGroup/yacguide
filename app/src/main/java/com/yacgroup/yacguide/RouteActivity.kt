@@ -26,7 +26,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 
-import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
@@ -45,9 +44,7 @@ class RouteActivity : TableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, DatabaseWrapper.INVALID_ID)
-
-        _rock = db.getRock(rockId)!!
+        _rock = db.getRock(activityLevel.parentId)!!
 
         val rockStatus = when (_rock.status){
             Rock.statusCollapsed -> getString(R.string.rock_collapsed)
@@ -89,32 +86,7 @@ class RouteActivity : TableActivity() {
     }
 
     override fun showComments(v: View) {
-        val comments = _rock.let { db.getRockComments(it.id) }
-        if (comments.isNotEmpty()) {
-            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for ((idx, comment) in comments.withIndex()) {
-                    val qualityId = comment.qualityId
-                    val text = comment.text
-
-                    if (idx > 0) {
-                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    }
-                    if (RockComment.QUALITY_MAP.containsKey(qualityId)) {
-                        it.addView(WidgetUtils.createCommonRowLayout(this,
-                                textLeft = getString(R.string.nature),
-                                textRight = RockComment.QUALITY_MAP[qualityId].orEmpty(),
-                                textSizeDp = WidgetUtils.textFontSizeDp,
-                                typeface = Typeface.NORMAL))
-                    }
-                    it.addView(WidgetUtils.createCommonRowLayout(this,
-                            textLeft = text.orEmpty(),
-                            textSizeDp = WidgetUtils.textFontSizeDp,
-                            typeface = Typeface.NORMAL))
-                }
-            }
-        } else {
-            showNoCommentToast()
-        }
+        showRockComments(_rock.id)
     }
 
     override fun displayContent() {
@@ -137,7 +109,8 @@ class RouteActivity : TableActivity() {
             val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             val onCLickListener = View.OnClickListener {
                 val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
-                intent.putExtra(IntentConstants.ROUTE_KEY, route.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, route.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, route.name)
                 startActivityForResult(intent, 0)
             }
             val statusId = route.statusId

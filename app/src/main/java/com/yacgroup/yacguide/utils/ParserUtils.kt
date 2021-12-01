@@ -67,7 +67,7 @@ object ParserUtils {
         if (encodedNames == null) {
             return Pair("", "")
         }
-        val decodedNames= encodedNames.split(_WATERMARK)
+        val decodedNames = encodedNames.split(_WATERMARK)
         return if (decodedNames.size > 1) Pair(decodedNames[0], decodedNames[1]) else Pair(decodedNames[0], "")
     }
 

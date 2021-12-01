@@ -28,6 +28,7 @@
     <string name="search">Suchen</string>
     <string name="comments">Kommentare</string>
     <string name="name">Name</string>
+    <string name="arrow">\u2794</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>

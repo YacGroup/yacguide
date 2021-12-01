@@ -22,47 +22,37 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import com.yacgroup.yacguide.activity_properties.*
-
 import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _countryName: String
     private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _countryName = intent.getStringExtra(IntentConstants.COUNTRY_KEY).toString()
-
-        val rockSearchable = RockSearchable(
-            this
-        ) { db.getRocksForCountry(_countryName) }
-        val ascentFilterable = AscentFilterable(
-            this,
-            { db.getProjectedRocksForCountry(_countryName) },
-            { db.getBotchedRocksForCountry(_countryName) }
-        )
         _updatable = Updatable(
             this,
-            RegionParser(db, _countryName)
-        ) { db.deleteRegionsRecursively(_countryName) }
-        properties = arrayListOf(rockSearchable, ascentFilterable, _updatable)
+            RegionParser(db, activityLevel.parentName)
+        ) { db.deleteRegionsRecursively(activityLevel.parentName) }
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
     }
 
     override fun getLayoutId() = R.layout.activity_region
 
     override fun displayContent() {
-        this.title = _countryName
+        this.title = activityLevel.parentName
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val regions = db.getRegions(_countryName)
+        val regions = db.getRegions(activityLevel.parentName)
         for (region in regions) {
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@RegionActivity, SectorActivity::class.java)
-                intent.putExtra(IntentConstants.REGION_KEY, region.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, region.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, region.name)
                 startActivity(intent)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,

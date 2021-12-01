@@ -23,13 +23,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import com.yacgroup.yacguide.R
-import com.yacgroup.yacguide.SelectedRockActivity
-import com.yacgroup.yacguide.TableActivity
-import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.RockActivity
+import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class RockSearchable(private val _activity: TableActivity,
-                     private val _searchRocks: () -> List<Rock>) : ActivityProperty {
+class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
 
     override fun getMenuGroupId() = R.id.group_rock_search
 
@@ -41,16 +39,13 @@ class RockSearchable(private val _activity: TableActivity,
             if (rockName.isEmpty()) {
                 Toast.makeText(searchDialog.context, R.string.hint_no_name, Toast.LENGTH_SHORT).show()
             } else {
-                val rocks = _searchRocks().filter { rock -> rock.name!!.toLowerCase().contains(rockName.toLowerCase()) }
-                if (rocks.isNotEmpty()) {
-                    val rockIds = ArrayList(rocks.map { it.id })
-                    val intent = Intent(_activity, SelectedRockActivity::class.java)
-                    intent.putIntegerArrayListExtra(IntentConstants.SELECTED_ROCK_IDS, rockIds)
-                    _activity.startActivity(intent)
-                    searchDialog.dismiss()
-                } else {
-                    Toast.makeText(_activity, R.string.hint_rock_not_found, Toast.LENGTH_SHORT).show()
-                }
+                val intent = Intent(_activity, RockActivity::class.java)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+                intent.putExtra(IntentConstants.FILTER_NAME, rockName)
+                _activity.startActivity(intent)
+                searchDialog.dismiss()
             }
         }
         searchDialog.findViewById<Button>(R.id.cancelButton)?.setOnClickListener { searchDialog.dismiss() }
