@@ -39,7 +39,7 @@ class RouteActivity : TableActivity() {
 
     private lateinit var _rock: Rock
     private lateinit var _searchBarHandler: SearchBarHandler
-    private var _routeFilter: ClimbingObjectFilter = ClimbingObjectFilter.eNone
+    private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,9 +48,6 @@ class RouteActivity : TableActivity() {
         val rockId = intent.getIntExtra(IntentConstants.ROCK_KEY, DatabaseWrapper.INVALID_ID)
 
         _rock = db.getRock(rockId)!!
-        _searchBarHandler = SearchBarHandler(findViewById(R.id.searchBarLayout), R.string.route_search, R.array.routeFilters) {
-            routeNamePart, routeFilter -> _onSearchBarUpdate(routeNamePart, routeFilter)
-        }
 
         val rockStatus = when (_rock.status){
             Rock.statusCollapsed -> getString(R.string.rock_collapsed)
@@ -66,6 +63,14 @@ class RouteActivity : TableActivity() {
             }
         }
         findViewById<TextView>(R.id.infoTextView).text = rockStatus
+
+        _searchBarHandler = SearchBarHandler(
+            findViewById(R.id.searchBarLayout),
+            R.string.route_search,
+            getString(R.string.only_official_routes),
+            resources.getBoolean(R.bool.only_official_routes),
+            customSettings
+        ) { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) }
     }
 
     override fun getLayoutId() = R.layout.activity_route
@@ -118,15 +123,14 @@ class RouteActivity : TableActivity() {
         val rockName = ParserUtils.decodeObjectNames(_rock.name)
         this.title = if (rockName.first.isNotEmpty()) rockName.first else rockName.second
 
-        val routes = when (_routeFilter) {
-            ClimbingObjectFilter.eOfficial -> db.getRoutes(_rock.id).filter { _isOfficialRoute(it) }
-            ClimbingObjectFilter.eProject -> db.getProjectedRoutes(_rock.id)
-            ClimbingObjectFilter.eBotch -> db.getBotchedRoutes(_rock.id)
-            else -> db.getRoutes(_rock.id)
+        var routes = db.getRoutes(_rock.id)
+        if (_onlyOfficialRoutes) {
+            routes = routes.filter { _isOfficialRoute(it) }
         }
+
         for (route in routes) {
             val routeName = ParserUtils.decodeObjectNames(route.name)
-            if (_routeNamePart.isNotEmpty() && routeName.toList().none{ it.toLowerCase().contains(_routeNamePart.toLowerCase()) }) {
+            if (_routeNamePart.isNotEmpty() && routeName.toList().none{ it.lowercase().contains(_routeNamePart.lowercase()) }) {
                 continue
             }
             val commentCount = db.getRouteCommentCount(route.id)
@@ -161,9 +165,14 @@ class RouteActivity : TableActivity() {
         }
     }
 
-    private fun _onSearchBarUpdate(routeNamePart: String, routeFilter: ClimbingObjectFilter) {
+    override fun onStop() {
+        _searchBarHandler.storeCustomSettings(getString(R.string.only_official_routes))
+        super.onStop()
+    }
+
+    private fun _onSearchBarUpdate(routeNamePart: String, onlyOfficialRoutes: Boolean) {
         _routeNamePart = routeNamePart
-        _routeFilter = routeFilter
+        _onlyOfficialRoutes = onlyOfficialRoutes
         displayContent()
     }
 

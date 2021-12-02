@@ -18,68 +18,61 @@
 package com.yacgroup.yacguide.utils
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.Spinner
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.yacgroup.yacguide.ClimbingObjectFilter
 import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
-                       filterNamesResource: Int,
-                       private val _updateCallback: (String, ClimbingObjectFilter) -> Unit) : AdapterView.OnItemSelectedListener {
+                       checkBoxTitle: String,
+                       checkBoxDefaultValue: Boolean,
+                       private val _settings: SharedPreferences,
+                       private val _updateCallback: (String, Boolean) -> Unit) {
 
-    private val _filterMap = mapOf(
-        0 to ClimbingObjectFilter.eNone,
-        1 to ClimbingObjectFilter.eOfficial,
-        2 to ClimbingObjectFilter.eProject,
-        3 to ClimbingObjectFilter.eBotch
-    )
-    private var _filter: ClimbingObjectFilter = ClimbingObjectFilter.eNone
     private var _namePart: String = ""
+    private var _onlyOfficialObjects: Boolean = false
 
     init {
-        val filterSpinner: Spinner = searchBarLayout.findViewById(R.id.filterSpinner)
-        ArrayAdapter.createFromResource(
-                searchBarLayout.context,
-                filterNamesResource,
-                android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            filterSpinner.adapter = adapter
-            filterSpinner.onItemSelectedListener = this
+        _onlyOfficialObjects = _settings.getBoolean(
+            checkBoxTitle,
+            checkBoxDefaultValue)
+        searchBarLayout.findViewById<CheckBox>(R.id.onlyOfficialObjectsCheckbox).apply {
+            text = checkBoxTitle
+            isChecked = _onlyOfficialObjects
+            setOnClickListener(View.OnClickListener {
+                _onlyOfficialObjects = isChecked
+                _updateCallback(_namePart, _onlyOfficialObjects)
+            })
         }
 
-        val searchEditText = searchBarLayout.findViewById<EditText>(R.id.searchEditText)
-        searchEditText.setHint(searchHintResource)
-        searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable) {
-                _namePart = searchEditText.text.toString()
-                _updateCallback(_namePart, _filter)
+        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
+            setHint(searchHintResource)
+            onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
+                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
-        })
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable) {
+                    _namePart = text.toString()
+                    _updateCallback(_namePart, _onlyOfficialObjects)
+                }
+            })
+        }
+
+        _updateCallback(_namePart, _onlyOfficialObjects)
     }
 
-    // AdapterView.OnItemSelectedListener
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        _filter = _filterMap[position] ?: ClimbingObjectFilter.eNone
-        _updateCallback(_namePart, _filter)
+    fun storeCustomSettings(key: String) {
+        val editor = _settings.edit()
+        editor.putBoolean(key, _onlyOfficialObjects)
+        editor.commit()
     }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {}
-
 }

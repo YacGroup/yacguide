@@ -18,7 +18,6 @@
 
 <!--
   Makes sure, that the spinner layout matches the one of a text edit field.
-
   NOTE: The textColor must explicitly be set, otherwise the spinner text will be gray.
 -->
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
