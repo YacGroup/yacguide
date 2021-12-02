@@ -10,11 +10,12 @@ contribution.
 
 To contribute a patch, the workflow is as follows:
 
-1. Fork the repository ([only for the first time][fork-a-repo])
-2. [Create a topic branch](#create-a-topic-branch)
-3. [Commit patches](#committing-patches)
-4. Push commits to your fork
-5. [Open a pull request](#creating-a-pull-request)
+1. Clone the repository 
+2. `git checkout master; git pull`
+3. [Create a topic branch](#create-a-topic-branch)
+4. [Commit patches](#committing-patches)
+5. Push commits to your fork
+6. [Open a pull request](#creating-a-pull-request)
 
 For more details about the development process have a look to the
 [developer notes](docs/developer-notes.md).
