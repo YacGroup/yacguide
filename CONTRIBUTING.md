@@ -14,7 +14,7 @@ To contribute a patch, the workflow is as follows:
 2. `git checkout master; git pull`
 3. [Create a topic branch](#create-a-topic-branch)
 4. [Commit patches](#committing-patches)
-5. Push commits to your fork
+5. Push commit
 6. [Open a pull request](#creating-a-pull-request)
 
 For more details about the development process have a look to the
