@@ -18,14 +18,14 @@
 package com.yacgroup.yacguide.utils
 
 object IntentConstants {
-    const val COUNTRY_KEY = "CountryName"
-    const val REGION_KEY = "RegionId"
-    const val SECTOR_KEY = "SectorId"
-    const val ROCK_KEY = "RockId"
-    const val ROUTE_KEY = "RouteId"
-    const val ASCEND_KEY = "AscendId"
-    const val ASCEND_PARTNER_IDS = "AscendPartnerIds"
-    const val SELECTED_ROCK_IDS = "SelectedRockIds"
+    const val ASCEND_ID = "AscentId"
+    const val ASCEND_PARTNER_IDS = "AscentPartnerIds"
+    const val CLIMBING_OBJECT_LEVEL = "ClimbingObjectLevel"
+    const val CLIMBING_OBJECT_PARENT_ID = "ClimbingObjectParentId"
+    const val CLIMBING_OBJECT_PARENT_NAME = "ClimbingObjectParentName"
+    const val FILTER_NAME = "FilterName"
+    const val FILTER_PROJECTS = "FilterProjects"
+    const val FILTER_BOTCHES = "FilterBotches"
 
     // Result codes
     const val RESULT_UPDATED = 1000

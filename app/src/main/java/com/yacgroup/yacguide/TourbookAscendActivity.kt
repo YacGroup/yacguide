@@ -44,8 +44,8 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
 
-        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_KEY, DatabaseWrapper.INVALID_ID)
-        _routeId = intent.getIntExtra(IntentConstants.ROUTE_KEY, DatabaseWrapper.INVALID_ID)
+        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
+        _routeId = intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID)
         if (ascendId != DatabaseWrapper.INVALID_ID) {
             _db.getAscend(ascendId)?.let {
                 _ascends = mutableListOf(it)
@@ -61,9 +61,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         }
     }
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_tourbook_ascend
-    }
+    override fun getLayoutId() = R.layout.activity_tourbook_ascend
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_delete, menu)
@@ -71,6 +69,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
             _ascends[_currentAscendIdx] = _db.getAscend(_ascends[_currentAscendIdx].id)!!
@@ -107,7 +106,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
     private fun edit() {
         val intent = Intent(this@TourbookAscendActivity, AscendActivity::class.java)
-        intent.putExtra(IntentConstants.ASCEND_KEY, _ascends[_currentAscendIdx].id)
+        intent.putExtra(IntentConstants.ASCEND_ID, _ascends[_currentAscendIdx].id)
         startActivityForResult(intent, 0)
     }
 

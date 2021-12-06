@@ -25,11 +25,7 @@ import android.view.View
 import android.widget.*
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
-
-import com.yacgroup.yacguide.database.comment.SectorComment
-import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.database.Sector
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
@@ -37,26 +33,21 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RockActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _sector: Sector
     private lateinit var _searchBarHandler: SearchBarHandler
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
+    private var _filterName: String = ""
+    private var _filterProjects: Boolean = false
+    private var _filterBotches: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sectorId = intent.getIntExtra(IntentConstants.SECTOR_KEY, DatabaseWrapper.INVALID_ID)
-        _sector = db.getSector(sectorId)!!
+        _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
+        _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
+        _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
-        val rockSearchable = RockSearchable(
-            this
-        ) { db.getRocksForSector(sectorId) }
-        val ascentFilterable = AscentFilterable(
-            this,
-            { db.getProjectedRocksForSector(sectorId) },
-            { db.getBotchedRocksForSector(sectorId) }
-        )
-        properties = arrayListOf(rockSearchable, ascentFilterable)
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
@@ -70,49 +61,31 @@ class RockActivity : TableActivityWithOptionsMenu() {
     override fun getLayoutId() = R.layout.activity_rock
 
     override fun showComments(v: View) {
-        val comments = db.getSectorComments(_sector.id)
-        if (comments.isNotEmpty()) {
-            prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for ((idx, comment) in comments.withIndex()) {
-                    val qualityId = comment.qualityId
-                    val text = comment.text
-
-                    if (idx > 0) {
-                        it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    }
-                    if (SectorComment.QUALITY_MAP.containsKey(qualityId)) {
-                        it.addView(WidgetUtils.createCommonRowLayout(this,
-                                textLeft = getString(R.string.relevance),
-                                textRight = SectorComment.QUALITY_MAP[qualityId].orEmpty(),
-                                textSizeDp = WidgetUtils.textFontSizeDp,
-                                typeface = Typeface.NORMAL))
-                    }
-                    it.addView(WidgetUtils.createCommonRowLayout(this,
-                            textLeft = text.orEmpty(),
-                            textSizeDp = WidgetUtils.textFontSizeDp,
-                            typeface = Typeface.NORMAL))
-                }
-            }
-        } else {
-            showNoCommentToast()
+        when (activityLevel.level) {
+            ClimbingObjectLevel.eSector -> showRegionComments(activityLevel.parentId)
+            ClimbingObjectLevel.eRock -> showSectorComments(activityLevel.parentId)
+            else -> showNoCommentToast()
         }
     }
 
     override fun displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
-        val sectorName = ParserUtils.decodeObjectNames(_sector.name)
-        this.title = if (sectorName.first.isNotEmpty()) sectorName.first else sectorName.second
 
-        var rocks = db.getRocksForSector(_sector.id)
+        val levelName = ParserUtils.decodeObjectNames(activityLevel.parentName)
+        this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
+
+        var rocks = _getAndFilterRocks()
+        // additional searchbar filters:
         if (_onlyOfficialSummits) {
             rocks = rocks.filter { _rockIsAnOfficialSummit(it) }
         }
+        if (_rockNamePart.isNotEmpty()) {
+            rocks = rocks.filter{ it.name.orEmpty().lowercase().contains(_rockNamePart.lowercase()) }
+        }
+
         for (rock in rocks) {
             val rockName = ParserUtils.decodeObjectNames(rock.name)
-            if (_rockNamePart.isNotEmpty() && rockName.toList().none { it.lowercase().contains(_rockNamePart.lowercase()) }) {
-                continue
-            }
             var bgColor = Color.WHITE
             var typeface = Typeface.BOLD
             var typeAdd = ""
@@ -128,8 +101,23 @@ class RockActivity : TableActivityWithOptionsMenu() {
             val decorationAdd = decorateEntry(rock.ascendsBitMask)
             val onClickListener = View.OnClickListener {
                 val intent = Intent(this@RockActivity, RouteActivity::class.java)
-                intent.putExtra(IntentConstants.ROCK_KEY, rock.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRoute.value)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, rock.id)
+                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, rock.name)
                 startActivityForResult(intent, 0)
+            }
+            val sectorInfo = _getSectorInfo(rock)
+            if (sectorInfo.isNotEmpty()) {
+                layout.addView(
+                    WidgetUtils.createCommonRowLayout(
+                        this,
+                        textLeft = sectorInfo,
+                        textSizeDp = WidgetUtils.textFontSizeDp,
+                        onClickListener = onClickListener,
+                        bgColor = bgColor,
+                        typeface = Typeface.NORMAL
+                    )
+                )
             }
             layout.addView(
                 WidgetUtils.createCommonRowLayout(
@@ -158,6 +146,53 @@ class RockActivity : TableActivityWithOptionsMenu() {
     override fun onStop() {
         _searchBarHandler.storeCustomSettings(getString(R.string.only_official_summits))
         super.onStop()
+    }
+
+    private fun _getAndFilterRocks(): List<Rock> {
+        val rocks = when (activityLevel.level) {
+            ClimbingObjectLevel.eCountry -> {
+                if (_filterProjects) db.getProjectedRocks()
+                else if (_filterBotches) db.getBotchedRocks()
+                else db.getRocks()
+            }
+            ClimbingObjectLevel.eRegion -> {
+                if (_filterProjects) db.getProjectedRocksForCountry(activityLevel.parentName)
+                else if (_filterBotches) db.getBotchedRocksForCountry(activityLevel.parentName)
+                else db.getRocksForCountry(activityLevel.parentName)
+            }
+            ClimbingObjectLevel.eSector -> {
+                if (_filterProjects) db.getProjectedRocksForRegion(activityLevel.parentId)
+                else if (_filterBotches) db.getBotchedRocksForRegion(activityLevel.parentId)
+                else db.getRocksForRegion(activityLevel.parentId)
+            }
+            ClimbingObjectLevel.eRock -> {
+                if (_filterProjects) db.getProjectedRocksForSector(activityLevel.parentId)
+                else if (_filterBotches) db.getBotchedRocksForSector(activityLevel.parentId)
+                else db.getRocksForSector(activityLevel.parentId)
+            }
+            else -> emptyList()
+        }
+        return if (_filterName.isNotEmpty())
+                   rocks.filter { it.name.orEmpty().lowercase().contains(_filterName.lowercase()) }
+               else
+                   rocks
+    }
+
+    private fun _getSectorInfo(rock: Rock): String {
+        var sectorInfo = ""
+        if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
+            val sector = db.getSector(rock.parentId)!!
+            if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
+                val region = db.getRegion(sector.parentId)!!
+                sectorInfo = "${region.name} ${getString(R.string.arrow)} "
+            }
+            val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+            sectorInfo += sectorNames.first
+            if (sectorNames.second.isNotEmpty()) {
+                sectorInfo += " / " + sectorNames.second
+            }
+        }
+        return sectorInfo
     }
 
     private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean)
