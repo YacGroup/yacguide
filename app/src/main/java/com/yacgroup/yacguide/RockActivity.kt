@@ -37,15 +37,11 @@ class RockActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
     private var _filterName: String = ""
-    private var _filterProjects: Boolean = false
-    private var _filterBotches: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
-        _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
-        _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
 
@@ -141,6 +137,9 @@ class RockActivity : TableActivityWithOptionsMenu() {
             )
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
+        if (rocks.isEmpty()) {
+            Toast.makeText(this, R.string.no_rocks_available, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onStop() {
@@ -150,26 +149,10 @@ class RockActivity : TableActivityWithOptionsMenu() {
 
     private fun _getAndFilterRocks(): List<Rock> {
         val rocks = when (activityLevel.level) {
-            ClimbingObjectLevel.eCountry -> {
-                if (_filterProjects) db.getProjectedRocks()
-                else if (_filterBotches) db.getBotchedRocks()
-                else db.getRocks()
-            }
-            ClimbingObjectLevel.eRegion -> {
-                if (_filterProjects) db.getProjectedRocksForCountry(activityLevel.parentName)
-                else if (_filterBotches) db.getBotchedRocksForCountry(activityLevel.parentName)
-                else db.getRocksForCountry(activityLevel.parentName)
-            }
-            ClimbingObjectLevel.eSector -> {
-                if (_filterProjects) db.getProjectedRocksForRegion(activityLevel.parentId)
-                else if (_filterBotches) db.getBotchedRocksForRegion(activityLevel.parentId)
-                else db.getRocksForRegion(activityLevel.parentId)
-            }
-            ClimbingObjectLevel.eRock -> {
-                if (_filterProjects) db.getProjectedRocksForSector(activityLevel.parentId)
-                else if (_filterBotches) db.getBotchedRocksForSector(activityLevel.parentId)
-                else db.getRocksForSector(activityLevel.parentId)
-            }
+            ClimbingObjectLevel.eCountry -> db.getRocks()
+            ClimbingObjectLevel.eRegion -> db.getRocksForCountry(activityLevel.parentName)
+            ClimbingObjectLevel.eSector -> db.getRocksForRegion(activityLevel.parentId)
+            ClimbingObjectLevel.eRock -> db.getRocksForSector(activityLevel.parentId)
             else -> emptyList()
         }
         return if (_filterName.isNotEmpty())
@@ -184,12 +167,12 @@ class RockActivity : TableActivityWithOptionsMenu() {
             val sector = db.getSector(rock.parentId)!!
             if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
                 val region = db.getRegion(sector.parentId)!!
-                sectorInfo = "${region.name} ${getString(R.string.arrow)} "
+                sectorInfo = "${region.name} ${getString(R.string.right_arrow)} "
             }
             val sectorNames = ParserUtils.decodeObjectNames(sector.name)
             sectorInfo += sectorNames.first
             if (sectorNames.second.isNotEmpty()) {
-                sectorInfo += " / " + sectorNames.second
+                sectorInfo += " / ${sectorNames.second}"
             }
         }
         return sectorInfo

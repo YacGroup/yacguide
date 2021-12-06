@@ -19,7 +19,10 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROUTES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_REGION
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_ROCK
 import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_ROUTE
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
@@ -31,17 +34,32 @@ interface RouteDao {
     @get:Query(SELECT_ROUTES)
     val all: List<Route>
 
-    @Query("$SELECT_ROUTES WHERE Route.parentId = :parentId $ORDERED_BY_ROUTE")
-    fun getAll(parentId: Int): List<Route>
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
+    fun getAllForStyle(styleId: Int): List<Route>
 
-    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :parentId AND Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
-    fun getAllForStyle(parentId: Int, styleId: Int): List<Route>
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName $ORDERED_BY_REGION")
+    fun getAllInCountry(countryName: String): List<Route>
 
-    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION $VIA_ROUTES_ASCENDS WHERE Region.country = :countryName AND Ascend.styleId = :styleId $ORDERED_BY_REGION")
+    fun getAllInCountryForStyle(countryName: String, styleId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId $ORDERED_BY_SECTOR")
     fun getAllInRegion(regionId: Int): List<Route>
 
-    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
-    fun getAllInCountry(countryName: String): List<Route>
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_ROUTES_ASCENDS WHERE Sector.parentId = :regionId AND Ascend.styleId = :styleId $ORDERED_BY_SECTOR")
+    fun getAllInRegionForStyle(regionId: Int, styleId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId $ORDERED_BY_ROCK")
+    fun getAllInSector(sectorId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROUTES_ASCENDS WHERE Rock.parentId = :sectorId AND Ascend.styleId = :styleId $ORDERED_BY_ROCK")
+    fun getAllInSectorForStyle(sectorId: Int, styleId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES WHERE Route.parentId = :rockId $ORDERED_BY_ROUTE")
+    fun getAllAtRock(rockId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :rockId AND Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
+    fun getAllAtRockForStyle(rockId: Int, styleId: Int): List<Route>
 
     @Query("$SELECT_ROUTES WHERE Route.id = :id")
     fun getRoute(id: Int): Route?
