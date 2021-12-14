@@ -20,9 +20,9 @@
 import os
 import grp
 import pwd
-import configparser
 # https://docker-py.readthedocs.io/en/stable/index.html
 import docker
+import git
 
 from . import utils
 
@@ -31,6 +31,8 @@ IMG = "yacgroup/yacguide-build:" + IMG_VER
 CONTAINER_NAME = "yacguide-build"
 NETWORK_NAME = "yacnet"
 MOUNT_TARGET = "/mnt/yacguide-build"
+DEFAULT_GIT_USER_NAME = "Yac Group"
+DEFAULT_GIT_EMAIL = "yacgroup.dd@gmail.com"
 
 
 class BuildContainer():
@@ -73,13 +75,15 @@ class BuildContainer():
     def _prepare_git(self):
         """Copy some Git configurations from the user into the
         container."""
-        git_config = configparser.ConfigParser()
-        user_info = self._get_user_infos()
-        git_config_file = os.path.join(user_info["home"],
-                                       ".gitconfig")
-        git_config.read(git_config_file)
-        git_user_name = git_config["user"]["name"]
-        git_user_email = git_config["user"]["email"]
+        git_config = git.config.GitConfigParser(config_level="global")
+        git_config.read()
+        if os.getenv("GITHUB_ACTION"):
+            # Running inside the CI environment.
+            git_user_name = DEFAULT_GIT_USER_NAME
+            git_user_email = DEFAULT_GIT_EMAIL
+        else:
+            git_user_name = git_config.get_value("user", "name")
+            git_user_email = git_config.get_value("user", "email")
         cmds = ['git config --global user.email "{email}"']
         cmds += ['git config --global user.name "{name}"']
         for cmd in cmds:
