@@ -1,0 +1,48 @@
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+
+name: CI
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - v[0-9]+
+      - dev-[0-9]+
+  pull_request:
+    branches:
+      - master
+jobs:
+  test-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v2
+      - name: Set up Python Environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install Python Packages
+        run: pip install -r requirements.txt
+      - name: Prepare App Environment
+        run: |
+          # Decode Google Service Account JSON file
+          echo ${{ secrets.PLAY_SERVICES_FILE_BASE64 }} | base64 -d > ${{ secrets.PLAY_SERVICES_FILE }}
+          # Decode keystore file from variable
+          echo ${{ secrets.PLAY_KEY_STORE_BASE64 }} | base64 -d > ${{ secrets.PLAY_KEY_STORE }}
+          # Write keystore properties file
+          printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\nplayServicesFile=%s\n' \
+            ${{ secrets.PLAY_KEY_STORE }} ${{ secrets.PLAY_STORE_PASSWORD }} ${{ secrets.PLAY_KEY_ALIAS }} ${{ secrets.PLAY_KEY_PASSWORD }} ${{ secrets.PLAY_SERVICES_FILE }} > keystore.properties
+      - name: Start Docker Container
+        run: scripts/make docker --start-new
+      - name: Run Tests
+        run: scripts/make tests
+      - name: Build Distributions
+        run: scripts/make dists
+      - name: Deploy Development Release
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'dev-') }}
+        run: scripts/make deploy --type dev
+      - name: Deploy Stable Release
+        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
+        run: scripts/make deploy --type stable
+      - name: Stop Docker Container
+        run: scripts/make docker --stop
