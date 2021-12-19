@@ -151,9 +151,6 @@ class RouteActivity : TableActivity() {
                     typeface = typeface))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
-        if (routes.isEmpty()) {
-            Toast.makeText(this, R.string.no_routes_available, Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onStop() {

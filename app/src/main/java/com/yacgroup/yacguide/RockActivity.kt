@@ -137,9 +137,6 @@ class RockActivity : TableActivityWithOptionsMenu() {
             )
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
-        if (rocks.isEmpty()) {
-            Toast.makeText(this, R.string.no_rocks_available, Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onStop() {
