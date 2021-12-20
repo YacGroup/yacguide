@@ -26,6 +26,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 
+import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -33,7 +34,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
 import com.yacgroup.yacguide.utils.WidgetUtils
 
-class RouteActivity : TableActivity() {
+class RouteActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _searchBarHandler: SearchBarHandler
     private var _onlyOfficialRoutes: Boolean = false
@@ -47,6 +48,8 @@ class RouteActivity : TableActivity() {
 
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
+
+        properties = arrayListOf(AscentFilterable(this))
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
