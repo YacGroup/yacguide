@@ -19,9 +19,7 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROCKS
-import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_REGION
 import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_ROCK
-import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROCKS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
@@ -33,26 +31,14 @@ interface RockDao {
     @get:Query(SELECT_ROCKS)
     val all: List<Rock>
 
-    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Ascend.styleId = :styleId $ORDERED_BY_REGION")
-    fun getAllForStyle(styleId: Int): List<Rock>
-
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Rock>
-
-    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Region.country = :countryName AND Ascend.styleId = :styleId $ORDERED_BY_REGION")
-    fun getAllInCountryForStyle(countryName: String, styleId: Int): List<Rock>
 
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Rock>
 
-    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Sector.parentId = :regionId AND Ascend.styleId = :styleId $ORDERED_BY_SECTOR")
-    fun getAllInRegionForStyle(regionId: Int, styleId: Int): List<Rock>
-
     @Query("$SELECT_ROCKS WHERE Rock.parentId = :sectorId $ORDERED_BY_ROCK")
     fun getAllInSector(sectorId: Int): List<Rock>
-
-    @Query("$SELECT_ROCKS $VIA_ROCKS_ROUTES $VIA_ROUTES_ASCENDS WHERE Rock.parentId = :sectorId AND Ascend.styleId = :styleId $ORDERED_BY_ROCK")
-    fun getAllInSectorForStyle(sectorId: Int, styleId: Int): List<Rock>
 
     @Query("$SELECT_ROCKS WHERE Rock.id = :id")
     fun getRock(id: Int): Rock?

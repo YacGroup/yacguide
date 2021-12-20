@@ -42,6 +42,7 @@
                 android:onClick="showComments"/>
 
             <ImageButton
+                android:id="@+id/mapButton"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 app:srcCompat="@drawable/ic_baseline_map_24"
