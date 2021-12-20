@@ -32,6 +32,7 @@ import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.*
@@ -48,6 +49,19 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _availableYears: IntArray
     private var _currentYear: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
+    // Activity result handler
+    private val _export = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK) {
+            it.data?.data?.also { uri -> _doExport(uri) }
+        }
+    }
+    private val _import = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK) {
+            it.data?.data?.also { uri -> _doImport(uri) }
+        }
+    }
 
     private lateinit var _customSettings: SharedPreferences
 
@@ -97,11 +111,6 @@ class TourbookActivity : BaseNavigationActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
-        } else if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                IntentConstants.REQUEST_OPEN_TOURBOOK -> data?.data?.also { uri -> _import(uri) }
-                IntentConstants.REQUEST_SAVE_TOURBOOK -> data?.data?.also { uri -> _export(uri) }
-            }
         }
     }
 
@@ -137,7 +146,7 @@ class TourbookActivity : BaseNavigationActivity() {
         _displayContent()
     }
 
-    private fun _import(uri: Uri) {
+    private fun _doImport(uri: Uri) {
         DialogWidgetBuilder(this, R.string.warning).apply {
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
@@ -183,7 +192,7 @@ class TourbookActivity : BaseNavigationActivity() {
         }.show()
     }
 
-    private fun _export(uri: Uri) {
+    private fun _doExport(uri: Uri) {
         try {
             TourbookExporter(_db, contentResolver).exportTourbook(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
@@ -313,7 +322,7 @@ class TourbookActivity : BaseNavigationActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-        startActivityForResult(intent, IntentConstants.REQUEST_OPEN_TOURBOOK)
+        _import.launch(intent)
     }
 
     private fun _selectFileExport() {
@@ -321,7 +330,7 @@ class TourbookActivity : BaseNavigationActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-        startActivityForResult(intent, IntentConstants.REQUEST_SAVE_TOURBOOK)
+        _export.launch(intent)
     }
 
     private fun _initYears(): Int {
