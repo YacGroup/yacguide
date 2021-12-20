@@ -25,7 +25,7 @@ import java.util.regex.Pattern
 
 object ParserUtils {
 
-    private const val _WATERMARK : String = "\u0000"
+    private const val _WATERMARK : String = "\uFFFA"
 
     // There are some czech letters with ambiguous utf-8 encodings.
     // Map structure: < wrong_utf8_as_regex, correct_utf8 >

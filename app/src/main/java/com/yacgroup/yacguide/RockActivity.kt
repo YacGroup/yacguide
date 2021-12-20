@@ -144,18 +144,24 @@ class RockActivity : TableActivityWithOptionsMenu() {
         super.onStop()
     }
 
-    private fun _getAndFilterRocks(): List<Rock> {
-        val rocks = when (activityLevel.level) {
-            ClimbingObjectLevel.eCountry -> db.getRocks()
-            ClimbingObjectLevel.eRegion -> db.getRocksForCountry(activityLevel.parentName)
-            ClimbingObjectLevel.eSector -> db.getRocksForRegion(activityLevel.parentId)
-            ClimbingObjectLevel.eRock -> db.getRocksForSector(activityLevel.parentId)
-            else -> emptyList()
+    private fun _getAndFilterRocks() = when(activityLevel.level) {
+        ClimbingObjectLevel.eCountry -> {
+            if (_filterName.isEmpty()) db.getRocks()
+            else db.getRocksByName(_filterName)
         }
-        return if (_filterName.isNotEmpty())
-                   rocks.filter { it.name.orEmpty().lowercase().contains(_filterName.lowercase()) }
-               else
-                   rocks
+        ClimbingObjectLevel.eRegion -> {
+            if (_filterName.isEmpty()) db.getRocksForCountry(activityLevel.parentName)
+            else db.getRocksByNameForCountry(activityLevel.parentName, _filterName)
+        }
+        ClimbingObjectLevel.eSector -> {
+            if (_filterName.isEmpty()) db.getRocksForRegion(activityLevel.parentId)
+            else db.getRocksByNameForRegion(activityLevel.parentId, _filterName)
+        }
+        ClimbingObjectLevel.eRock -> {
+            if (_filterName.isEmpty()) db.getRocksForSector(activityLevel.parentId)
+            else db.getRocksByNameForSector(activityLevel.parentId, _filterName)
+        }
+        else -> emptyList()
     }
 
     private fun _getSectorInfo(rock: Rock): String {
