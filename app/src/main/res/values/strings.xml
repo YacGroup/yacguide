@@ -29,6 +29,7 @@
     <string name="comments">Kommentare</string>
     <string name="name">Name</string>
     <string name="right_arrow">\u2794</string>
+    <string name="tick">\u2611</string>
 
     <!-- Menu -->
     <string name="menu_database">Datenbank</string>

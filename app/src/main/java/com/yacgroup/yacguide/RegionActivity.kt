@@ -17,7 +17,9 @@
 
 package com.yacgroup.yacguide
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -42,6 +44,7 @@ class RegionActivity : TableActivityWithOptionsMenu() {
 
     override fun getLayoutId() = R.layout.activity_region
 
+    @SuppressLint("NewApi")
     override fun displayContent() {
         this.title = activityLevel.parentName
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
@@ -55,9 +58,16 @@ class RegionActivity : TableActivityWithOptionsMenu() {
                 intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, region.name)
                 startActivity(intent)
             }
+            var icon = ""
+            var bgColor = Color.WHITE
+            if (db.getSectors(region.id).isNotEmpty()) {
+                icon = getString(R.string.tick)
+                bgColor = getColor(R.color.colorDownloaded)
+            }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = region.name.orEmpty(),
+                    textLeft = "$icon ${region.name.orEmpty()}",
                     onClickListener = onClickListener,
+                    bgColor = bgColor,
                     padding = WidgetUtils.Padding(20, 30, 20, 30)))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
