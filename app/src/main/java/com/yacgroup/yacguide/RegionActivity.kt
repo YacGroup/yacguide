@@ -58,11 +58,11 @@ class RegionActivity : TableActivityWithOptionsMenu() {
                 intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, region.name)
                 startActivity(intent)
             }
-            var icon = ""
+            var icon = getString(R.string.empty_box)
             var bgColor = Color.WHITE
             if (db.getSectors(region.id).isNotEmpty()) {
                 icon = getString(R.string.tick)
-                bgColor = getColor(R.color.colorDownloaded)
+                bgColor = getColor(R.color.colorAccentLight)
             }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
                     textLeft = "$icon ${region.name.orEmpty()}",
