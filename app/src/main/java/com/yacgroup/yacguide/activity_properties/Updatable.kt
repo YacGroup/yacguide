@@ -17,89 +17,30 @@
 
 package com.yacgroup.yacguide.activity_properties
 
-import android.app.Dialog
 import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.TableActivity
-import com.yacgroup.yacguide.UpdateListener
+import com.yacgroup.yacguide.UpdateHandler
 import com.yacgroup.yacguide.network.JSONWebParser
-import com.yacgroup.yacguide.utils.DialogWidgetBuilder
-import com.yacgroup.yacguide.utils.NetworkUtils
 
 class Updatable(private val _activity: TableActivity,
-                private val _jsonParser: JSONWebParser,
-                private val _deleteContent: () -> Unit) : ActivityProperty, UpdateListener {
+                jsonParser: JSONWebParser,
+                deleteContent: () -> Unit) : ActivityProperty {
 
-    private var _updateDialog: Dialog? = null
-
-    init {
-        _jsonParser.listener = this
-    }
+    private val _updateHandler = UpdateHandler(_activity, jsonParser, deleteContent, { _activity.displayContent() })
 
     override fun getMenuGroupId() = R.id.group_update
 
     override fun onMenuAction(menuItemId: Int) {
         when (menuItemId) {
-            R.id.action_download -> _update()
-            R.id.action_delete -> _delete()
-        }
-    }
-
-    override fun onUpdateFinished(success: Boolean) {
-        _updateDialog?.dismiss()
-
-        if (success) {
-            Toast.makeText(_activity, R.string.objects_refreshed, Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
-        }
-        _activity.displayContent()
-    }
-
-    override fun onUpdateStatus(statusMessage: String) {
-        _activity.runOnUiThread {
-            _updateDialog?.findViewById<TextView>(R.id.dialogText)?.text = statusMessage
+            R.id.action_download -> _updateHandler.update()
+            R.id.action_delete -> _updateHandler.delete()
         }
     }
 
     fun getDownloadButton(): ImageButton {
         val button = _activity.layoutInflater.inflate(R.layout.button_download, null) as ImageButton
-        button.setOnClickListener{ _update() }
+        button.setOnClickListener{ _updateHandler.update() }
         return button
-    }
-
-    private fun _update() {
-        if (!NetworkUtils.isNetworkAvailable(_activity)) {
-            Toast.makeText(_activity, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
-            return
-        }
-        _jsonParser.fetchData()
-        _showUpdateDialog()
-    }
-
-    private fun _delete() {
-        DialogWidgetBuilder(_activity, R.string.dialog_question_delete).apply {
-            setIcon(android.R.drawable.ic_dialog_alert)
-            setNegativeButton()
-            setPositiveButton { _, _ ->
-                _deleteContent()
-                Toast.makeText(
-                    _activity,
-                    R.string.objects_deleted,
-                    Toast.LENGTH_SHORT
-                ).show()
-                _activity.displayContent()
-            }
-        }.show()
-    }
-
-    private fun _showUpdateDialog() {
-        _updateDialog = Dialog(_activity)
-        _updateDialog?.setContentView(R.layout.info_dialog)
-        _updateDialog?.setCancelable(false)
-        _updateDialog?.setCanceledOnTouchOutside(false)
-        _updateDialog?.show()
     }
 }

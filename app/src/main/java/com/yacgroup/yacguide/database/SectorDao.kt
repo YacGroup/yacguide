@@ -25,8 +25,8 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface SectorDao {
-    @Query("$SELECT_SECTORS WHERE Sector.parentId = :parentId $ORDERED_BY_SECTOR")
-    fun getAll(parentId: Int): List<Sector>
+    @Query("$SELECT_SECTORS WHERE Sector.parentId = :regionId $ORDERED_BY_SECTOR")
+    fun getAll(regionId: Int): List<Sector>
 
     @Query("$SELECT_SECTORS $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Sector>

@@ -162,6 +162,15 @@
 
         <View style="@style/FatDivider"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/full_database_update"
+            android:onClick="updateDatabase"/>
+
+        <View style="@style/FatDivider"/>
+
     </LinearLayout>
 
 </ScrollView>

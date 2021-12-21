@@ -25,9 +25,17 @@ import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.network.SectorParser
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class PreferencesActivity : BaseNavigationActivity() {
 
+    private lateinit var _db: DatabaseWrapper
+    private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _jsonParser: SectorParser
+    private lateinit var _regionsToUpdate: MutableSet<Region>
     private lateinit var _customSettings: SharedPreferences
 
     private val _settingKeysMap = mapOf(R.id.tourbookOrderingCheckbox to Pair(R.string.order_tourbook_chronologically,
@@ -61,8 +69,11 @@ class PreferencesActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.action_settings)
 
+        _db = DatabaseWrapper(this)
+        _jsonParser = SectorParser(_db, 0)
+        _updateHandler = UpdateHandler(this, _jsonParser, {}, { _updateNextRegion() }, true)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-        _ascendColorsList = listOf<Int>(
+        _ascendColorsList = listOf(
                 ContextCompat.getColor(this, R.color.greenblue),
                 ContextCompat.getColor(this, R.color.green),
                 ContextCompat.getColor(this, R.color.yellow),
@@ -83,6 +94,30 @@ class PreferencesActivity : BaseNavigationActivity() {
         val currColor = (view.background as ColorDrawable).color
         val nextColor = _ascendColorsList[(_ascendColorsList.indexOf(currColor) + 1) % _ascendColorsList.size]
         view.setBackgroundColor(nextColor)
+    }
+
+    fun updateDatabase(view: View) {
+        _regionsToUpdate = _db.getNonEmptyRegions().toMutableSet()
+
+        DialogWidgetBuilder(this, R.string.dialog_question_update).apply {
+            setIcon(android.R.drawable.ic_dialog_alert)
+            setNegativeButton()
+            setPositiveButton { _, _ ->
+                _updateNextRegion()
+            }
+        }.show()
+    }
+
+    private fun _updateNextRegion() {
+        try {
+            val nextRegion = _regionsToUpdate.first()
+            _regionsToUpdate.remove(nextRegion)
+            _jsonParser.setRegionId(nextRegion.id)
+            _jsonParser.setRegionName(nextRegion.name.orEmpty())
+            _updateHandler.update()
+        } catch (e: NoSuchElementException) {
+            _updateHandler.finish()
+        }
     }
 
     private fun _storeSettings() {

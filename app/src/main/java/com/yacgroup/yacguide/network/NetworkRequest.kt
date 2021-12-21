@@ -17,4 +17,4 @@
 
 package com.yacgroup.yacguide.network
 
-class NetworkRequest(var requestId: NetworkRequestUId, var url: String)
+class NetworkRequest(val requestId: NetworkRequestUId, val url: String)

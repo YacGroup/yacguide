@@ -65,5 +65,6 @@ class SqlMacros {
         const val VIA_COMMENTS_SECTOR = "JOIN Sector ON Sector.id = SectorComment.sectorId"
         const val VIA_SECTORS_REGION = "JOIN Region ON Region.id = Sector.parentId"
         const val VIA_COMMENTS_REGION = "JOIN Region ON Region.id = RegionComment.regionId"
+        const val VIA_REGIONS_SECTORS = "JOIN Sector ON Sector.parentId = Region.id"
     }
 }

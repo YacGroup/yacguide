@@ -69,6 +69,7 @@
     <string name="dialog_text_change_partner">Kletterpartner ändern</string>
     <string name="dialog_question_delete">Diesen Bereich löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
+    <string name="dialog_question_update">Dies aktualisiert alle Gebiete und kann daher einige Zeit dauern.</string>
     <string name="dialog_loading">Lädt...</string>
     <string name="report_error">Fehler melden</string>
 
@@ -78,8 +79,8 @@
     <string name="partner_search">Partner suchen</string>
 
     <!-- Toasts -->
-    <string name="objects_refreshed">Bereich aktualisiert</string>
-    <string name="objects_deleted">Bereich gelöscht</string>
+    <string name="objects_refreshed">Gebiete aktualisiert</string>
+    <string name="objects_deleted">Gebiete gelöscht</string>
     <string name="error_on_refresh">Fehler bei Aktualisierung</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
@@ -151,6 +152,8 @@
 
     <string name="only_official_summits">Nur offizielle Gipfel</string>
     <string name="only_official_routes">Nur offizielle Wege</string>
+
+    <string name="full_database_update">Lokale Datenbank aktualisieren</string>
 
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>
