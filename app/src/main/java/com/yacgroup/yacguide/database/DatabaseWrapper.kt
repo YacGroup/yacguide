@@ -58,11 +58,19 @@ class DatabaseWrapper(context: Context) {
 
     fun getRocksForSector(sectorId: Int) = _db.rockDao().getAllInSector(sectorId)
 
+    fun getRocksByNameForSector(sectorId: Int, namePart: String) = _db.rockDao().getAllByNameInSector(sectorId, "%$namePart%")
+
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
+
+    fun getRocksByNameForRegion(regionId: Int, namePart: String) = _db.rockDao().getAllByNameInRegion(regionId, "%$namePart%")
 
     fun getRocksForCountry(countryName: String) = _db.rockDao().getAllInCountry(countryName)
 
+    fun getRocksByNameForCountry(countryName: String, namePart: String) = _db.rockDao().getAllByNameInCountry(countryName, "%$namePart%")
+
     fun getRocks() = _db.rockDao().all
+
+    fun getRocksByName(namePart: String) = _db.rockDao().getAllByName("%$namePart%")
 
     fun getRock(rockId: Int) =_db.rockDao().getRock(rockId)
 
@@ -329,28 +337,28 @@ class DatabaseWrapper(context: Context) {
     // Some default stuff necessary for import_export if according objects have
     // been deleted from the database
     fun createUnknownRoute(): Route {
-        val route = Route()
-        route.name = UNKNOWN_NAME
-        route.grade = UNKNOWN_NAME
-        return route
+        return Route().apply {
+            name = UNKNOWN_NAME
+            grade = UNKNOWN_NAME
+        }
     }
 
     fun createUnknownRock(): Rock {
-        val rock = Rock()
-        rock.name = UNKNOWN_NAME
-        return rock
+        return Rock().apply {
+            name = UNKNOWN_NAME
+        }
     }
 
     fun createUnknownSector(): Sector {
-        val sector = Sector()
-        sector.name = UNKNOWN_NAME
-        return sector
+        return Sector().apply {
+            name = UNKNOWN_NAME
+        }
     }
 
     fun createUnknownRegion(): Region {
-        val region = Region()
-        region.name = UNKNOWN_NAME
-        return region
+        return Region().apply {
+            name = UNKNOWN_NAME
+        }
     }
 
 }

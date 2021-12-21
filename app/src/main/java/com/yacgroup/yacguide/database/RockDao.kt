@@ -31,14 +31,26 @@ interface RockDao {
     @get:Query(SELECT_ROCKS)
     val all: List<Rock>
 
+    @Query("$SELECT_ROCKS WHERE LOWER(Rock.name) LIKE LOWER(:name)")
+    fun getAllByName(name: String): List<Rock>
+
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Rock>
+
+    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND LOWER(Rock.name) LIKE LOWER(:name)")
+    fun getAllByNameInCountry(countryName: String, name: String): List<Rock>
 
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Rock>
 
+    @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND LOWER(Rock.name) LIKE LOWER(:name)")
+    fun getAllByNameInRegion(regionId: Int, name: String): List<Rock>
+
     @Query("$SELECT_ROCKS WHERE Rock.parentId = :sectorId $ORDERED_BY_ROCK")
     fun getAllInSector(sectorId: Int): List<Rock>
+
+    @Query("$SELECT_ROCKS WHERE Rock.parentId = :sectorId AND LOWER(Rock.name) LIKE LOWER(:name) $ORDERED_BY_ROCK")
+    fun getAllByNameInSector(sectorId: Int, name: String): List<Rock>
 
     @Query("$SELECT_ROCKS WHERE Rock.id = :id")
     fun getRock(id: Int): Rock?
