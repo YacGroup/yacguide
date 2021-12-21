@@ -25,6 +25,9 @@ import java.util.regex.Pattern
 
 object ParserUtils {
 
+    // This watermark separates a sector's/rock's/route's name from its alternative name
+    // in the database field "name". This must not be \u0000 to ensure that SQL can
+    // handle the corresponding strings correctly, e.g. when using the LIKE command.
     private const val _WATERMARK : String = "\uFFFA"
 
     // There are some czech letters with ambiguous utf-8 encodings.
