@@ -49,6 +49,7 @@ class SqlMacros {
         const val DELETE_ASCENDS = "DELETE FROM Ascend"
         const val DELETE_PARTNERS = "DELETE FROM Partner"
 
+        const val ORDERED_BY_COUNTRY = "ORDER BY Region.country"
         const val ORDERED_BY_REGION = "ORDER BY Region.name"
         const val ORDERED_BY_SECTOR = "ORDER BY Sector.nr"
         const val ORDERED_BY_ROCK = "ORDER BY Rock.nr"
@@ -65,5 +66,6 @@ class SqlMacros {
         const val VIA_COMMENTS_SECTOR = "JOIN Sector ON Sector.id = SectorComment.sectorId"
         const val VIA_SECTORS_REGION = "JOIN Region ON Region.id = Sector.parentId"
         const val VIA_COMMENTS_REGION = "JOIN Region ON Region.id = RegionComment.regionId"
+        const val VIA_REGIONS_SECTORS = "JOIN Sector ON Sector.parentId = Region.id"
     }
 }

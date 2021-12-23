@@ -31,16 +31,13 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SectorActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _updatable: Updatable
+    private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updatable = Updatable(
-            this,
-            SectorParser(db, activityLevel.parentId)
-        ) { db.deleteSectorsRecursively(activityLevel.parentId) }
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
+        _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
     }
 
     override fun getLayoutId() = R.layout.activity_sector
@@ -78,7 +75,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (sectors.isEmpty()) {
-            layout.addView(_updatable.getDownloadButton())
+            layout.addView(_updateHandler.getDownloadButton { displayContent() })
         }
     }
 

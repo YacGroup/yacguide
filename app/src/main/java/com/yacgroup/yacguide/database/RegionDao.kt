@@ -19,12 +19,17 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_REGIONS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_COUNTRY
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_REGIONS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_REGIONS_SECTORS
 
 @Dao
 interface RegionDao {
     @Query("$SELECT_REGIONS WHERE Region.country = :countryName")
     fun getAll(countryName: String): List<Region>
+
+    @Query("$SELECT_REGIONS $VIA_REGIONS_SECTORS $ORDERED_BY_COUNTRY")
+    fun getAllNonEmpty(): List<Region>
 
     @Query("$SELECT_REGIONS WHERE Region.id = :id")
     fun getRegion(id: Int): Region?

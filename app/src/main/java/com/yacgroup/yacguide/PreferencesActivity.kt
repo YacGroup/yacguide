@@ -53,16 +53,14 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     private lateinit var _ascendColorsList: List<Int>
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_preferences
-    }
+    override fun getLayoutId() = R.layout.activity_preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.action_settings)
 
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-        _ascendColorsList = listOf<Int>(
+        _ascendColorsList = listOf(
                 ContextCompat.getColor(this, R.color.greenblue),
                 ContextCompat.getColor(this, R.color.green),
                 ContextCompat.getColor(this, R.color.yellow),

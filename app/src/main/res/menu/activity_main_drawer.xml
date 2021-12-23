@@ -30,6 +30,10 @@
             android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="@string/menu_tourbook"/>
         <item
+            android:id="@+id/nav_region_manager"
+            android:icon="@android:drawable/ic_menu_save"
+            android:title="@string/menu_region_manager"/>
+        <item
             android:id="@+id/nav_preferences"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="@string/action_settings"/>
