@@ -30,19 +30,16 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _updatable: Updatable
+    private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updatable = Updatable(
-            this,
-            RegionParser(db, activityLevel.parentName)
-        ) { db.deleteRegionsRecursively(activityLevel.parentName) }
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
+        _updateHandler = UpdateHandler(this, RegionParser(db, activityLevel.parentName))
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
     }
 
-    override fun getLayoutId() = R.layout.activity_region
+    override fun getLayoutId() = R.layout.activity_table
 
     @SuppressLint("NewApi")
     override fun displayContent() {
@@ -72,7 +69,7 @@ class RegionActivity : TableActivityWithOptionsMenu() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (regions.isEmpty()) {
-            layout.addView(_updatable.getDownloadButton())
+            layout.addView(_updateHandler.getDownloadButton { displayContent() })
         }
     }
 }

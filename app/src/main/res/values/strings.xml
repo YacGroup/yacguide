@@ -36,6 +36,7 @@
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
+    <string name="menu_region_manager">Gebiete verwalten</string>
     <string name="menu_about">Über <xliff:g id="app_name">%1$s</xliff:g></string>
     <string name="nav_header_desc">@string/app_name_long</string>
     <string name="nav_header_title">@string/app_name</string>
@@ -46,13 +47,12 @@
     <!-- Submenus -->
     <string name="import_tourbook">Import</string>
     <string name="export_tourbook">Export</string>
-    <string name="download">Aktualisieren</string>
+    <string name="download_all">Alle aktualisieren</string>
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
 
     <!-- Activity names -->
     <string name="title_climbing_partner">Kletterpartner</string>
-    <string name="title_rock_search_results">Gefundene Felsen</string>
 
     <!-- About view -->
     <string name="source_code_and_support">Sourcecode und Support</string>
@@ -69,7 +69,7 @@
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
     <string name="dialog_text_change_partner">Kletterpartner ändern</string>
-    <string name="dialog_question_delete">Diesen Bereich löschen?</string>
+    <string name="dialog_question_delete">Dieses Gebiet löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>
     <string name="report_error">Fehler melden</string>
@@ -80,8 +80,8 @@
     <string name="partner_search">Partner suchen</string>
 
     <!-- Toasts -->
-    <string name="objects_refreshed">Bereich aktualisiert</string>
-    <string name="objects_deleted">Bereich gelöscht</string>
+    <string name="successful_refresh">Aktualisierung erfolgreich</string>
+    <string name="region_deleted">Gebiet gelöscht</string>
     <string name="error_on_refresh">Fehler bei Aktualisierung</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>

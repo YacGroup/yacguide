@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2019 Fabian Kantereit
+  Copyright (C) 2021 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,20 +17,7 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/group_rock_search" android:visible="false">
-        <item
-            android:id="@+id/action_rock_search"
-            android:icon="@drawable/ic_menu_search"
-            android:title="@string/rock_search" />
-    </group>
-    <group android:id="@+id/group_filter" android:visible="false">
-        <item
-            android:id="@+id/action_filter_projects"
-            android:icon="@drawable/ic_menu_project"
-            android:title="@string/my_projects" />
-        <item
-            android:id="@+id/action_filter_botches"
-            android:icon="@drawable/ic_menu_flash"
-            android:title="@string/my_botches" />
-    </group>
+    <item
+        android:id="@+id/action_download"
+        android:title="@string/download_all"/>
 </menu>

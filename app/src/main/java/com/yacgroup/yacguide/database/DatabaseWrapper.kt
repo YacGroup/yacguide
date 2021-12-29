@@ -46,6 +46,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRegions(countryName: String) = _db.regionDao().getAll(countryName)
 
+    fun getNonEmptyRegions() = _db.regionDao().getAllNonEmpty()
+
     fun getRegion(regionId: Int) = _db.regionDao().getRegion(regionId)
 
     fun getRegionComments(regionId: Int) = _db.regionCommentDao().getAll(regionId)
@@ -216,27 +218,6 @@ class DatabaseWrapper(context: Context) {
         _db.regionDao().deleteAll()
 
         _db.countryDao().deleteAll()
-    }
-
-    fun deleteRegionsRecursively(countryName: String) = _dbTransaction {
-        val routeComments = _db.routeCommentDao().getAllInCountry(countryName)
-        _db.routeCommentDao().delete(routeComments)
-        val routes = _db.routeDao().getAllInCountry(countryName)
-        _db.routeDao().delete(routes)
-
-        val rockComments = _db.rockCommentDao().getAllInCountry(countryName)
-        _db.rockCommentDao().delete(rockComments)
-        val rocks = _db.rockDao().getAllInCountry(countryName)
-        _db.rockDao().delete(rocks)
-
-        val sectorComments = _db.sectorCommentDao().getAllInCountry(countryName)
-        _db.sectorCommentDao().delete(sectorComments)
-        val sectors = _db.sectorDao().getAllInCountry(countryName)
-        _db.sectorDao().delete(sectors)
-
-        val regionComments = _db.regionCommentDao().getAllInCountry(countryName)
-        _db.regionCommentDao().delete(regionComments)
-        _db.regionDao().deleteAll(countryName)
     }
 
     fun deleteSectorsRecursively(regionId: Int) = _dbTransaction {

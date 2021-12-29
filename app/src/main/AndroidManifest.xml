@@ -66,6 +66,7 @@
             android:theme="@style/AppTheme.ActionBar"/>
         <activity android:name=".TourbookActivity"/>
         <activity android:name=".TourbookAscendActivity"/>
+        <activity android:name=".RegionManagerActivity"/>
         <activity android:name=".PreferencesActivity"/>
         <activity android:name=".AboutActivity"/>
         <activity

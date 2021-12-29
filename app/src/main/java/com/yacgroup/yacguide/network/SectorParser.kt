@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide.network
 
-import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
@@ -32,7 +31,8 @@ import java.util.*
 import kotlin.jvm.Throws
 
 class SectorParser(private val _db: DatabaseWrapper,
-                   private val _regionId: Int) : JSONWebParser() {
+                   private var _regionId: Int,
+                   private var _regionName: String = "") : JSONWebParser() {
 
     private val _CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
         init {
@@ -92,7 +92,24 @@ class SectorParser(private val _db: DatabaseWrapper,
 
         _updateAscendedRocks()
 
+        // Clear lists for the case of updating multiple regions
+        _sectors.clear()
+        _rocks.clear()
+        _routes.clear()
+        _regionComments.clear()
+        _sectorComments.clear()
+        _rockComments.clear()
+        _routeComments.clear()
+
         super.onFinalTaskResolved()
+    }
+
+    fun setRegionId(id: Int) {
+        _regionId = id
+    }
+
+    fun setRegionName(name: String) {
+        _regionName = name
     }
 
     @Throws(JSONException::class)
@@ -100,7 +117,7 @@ class SectorParser(private val _db: DatabaseWrapper,
         val jsonSectors = JSONArray(json)
         _sectorCount = jsonSectors.length()
         _parsedSectorCount = 0
-        listener?.onUpdateStatus("0 %")
+        listener?.onUpdateStatus("$_regionName 0 %")
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
             val s = Sector()
@@ -171,7 +188,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             r.parentId = sectorId
             _rocks.add(r)
         }
-        listener?.onUpdateStatus("${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
+        listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
 
     @Throws(JSONException::class)
