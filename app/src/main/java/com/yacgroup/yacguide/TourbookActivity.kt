@@ -35,6 +35,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import com.yacgroup.yacguide.database.*
+import com.yacgroup.yacguide.database.tourbook.TourbookExporter
 import com.yacgroup.yacguide.utils.*
 
 import org.json.JSONException
@@ -47,6 +48,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _availableYears: IntArray
+    private lateinit var _tourbookExporter: TourbookExporter
     private var _currentYear: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
     // Activity result handler
@@ -77,6 +79,8 @@ class TourbookActivity : BaseNavigationActivity() {
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
+        _tourbookExporter = TourbookExporter(_db, contentResolver)
+
         _currentYear = _initYears()
         _displayContent()
     }
@@ -91,7 +95,7 @@ class TourbookActivity : BaseNavigationActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_import -> _selectFileImport()
-            R.id.action_export -> _selectFileExport()
+            R.id.action_export -> _selectExportFormat()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -153,7 +157,7 @@ class TourbookActivity : BaseNavigationActivity() {
             setNegativeButton()
             setPositiveButton { _, _ ->
                 try {
-                    TourbookExporter(_db, contentResolver).importTourbook(uri)
+                    _tourbookExporter.importTourbook(uri)
                     Toast.makeText(
                             this@TourbookActivity,
                             R.string.tourbook_import_successfull,
@@ -194,7 +198,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _doExport(uri: Uri) {
         try {
-            TourbookExporter(_db, contentResolver).exportTourbook(uri)
+            _tourbookExporter.exportTourbook(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
                     Toast.LENGTH_SHORT).show()
         } catch (e: IOException) {
@@ -320,15 +324,36 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
+            type = "application/json"
         }
         _import.launch(intent)
     }
 
-    private fun _selectFileExport() {
+    /*
+     * Open dialog to let the user choose the export format.
+     */
+    private fun _selectExportFormat() {
+        var mimeType = "application/json"
+        DialogWidgetBuilder(this, R.string.export_format).apply {
+            setSingleChoiceItems(R.array.exportFormats, 0) {_, which ->
+                when (which) {
+                    0 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSON
+                    1 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSONVEROBSE
+                    2 -> {
+                        mimeType = "text/comma-separated-values"
+                        _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eCSV
+                    }
+                }
+            }
+            setNegativeButton()
+            setPositiveButton{ _, _ -> _selectExportFile(mimeType) }
+        }.show()
+    }
+
+    private fun _selectExportFile(mimeType: String) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
+            type = mimeType
         }
         _export.launch(intent)
     }

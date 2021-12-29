@@ -128,6 +128,16 @@ dependencies {
     def markwon_version = '4.6.2'
     implementation "io.noties.markwon:core:$markwon_version"
     implementation "io.noties.markwon:linkify:$markwon_version"
+
+    /*
+     * CSV library for tour book export
+     *
+     * https://commons.apache.org/proper/commons-csv/
+     */
+    implementation 'org.apache.commons:commons-csv:1.9.0'
+
+    // For introspection
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.0"
 }
 repositories {
     mavenCentral()

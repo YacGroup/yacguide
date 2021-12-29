@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019 Axel Pätzold
+ * Copyright (C) 2021 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.database
+package com.yacgroup.yacguide.database.tourbook
 
 import android.content.ContentResolver
 import android.net.Uri
+import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.database.Partner
 
 import com.yacgroup.yacguide.utils.ParserUtils
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 
 import org.json.JSONArray
 import org.json.JSONException
@@ -30,8 +36,10 @@ import java.io.*
 import java.util.ArrayList
 
 class TourbookExporter(
-        private val _db: DatabaseWrapper,
-        private val _contentResolver: ContentResolver) {
+    private val _db: DatabaseWrapper,
+    private val _contentResolver: ContentResolver) {
+
+    private val JSON_INDENT_SPACE = 2
 
     private val _routeIdKey = "routeId"
     private val _styleIdKey = "styleId"
@@ -41,11 +49,57 @@ class TourbookExporter(
     private val _partnersKey = "partners"
     private val _notesKey = "notes"
 
+    enum class ExportFormat {
+        eJSON,
+        eJSONVEROBSE,
+        eCSV;
+    }
+
+    var exportFormat: ExportFormat = ExportFormat.eJSON
+
     @Throws(IOException::class)
     fun exportTourbook(uri: Uri) {
+        when (exportFormat) {
+            ExportFormat.eJSON, ExportFormat.eJSONVEROBSE -> _exportAsJson(uri)
+            ExportFormat.eCSV -> _exportAsCsv(uri)
+        }
+    }
+
+    /*
+     * Export tour book as CSV file
+     *
+     * See https://commons.apache.org/proper/commons-csv/apidocs/index.html
+     */
+    @Throws(IOException::class)
+    private fun _exportAsCsv(uri: Uri) {
+        val writer = StringBuffer()
+        val csvFormat = CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
+            setHeader(*TourbookEntryVerbose.keys().map { it }.toTypedArray())
+            setTrim(true)
+        }.build()
+        CSVPrinter(writer, csvFormat).apply {
+            _db.getAscends().forEach {
+                printRecord(TourbookEntryVerbose(it, _db).values())
+            }
+            flush()
+            close()
+            _writeStrToUri(uri, writer.toString())
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun _exportAsJson(uri: Uri) {
         val jsonAscends = JSONArray()
-        _db.getAscends().map { jsonAscends.put(ascend2Json(it)) }
-        _writeStrToUri(uri, jsonAscends.toString())
+        _db.getAscends().map {
+            when (exportFormat) {
+                ExportFormat.eJSON -> jsonAscends.put(ascend2Json(it))
+                ExportFormat.eJSONVEROBSE -> jsonAscends.put(
+                    JSONObject(TourbookEntryVerbose(it, _db).asMap())
+                )
+                else -> {}
+            }
+        }
+        _writeStrToUri(uri, jsonAscends.toString(JSON_INDENT_SPACE))
     }
 
     @Throws(IOException::class)
