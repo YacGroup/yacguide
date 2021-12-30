@@ -17,14 +17,12 @@
 
 package com.yacgroup.yacguide
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.view.menu.MenuBuilder
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.network.SectorParser
@@ -46,12 +44,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _displayContent()
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.update_options_menu, menu)
-        if (menu is MenuBuilder) {
-            menu.setOptionalIconsVisible(true)
-        }
         return true
     }
 

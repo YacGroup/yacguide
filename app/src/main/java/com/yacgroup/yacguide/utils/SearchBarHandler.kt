@@ -33,6 +33,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        checkBoxTitle: String,
                        checkBoxDefaultValue: Boolean,
                        private val _settings: SharedPreferences,
+                       private val _initCallback: (Boolean) -> Unit,
                        private val _updateCallback: (String, Boolean) -> Unit) {
 
     private var _namePart: String = ""
@@ -67,7 +68,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             })
         }
 
-        _updateCallback(_namePart, _onlyOfficialObjects)
+        _initCallback(_onlyOfficialObjects)
     }
 
     fun storeCustomSettings(key: String) {

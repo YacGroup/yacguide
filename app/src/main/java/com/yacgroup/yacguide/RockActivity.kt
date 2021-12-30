@@ -25,6 +25,7 @@ import android.view.View
 import android.widget.*
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
+import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -43,15 +44,19 @@ class RockActivity : TableActivityWithOptionsMenu() {
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
 
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this))
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
             R.string.rock_search,
             getString(R.string.only_official_summits),
             resources.getBoolean(R.bool.only_official_summits),
-            customSettings
-        ) { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) }
+            customSettings,
+            { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
+            { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) })
     }
 
     override fun getLayoutId() = R.layout.activity_rock

@@ -17,6 +17,12 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_route_search" android:visible="false">
+        <item
+            android:id="@+id/action_route_search"
+            android:icon="@drawable/ic_menu_search"
+            android:title="@string/route_search" />
+    </group>
     <group android:id="@+id/group_rock_search" android:visible="false">
         <item
             android:id="@+id/action_rock_search"

@@ -74,7 +74,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             RequestType.SECTOR_DATA -> _parseSectors(json)
             RequestType.REGION_COMMENTS -> _parseRegionComments(json)
             RequestType.ROCK_DATA -> _parseRocks(json, requestId.id)
-            RequestType.ROUTE_DATA -> _parseRoutes(json, requestId.id)
+            RequestType.ROUTE_DATA -> _parseRoutes(json)
             RequestType.SECTOR_COMMENTS -> _parseComments(json)
         }
     }
@@ -192,7 +192,7 @@ class SectorParser(private val _db: DatabaseWrapper,
     }
 
     @Throws(JSONException::class)
-    private fun _parseRoutes(json: String, sectorId: Int) {
+    private fun _parseRoutes(json: String) {
         val jsonRoutes = JSONArray(json)
         for (i in 0 until jsonRoutes.length()) {
             val jsonRoute = jsonRoutes.getJSONObject(i)

@@ -80,11 +80,15 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRock(rockId)
 
+    fun getRoutesByNameForRock(rockId: Int, namePart: String) = _db.routeDao().getAllByNameAtRock(rockId, "%$namePart%")
+
     fun getProjectedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.eBOTCHED.id)
 
     fun getRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSector(sectorId)
+
+    fun getRoutesByNameForSector(sectorId: Int, namePart: String) = _db.routeDao().getAllByNameInSector(sectorId, "%$namePart%")
 
     fun getProjectedRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSectorForStyle(sectorId, AscendStyle.ePROJECT.id)
 
@@ -92,17 +96,23 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegion(regionId)
 
+    fun getRoutesByNameForRegion(regionId: Int, namePart: String) = _db.routeDao().getAllByNameInRegion(regionId, "%$namePart%")
+
     fun getProjectedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.eBOTCHED.id)
 
     fun getRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountry(countryName)
 
+    fun getRoutesByNameForCountry(countryName: String, namePart: String) = _db.routeDao().getAllByNameInCountry(countryName, "%$namePart%")
+
     fun getProjectedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.eBOTCHED.id)
 
     fun getRoutes() = _db.routeDao().all
+
+    fun getRoutesByName(namePart: String) = _db.routeDao().getAllByName("%$namePart%")
 
     fun getProjectedRoutes() = _db.routeDao().getAllForStyle(AscendStyle.ePROJECT.id)
 

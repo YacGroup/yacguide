@@ -27,6 +27,7 @@ import android.view.View
 import android.widget.*
 
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
+import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -39,6 +40,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private lateinit var _searchBarHandler: SearchBarHandler
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
+    private var _filterName: String = ""
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
@@ -46,18 +48,22 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
-        properties = arrayListOf(AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            AscentFilterable(this))
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
             R.string.route_search,
             getString(R.string.only_official_routes),
             resources.getBoolean(R.bool.only_official_routes),
-            customSettings
-        ) { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) }
+            customSettings,
+            { onlyOfficialRoutes -> _onlyOfficialRoutes = onlyOfficialRoutes },
+            { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) })
 
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
             _rock = db.getRock(activityLevel.parentId)
@@ -106,7 +112,6 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         if (_routeNamePart.isNotEmpty()) {
             routes = routes.filter{ it.name.orEmpty().lowercase().contains(_routeNamePart.lowercase()) }
         }
-
         for (route in routes) {
             val routeName = ParserUtils.decodeObjectNames(route.name)
             val commentCount = db.getRouteCommentCount(route.id)
@@ -163,27 +168,32 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 
     private fun _getAndFilterRoutes(): List<Route> = when (activityLevel.level) {
         ClimbingObjectLevel.eCountry -> {
-            if (_filterProjects) db.getProjectedRoutes()
+            if (_filterName.isNotEmpty()) db.getRoutesByName(_filterName)
+            else if (_filterProjects) db.getProjectedRoutes()
             else if (_filterBotches) db.getBotchedRoutes()
             else db.getRoutes()
         }
         ClimbingObjectLevel.eRegion -> {
-            if (_filterProjects) db.getProjectedRoutesForCountry(activityLevel.parentName)
+            if (_filterName.isNotEmpty()) db.getRoutesByNameForCountry(activityLevel.parentName, _filterName)
+            else if (_filterProjects) db.getProjectedRoutesForCountry(activityLevel.parentName)
             else if (_filterBotches) db.getBotchedRoutesForCountry(activityLevel.parentName)
             else db.getRoutesForCountry(activityLevel.parentName)
         }
         ClimbingObjectLevel.eSector -> {
-            if (_filterProjects) db.getProjectedRoutesForRegion(activityLevel.parentId)
+            if (_filterName.isNotEmpty()) db.getRoutesByNameForRegion(activityLevel.parentId, _filterName)
+            else if (_filterProjects) db.getProjectedRoutesForRegion(activityLevel.parentId)
             else if (_filterBotches) db.getBotchedRoutesForRegion(activityLevel.parentId)
             else db.getRoutesForRegion(activityLevel.parentId)
         }
         ClimbingObjectLevel.eRock -> {
-            if (_filterProjects) db.getProjectedRoutesForSector(activityLevel.parentId)
+            if (_filterName.isNotEmpty()) db.getRoutesByNameForSector(activityLevel.parentId, _filterName)
+            else if (_filterProjects) db.getProjectedRoutesForSector(activityLevel.parentId)
             else if (_filterBotches) db.getBotchedRoutesForSector(activityLevel.parentId)
             else db.getRoutesForSector(activityLevel.parentId)
         }
         ClimbingObjectLevel.eRoute -> {
-            if (_filterProjects) db.getProjectedRoutesForRock(activityLevel.parentId)
+            if (_filterName.isNotEmpty()) db.getRoutesByNameForRock(activityLevel.parentId, _filterName)
+            else if (_filterProjects) db.getProjectedRoutesForRock(activityLevel.parentId)
             else if (_filterBotches) db.getBotchedRoutesForRock(activityLevel.parentId)
             else db.getRoutesForRock(activityLevel.parentId)
         }
@@ -194,20 +204,23 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         val arrow = getString(R.string.right_arrow)
         var sectorInfo = ""
         if (activityLevel.level.value < ClimbingObjectLevel.eRoute.value) {
-            val rock = db.getRock(route.parentId)!!
-            if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
-                val sector = db.getSector(rock.parentId)!!
-                if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
-                    val region = db.getRegion(sector.parentId)!!
-                    sectorInfo = "${region.name} $arrow "
+            db.getRock(route.parentId)?.let { rock ->
+                if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
+                    db.getSector(rock.parentId)?.let { sector ->
+                        if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
+                            db.getRegion(sector.parentId)?.let { region ->
+                                sectorInfo = "${region.name} $arrow "
+                            }
+                        }
+                        val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+                        val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
+                        sectorInfo += "${sectorNames.first} $altName $arrow "
+                    }
                 }
-                val sectorNames = ParserUtils.decodeObjectNames(sector.name)
-                val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
-                sectorInfo += "${sectorNames.first} $altName $arrow "
+                val rockNames = ParserUtils.decodeObjectNames(rock.name)
+                val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
+                sectorInfo += "${rockNames.first} $altName"
             }
-            val rockNames = ParserUtils.decodeObjectNames(rock.name)
-            val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
-            sectorInfo += "${rockNames.first} $altName"
         }
         return sectorInfo
     }

@@ -34,7 +34,10 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _updateHandler = UpdateHandler(this, CountryParser(db))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this))
 
         WhatsNewInfo(this).let {
             if (it.checkForVersionUpdate()) {

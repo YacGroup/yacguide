@@ -37,7 +37,10 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this))
     }
 
     override fun getLayoutId() = R.layout.activity_sector
