@@ -111,8 +111,8 @@ class PreferencesActivity : BaseNavigationActivity() {
         for ((checkboxId, keyPair) in _settingKeysMap) {
             editor.putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
         }
-//        editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.string.lead))
-//        editor.putInt(getString(R.string.follow), (findViewById<Button>(R.id.followColorButton).background as ColorDrawable).color)
+        editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
+        editor.putInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_lead))
 
         editor.commit()
 
