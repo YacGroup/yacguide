@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.Toast
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class PreferencesActivity : BaseNavigationActivity() {
 
@@ -85,7 +87,13 @@ class PreferencesActivity : BaseNavigationActivity() {
         view.setBackgroundColor(nextColor)
     }
 
-    fun resetDatabase(view: android.view.View) {}
+    fun resetDatabase(view: android.view.View) {
+        DialogWidgetBuilder(this, R.string.reset_database).apply {
+            setMessage(R.string.reset_database_confirmation)
+            setNegativeButton()
+            setPositiveButton(null)
+        }.show()
+    }
 
     private fun _storeSettings() {
         val editor = _customSettings.edit()
