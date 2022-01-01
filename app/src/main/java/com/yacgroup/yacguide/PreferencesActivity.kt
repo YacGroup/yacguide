@@ -48,8 +48,10 @@ class PreferencesActivity : BaseNavigationActivity() {
                                                                          R.bool.count_collapsed_rocks),
                                         R.id.countOnlyLeadsCheckbox to Pair(R.string.count_only_leads,
                                                                             R.bool.count_only_leads),
-                                        R.id.colorizeTourbookEntriesCheckbox to Pair(R.string.colorize_tourbook_entries,
-                                                                                     R.bool.colorize_tourbook_entries))
+                                        R.id.colorizeTourbookEntriesCheckbox to Pair(
+                                            R.string.colorize_tourbook_entries,
+                                            R.bool.colorize_tourbook_entries,
+                                        ))
 
     private lateinit var _ascendColorsList: List<Int>
 
@@ -85,6 +87,8 @@ class PreferencesActivity : BaseNavigationActivity() {
         view.setBackgroundColor(nextColor)
     }
 
+    fun resetDatabase(view: android.view.View) {}
+
     private fun _storeSettings() {
         val editor = _customSettings.edit()
         for ((checkboxId, keyPair) in _settingKeysMap) {
@@ -99,12 +103,21 @@ class PreferencesActivity : BaseNavigationActivity() {
     private fun _displayContent() {
         for ((checkboxId, keyPair) in _settingKeysMap) {
             findViewById<CheckBox>(checkboxId).isChecked = _customSettings.getBoolean(
-                    getString(keyPair.first),
-                    resources.getBoolean(keyPair.second))
+                getString(keyPair.first),
+                resources.getBoolean(keyPair.second)
+            )
         }
-        findViewById<Button>(R.id.leadColorButton).setBackgroundColor(_customSettings.getInt(getString(R.string.lead),
-                        ContextCompat.getColor(this, R.color.color_lead)))
-        findViewById<Button>(R.id.followColorButton).setBackgroundColor(_customSettings.getInt(getString(R.string.follow),
-                        ContextCompat.getColor(this, R.color.color_follow)))
+        findViewById<Button>(R.id.leadColorButton).setBackgroundColor(
+            _customSettings.getInt(
+                getString(R.string.lead),
+                ContextCompat.getColor(this, R.color.color_lead)
+            )
+        )
+        findViewById<Button>(R.id.followColorButton).setBackgroundColor(
+            _customSettings.getInt(
+                getString(R.string.follow),
+                ContextCompat.getColor(this, R.color.color_follow)
+            )
+        )
     }
 }
