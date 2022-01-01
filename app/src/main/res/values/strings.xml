@@ -155,8 +155,6 @@
     <string name="only_official_routes">Nur offizielle Wege</string>
 
     <string name="reset_database">Auf Werkseinstellungen zurücksetzen</string>
-    <string name="reset_database_confirmation">Gesamte Datenbank (inkl. Tourenbuch) wird gelöscht. Fortfahren?</string>
-    <string name="reset_database_done">Datenbank gelöscht. Einstellungen zurückgesetzt.</string>
 
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>

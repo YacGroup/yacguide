@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -26,14 +25,10 @@ import androidx.core.content.ContextCompat
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.Toast
-import com.yacgroup.yacguide.database.DatabaseWrapper
-import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class PreferencesActivity : BaseNavigationActivity() {
 
     private lateinit var _customSettings: SharedPreferences
-    private lateinit var _db: DatabaseWrapper
 
     private val _settingKeysMap = mapOf(R.id.tourbookOrderingCheckbox to Pair(R.string.order_tourbook_chronologically,
                                                                               R.bool.order_tourbook_chronologically),
@@ -66,8 +61,6 @@ class PreferencesActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.action_settings)
 
-        _db = DatabaseWrapper(this)
-
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         _ascendColorsList = listOf(
                 ContextCompat.getColor(this, R.color.greenblue),
@@ -92,32 +85,7 @@ class PreferencesActivity : BaseNavigationActivity() {
         view.setBackgroundColor(nextColor)
     }
 
-    fun resetDatabase(view: android.view.View) {
-        DialogWidgetBuilder(this, R.string.reset_database).apply {
-            setMessage(R.string.reset_database_confirmation)
-            setNegativeButton()
-            setPositiveButton("OK") { dialog: DialogInterface?, whichButton: Int ->
-                _db.deleteCountriesRecursively()
-                _resetCustomSettings()
-                Toast.makeText(this.context, R.string.reset_database_done,
-                    Toast.LENGTH_SHORT).show()
-            }
-        }.show()
-
-    }
-
-    private fun _resetCustomSettings() {
-        val editor = _customSettings.edit()
-        for ((checkboxId, keyPair) in _settingKeysMap) {
-            editor.putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
-        }
-        editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-        editor.putInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_lead))
-
-        editor.commit()
-
-        _displayContent()
-    }
+    fun resetDatabase(view: android.view.View) {}
 
     private fun _storeSettings() {
         val editor = _customSettings.edit()
