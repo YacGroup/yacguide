@@ -27,11 +27,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class PreferencesActivity : BaseNavigationActivity() {
 
     private lateinit var _customSettings: SharedPreferences
+    private lateinit var _db: DatabaseWrapper
 
     private val _settingKeysMap = mapOf(R.id.tourbookOrderingCheckbox to Pair(R.string.order_tourbook_chronologically,
                                                                               R.bool.order_tourbook_chronologically),
@@ -64,6 +66,8 @@ class PreferencesActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.action_settings)
 
+        _db = DatabaseWrapper(this)
+
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         _ascendColorsList = listOf(
                 ContextCompat.getColor(this, R.color.greenblue),
@@ -93,7 +97,9 @@ class PreferencesActivity : BaseNavigationActivity() {
             setMessage(R.string.reset_database_confirmation)
             setNegativeButton()
             setPositiveButton("OK") { dialog: DialogInterface?, whichButton: Int ->
-                println("Delete database")
+                _db.deleteCountriesRecursively()
+                Toast.makeText(this.context, R.string.reset_database_done,
+                    Toast.LENGTH_SHORT).show()
             }
         }.show()
 
