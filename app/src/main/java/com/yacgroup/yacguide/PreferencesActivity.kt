@@ -100,11 +100,25 @@ class PreferencesActivity : BaseNavigationActivity() {
             setNegativeButton()
             setPositiveButton("OK") { dialog: DialogInterface?, whichButton: Int ->
                 _db.deleteCountriesRecursively()
+                _resetCustomSettings()
                 Toast.makeText(this.context, R.string.reset_database_done,
                     Toast.LENGTH_SHORT).show()
             }
         }.show()
 
+    }
+
+    private fun _resetCustomSettings() {
+        val editor = _customSettings.edit()
+        for ((checkboxId, keyPair) in _settingKeysMap) {
+            editor.putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
+        }
+//        editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.string.lead))
+//        editor.putInt(getString(R.string.follow), (findViewById<Button>(R.id.followColorButton).background as ColorDrawable).color)
+
+        editor.commit()
+
+        _displayContent()
     }
 
     private fun _storeSettings() {
