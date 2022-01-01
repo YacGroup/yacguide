@@ -153,6 +153,8 @@
     <string name="only_official_summits">Nur offizielle Gipfel</string>
     <string name="only_official_routes">Nur offizielle Wege</string>
 
+    <string name="database_reset">Auf Werkseinstellungen zurücksetzen</string>
+
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>
     <string name="project">\u0020\u2117</string>
