@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -91,8 +92,11 @@ class PreferencesActivity : BaseNavigationActivity() {
         DialogWidgetBuilder(this, R.string.reset_database).apply {
             setMessage(R.string.reset_database_confirmation)
             setNegativeButton()
-            setPositiveButton(null)
+            setPositiveButton("OK") { dialog: DialogInterface?, whichButton: Int ->
+                println("Delete database")
+            }
         }.show()
+
     }
 
     private fun _storeSettings() {
