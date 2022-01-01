@@ -156,7 +156,7 @@
 
     <string name="reset_database">Auf Werkseinstellungen zurücksetzen</string>
     <string name="reset_database_confirmation">Gesamte Datenbank (inkl. Tourenbuch) wird gelöscht. Fortfahren?</string>
-    <string name="reset_database_done">Datenbank gelöscht. Einstellungen zurückgesetzt.</string>
+    <string name="reset_database_done">Datenbank gelöscht.</string>
 
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>
