@@ -28,8 +28,12 @@ enum class ClimbingObjectLevel(val value: Int) {
     eRoute(4);
 
     companion object {
-        fun fromInt(value: Int) = values().first { it.value == value }
+        fun fromInt(value: Int) = ClimbingObjectLevel.values().first { it.value == value }
     }
 }
 
-class ClimbingObject(val level: ClimbingObjectLevel, val parentId: Int, val parentName: String)
+class ClimbingObject(level: ClimbingObjectLevel, parentId: Int, parentName: String) {
+    val level: ClimbingObjectLevel = level
+    val parentId: Int = parentId
+    val parentName: String = parentName
+}

@@ -28,13 +28,16 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class CountryActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, CountryParser(db))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        _updatable = Updatable(
+            this,
+            CountryParser(db)
+        ) { db.deleteCountriesRecursively() }
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
 
         WhatsNewInfo(this).let {
             if (it.checkForVersionUpdate()) {
@@ -43,7 +46,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         }
     }
 
-    override fun getLayoutId() = R.layout.activity_table
+    override fun getLayoutId() = R.layout.activity_country
 
     override fun displayContent() {
         setTitle(R.string.app_name)
@@ -64,7 +67,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (countries.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
+            layout.addView(_updatable.getDownloadButton())
         }
     }
 }

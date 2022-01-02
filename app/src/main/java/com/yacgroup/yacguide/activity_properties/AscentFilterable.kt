@@ -19,7 +19,7 @@ package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
 import com.yacgroup.yacguide.R
-import com.yacgroup.yacguide.RouteActivity
+import com.yacgroup.yacguide.RockActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.utils.IntentConstants
 
@@ -29,13 +29,13 @@ class AscentFilterable(private val _activity: TableActivityWithOptionsMenu) : Ac
 
     override fun onMenuAction(menuItemId: Int) {
         when (menuItemId) {
-            R.id.action_filter_projects -> _goToFilteredRoutesView(IntentConstants.FILTER_PROJECTS)
-            R.id.action_filter_botches -> _goToFilteredRoutesView(IntentConstants.FILTER_BOTCHES)
+            R.id.action_filter_projects -> _goToFilteredRocksView(IntentConstants.FILTER_PROJECTS)
+            R.id.action_filter_botches -> _goToFilteredRocksView(IntentConstants.FILTER_BOTCHES)
         }
     }
 
-    private fun _goToFilteredRoutesView(filterIntent: String) {
-        val intent = Intent(_activity, RouteActivity::class.java)
+    private fun _goToFilteredRocksView(filterIntent: String) {
+        val intent = Intent(_activity, RockActivity::class.java)
         intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
         intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
         intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)

@@ -17,9 +17,7 @@
 
 package com.yacgroup.yacguide
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -30,18 +28,20 @@ import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _updatable: Updatable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, RegionParser(db, activityLevel.parentName))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        _updatable = Updatable(
+            this,
+            RegionParser(db, activityLevel.parentName)
+        ) { db.deleteRegionsRecursively(activityLevel.parentName) }
+        properties = arrayListOf(RockSearchable(this), AscentFilterable(this), _updatable)
     }
 
-    override fun getLayoutId() = R.layout.activity_table
+    override fun getLayoutId() = R.layout.activity_region
 
-    @SuppressLint("NewApi")
     override fun displayContent() {
         this.title = activityLevel.parentName
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
@@ -55,21 +55,14 @@ class RegionActivity : TableActivityWithOptionsMenu() {
                 intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, region.name)
                 startActivity(intent)
             }
-            var icon = getString(R.string.empty_box)
-            var bgColor = Color.WHITE
-            if (db.getSectors(region.id).isNotEmpty()) {
-                icon = getString(R.string.tick)
-                bgColor = getColor(R.color.colorAccentLight)
-            }
             layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "$icon ${region.name.orEmpty()}",
+                    textLeft = region.name.orEmpty(),
                     onClickListener = onClickListener,
-                    bgColor = bgColor,
                     padding = WidgetUtils.Padding(20, 30, 20, 30)))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
         if (regions.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
+            layout.addView(_updatable.getDownloadButton())
         }
     }
 }

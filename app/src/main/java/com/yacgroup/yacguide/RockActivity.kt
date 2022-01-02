@@ -37,11 +37,15 @@ class RockActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
     private var _filterName: String = ""
+    private var _filterProjects: Boolean = false
+    private var _filterBotches: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
+        _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
+        _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
 
@@ -144,24 +148,34 @@ class RockActivity : TableActivityWithOptionsMenu() {
         super.onStop()
     }
 
-    private fun _getAndFilterRocks() = when(activityLevel.level) {
-        ClimbingObjectLevel.eCountry -> {
-            if (_filterName.isEmpty()) db.getRocks()
-            else db.getRocksByName(_filterName)
+    private fun _getAndFilterRocks(): List<Rock> {
+        val rocks = when (activityLevel.level) {
+            ClimbingObjectLevel.eCountry -> {
+                if (_filterProjects) db.getProjectedRocks()
+                else if (_filterBotches) db.getBotchedRocks()
+                else db.getRocks()
+            }
+            ClimbingObjectLevel.eRegion -> {
+                if (_filterProjects) db.getProjectedRocksForCountry(activityLevel.parentName)
+                else if (_filterBotches) db.getBotchedRocksForCountry(activityLevel.parentName)
+                else db.getRocksForCountry(activityLevel.parentName)
+            }
+            ClimbingObjectLevel.eSector -> {
+                if (_filterProjects) db.getProjectedRocksForRegion(activityLevel.parentId)
+                else if (_filterBotches) db.getBotchedRocksForRegion(activityLevel.parentId)
+                else db.getRocksForRegion(activityLevel.parentId)
+            }
+            ClimbingObjectLevel.eRock -> {
+                if (_filterProjects) db.getProjectedRocksForSector(activityLevel.parentId)
+                else if (_filterBotches) db.getBotchedRocksForSector(activityLevel.parentId)
+                else db.getRocksForSector(activityLevel.parentId)
+            }
+            else -> emptyList()
         }
-        ClimbingObjectLevel.eRegion -> {
-            if (_filterName.isEmpty()) db.getRocksForCountry(activityLevel.parentName)
-            else db.getRocksByNameForCountry(activityLevel.parentName, _filterName)
-        }
-        ClimbingObjectLevel.eSector -> {
-            if (_filterName.isEmpty()) db.getRocksForRegion(activityLevel.parentId)
-            else db.getRocksByNameForRegion(activityLevel.parentId, _filterName)
-        }
-        ClimbingObjectLevel.eRock -> {
-            if (_filterName.isEmpty()) db.getRocksForSector(activityLevel.parentId)
-            else db.getRocksByNameForSector(activityLevel.parentId, _filterName)
-        }
-        else -> emptyList()
+        return if (_filterName.isNotEmpty())
+                   rocks.filter { it.name.orEmpty().lowercase().contains(_filterName.lowercase()) }
+               else
+                   rocks
     }
 
     private fun _getSectorInfo(rock: Rock): String {
@@ -170,12 +184,12 @@ class RockActivity : TableActivityWithOptionsMenu() {
             val sector = db.getSector(rock.parentId)!!
             if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
                 val region = db.getRegion(sector.parentId)!!
-                sectorInfo = "${region.name} ${getString(R.string.right_arrow)} "
+                sectorInfo = "${region.name} ${getString(R.string.arrow)} "
             }
             val sectorNames = ParserUtils.decodeObjectNames(sector.name)
             sectorInfo += sectorNames.first
             if (sectorNames.second.isNotEmpty()) {
-                sectorInfo += " / ${sectorNames.second}"
+                sectorInfo += " / " + sectorNames.second
             }
         }
         return sectorInfo
