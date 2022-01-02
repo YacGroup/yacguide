@@ -98,6 +98,7 @@ class PreferencesActivity : BaseNavigationActivity() {
             setNegativeButton()
             setPositiveButton("OK") { dialog: DialogInterface?, whichButton: Int ->
                 _db.deleteCountriesRecursively()
+                _db.deleteAscends()
                 _resetCustomSettings()
                 Toast.makeText(this.context, R.string.reset_database_done,
                     Toast.LENGTH_SHORT).show()
