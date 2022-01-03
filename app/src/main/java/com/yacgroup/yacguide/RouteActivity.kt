@@ -194,20 +194,23 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         val arrow = getString(R.string.right_arrow)
         var sectorInfo = ""
         if (activityLevel.level.value < ClimbingObjectLevel.eRoute.value) {
-            val rock = db.getRock(route.parentId)!!
-            if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
-                val sector = db.getSector(rock.parentId)!!
-                if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
-                    val region = db.getRegion(sector.parentId)!!
-                    sectorInfo = "${region.name} $arrow "
+            db.getRock(route.parentId)?.let { rock ->
+                if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
+                    db.getSector(rock.parentId)?.let { sector ->
+                        if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
+                            db.getRegion(sector.parentId)?.let { region ->
+                                sectorInfo = "${region.name} $arrow "
+                            }
+                        }
+                        val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+                        val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
+                        sectorInfo += "${sectorNames.first} $altName $arrow "
+                    }
                 }
-                val sectorNames = ParserUtils.decodeObjectNames(sector.name)
-                val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
-                sectorInfo += "${sectorNames.first} $altName $arrow "
+                val rockNames = ParserUtils.decodeObjectNames(rock.name)
+                val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
+                sectorInfo += "${rockNames.first} $altName"
             }
-            val rockNames = ParserUtils.decodeObjectNames(rock.name)
-            val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
-            sectorInfo += "${rockNames.first} $altName"
         }
         return sectorInfo
     }
