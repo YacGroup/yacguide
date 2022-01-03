@@ -31,8 +31,8 @@ import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class PreferencesActivity : BaseNavigationActivity() {
 
-    private lateinit var _customSettings: SharedPreferences
     private lateinit var _db: DatabaseWrapper
+    private lateinit var _customSettings: SharedPreferences
 
     private val _settingKeysMap = mapOf(R.id.tourbookOrderingCheckbox to Pair(R.string.order_tourbook_chronologically,
                                                                               R.bool.order_tourbook_chronologically),
