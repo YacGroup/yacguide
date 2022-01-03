@@ -162,6 +162,16 @@
 
         <View style="@style/FatDivider"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:id="@+id/resetDatabaseButton"
+            android:text="@string/reset_database"
+            android:textSize="16sp"
+            android:onClick="resetDatabase"/>
+
     </LinearLayout>
 
 </ScrollView>

@@ -151,6 +151,11 @@
     <string name="follow">Nachstieg</string>
     <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
 
+    <string name="reset_database">Auf Werkseinstellungen zurücksetzen</string>
+    <string name="reset_database_confirm">Dies löscht die gesamte Datenbank, inkl. Tourenbuch.
+                                          Fortfahren?</string>
+    <string name="reset_database_done">Auf Werkseinstellungen zurückgesetzt</string>
+
     <string name="only_official_summits">Nur offizielle Gipfel</string>
     <string name="only_official_routes">Nur offizielle Wege</string>
 
