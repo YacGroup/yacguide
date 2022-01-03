@@ -56,8 +56,9 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             R.string.route_search,
             getString(R.string.only_official_routes),
             resources.getBoolean(R.bool.only_official_routes),
-            customSettings
-        ) { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) }
+            customSettings,
+            { onlyOfficialRoutes -> _onlyOfficialRoutes = onlyOfficialRoutes },
+            { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) })
 
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
             _rock = db.getRock(activityLevel.parentId)

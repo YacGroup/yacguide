@@ -50,8 +50,9 @@ class RockActivity : TableActivityWithOptionsMenu() {
             R.string.rock_search,
             getString(R.string.only_official_summits),
             resources.getBoolean(R.bool.only_official_summits),
-            customSettings
-        ) { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) }
+            customSettings,
+            { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
+            { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) })
     }
 
     override fun getLayoutId() = R.layout.activity_rock
