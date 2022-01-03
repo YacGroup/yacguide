@@ -27,7 +27,7 @@ import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.NetworkUtils
 
 class UpdateHandler(private val _activity: AppCompatActivity,
-                    private val _jsonParser: JSONWebParser): UpdateListener {
+                    private var _jsonParser: JSONWebParser): UpdateListener {
 
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
@@ -58,6 +58,11 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         }
     }
 
+    fun setJsonParser(parser: JSONWebParser) {
+        _jsonParser = parser
+        _jsonParser.listener = this
+    }
+
     fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false) {
         _onUpdateFinished = onUpdateFinished
         _isRecurringUpdate = isRecurring
@@ -66,7 +71,6 @@ class UpdateHandler(private val _activity: AppCompatActivity,
             return
         }
         _jsonParser.fetchData()
-        _updateDialog.setContentView(R.layout.info_dialog)
         _updateDialog.show()
     }
 
@@ -93,6 +97,9 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         } else {
             Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
         }
+
+        _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
+        _success = true
     }
 
     fun getDownloadButton(onUpdateFinished: () -> Unit): ImageButton {

@@ -17,47 +17,45 @@
 
 package com.yacgroup.yacguide
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.view.menu.MenuBuilder
+import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.network.CountryParser
+import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionManagerActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private lateinit var _jsonParser: SectorParser
+    private lateinit var _regionParser: RegionParser
+    private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _db = DatabaseWrapper(this)
-        _jsonParser = SectorParser(_db, 0)
-        _updateHandler = UpdateHandler(this, _jsonParser)
+        _regionParser = RegionParser(_db, "")
+        _sectorParser = SectorParser(_db, 0)
+        _updateHandler = UpdateHandler(this, _sectorParser)
 
         _displayContent()
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.update_options_menu, menu)
-        if (menu is MenuBuilder) {
-            menu.setOptionalIconsVisible(true)
-        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val regions = _db.getNonEmptyRegions().toMutableSet()
-        _updateNextRegion(regions)
+        _updateAll()
         return true
     }
 
@@ -88,8 +86,9 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 id = View.generateViewId()
                 setImageResource(android.R.drawable.stat_notify_sync)
                 setOnClickListener {
-                    _jsonParser.setRegionId(region.id)
-                    _jsonParser.setRegionName(region.name.orEmpty())
+                    _updateHandler.setJsonParser(_sectorParser)
+                    _sectorParser.setRegionId(region.id)
+                    _sectorParser.setRegionName(region.name.orEmpty())
                     _updateHandler.update()
                 }
             }
@@ -126,12 +125,35 @@ class RegionManagerActivity : BaseNavigationActivity() {
         }
     }
 
+    private fun _updateAll() {
+        // We need to update regions recursively since update() is asynchronous.
+        _updateHandler.setJsonParser(CountryParser(_db))
+        _updateHandler.update({
+            _updateHandler.setJsonParser(_regionParser)
+            val countries = _db.getNonEmptyCountries().toMutableSet()
+            _updateNextCountry(countries)
+        }, true)
+    }
+
+    private fun _updateNextCountry(countries: MutableSet<Country>) {
+        try {
+            val nextCountry = countries.first()
+            countries.remove(nextCountry)
+            _regionParser.setCountryName(nextCountry.name)
+            _updateHandler.update({ _updateNextCountry(countries) }, true)
+        } catch (e: NoSuchElementException) {
+            _updateHandler.setJsonParser(_sectorParser)
+            val regions = _db.getNonEmptyRegions().toMutableSet()
+            _updateNextRegion(regions)
+        }
+    }
+
     private fun _updateNextRegion(regions: MutableSet<Region>) {
         try {
             val nextRegion = regions.first()
             regions.remove(nextRegion)
-            _jsonParser.setRegionId(nextRegion.id)
-            _jsonParser.setRegionName(nextRegion.name.orEmpty())
+            _sectorParser.setRegionId(nextRegion.id)
+            _sectorParser.setRegionName(nextRegion.name.orEmpty())
             _updateHandler.update({ _updateNextRegion(regions) }, true)
         } catch (e: NoSuchElementException) {
             _updateHandler.finish()

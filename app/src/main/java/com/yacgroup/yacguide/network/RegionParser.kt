@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide.network
 
-import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.utils.NetworkUtils
@@ -28,10 +27,8 @@ import org.json.JSONException
 import java.util.*
 import kotlin.jvm.Throws
 
-class RegionParser(
-        private val _db: DatabaseWrapper,
-        private val _countryName: String)
-    : JSONWebParser() {
+class RegionParser(private val _db: DatabaseWrapper,
+                   private var _countryName: String) : JSONWebParser() {
 
     private val _regions = mutableListOf<Region>()
 
@@ -60,5 +57,9 @@ class RegionParser(
         _db.deleteRegions(_countryName)
         _db.addRegions(_regions)
         super.onFinalTaskResolved()
+    }
+
+    fun setCountryName(name: String) {
+        _countryName = name
     }
 }
