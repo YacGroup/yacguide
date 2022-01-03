@@ -51,8 +51,8 @@ class TourbookExporter(
 
     enum class ExportFormat {
         eJSON,
-        eJSONVEROBSE,
-        eCSV;
+        eJSONVERBOSE,
+        eCSV
     }
 
     var exportFormat: ExportFormat = ExportFormat.eJSON
@@ -60,14 +60,12 @@ class TourbookExporter(
     @Throws(IOException::class)
     fun exportTourbook(uri: Uri) {
         when (exportFormat) {
-            ExportFormat.eJSON, ExportFormat.eJSONVEROBSE -> _exportAsJson(uri)
+            ExportFormat.eJSON, ExportFormat.eJSONVERBOSE -> _exportAsJson(uri)
             ExportFormat.eCSV -> _exportAsCsv(uri)
         }
     }
 
     /*
-     * Export tour book as CSV file
-     *
      * See https://commons.apache.org/proper/commons-csv/apidocs/index.html
      */
     @Throws(IOException::class)
@@ -90,10 +88,10 @@ class TourbookExporter(
     @Throws(IOException::class)
     private fun _exportAsJson(uri: Uri) {
         val jsonAscends = JSONArray()
-        _db.getAscends().map {
+        _db.getAscends().forEach {
             when (exportFormat) {
                 ExportFormat.eJSON -> jsonAscends.put(ascend2Json(it))
-                ExportFormat.eJSONVEROBSE -> jsonAscends.put(
+                ExportFormat.eJSONVERBOSE -> jsonAscends.put(
                     JSONObject(TourbookEntryVerbose(it, _db).asMap())
                 )
                 else -> {}

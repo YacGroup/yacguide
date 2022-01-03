@@ -124,7 +124,7 @@
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
     <string name="tourbook_import_error">Fehler beim Import</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
-    <string name="export_format">Wähle das Exportformat</string>
+    <string name="export_format">Exportformat wählen</string>
 
     <!-- Ascend edit -->
     <string name="ascend_edit_note">Bemerkung:</string>
@@ -174,9 +174,9 @@
 
     <!-- IMPORTANT: This list must be in sync with the code in the TourbookActivity class. -->
     <string-array name="exportFormats">
-        <item>JSON (für Export/Import)</item>
-        <item>JSON (mit Namen)</item>
-        <item>CSV (mit Namen)</item>
+        <item>JSON (ID-basiert für Re-Import)</item>
+        <item>JSON (Namen-basiert)</item>
+        <item>CSV (Namen-basiert)</item>
     </string-array>
 
     <!-- What's New dialog -->

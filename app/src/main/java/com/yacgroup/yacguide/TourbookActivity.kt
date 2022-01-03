@@ -51,17 +51,16 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _tourbookExporter: TourbookExporter
     private var _currentYear: Int = 0
     private var _tourbookType: TourbookType = TourbookType.eAscends
-    // Activity result handler
-    private val _export = registerForActivityResult(
+    private val _exportResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK) {
-            it.data?.data?.also { uri -> _doExport(uri) }
+            it.data?.data?.also { uri -> _export(uri) }
         }
     }
-    private val _import = registerForActivityResult(
+    private val _importResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK) {
-            it.data?.data?.also { uri -> _doImport(uri) }
+            it.data?.data?.also { uri -> _import(uri) }
         }
     }
 
@@ -71,6 +70,9 @@ class TourbookActivity : BaseNavigationActivity() {
         eAscends,
         eBotches
     }
+
+    private val MIME_TYPE_JSON = "application/json"
+    private val MIME_TYPE_CSV = "text/comma-separated-values"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,7 +152,7 @@ class TourbookActivity : BaseNavigationActivity() {
         _displayContent()
     }
 
-    private fun _doImport(uri: Uri) {
+    private fun _import(uri: Uri) {
         DialogWidgetBuilder(this, R.string.warning).apply {
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
@@ -196,7 +198,7 @@ class TourbookActivity : BaseNavigationActivity() {
         }.show()
     }
 
-    private fun _doExport(uri: Uri) {
+    private fun _export(uri: Uri) {
         try {
             _tourbookExporter.exportTourbook(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
@@ -324,23 +326,20 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
+            type = MIME_TYPE_JSON
         }
-        _import.launch(intent)
+        _importResultLauncher.launch(intent)
     }
 
-    /*
-     * Open dialog to let the user choose the export format.
-     */
     private fun _selectExportFormat() {
-        var mimeType = "application/json"
+        var mimeType = MIME_TYPE_JSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
             setSingleChoiceItems(R.array.exportFormats, 0) {_, which ->
                 when (which) {
                     0 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSON
-                    1 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSONVEROBSE
+                    1 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSONVERBOSE
                     2 -> {
-                        mimeType = "text/comma-separated-values"
+                        mimeType = MIME_TYPE_CSV
                         _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eCSV
                     }
                 }
@@ -355,7 +354,7 @@ class TourbookActivity : BaseNavigationActivity() {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = mimeType
         }
-        _export.launch(intent)
+        _exportResultLauncher.launch(intent)
     }
 
     private fun _initYears(): Int {

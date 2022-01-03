@@ -24,72 +24,58 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import kotlin.reflect.full.memberProperties
 
-class TourbookEntryVerbose(_ascend: Ascend, val _db: DatabaseWrapper) {
+class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
     companion object {
         /*
          * Return a list of all property names of this class
          * which are treated as fields to be exported.
          */
-        fun keys(): List<String> {
-            return buildList {
-                TourbookEntryVerbose::class.memberProperties.forEach{
-                    if (!it.name.startsWith("_")) {
-                        add(it.name)
-                    }
-                }
-            }
-        }
+        fun keys(): List<String> = TourbookEntryVerbose::class.memberProperties.map{ it.name }
     }
 
     var country: String
     var regionName: String
-    var sectorName: String
-    var rockName: String
-    var routeName: String
+    var sectorFirstName: String
+    var sectorSecondName: String
+    var rockFirstName: String
+    var rockSecondName: String
+    var routeFirstName: String
+    var routeSecondName: String
     var notes: String
     var date: String
     var style: String
     var partners: String
 
     init {
-        val route = _db.getRoute(_ascend.routeId)
-        val rock = route?.parentId?.let { it -> _db.getRock(it) }
-        val sector = rock?.parentId?.let { it -> _db.getSector(it) }
-        val region = sector?.parentId?.let { it -> _db.getRegion(it) }
+        val route = db.getRoute(ascend.routeId)
+        val rock = route?.parentId?.let { db.getRock(it) }
+        val sector = rock?.parentId?.let { db.getSector(it) }
+        val region = sector?.parentId?.let { db.getRegion(it) }
 
         country = region?.country.orEmpty()
         regionName = region?.name.orEmpty()
-        sectorName = ParserUtils.decodeObjectNames(sector?.name).first
-        rockName = ParserUtils.decodeObjectNames(rock?.name).first
-        routeName = ParserUtils.decodeObjectNames(route?.name).first
-        notes = _ascend.notes.orEmpty()
-        date = "%02d.%02d.%4d".format(_ascend.day, _ascend.month, _ascend.year)
-        style = AscendStyle.fromId(_ascend.styleId)?.styleName.orEmpty()
-        partners = _db.getPartnerNames(_ascend.partnerIds.orEmpty()).joinToString(",")
+        sectorFirstName = ParserUtils.decodeObjectNames(sector?.name).first
+        sectorSecondName = ParserUtils.decodeObjectNames(sector?.name).second
+        rockFirstName = ParserUtils.decodeObjectNames(rock?.name).first
+        rockSecondName = ParserUtils.decodeObjectNames(rock?.name).second
+        routeFirstName = ParserUtils.decodeObjectNames(route?.name).first
+        routeSecondName = ParserUtils.decodeObjectNames(route?.name).second
+        notes = ascend.notes.orEmpty()
+        date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
+        style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
+        partners = db.getPartnerNames(ascend.partnerIds.orEmpty()).joinToString(",")
     }
 
-    /*
-     * Return tour book entry as map
-     */
     fun asMap(): Map<String, String> {
-        val thisObj = this
+        val self = this
         return buildMap {
             TourbookEntryVerbose::class.memberProperties.forEach {
                 if (it.name in keys()) {
-                    put(it.name, it.get(thisObj).toString())
+                    put(it.name, it.get(self).toString())
                 }
             }
         }
     }
 
-    /*
-     * Return tour book values in the order of the keys
-     */
-    fun values(): List<String> {
-        return buildList {
-            keys().forEach{
-                asMap()[it]?.let { it1 -> add(it1) }
-            }
-        }
-    }
+    fun values(): List<String> = keys().map { asMap()[it]!! }
 }
