@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide.network
 
-import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 

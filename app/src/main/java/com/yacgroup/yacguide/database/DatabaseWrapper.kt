@@ -44,6 +44,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getCountries() = _db.countryDao().all
 
+    fun getNonEmptyCountries() = _db.countryDao().getAllNonEmpty()
+
     fun getRegions(countryName: String) = _db.regionDao().getAll(countryName)
 
     fun getNonEmptyRegions() = _db.regionDao().getAllNonEmpty()

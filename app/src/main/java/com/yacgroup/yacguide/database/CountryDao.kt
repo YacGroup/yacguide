@@ -20,12 +20,16 @@ package com.yacgroup.yacguide.database
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_COUNTRIES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_COUNTRIES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COUNTRIES_REGIONS
 
 @Dao
 interface CountryDao {
 
     @get:Query(SELECT_COUNTRIES)
     val all: List<Country>
+
+    @Query("$SELECT_COUNTRIES $VIA_COUNTRIES_REGIONS")
+    fun getAllNonEmpty(): List<Country>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(countries: List<Country>)
