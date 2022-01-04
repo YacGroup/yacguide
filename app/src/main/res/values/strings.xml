@@ -172,7 +172,7 @@
         <item>@string/report_error</item>
     </string-array>
 
-    <!-- IMPORTANT: This list must be in sync with the code in the TourbookActivity class. -->
+    <!-- IMPORTANT: This list must be in sync with the code in the TourbookExportFormat class. -->
     <string-array name="exportFormats">
         <item>JSON (ID-basiert für Re-Import)</item>
         <item>JSON (Namen-basiert)</item>

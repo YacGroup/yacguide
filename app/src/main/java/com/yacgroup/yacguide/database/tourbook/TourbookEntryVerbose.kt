@@ -54,12 +54,18 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
 
         country = region?.country.orEmpty()
         regionName = region?.name.orEmpty()
-        sectorFirstName = ParserUtils.decodeObjectNames(sector?.name).first
-        sectorSecondName = ParserUtils.decodeObjectNames(sector?.name).second
-        rockFirstName = ParserUtils.decodeObjectNames(rock?.name).first
-        rockSecondName = ParserUtils.decodeObjectNames(rock?.name).second
-        routeFirstName = ParserUtils.decodeObjectNames(route?.name).first
-        routeSecondName = ParserUtils.decodeObjectNames(route?.name).second
+        ParserUtils.decodeObjectNames(sector?.name).let {
+            sectorFirstName = it.first
+            sectorSecondName = it.second
+        }
+        ParserUtils.decodeObjectNames(rock?.name).let {
+            rockFirstName = it.first
+            rockSecondName = it.second
+        }
+        ParserUtils.decodeObjectNames(route?.name).let {
+            routeFirstName = it.first
+            routeSecondName = it.second
+        }
         notes = ascend.notes.orEmpty()
         date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
         style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()

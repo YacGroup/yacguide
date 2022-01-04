@@ -35,6 +35,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import com.yacgroup.yacguide.database.*
+import com.yacgroup.yacguide.database.tourbook.TourbookExportFormat
 import com.yacgroup.yacguide.database.tourbook.TourbookExporter
 import com.yacgroup.yacguide.utils.*
 
@@ -71,8 +72,8 @@ class TourbookActivity : BaseNavigationActivity() {
         eBotches
     }
 
-    private val MIME_TYPE_JSON = "application/json"
-    private val MIME_TYPE_CSV = "text/comma-separated-values"
+    private val _MIME_TYPE_JSON = "application/json"
+    private val _MIME_TYPE_CSV = "text/comma-separated-values"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -326,22 +327,18 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = MIME_TYPE_JSON
+            type = _MIME_TYPE_JSON
         }
         _importResultLauncher.launch(intent)
     }
 
     private fun _selectExportFormat() {
-        var mimeType = MIME_TYPE_JSON
+        var mimeType = _MIME_TYPE_JSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
-            setSingleChoiceItems(R.array.exportFormats, 0) {_, which ->
-                when (which) {
-                    0 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSON
-                    1 -> _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eJSONVERBOSE
-                    2 -> {
-                        mimeType = MIME_TYPE_CSV
-                        _tourbookExporter.exportFormat = TourbookExporter.ExportFormat.eCSV
-                    }
+            setSingleChoiceItems(R.array.exportFormats, _tourbookExporter.exportFormat.id) {_, which ->
+                _tourbookExporter.exportFormat = TourbookExportFormat.fromId(which)!!
+                if (which == TourbookExportFormat.eCSV.id) {
+                    mimeType = _MIME_TYPE_CSV
                 }
             }
             setNegativeButton()

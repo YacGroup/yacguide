@@ -49,19 +49,13 @@ class TourbookExporter(
     private val _partnersKey = "partners"
     private val _notesKey = "notes"
 
-    enum class ExportFormat {
-        eJSON,
-        eJSONVERBOSE,
-        eCSV
-    }
-
-    var exportFormat: ExportFormat = ExportFormat.eJSON
+    var exportFormat: TourbookExportFormat = TourbookExportFormat.eJSON
 
     @Throws(IOException::class)
     fun exportTourbook(uri: Uri) {
         when (exportFormat) {
-            ExportFormat.eJSON, ExportFormat.eJSONVERBOSE -> _exportAsJson(uri)
-            ExportFormat.eCSV -> _exportAsCsv(uri)
+            TourbookExportFormat.eJSON, TourbookExportFormat.eJSONVERBOSE -> _exportAsJson(uri)
+            TourbookExportFormat.eCSV -> _exportAsCsv(uri)
         }
     }
 
@@ -72,7 +66,7 @@ class TourbookExporter(
     private fun _exportAsCsv(uri: Uri) {
         val writer = StringBuffer()
         val csvFormat = CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
-            setHeader(*TourbookEntryVerbose.keys().map { it }.toTypedArray())
+            setHeader(*TourbookEntryVerbose.keys().toTypedArray())
             setTrim(true)
         }.build()
         CSVPrinter(writer, csvFormat).apply {
@@ -90,8 +84,8 @@ class TourbookExporter(
         val jsonAscends = JSONArray()
         _db.getAscends().forEach {
             when (exportFormat) {
-                ExportFormat.eJSON -> jsonAscends.put(ascend2Json(it))
-                ExportFormat.eJSONVERBOSE -> jsonAscends.put(
+                TourbookExportFormat.eJSON -> jsonAscends.put(ascend2Json(it))
+                TourbookExportFormat.eJSONVERBOSE -> jsonAscends.put(
                     JSONObject(TourbookEntryVerbose(it, _db).asMap())
                 )
                 else -> {}
