@@ -29,7 +29,7 @@ class Docs():
     def prepare_jekyll(self):
         """Setup Jekyll inside the container"""
         cmds = ["cd docs"]
-        cmds += ["bundle install --path vendor/bundle"]
+        cmds += ["bundle config set --local path 'vendor/bundle'"]
         cmd_line = " && ".join(cmds)
         self.container.execute_user(cmd_line)
 
