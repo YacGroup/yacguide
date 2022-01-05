@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2022 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.utils
+package com.yacgroup.yacguide.database.tourbook
 
-object IntentConstants {
-    const val ASCEND_ID = "AscentId"
-    const val ASCEND_PARTNER_IDS = "AscentPartnerIds"
-    const val CLIMBING_OBJECT_LEVEL = "ClimbingObjectLevel"
-    const val CLIMBING_OBJECT_PARENT_ID = "ClimbingObjectParentId"
-    const val CLIMBING_OBJECT_PARENT_NAME = "ClimbingObjectParentName"
-    const val FILTER_NAME = "FilterName"
-    const val FILTER_PROJECTS = "FilterProjects"
-    const val FILTER_BOTCHES = "FilterBotches"
+enum class TourbookExportFormat (val id: Int) {
+    eJSON(0),
+    eJSONVERBOSE(1),
+    eCSV(2);
 
-    // Result codes
-    const val RESULT_UPDATED = 1000
+    companion object {
+        private val _by_id = HashMap<Int, TourbookExportFormat>()
+
+        init {
+            values().forEach { _by_id[it.id] = it }
+        }
+
+        fun fromId(id: Int): TourbookExportFormat? = _by_id[id]
+    }
 }
