@@ -101,15 +101,30 @@ class BuildContainer():
         """
         container = self.start()
         exec_args = {
-            "stream": True,
-            "cmd": "/bin/bash -c '%s'" % cmd
+            "container": container.name,
+            "cmd": f"/bin/bash -c '{cmd}'",
         }
         exec_args.update(add_exec_args)
-        utils.info("Executing command inside container: %s" %
-                   exec_args["cmd"])
-        _exit_code, output = container.exec_run(**exec_args)
-        for chunk in output:
+        utils.info(
+            f"Executing command inside container: {exec_args['cmd']}"
+        )
+        # We need to use the low-level API because
+        # container.exec_run(..., stream=True) does not return the
+        # exit_code.
+        # https://github.com/docker/docker-py/issues/1381
+        api = self.client.api
+        exec_handler = api.exec_create(**exec_args)
+        stream = api.exec_start(exec_handler, stream=True)
+        for chunk in stream:
             print(chunk.decode(), end="")
+        exit_code = api.exec_inspect(
+            exec_handler["Id"]
+        ).get("ExitCode")
+        if exit_code != 0:
+            utils.error(
+                f"Command execution inside container failed"
+                f" with exit_code={exit_code}: {exec_args['cmd']}"
+            )
 
     def _start_new(self):
         """Start new container."""
