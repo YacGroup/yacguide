@@ -4,5 +4,16 @@ description: Offline tool for sandsteinklettern.de
 
 theme: minima
 
+# Plugins supported by GitHub: https://pages.github.com/versions/
+plugins:
+  # https://github.com/jekyll/jekyll-redirect-from
+  - jekyll-redirect-from
+
 header_pages:
+  - releases.md
   - privacy_policy.md
+
+collections:
+  release-notes:
+    output: true
+    sort_by: title
