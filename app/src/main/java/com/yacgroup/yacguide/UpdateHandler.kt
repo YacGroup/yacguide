@@ -18,7 +18,9 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
+import android.view.View
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -102,9 +104,15 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _success = true
     }
 
-    fun getDownloadButton(onUpdateFinished: () -> Unit): ImageButton {
-        val button = _activity.layoutInflater.inflate(R.layout.button_download, null) as ImageButton
-        button.setOnClickListener{ update({ onUpdateFinished() }) }
-        return button
+    fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
+        val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
+        if (enabled) {
+            button.visibility = View.VISIBLE
+            button.setOnClickListener{
+                update({ onUpdateFinished() })
+            }
+        } else {
+            button.visibility = View.INVISIBLE
+        }
     }
 }

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   Copyright (C) 2019 Fabian Kantereit
 
@@ -17,16 +16,29 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<ScrollView
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorSecondaryLight">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
     <LinearLayout
         android:id="@+id/tableLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</ScrollView>
+        <include layout="@layout/appbar_empty"/>
+
+        <include layout="@layout/list_view_content"/>
+
+        <include layout="@layout/button_download"/>
+
+    </LinearLayout>
+
+    <include layout="@layout/nav_view"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

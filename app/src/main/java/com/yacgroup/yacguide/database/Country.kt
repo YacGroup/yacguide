@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 package com.yacgroup.yacguide.database
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity(primaryKeys = ["name"])
-class Country {
-
-    var name = ""
-}
+@Entity
+data class Country(
+    @PrimaryKey val name: String
+)

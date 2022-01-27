@@ -31,8 +31,8 @@
     <color name="colorOnPrimaryDark">@color/white</color>
 
     <!-- NOTE: Must be in sync with the colors in the WidgetUtils class. -->
-    <color name="colorSecondary">#9e9e9e</color>
-    <color name="colorSecondaryLight">#cfcfcf</color>
+    <color name="colorSecondary">#cfcfcf</color>
+    <color name="colorSecondaryLight">@color/white</color>
     <color name="colorSecondaryDark">#707070</color>
     <color name="colorOnSecondary">@color/colorBlack</color>
     <color name="colorOnSecondaryLight">@color/colorSecondaryDark</color>

@@ -68,8 +68,6 @@ class RegionActivity : TableActivityWithOptionsMenu() {
                     padding = WidgetUtils.Padding(20, 30, 20, 30)))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
-        if (regions.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
-        }
+        _updateHandler.configureDownloadButton(regions.isEmpty()) { displayContent() }
     }
 }

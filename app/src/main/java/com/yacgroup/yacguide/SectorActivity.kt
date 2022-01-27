@@ -74,9 +74,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
                     onClickListener = onClickListener))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
-        if (sectors.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
-        }
+        _updateHandler.configureDownloadButton(sectors.isEmpty()) { displayContent() }
     }
 
     private fun _generateRockCountString(rocks: List<Rock>): String {

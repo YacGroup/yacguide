@@ -41,9 +41,10 @@ class CountryParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         val jsonCountries = JSONArray(json)
         for (i in 0 until jsonCountries.length()) {
             val jsonCountry = jsonCountries.getJSONObject(i)
-            val c = Country()
-            c.name = jsonCountry.getString("land")
-            _countries.add(c)
+            val country = Country(
+                jsonCountry.getString("land")
+            )
+            _countries.add(country)
         }
     }
 
