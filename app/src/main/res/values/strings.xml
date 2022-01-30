@@ -186,5 +186,6 @@
 
     <!-- What's New dialog -->
     <string name="whats_new">Neuigkeiten</string>
+    <string name="show_whats_new">Neuigkeiten anzeigen?</string>
 
 </resources>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Christian Sommer
+ * Copyright (C) 2020, 2022 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,12 @@
 
 package com.yacgroup.yacguide
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
-import android.widget.ScrollView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.yacgroup.yacguide.markwon.WhatsNewMarkwonPlugin
+import com.yacgroup.yacguide.utils.ActivityUtils
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import io.noties.markwon.Markwon
 import io.noties.markwon.linkify.LinkifyPlugin
@@ -35,23 +34,27 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
         private const val _RELEASE_NOTES_PATH = "release-notes"
     }
 
-    private var _sharedPrefs: SharedPreferences
-    private var _numReleaseNotesShow: Int = 1
-    private var _releaseNoteFiles: Array<String>?
-    private var _markwonBuilder: Markwon
+    private val _sharedPrefs: SharedPreferences
+    private val _releaseNoteFiles: Array<String>?
+    private val _markwonBuilder: Markwon
     private lateinit var _view: View
+    private val _activityUtils: ActivityUtils
 
     init {
         _activity.let {
             _markwonBuilder = Markwon.builder(it)
-                    .usePlugin(WhatsNewMarkwonPlugin(it.getString(R.string.github_url)))
                     .usePlugin(LinkifyPlugin.create())
                     .build()
             _releaseNoteFiles = it.assets.list(_RELEASE_NOTES_PATH)
             _sharedPrefs = it.getSharedPreferences(
                     it.getString(R.string.preferences_filename),
                     Context.MODE_PRIVATE)
+            _activityUtils = ActivityUtils(it)
         }
+    }
+
+    fun getReleaseNotesUrl(): String {
+        return _activity.getString(R.string.release_notes_url, _activityUtils.appVersion)
     }
 
     /*
@@ -83,73 +86,41 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     /*
      * Render Markdown code and show dialog.
      */
+    @SuppressLint("InflateParams")
     fun showDialog() {
-        _numReleaseNotesShow = 1
         _activity.let {
             val inflater = it.layoutInflater
             // Pass null as the parent view because its going in the dialog layout.
             _view = inflater.inflate(R.layout.whats_new, null)
-            _view.findViewById<TextView>(R.id.whatsNewShowMore).apply {
-                text = it.getString(R.string.more).toUpperCase()
-                isClickable = true
-                setOnClickListener { _showMore() }
-            }
-            _setTextView()
-            DialogWidgetBuilder(it, it.getString(R.string.whats_new) + " ...").apply {
+            _markwonBuilder.setMarkdown(
+                _view.findViewById(R.id.whatsNewTextView),
+                _getReleaseNotes(_activityUtils.appVersion)
+            )
+            DialogWidgetBuilder(it, it.getString(R.string.show_whats_new)).apply {
                 setView(_view)
-                setPositiveButton { dialog, _ ->
-                    dialog.dismiss()
+                setPositiveButton(R.string.yes) { _, _ ->
+                    _activityUtils.openUrl(getReleaseNotesUrl())
                 }
+                setNegativeButton(R.string.no)
             }.show()
         }
     }
 
-    /*
-     * Read release notes from Markdown files, add an additional heading for each release
-     * and merge them together. Show only a limited number of versions.
-     */
-    private fun _getReleaseNotes(): String {
+    private fun _getReleaseNotes(version: String): String {
         val releaseNotes = StringBuilder()
-        _releaseNoteFiles?.let {
-            for ((idx, name) in it.sortedDescending().withIndex()) {
-                val file = File(_RELEASE_NOTES_PATH, name)
-                releaseNotes.let {
-                    it.append("# Version ")
-                    it.appendLine(name.removePrefix("v").removeSuffix(".md"))
-                    it.append(_activity.assets.open(file.path).bufferedReader().use { it.readText() })
+        _releaseNoteFiles?.let { files ->
+            for (name in files) {
+                val basename = name.removeSuffix(".md")
+                if (basename == version) {
+                    val file = File(_RELEASE_NOTES_PATH, name)
+                    releaseNotes.let { note ->
+                        note.clear()
+                        note.append(_activity.assets.open(file.path).bufferedReader().readText())
+                    }
+                    break
                 }
-                // Limit the number of versions to avoid that the dialog becomes too long.
-                if (idx == _numReleaseNotesShow - 1) break
             }
         }
         return releaseNotes.toString()
-    }
-
-    /*
-     * Apply rendered Markdown to text view
-     */
-    private fun _setTextView() {
-        _markwonBuilder.setMarkdown(
-                _view.findViewById<TextView>(R.id.whatsNewTextView),
-                _getReleaseNotes()
-        )
-    }
-
-    /*
-     * Show one more release note, with every call.
-     */
-    private fun _showMore() {
-        _numReleaseNotesShow++
-        _setTextView()
-        // Scroll down
-        _view.findViewById<ScrollView>(R.id.whatsNewScrollView).let {
-            it.post(Runnable { it.fullScroll(ScrollView.FOCUS_DOWN) })
-        }
-        // If last release note is shown, disable the "button"
-        _releaseNoteFiles?.let {
-            if (_numReleaseNotesShow == it.size) {
-                _view.findViewById<TextView>(R.id.whatsNewShowMore).visibility = View.INVISIBLE
-            }
-        }
     }
 }

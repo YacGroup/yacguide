@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Christian Sommer
+ * Copyright (C) 2020, 2022 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.markwon
+package com.yacgroup.yacguide.utils
 
-class WhatsNewMarkwonPlugin(private val _githubUrl: String): BaseMarkwonPlugin() {
-
-    override fun processMarkdown(markdown: String): String {
-        // Add link to GitHub issue, referenced in the markdown file with #<issueId>.
-        val regexSearch = Regex("""#(\d+)""")
-        val issueUrl = _githubUrl + "/issues/"
-        val regexReplace = "[#$1](" + issueUrl + "$1)"
-        return markdown.replace(regexSearch, regexReplace)
+class MarkdownUtils {
+    companion object {
+        fun replaceFrontMatter(string: String, replacement: String): String {
+            val regex = Regex(
+                """^---.*---$""",
+                setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL)
+            )
+            return string.replace(regex, replacement)
+        }
     }
 }

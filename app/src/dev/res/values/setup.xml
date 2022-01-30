@@ -19,4 +19,5 @@
 <resources>
     <string name="app_name">YacGuide Dev</string>
     <string name="app_name_long">Yet Another Climbing Guide Development Version</string>
+    <string name="release_notes_url">https://github.com/YacGroup/yacguide/releases/tag/dev-%s</string>
 </resources>

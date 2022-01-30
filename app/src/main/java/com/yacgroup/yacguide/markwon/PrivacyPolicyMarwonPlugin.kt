@@ -17,12 +17,11 @@
 
 package com.yacgroup.yacguide.markwon
 
+import com.yacgroup.yacguide.utils.MarkdownUtils
+
 class PrivacyPolicyMarkwonPlugin(private val _heading: String): BaseMarkwonPlugin() {
 
     override fun processMarkdown(markdown: String): String {
-        // Replace front matter from markdown file by markdown section.
-        val regex =  Regex("^---.*---$",
-                setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
-        return markdown.replace(regex, "# ".plus(_heading))
+        return MarkdownUtils.replaceFrontMatter(markdown, "# $_heading")
     }
 }

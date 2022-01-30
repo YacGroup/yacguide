@@ -26,6 +26,7 @@
     <string name="data_src_url">http://db-sandsteinklettern.gipfelbuch.de</string>
     <string name="license_url">https://www.gnu.org/licenses/gpl-3.0.html</string>
     <string name="contact_email_address">yacgroup.dd@gmail.com</string>
+    <string name="release_notes_url">https://yacgroup.github.io/yacguide/release-notes/v%s.html</string>
 
     <!-- File names -->
     <string name="preferences_filename">yacguide_settings</string>

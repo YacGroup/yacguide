@@ -17,13 +17,18 @@
 
 package com.yacgroup.yacguide.utils
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.webkit.URLUtil
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.yacgroup.yacguide.R
 
 open class ActivityUtils(protected val activity: AppCompatActivity) {
 
-    val appVersion: String
-        get() = _getAppVersion()
+    val appVersion: String = _getAppVersion()
 
     private fun _getAppVersion(): String {
         try {
@@ -34,5 +39,22 @@ open class ActivityUtils(protected val activity: AppCompatActivity) {
             e.printStackTrace()
         }
         return "0.0"
+    }
+
+    fun openUrl(url: String) {
+        if (URLUtil.isValidUrl(url)) {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(url)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                activity.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(
+                    activity,
+                    R.string.no_webbrowser_available, Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }

@@ -18,19 +18,17 @@
 
 package com.yacgroup.yacguide
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.webkit.URLUtil
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.yacgroup.yacguide.utils.ActivityUtils
 import com.yacgroup.yacguide.utils.ContactUtils
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
 class AboutActivity : BaseNavigationActivity() {
+
+    private lateinit var _activityUtils: ActivityUtils
 
     override fun getLayoutId(): Int {
         return R.layout.activity_about
@@ -39,13 +37,16 @@ class AboutActivity : BaseNavigationActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.title = getString(R.string.menu_about, getString(R.string.app_name))
+        _activityUtils = ActivityUtils(this)
 
         _createEntry(getString(R.string.data_src), getString(R.string.data_src_url))
         _createEntry(getString(R.string.privacy_policy), callback = { _showPrivacyPolicy() })
         _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
         _createEntry(getString(R.string.license), getString(R.string.license_url))
-        _createEntry(getString(R.string.whats_new),
-                callback = { WhatsNewInfo(this).showDialog() })
+        _createEntry(
+            getString(R.string.whats_new),
+            WhatsNewInfo(this).getReleaseNotesUrl()
+        )
         _createEntry(getString(R.string.contact), getString(R.string.contact_details),
                 callback = { _selectContactConcern() })
         _createEntry(getString(R.string.version), ActivityUtils(this).appVersion)
@@ -57,7 +58,7 @@ class AboutActivity : BaseNavigationActivity() {
             callback: (() -> Unit)? = null) {
         layoutInflater.inflate(R.layout.about_entry, null).let {
             val contentAbout = findViewById<LinearLayout>(R.id.aboutContent)
-            it.setOnClickListener { callback?.invoke() ?: _openUrl(description) }
+            it.setOnClickListener { callback?.invoke() ?: _activityUtils.openUrl(description) }
             it.findViewById<TextView>(R.id.aboutEntryTitle).text = title
             it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
             contentAbout.addView(it)
@@ -67,20 +68,6 @@ class AboutActivity : BaseNavigationActivity() {
     private fun _showPrivacyPolicy() {
         val intent = Intent(this, PrivacyPolicyActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun _openUrl(url: String) {
-        if (URLUtil.isValidUrl(url)) {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(url)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
-                Toast.makeText(this, R.string.no_webbrowser_available, Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     private fun _selectContactConcern() {

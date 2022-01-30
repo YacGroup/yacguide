@@ -42,6 +42,10 @@ class DialogWidgetBuilder(context: Context, title: String): AlertDialog.Builder(
         super.setNegativeButton(R.string.cancel, null)
     }
 
+    fun setNegativeButton(textId: Int) {
+        super.setNegativeButton(textId, null)
+    }
+
     fun setPositiveButton(listener: DialogInterface.OnClickListener?) {
         super.setPositiveButton(R.string.ok, listener)
     }

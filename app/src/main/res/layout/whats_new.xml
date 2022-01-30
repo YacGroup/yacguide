@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2020 Christian Sommer
+  Copyright (C) 2020, 2022 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -36,26 +36,10 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="25dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/whatsNewTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/whatsNewTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-            <TextView
-                android:id="@+id/whatsNewShowMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"
-                android:textColor="?android:textColorLink"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
+            android:layout_height="match_parent"/>
 
     </ScrollView>
 
