@@ -1,1 +1,1 @@
-We are continuously improving the app. For a detailed list of changes, please have a look to our Git commits.
+https://github.com/YacGroup/yacguide/releases
