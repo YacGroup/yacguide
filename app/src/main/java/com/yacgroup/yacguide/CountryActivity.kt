@@ -56,9 +56,9 @@ class CountryActivity : TableActivityWithOptionsMenu() {
     }
 
     private fun _onCountrySelected(countryName: String) {
-        val intent = Intent(this@CountryActivity, RegionActivity::class.java)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, countryName)
-        startActivity(intent)
+        startActivity(Intent(this@CountryActivity, RegionActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, countryName)
+        })
     }
 }

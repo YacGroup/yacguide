@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.app.Dialog
 import android.view.View
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -112,7 +111,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
                 update({ onUpdateFinished() })
             }
         } else {
-            button.visibility = View.INVISIBLE
+            button.visibility = View.GONE
         }
     }
 }

@@ -27,9 +27,11 @@
     <View style="@style/ThinDivider"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/infoTextLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/infoLeftTextView"
