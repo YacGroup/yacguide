@@ -1,6 +1,9 @@
 title: Yet Another Climbing Guide
 email: yacgroup.dd@gmail.com
 description: Offline tool for sandsteinklettern.de
+domain: yacgroup.github.io
+url: https://yacgroup.github.io
+baseurl: /yacguide/
 
 theme: minima
 
