@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018 Axel Paetzold
+  Copyright (C) 2018, 2022 Axel Paetzold
                 2021 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
@@ -60,6 +60,11 @@
     <style name="AppTheme.Secondary.ImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@color/colorSecondaryLight</item>
         <item name="android:tint">@color/colorSecondaryDark</item>
+    </style>
+
+    <style name="AppTheme.Secondary.SpecialImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/colorSecondary</item>
+        <item name="android:tint">@color/colorOnSecondaryLight</item>
     </style>
 
     <style name="ThinDivider">
