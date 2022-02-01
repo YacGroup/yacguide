@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,10 @@ class CountryParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         val jsonCountries = JSONArray(json)
         for (i in 0 until jsonCountries.length()) {
             val jsonCountry = jsonCountries.getJSONObject(i)
-            val c = Country()
-            c.name = jsonCountry.getString("land")
-            _countries.add(c)
+            val country = Country(
+                jsonCountry.getString("land")
+            )
+            _countries.add(country)
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Axel Paetzold
+ * Copyright (C) 2021, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.app.Dialog
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -102,9 +103,15 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _success = true
     }
 
-    fun getDownloadButton(onUpdateFinished: () -> Unit): ImageButton {
-        val button = _activity.layoutInflater.inflate(R.layout.button_download, null) as ImageButton
-        button.setOnClickListener{ update({ onUpdateFinished() }) }
-        return button
+    fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
+        val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
+        if (enabled) {
+            button.visibility = View.VISIBLE
+            button.setOnClickListener{
+                update({ onUpdateFinished() })
+            }
+        } else {
+            button.visibility = View.GONE
+        }
     }
 }

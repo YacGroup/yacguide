@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +19,15 @@ package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
+import com.yacgroup.yacguide.list_adapters.CountryViewAdapter
 import com.yacgroup.yacguide.network.CountryParser
 import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class CountryActivity : TableActivityWithOptionsMenu() {
 
+    private lateinit var _viewAdapter: CountryViewAdapter
     private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +36,9 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         _updateHandler = UpdateHandler(this, CountryParser(db))
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
 
+        _viewAdapter = CountryViewAdapter { countryName -> _onCountrySelected(countryName) }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+
         WhatsNewInfo(this).let {
             if (it.checkForVersionUpdate()) {
                 it.showDialog()
@@ -43,28 +46,19 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         }
     }
 
-    override fun getLayoutId() = R.layout.activity_table
+    override fun getLayoutId() = R.layout.activity_country
 
     override fun displayContent() {
         setTitle(R.string.app_name)
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
         val countries = db.getCountries()
-        for (country in countries) {
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this@CountryActivity, RegionActivity::class.java)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, country.name)
-                startActivity(intent)
-            }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = country.name,
-                    onClickListener = onClickListener,
-                    padding = WidgetUtils.Padding(20, 30, 20, 30)))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
-        if (countries.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
-        }
+        _viewAdapter.submitList(countries)
+        _updateHandler.configureDownloadButton(countries.isEmpty()){ displayContent() }
+    }
+
+    private fun _onCountrySelected(countryName: String) {
+        startActivity(Intent(this@CountryActivity, RegionActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, countryName)
+        })
     }
 }

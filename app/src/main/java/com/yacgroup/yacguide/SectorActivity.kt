@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,9 +74,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
                     onClickListener = onClickListener))
             layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         }
-        if (sectors.isEmpty()) {
-            layout.addView(_updateHandler.getDownloadButton { displayContent() })
-        }
+        _updateHandler.configureDownloadButton(sectors.isEmpty()) { displayContent() }
     }
 
     private fun _generateRockCountString(rocks: List<Rock>): String {

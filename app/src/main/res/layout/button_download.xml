@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2020 Axel Paetzold
+  Copyright (C) 2020, 2022 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 
 <ImageButton
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.Secondary.ImageButton"
+    style="@style/AppTheme.Secondary.SpecialImageButton"
     android:id="@+id/downloadButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="false"
     android:layout_gravity="center_horizontal"
     android:layout_centerInParent="true"
+    android:visibility="gone"
     android:padding="20dp"
     android:src="@android:drawable/stat_sys_download"/>
 
