@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class Region {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var name: String? = null
-    var country: String? = null
-}
+data class Region(
+    @PrimaryKey val id: Int,
+    val name: String?,
+    val country: String?
+)

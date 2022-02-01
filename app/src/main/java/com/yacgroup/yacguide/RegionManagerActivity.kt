@@ -59,7 +59,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         return true
     }
 
-    override fun getLayoutId() = R.layout.activity_table
+    override fun getLayoutId() = R.layout.activity_region_manager
 
     private fun _displayContent() {
         this.setTitle(R.string.menu_region_manager)
