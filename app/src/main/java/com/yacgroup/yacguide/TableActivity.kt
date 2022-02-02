@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ abstract class TableActivity : BaseNavigationActivity() {
             _prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
                 for (comment in comments) {
                     it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    _addCommentPropertyView(it, R.string.nature, RockComment.QUALITY_MAP, comment.qualityId)
+                    _addCommentPropertyView(it, R.string.nature, RockComment.RELEVANCE_MAP, comment.qualityId)
                     _addCommentTextView(it, comment.text.orEmpty())
                 }
                 it.addView(WidgetUtils.createHorizontalLine(this, 1))

@@ -64,17 +64,25 @@ class DatabaseWrapper(context: Context) {
 
     fun getRocksByNameForSector(sectorId: Int, namePart: String) = _db.rockDao().getAllByNameInSector(sectorId, "%$namePart%")
 
+    fun getRocksByRelevanceForSector(sectorId: Int, maxRelevanceId: Int) = _db.rockDao().getAllByRelevanceInSector(sectorId, maxRelevanceId)
+
     fun getRocksForRegion(regionId: Int) = _db.rockDao().getAllInRegion(regionId)
 
     fun getRocksByNameForRegion(regionId: Int, namePart: String) = _db.rockDao().getAllByNameInRegion(regionId, "%$namePart%")
+
+    fun getRocksByRelevanceForRegion(regionId: Int, maxRelevanceId: Int) = _db.rockDao().getAllByRelevanceInRegion(regionId, maxRelevanceId)
 
     fun getRocksForCountry(countryName: String) = _db.rockDao().getAllInCountry(countryName)
 
     fun getRocksByNameForCountry(countryName: String, namePart: String) = _db.rockDao().getAllByNameInCountry(countryName, "%$namePart%")
 
+    fun getRocksByRelevanceForCountry(countryName: String, maxRelevanceId: Int) = _db.rockDao().getAllByRelevanceInCountry(countryName, maxRelevanceId)
+
     fun getRocks() = _db.rockDao().all
 
     fun getRocksByName(namePart: String) = _db.rockDao().getAllByName("%$namePart%")
+
+    fun getRocksByRelevance(maxRelevanceId: Int) = _db.rockDao().getAllByRelevance(maxRelevanceId)
 
     fun getRock(rockId: Int) =_db.rockDao().getRock(rockId)
 

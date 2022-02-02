@@ -26,6 +26,7 @@ import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.list_adapters.RockViewAdapter
+import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
@@ -34,16 +35,42 @@ class RockActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _viewAdapter: RockViewAdapter
     private lateinit var _searchBarHandler: SearchBarHandler
+    private lateinit var _rockGettersMap: Map<ClimbingObjectLevel, RockGetter>
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
     private var _filterName: String = ""
+    private var _filterMaxRelevanceId: Int = RockComment.RELEVANCE_NONE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
+        _filterMaxRelevanceId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RockComment.RELEVANCE_NONE)
 
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+
+        _rockGettersMap = mapOf(
+            ClimbingObjectLevel.eCountry to RockGetter(
+                getAll = { db.getRocks() },
+                getByName = { db.getRocksByName(_filterName) },
+                getByRelevance = { db.getRocksByRelevance(_filterMaxRelevanceId) }
+            ),
+            ClimbingObjectLevel.eRegion to RockGetter(
+                getAll = { db.getRocksForCountry(activityLevel.parentName) },
+                getByName = { db.getRocksByNameForCountry(activityLevel.parentName, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForCountry(activityLevel.parentName, _filterMaxRelevanceId) }
+            ),
+            ClimbingObjectLevel.eSector to RockGetter(
+                getAll = { db.getRocksForRegion(activityLevel.parentId) },
+                getByName = { db.getRocksByNameForRegion(activityLevel.parentId, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForRegion(activityLevel.parentId, _filterMaxRelevanceId) }
+            ),
+            ClimbingObjectLevel.eRock to RockGetter(
+                getAll = { db.getRocksForSector(activityLevel.parentId) },
+                getByName = { db.getRocksByNameForSector(activityLevel.parentId, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForSector(activityLevel.parentId, _filterMaxRelevanceId) }
+            )
+        )
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
@@ -95,24 +122,21 @@ class RockActivity : TableActivityWithOptionsMenu() {
         super.onStop()
     }
 
-    private fun _getAndFilterRocks() = when(activityLevel.level) {
-        ClimbingObjectLevel.eCountry -> {
-            if (_filterName.isEmpty()) db.getRocks()
-            else db.getRocksByName(_filterName)
+    private fun _getAndFilterRocks(): List<Rock> {
+        val rockGetter = _rockGettersMap[activityLevel.level]!!
+        return if (_filterName.isEmpty() && _filterMaxRelevanceId == 0) {
+            rockGetter.getAll()
+        } else {
+            val nameFilteredRocks =
+                if (_filterName.isEmpty()) null
+                else rockGetter.getByName().toSet()
+            val relevanceFilteredRocks =
+                if (_filterMaxRelevanceId == RockComment.RELEVANCE_NONE) null
+                else rockGetter.getByRelevance().toSet()
+            listOfNotNull(nameFilteredRocks, relevanceFilteredRocks).reduce {
+                    intersection, filteredRocks -> intersection.intersect(filteredRocks)
+            }.toList()
         }
-        ClimbingObjectLevel.eRegion -> {
-            if (_filterName.isEmpty()) db.getRocksForCountry(activityLevel.parentName)
-            else db.getRocksByNameForCountry(activityLevel.parentName, _filterName)
-        }
-        ClimbingObjectLevel.eSector -> {
-            if (_filterName.isEmpty()) db.getRocksForRegion(activityLevel.parentId)
-            else db.getRocksByNameForRegion(activityLevel.parentId, _filterName)
-        }
-        ClimbingObjectLevel.eRock -> {
-            if (_filterName.isEmpty()) db.getRocksForSector(activityLevel.parentId)
-            else db.getRocksByNameForSector(activityLevel.parentId, _filterName)
-        }
-        else -> emptyList()
     }
 
     private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean)
@@ -136,3 +160,9 @@ class RockActivity : TableActivityWithOptionsMenu() {
         })
     }
 }
+
+class RockGetter(
+    val getAll: () -> List<Rock>,
+    val getByName: () -> List<Rock>,
+    val getByRelevance: () -> List<Rock>
+)

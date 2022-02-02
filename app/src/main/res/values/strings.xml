@@ -78,6 +78,7 @@
     <string name="rock_search">Felsen suchen</string>
     <string name="route_search">Weg suchen</string>
     <string name="partner_search">Partner suchen</string>
+    <string name="rock_relevance_filter">Bedeutung: mindestens</string>
 
     <!-- Toasts -->
     <string name="successful_refresh">Aktualisierung erfolgreich</string>
