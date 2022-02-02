@@ -339,9 +339,11 @@ class DatabaseWrapper(context: Context) {
     }
 
     fun createUnknownRegion(): Region {
-        return Region().apply {
-            name = UNKNOWN_NAME
-        }
+        return Region(
+            id = INVALID_ID,
+            name = UNKNOWN_NAME,
+            country = UNKNOWN_NAME
+        )
     }
 
 }

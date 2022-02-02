@@ -17,19 +17,17 @@
 
 package com.yacgroup.yacguide
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
+import com.yacgroup.yacguide.list_adapters.RegionViewAdapter
 import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionActivity : TableActivityWithOptionsMenu() {
 
+    private lateinit var _viewAdapter: RegionViewAdapter
     private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,37 +35,25 @@ class RegionActivity : TableActivityWithOptionsMenu() {
 
         _updateHandler = UpdateHandler(this, RegionParser(db, activityLevel.parentName))
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+
+        _viewAdapter = RegionViewAdapter(this, db) { regionId, regionName -> _onRegionSelected(regionId, regionName) }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_table
 
-    @SuppressLint("NewApi")
     override fun displayContent() {
         this.title = activityLevel.parentName
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
         val regions = db.getRegions(activityLevel.parentName)
-        for (region in regions) {
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this@RegionActivity, SectorActivity::class.java)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, region.id)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, region.name)
-                startActivity(intent)
-            }
-            var icon = getString(R.string.empty_box)
-            var bgColor = Color.WHITE
-            if (db.getSectors(region.id).isNotEmpty()) {
-                icon = getString(R.string.tick)
-                bgColor = getColor(R.color.colorAccentLight)
-            }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "$icon ${region.name.orEmpty()}",
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    padding = WidgetUtils.Padding(20, 30, 20, 30)))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
+        _viewAdapter.submitList(regions)
         _updateHandler.configureDownloadButton(regions.isEmpty()) { displayContent() }
+    }
+
+    private fun _onRegionSelected(regionId: Int, regionName: String) {
+        startActivity(Intent(this@RegionActivity, SectorActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, regionId)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, regionName)
+        })
     }
 }

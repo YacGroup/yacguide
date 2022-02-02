@@ -46,7 +46,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         }
     }
 
-    override fun getLayoutId() = R.layout.activity_country
+    override fun getLayoutId() = R.layout.activity_table
 
     override fun displayContent() {
         setTitle(R.string.app_name)

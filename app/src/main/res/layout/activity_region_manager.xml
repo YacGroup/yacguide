@@ -26,16 +26,13 @@
     tools:openDrawer="start">
 
     <LinearLayout
-        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/list_view_content"/>
-
-        <include layout="@layout/button_download"/>
+        <include layout="@layout/content_table"/>
 
     </LinearLayout>
 

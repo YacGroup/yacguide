@@ -45,11 +45,12 @@ class RegionParser(private val _db: DatabaseWrapper,
         val jsonRegions = JSONArray(json)
         for (i in 0 until jsonRegions.length()) {
             val jsonRegion = jsonRegions.getJSONObject(i)
-            val r = Region()
-            r.id = ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID")
-            r.name = jsonRegion.getString("gebiet")
-            r.country = _countryName
-            _regions.add(r)
+            val region = Region(
+                id = ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID"),
+                name = jsonRegion.getString("gebiet"),
+                country = _countryName
+            )
+            _regions.add(region)
         }
     }
 
