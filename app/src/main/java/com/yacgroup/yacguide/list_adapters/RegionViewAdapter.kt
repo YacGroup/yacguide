@@ -31,10 +31,13 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 
 class RegionViewAdapter(
-    private val _context: Context,
+    context: Context,
     private val _db: DatabaseWrapper,
     private val _onClick: (Int, String) -> Unit)
     : ListAdapter<Region, RecyclerView.ViewHolder>(RegionDiffCallback) {
+
+    private val _emptyIcon = context.getString(R.string.empty_box)
+    private val _tickedIcon = context.getString(R.string.tick)
 
     inner class RegionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
@@ -42,10 +45,10 @@ class RegionViewAdapter(
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
 
         fun bind(region: Region) {
-            var icon = _context.getString(R.string.empty_box)
+            var icon = _emptyIcon
             var background = R.color.colorSecondaryLight
             if (_db.getSectors(region.id).isNotEmpty()) {
-                icon = _context.getString(R.string.tick)
+                icon = _tickedIcon
                 background = R.color.colorAccentLight
             }
             _mainLeftTextView.text = region.name

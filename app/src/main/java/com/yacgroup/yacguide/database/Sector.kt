@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class Sector {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var nr: Float = 0f
-    var name: String? = null
-    var parentId: Int = 0
-}
+data class Sector(
+    @PrimaryKey val id: Int,
+    val nr: Float,
+    val name: String?,
+    val parentId: Int
+)

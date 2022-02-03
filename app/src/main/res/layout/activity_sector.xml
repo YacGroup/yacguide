@@ -32,7 +32,7 @@
 
         <include layout="@layout/appbar_info"/>
 
-        <include layout="@layout/content_table"/>
+        <include layout="@layout/list_view_content"/>
 
         <include layout="@layout/button_download"/>
 

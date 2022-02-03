@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,14 +120,14 @@ class SectorParser(private val _db: DatabaseWrapper,
         listener?.onUpdateStatus("$_regionName 0 %")
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
-            val s = Sector()
-            s.id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID")
             val firstName = jsonSector.getString("sektorname_d")
             val secondName = jsonSector.getString("sektorname_cz")
-            s.name = ParserUtils.encodeObjectNames(firstName, secondName)
-            s.nr = ParserUtils.jsonField2Float(jsonSector, "sektornr")
-            s.parentId = _regionId
-
+            val s = Sector(
+                id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID"),
+                name = ParserUtils.encodeObjectNames(firstName, secondName),
+                nr = ParserUtils.jsonField2Float(jsonSector, "sektornr"),
+                parentId = _regionId
+            )
             _sectors.add(s)
             _requestRocks(s.id)
         }

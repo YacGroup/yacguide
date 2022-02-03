@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Axel Paetzold
+ * Copyright (C) 2020, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,9 +333,12 @@ class DatabaseWrapper(context: Context) {
     }
 
     fun createUnknownSector(): Sector {
-        return Sector().apply {
-            name = UNKNOWN_NAME
-        }
+        return Sector(
+            id = INVALID_ID,
+            nr = 0f,
+            name = UNKNOWN_NAME,
+            parentId = INVALID_ID
+        )
     }
 
     fun createUnknownRegion(): Region {
