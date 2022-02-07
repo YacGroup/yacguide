@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_COUNTRIES
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_COUNTRY
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_COUNTRIES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COUNTRIES_REGIONS
 
 @Dao
 interface CountryDao {
 
-    @get:Query(SELECT_COUNTRIES)
+    @get:Query("$SELECT_COUNTRIES $ORDERED_BY_COUNTRY")
     val all: List<Country>
 
     @Query("$SELECT_COUNTRIES $VIA_COUNTRIES_REGIONS")

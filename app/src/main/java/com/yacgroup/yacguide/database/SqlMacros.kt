@@ -49,7 +49,7 @@ class SqlMacros {
         const val DELETE_ASCENDS = "DELETE FROM Ascend"
         const val DELETE_PARTNERS = "DELETE FROM Partner"
 
-        const val ORDERED_BY_COUNTRY = "ORDER BY Region.country"
+        const val ORDERED_BY_COUNTRY = "ORDER BY Country.name"
         const val ORDERED_BY_REGION = "ORDER BY Region.name"
         const val ORDERED_BY_SECTOR = "ORDER BY Sector.nr"
         const val ORDERED_BY_ROCK = "ORDER BY Rock.nr"
@@ -67,6 +67,7 @@ class SqlMacros {
         const val VIA_SECTORS_REGION = "JOIN Region ON Region.id = Sector.parentId"
         const val VIA_COMMENTS_REGION = "JOIN Region ON Region.id = RegionComment.regionId"
         const val VIA_REGIONS_SECTORS = "JOIN Sector ON Sector.parentId = Region.id"
+        const val VIA_REGIONS_COUNTRY = "Join Country ON Country.name = Region.country"
         const val VIA_COUNTRIES_REGIONS = "JOIN Region ON Region.country = Country.name"
 
         const val VIA_ROCKS_RELEVANCE = "JOIN (SELECT RockComment.rockId, ROUND(AVG(RockComment.qualityId)) AS relevance FROM RockComment WHERE RockComment.qualityId > 0 GROUP BY RockComment.rockId) RelevanceAvg ON RelevanceAvg.rockId = Rock.id"
