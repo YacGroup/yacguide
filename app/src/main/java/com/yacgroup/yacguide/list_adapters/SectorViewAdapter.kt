@@ -41,14 +41,30 @@ class SectorViewAdapter(
     private val _onClick: (Int, String) -> Unit)
     : ListAdapter<Sector, RecyclerView.ViewHolder>(SectorDiffCallback) {
 
-    private val _countSummits = customSettings.getBoolean(context.getString(R.string.count_summits), context.resources.getBoolean(R.bool.count_summits))
-    private val _countMassifs = customSettings.getBoolean(context.getString(R.string.count_massifs), context.resources.getBoolean(R.bool.count_massifs))
-    private val _countBoulders = customSettings.getBoolean(context.getString(R.string.count_boulders), context.resources.getBoolean(R.bool.count_boulders))
-    private val _countCaves = customSettings.getBoolean(context.getString(R.string.count_caves), context.resources.getBoolean(R.bool.count_caves))
-    private val _countUnofficialRocks = customSettings.getBoolean(context.getString(R.string.count_unofficial_rocks), context.resources.getBoolean(R.bool.count_unofficial_rocks))
-    private val _countProhibitedRocks = customSettings.getBoolean(context.getString(R.string.count_prohibited_rocks), context.resources.getBoolean(R.bool.count_prohibited_rocks))
-    private val _countCollapsedRocks = customSettings.getBoolean(context.getString(R.string.count_collapsed_rocks), context.resources.getBoolean(R.bool.count_collapsed_rocks))
-    private val _countOnlyLeads = customSettings.getBoolean(context.getString(R.string.count_only_leads), context.resources.getBoolean(R.bool.count_only_leads))
+    private val _countSummits = customSettings.getBoolean(
+        context.getString(R.string.count_summits),
+        context.resources.getBoolean(R.bool.count_summits))
+    private val _countMassifs = customSettings.getBoolean(
+        context.getString(R.string.count_massifs),
+        context.resources.getBoolean(R.bool.count_massifs))
+    private val _countBoulders = customSettings.getBoolean(
+        context.getString(R.string.count_boulders),
+        context.resources.getBoolean(R.bool.count_boulders))
+    private val _countCaves = customSettings.getBoolean(
+        context.getString(R.string.count_caves),
+        context.resources.getBoolean(R.bool.count_caves))
+    private val _countUnofficialRocks = customSettings.getBoolean(
+        context.getString(R.string.count_unofficial_rocks),
+        context.resources.getBoolean(R.bool.count_unofficial_rocks))
+    private val _countProhibitedRocks = customSettings.getBoolean(
+        context.getString(R.string.count_prohibited_rocks),
+        context.resources.getBoolean(R.bool.count_prohibited_rocks))
+    private val _countCollapsedRocks = customSettings.getBoolean(
+        context.getString(R.string.count_collapsed_rocks),
+        context.resources.getBoolean(R.bool.count_collapsed_rocks))
+    private val _countOnlyLeads = customSettings.getBoolean(
+        context.getString(R.string.count_only_leads),
+        context.resources.getBoolean(R.bool.count_only_leads))
 
     inner class SectorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
