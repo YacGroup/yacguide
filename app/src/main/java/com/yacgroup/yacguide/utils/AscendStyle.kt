@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,19 @@ enum class AscendStyle (val id: Int, val styleName: String) {
 
         fun isProject(mask: Int): Boolean {
             return hasAscendBit(mask and _PROJECT_BIT_MASK)
+        }
+
+        fun deriveAscentColor(ascentBitMask: Int, leadColor: Int, followColor: Int, defaultColor: Int) = when {
+            isLead(ascentBitMask) -> leadColor
+            isFollow(ascentBitMask) -> followColor
+            else -> defaultColor
+        }
+
+        fun deriveAscentDecoration(ascendsBitMask: Int, botchIcon: String, projectIcon: String, watchingIcon:String): String {
+            val botchAdd = if (isBotch(ascendsBitMask)) botchIcon else ""
+            val projectAdd = if (isProject(ascendsBitMask)) projectIcon else ""
+            val watchingAdd = if (isWatching(ascendsBitMask)) watchingIcon else ""
+            return "$botchAdd$projectAdd$watchingAdd"
         }
 
         // We need to preserve order given by IDs

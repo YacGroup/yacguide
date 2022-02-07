@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,23 +21,20 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class Rock {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var nr: Float = 0.toFloat()
-    var type: Char = ' '   // 'G' = Rock, 'M' = Massif, 'H' = Cage, 'B' = Boulder, 'N' = unofficial
-    var status: Char = ' ' // 'X' = prohibited, 'Z' = temporarily prohibited, 'T' = partly prohibited
-    var name: String? = null
-    var longitude: Float = 0f
-    var latitude: Float = 0f
-    var ascendsBitMask: Int = 0 // a 32bit number for 14 ascend styles.
+data class Rock(
+    @PrimaryKey val id: Int,
+    val nr: Float,
+    val type: Char,
+    val status: Char,
+    val name: String?,
+    val longitude: Float,
+    val latitude: Float,
+    var ascendsBitMask: Int,    // a 32bit number for 14 ascend styles.
                                 // Bit index == (styleId - 1).
                                 // Bit value == 1 if rock has been ascended with this style.
                                 // Note: styleId == 0 ("Unknown") corresponds to mask 0b10000...0 = -IntMax.
-    var parentId: Int = 0
-
+    val parentId: Int
+) {
     companion object {
 
         // This needs to be in sync with sandsteinklettern.de!

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
 import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.list_adapters.RockViewAdapter
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RockActivity : TableActivityWithOptionsMenu() {
 
+    private lateinit var _viewAdapter: RockViewAdapter
     private lateinit var _searchBarHandler: SearchBarHandler
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
@@ -53,6 +53,15 @@ class RockActivity : TableActivityWithOptionsMenu() {
             customSettings,
             { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
             { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) })
+
+        _viewAdapter = RockViewAdapter(
+            this,
+            customSettings,
+            activityLevel.level,
+            db) { rockId, rockName ->
+                _onRockSelected(rockId, rockName
+            ) }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_rock
@@ -66,9 +75,6 @@ class RockActivity : TableActivityWithOptionsMenu() {
     }
 
     override fun displayContent() {
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
-
         val levelName = ParserUtils.decodeObjectNames(activityLevel.parentName)
         this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
 
@@ -81,63 +87,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
             rocks = rocks.filter{ it.name.orEmpty().lowercase().contains(_rockNamePart.lowercase()) }
         }
 
-        for (rock in rocks) {
-            val rockName = ParserUtils.decodeObjectNames(rock.name)
-            var bgColor = Color.WHITE
-            var typeface = Typeface.BOLD
-            var typeAdd = ""
-            if (rock.type != Rock.typeSummit) {
-                typeface = Typeface.NORMAL
-                typeAdd = "  (${rock.type})"
-            }
-            if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed) {
-                typeface = Typeface.ITALIC
-                bgColor = Color.LTGRAY
-            }
-            bgColor = colorizeEntry(rock.ascendsBitMask, bgColor)
-            val decorationAdd = decorateEntry(rock.ascendsBitMask)
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this@RockActivity, RouteActivity::class.java)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRoute.value)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, rock.id)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, rock.name)
-                startActivityForResult(intent, 0)
-            }
-            val sectorInfo = _getSectorInfo(rock)
-            if (sectorInfo.isNotEmpty()) {
-                layout.addView(
-                    WidgetUtils.createCommonRowLayout(
-                        this,
-                        textLeft = sectorInfo,
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        onClickListener = onClickListener,
-                        bgColor = bgColor,
-                        typeface = Typeface.NORMAL
-                    )
-                )
-            }
-            layout.addView(
-                WidgetUtils.createCommonRowLayout(
-                    this,
-                    textLeft = "${rock.nr}  ${rockName.first}$typeAdd$decorationAdd",
-                    textRight = rock.status.toString(),
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    typeface = typeface
-                )
-            )
-            layout.addView(
-                WidgetUtils.createCommonRowLayout(
-                    this,
-                    textLeft = rockName.second,
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    typeface = typeface
-                )
-            )
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
+        _viewAdapter.submitList(rocks)
     }
 
     override fun onStop() {
@@ -165,23 +115,6 @@ class RockActivity : TableActivityWithOptionsMenu() {
         else -> emptyList()
     }
 
-    private fun _getSectorInfo(rock: Rock): String {
-        var sectorInfo = ""
-        if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
-            val sector = db.getSector(rock.parentId)!!
-            if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
-                val region = db.getRegion(sector.parentId)!!
-                sectorInfo = "${region.name} ${getString(R.string.right_arrow)} "
-            }
-            val sectorNames = ParserUtils.decodeObjectNames(sector.name)
-            sectorInfo += sectorNames.first
-            if (sectorNames.second.isNotEmpty()) {
-                sectorInfo += " / ${sectorNames.second}"
-            }
-        }
-        return sectorInfo
-    }
-
     private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean)
     {
         _rockNamePart = rockNamePart
@@ -193,5 +126,13 @@ class RockActivity : TableActivityWithOptionsMenu() {
         return (rock.type == Rock.typeSummit || rock.type == Rock.typeAlpine)
                 && rock.status != Rock.statusProhibited
                 && rock.status != Rock.statusCollapsed
+    }
+
+    private fun _onRockSelected(rockId: Int, rockName: String) {
+        startActivity(Intent(this@RockActivity, RouteActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRoute.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, rockId)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, rockName)
+        })
     }
 }
