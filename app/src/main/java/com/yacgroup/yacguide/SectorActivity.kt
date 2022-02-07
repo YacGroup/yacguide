@@ -21,16 +21,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
-import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.list_adapters.SectorViewAdapter
 import com.yacgroup.yacguide.network.SectorParser
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class SectorActivity : TableActivityWithOptionsMenu() {
 
+    private lateinit var _viewAdapter: SectorViewAdapter
     private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +37,9 @@ class SectorActivity : TableActivityWithOptionsMenu() {
 
         _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
         properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+
+        _viewAdapter = SectorViewAdapter(this, customSettings, db) { sectorId, sectorName -> _onSectorSelected(sectorId, sectorName) }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_sector
@@ -47,76 +49,17 @@ class SectorActivity : TableActivityWithOptionsMenu() {
     }
 
     override fun displayContent() {
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
         this.title = activityLevel.parentName
         val sectors = db.getSectors(activityLevel.parentId)
-        for (sector in sectors) {
-            val sectorName = ParserUtils.decodeObjectNames(sector.name)
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this@SectorActivity, RockActivity::class.java)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRock.value)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, sector.id)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, sector.name)
-                startActivity(intent)
-            }
-
-            val rocks = db.getRocksForSector(sector.id)
-            val rockCountString = _generateRockCountString(rocks)
-
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = sectorName.first,
-                    textRight = rockCountString,
-                    onClickListener = onClickListener))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = sectorName.second,
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
+        _viewAdapter.submitList(sectors)
         _updateHandler.configureDownloadButton(sectors.isEmpty()) { displayContent() }
     }
 
-    private fun _generateRockCountString(rocks: List<Rock>): String {
-        val countSummits = customSettings.getBoolean(getString(R.string.count_summits), resources.getBoolean(R.bool.count_summits))
-        val countMassifs = customSettings.getBoolean(getString(R.string.count_massifs), resources.getBoolean(R.bool.count_massifs))
-        val countBoulders = customSettings.getBoolean(getString(R.string.count_boulders), resources.getBoolean(R.bool.count_boulders))
-        val countCaves = customSettings.getBoolean(getString(R.string.count_caves), resources.getBoolean(R.bool.count_caves))
-        if (!(countSummits || countMassifs || countBoulders || countCaves)) {
-            return ""
-        }
-
-        var filteredRocks = rocks
-        if (!countSummits) {
-            filteredRocks = filteredRocks.filter{ it.type != Rock.typeSummit && it.type != Rock.typeAlpine }
-        }
-        if (!countMassifs) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeMassif && it.type != Rock.typeStonePit}
-        }
-        if (!countBoulders) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeBoulder }
-        }
-        if (!countCaves) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeCave }
-        }
-
-        if (!customSettings.getBoolean(getString(R.string.count_unofficial_rocks), resources.getBoolean(R.bool.count_unofficial_rocks))) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeUnofficial }
-        }
-        if (!customSettings.getBoolean(getString(R.string.count_prohibited_rocks), resources.getBoolean(R.bool.count_prohibited_rocks))) {
-            filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
-        }
-        if (!customSettings.getBoolean(getString(R.string.count_collapsed_rocks), resources.getBoolean(R.bool.count_collapsed_rocks))) {
-            filteredRocks = filteredRocks.filter { it.status != Rock.statusCollapsed }
-        }
-        val allRockCount = filteredRocks.size
-
-        filteredRocks = if (customSettings.getBoolean(getString(R.string.count_only_leads), resources.getBoolean(R.bool.count_only_leads))) {
-            filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
-        } else {
-            filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) || AscendStyle.isFollow(it.ascendsBitMask) }
-        }
-
-        return "(${filteredRocks.size} / $allRockCount)"
+    private fun _onSectorSelected(sectorId: Int, sectorName: String) {
+        startActivity(Intent(this@SectorActivity, RockActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRock.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, sectorId)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, sectorName)
+        })
     }
 }
