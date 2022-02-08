@@ -175,17 +175,19 @@ class SectorParser(private val _db: DatabaseWrapper,
             if (!_CLIMBING_OBJECT_TYPES.contains(type)) {
                 continue
             }
-            val r = Rock()
-            r.id = ParserUtils.jsonField2Int(jsonRock, "gipfel_ID")
-            r.nr = ParserUtils.jsonField2Float(jsonRock, "gipfelnr")
             val firstName = jsonRock.getString("gipfelname_d")
             val secondName = jsonRock.getString("gipfelname_cz")
-            r.name = ParserUtils.encodeObjectNames(firstName, secondName)
-            r.type = type
-            r.status = ParserUtils.jsonField2Char(jsonRock, "status")
-            r.longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd")
-            r.latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd")
-            r.parentId = sectorId
+            val r = Rock(
+                id = ParserUtils.jsonField2Int(jsonRock, "gipfel_ID"),
+                nr = ParserUtils.jsonField2Float(jsonRock, "gipfelnr"),
+                name = ParserUtils.encodeObjectNames(firstName, secondName),
+                type = type,
+                status = ParserUtils.jsonField2Char(jsonRock, "status"),
+                longitude = ParserUtils.jsonField2Float(jsonRock, "vgrd"),
+                latitude = ParserUtils.jsonField2Float(jsonRock, "ngrd"),
+                ascendsBitMask = 0,
+                parentId = sectorId
+            )
             _rocks.add(r)
         }
         listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")

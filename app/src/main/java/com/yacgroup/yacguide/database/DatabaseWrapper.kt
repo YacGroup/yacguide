@@ -327,9 +327,17 @@ class DatabaseWrapper(context: Context) {
     }
 
     fun createUnknownRock(): Rock {
-        return Rock().apply {
-            name = UNKNOWN_NAME
-        }
+        return Rock(
+            id = INVALID_ID,
+            nr = 0f,
+            type = ' ',
+            status = ' ',
+            name = UNKNOWN_NAME,
+            longitude = 0f,
+            latitude = 0f,
+            ascendsBitMask = 0,
+            parentId = INVALID_ID
+        )
     }
 
     fun createUnknownSector(): Sector {
