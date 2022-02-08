@@ -177,7 +177,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             }
             val firstName = jsonRock.getString("gipfelname_d")
             val secondName = jsonRock.getString("gipfelname_cz")
-            val r = Rock(
+            val rock = Rock(
                 id = ParserUtils.jsonField2Int(jsonRock, "gipfel_ID"),
                 nr = ParserUtils.jsonField2Float(jsonRock, "gipfelnr"),
                 name = ParserUtils.encodeObjectNames(firstName, secondName),
@@ -188,7 +188,7 @@ class SectorParser(private val _db: DatabaseWrapper,
                 ascendsBitMask = 0,
                 parentId = sectorId
             )
-            _rocks.add(r)
+            _rocks.add(rock)
         }
         listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
@@ -198,24 +198,27 @@ class SectorParser(private val _db: DatabaseWrapper,
         val jsonRoutes = JSONArray(json)
         for (i in 0 until jsonRoutes.length()) {
             val jsonRoute = jsonRoutes.getJSONObject(i)
-            val r = Route()
             val routeId = ParserUtils.jsonField2Int(jsonRoute, "weg_ID")
-            r.id = routeId
-            r.nr = ParserUtils.jsonField2Float(jsonRoute, "wegnr")
-            r.statusId = ParserUtils.jsonField2Int(jsonRoute, "wegstatus")
             val firstName = jsonRoute.getString("wegname_d")
             val secondName = jsonRoute.getString("wegname_cz")
-            r.name = ParserUtils.encodeObjectNames(firstName, secondName)
-            r.grade = jsonRoute.getString("schwierigkeit")
-            r.firstAscendLeader = jsonRoute.getString("erstbegvorstieg")
-            r.firstAscendFollower = jsonRoute.getString("erstbegnachstieg")
-            r.firstAscendDate = jsonRoute.getString("erstbegdatum")
-            r.typeOfClimbing = jsonRoute.getString("kletterei")
-            r.description = jsonRoute.getString("wegbeschr_d")
-            // if we re-add a route that has already been marked as ascended in the past:
-            _db.getRouteAscends(routeId).map { r.ascendsBitMask = (r.ascendsBitMask or AscendStyle.bitMask(it.styleId)) }
-            r.parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
-            _routes.add(r)
+            var ascentsBitMask = 0
+            // re-store route's bitmask if it is re-added after being marked as ascended in the past
+            _db.getRouteAscends(routeId).forEach { ascentsBitMask = (ascentsBitMask or AscendStyle.bitMask(it.styleId)) }
+            val route = Route(
+                id = routeId,
+                nr = ParserUtils.jsonField2Float(jsonRoute, "wegnr"),
+                statusId = ParserUtils.jsonField2Int(jsonRoute, "wegstatus"),
+                name = ParserUtils.encodeObjectNames(firstName, secondName),
+                grade = jsonRoute.getString("schwierigkeit"),
+                firstAscendLeader = jsonRoute.getString("erstbegvorstieg"),
+                firstAscendFollower = jsonRoute.getString("erstbegnachstieg"),
+                firstAscendDate = jsonRoute.getString("erstbegdatum"),
+                typeOfClimbing = jsonRoute.getString("kletterei"),
+                description = jsonRoute.getString("wegbeschr_d"),
+                ascendsBitMask = ascentsBitMask,
+                parentId = ParserUtils.jsonField2Int(jsonRoute, "gipfelid")
+            )
+            _routes.add(route)
         }
     }
 
