@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2020 Christian Sommer
+  Copyright (C) 2020 Christian Sommer,
+                2022 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -43,6 +44,9 @@
     <color name="blue">#33ccff</color>
     <color name="white">#ffffff</color>
 
+    <!-- Database -->
+    <integer name="unknown_id">-1</integer>
+
     <!-- Default settings -->
     <bool name="order_tourbook_chronologically">false</bool>
     <bool name="only_official_summits">false</bool>
@@ -60,5 +64,7 @@
     <color name="color_lead">@color/greenblue</color>
     <color name="color_follow">@color/greenblue</color>
     <bool name="colorize_tourbook_entries">false</bool>
+
+    <integer name="default_region_id">@integer/unknown_id</integer>
 
 </resources>

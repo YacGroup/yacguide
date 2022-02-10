@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide.database
 
 import android.content.Context
+import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.comment.RouteComment
@@ -28,7 +29,7 @@ class DatabaseWrapper(context: Context) {
 
     companion object {
         const val UNKNOWN_NAME = "???"
-        const val INVALID_ID = -1
+        const val INVALID_ID = R.integer.unknown_id
     }
 
     private var _db: AppDatabase = AppDatabase.getAppDatabase(context)

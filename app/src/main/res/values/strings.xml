@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 Axel Paetzold
+  Copyright (C) 2018 - 2022 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
     <string name="comments">Kommentare</string>
     <string name="name">Name</string>
     <string name="right_arrow">\u2794</string>
+    <string name="startup_arrow">\u27A5</string>
     <string name="tick">\u2611</string>
     <string name="empty_box">\u2610</string>
 
@@ -95,6 +96,8 @@
                                                  Datenbankeintrag wurde scheinbar gelöscht.</string>
     <string name="no_comment_available">Kein Kommentar vorhanden</string>
     <string name="cannot_create_logfile">Fehler beim Erzeugen der Log-Datei</string>
+    <string name="default_region_set">Standardgebiet festgelegt</string>
+    <string name="default_region_reset">Standardgebiet zurückgesetzt</string>
 
     <!-- Data -->
     <string name="region">Teilgebiet</string>
@@ -159,6 +162,8 @@
 
     <string name="only_official_summits">Nur offizielle Gipfel</string>
     <string name="only_official_routes">Nur offizielle Wege</string>
+
+    <string name="default_region">Standardgebiet</string>
 
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>

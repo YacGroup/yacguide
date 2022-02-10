@@ -72,8 +72,9 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
     }
 
     fun storeCustomSettings(key: String) {
-        val editor = _settings.edit()
-        editor.putBoolean(key, _onlyOfficialObjects)
-        editor.commit()
+        _settings.edit().apply {
+            putBoolean(key, _onlyOfficialObjects)
+            apply()
+        }
     }
 }
