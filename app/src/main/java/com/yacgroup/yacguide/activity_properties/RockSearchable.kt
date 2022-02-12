@@ -33,7 +33,7 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
     override fun getMenuGroupId() = R.id.group_rock_search
 
     override fun onMenuAction(menuItemId: Int) {
-        val searchDialog = AppCompatDialog(_activity)
+        val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog)
         searchDialog.setContentView(R.layout.search_dialog)
         searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 

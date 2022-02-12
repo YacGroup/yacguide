@@ -34,6 +34,8 @@
         <item name="colorError">@color/colorError</item>
         <item name="android:textColorPrimary">@color/colorPrimaryText</item>
         <item name="android:textColorSecondary">@color/colorSecondaryText</item>
+
+        <item name="android:listDivider">@color/colorSecondary</item>
     </style>
 
     <style name="AppTheme.ActionBar" parent="AppTheme">
@@ -46,6 +48,10 @@
     </style>
 
     <style name="AppTheme.Popup" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="AppTheme.Dialog" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:listDivider">@color/colorSecondary</item>
+    </style>
 
     <style name="AppTheme.Secondary.TextView" parent="Widget.AppCompat.TextView">
         <item name="android:background">@color/colorSecondaryLight</item>
