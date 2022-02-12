@@ -25,6 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -59,6 +60,7 @@ class RouteViewAdapter(
 
     inner class RouteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
+        private val _infoTextLayout = view.findViewById<ConstraintLayout>(R.id.infoTextLayout)
         private val _infoLeftTextView = view.findViewById<TextView>(R.id.infoLeftTextView)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
@@ -87,7 +89,7 @@ class RouteViewAdapter(
             )
             val sectorInfo = _getSectorInfo(route)
             if (sectorInfo.isNotEmpty()) {
-                _infoLeftTextView.visibility = View.VISIBLE
+                _infoTextLayout.visibility = View.VISIBLE
                 _infoLeftTextView.text = sectorInfo
             }
             _mainLeftTextView.setTypeface(null, typeface)

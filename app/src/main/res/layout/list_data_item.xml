@@ -37,7 +37,7 @@
             android:id="@+id/infoLeftTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_margin="6dp"
             android:textSize="14dp"
             app:layout_constrainedWidth="true"
             app:layout_constraintHorizontal_bias="0"

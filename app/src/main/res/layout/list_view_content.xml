@@ -28,7 +28,7 @@
         android:id="@+id/tableRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="?android:attr/actionBarSize"
         app:layoutManager="LinearLayoutManager"
         app:layout_constraintTop_toTopOf="parent"/>
 
