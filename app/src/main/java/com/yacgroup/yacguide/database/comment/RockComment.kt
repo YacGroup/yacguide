@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,12 @@ class RockComment {
 
     companion object {
 
+        const val RELEVANCE_NONE = 0
+
         // This needs to be in sync with sandsteinklettern.de!
-        val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
+        val RELEVANCE_MAP: Map<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
+                put(RELEVANCE_NONE, "keine Angabe")
                 put(1, "Hauptgipfel")
                 put(2, "lohnender Gipfel")
                 put(3, "Durchschnittsgipfel")

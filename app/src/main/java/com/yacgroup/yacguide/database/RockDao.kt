@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ROCKS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_ROCK
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROCKS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_RELEVANCE
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
@@ -34,11 +35,17 @@ interface RockDao {
     @Query("$SELECT_ROCKS WHERE LOWER(Rock.name) LIKE LOWER(:name)")
     fun getAllByName(name: String): List<Rock>
 
+    @Query("$SELECT_ROCKS $VIA_ROCKS_RELEVANCE WHERE RelevanceAvg.relevance <= :maxRelevanceId")
+    fun getAllByRelevance(maxRelevanceId: Int): List<Rock>
+
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Rock>
 
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND LOWER(Rock.name) LIKE LOWER(:name)")
     fun getAllByNameInCountry(countryName: String, name: String): List<Rock>
+
+    @Query("$SELECT_ROCKS $VIA_ROCKS_RELEVANCE $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND RelevanceAvg.relevance <= :maxRelevanceId")
+    fun getAllByRelevanceInCountry(countryName: String, maxRelevanceId: Int): List<Rock>
 
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId")
     fun getAllInRegion(regionId: Int): List<Rock>
@@ -46,11 +53,17 @@ interface RockDao {
     @Query("$SELECT_ROCKS $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND LOWER(Rock.name) LIKE LOWER(:name)")
     fun getAllByNameInRegion(regionId: Int, name: String): List<Rock>
 
+    @Query("$SELECT_ROCKS $VIA_ROCKS_RELEVANCE $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND RelevanceAvg.relevance <= :maxRelevanceId")
+    fun getAllByRelevanceInRegion(regionId: Int, maxRelevanceId: Int): List<Rock>
+
     @Query("$SELECT_ROCKS WHERE Rock.parentId = :sectorId $ORDERED_BY_ROCK")
     fun getAllInSector(sectorId: Int): List<Rock>
 
     @Query("$SELECT_ROCKS WHERE Rock.parentId = :sectorId AND LOWER(Rock.name) LIKE LOWER(:name) $ORDERED_BY_ROCK")
     fun getAllByNameInSector(sectorId: Int, name: String): List<Rock>
+
+    @Query("$SELECT_ROCKS $VIA_ROCKS_RELEVANCE WHERE Rock.parentId = :sectorId AND RelevanceAvg.relevance <= :maxRelevanceId")
+    fun getAllByRelevanceInSector(sectorId: Int, maxRelevanceId: Int): List<Rock>
 
     @Query("$SELECT_ROCKS WHERE Rock.id = :id")
     fun getRock(id: Int): Rock?

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Axel Paetzold
+ * Copyright (C) 2020, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,5 +68,7 @@ class SqlMacros {
         const val VIA_COMMENTS_REGION = "JOIN Region ON Region.id = RegionComment.regionId"
         const val VIA_REGIONS_SECTORS = "JOIN Sector ON Sector.parentId = Region.id"
         const val VIA_COUNTRIES_REGIONS = "JOIN Region ON Region.country = Country.name"
+
+        const val VIA_ROCKS_RELEVANCE = "JOIN (SELECT RockComment.rockId, ROUND(AVG(RockComment.qualityId)) AS relevance FROM RockComment WHERE RockComment.qualityId > 0 GROUP BY RockComment.rockId) RelevanceAvg ON RelevanceAvg.rockId = Rock.id"
     }
 }

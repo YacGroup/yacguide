@@ -47,6 +47,12 @@
 
     <style name="AppTheme.Popup" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="AppTheme.Dialog" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:listDivider">@color/colorSecondary</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+    </style>
+
     <style name="AppTheme.Secondary.TextView" parent="Widget.AppCompat.TextView">
         <item name="android:background">@color/colorSecondaryLight</item>
         <item name="android:textColor">@color/colorOnSecondaryLight</item>
