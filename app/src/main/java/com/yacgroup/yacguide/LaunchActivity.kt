@@ -17,14 +17,21 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
+import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.utils.IntentConstants
 
 const val TIME_OUT_MS = 3000L
 
 class LaunchActivity : AppCompatActivity() {
+
+    private lateinit var _db: DatabaseWrapper
+    private lateinit var _customSettings: SharedPreferences
 
     inner class Timer : CountDownTimer(TIME_OUT_MS, TIME_OUT_MS) {
         override fun onTick(msUntilFinish: Long) {}
@@ -37,11 +44,23 @@ class LaunchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
 
+        _db = DatabaseWrapper(this)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+
         Timer().start()
     }
 
     private fun _switchToDatabase() {
-        startActivity(Intent(this, CountryActivity::class.java))
+        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
+        val intent = if (defaultRegionId == R.integer.unknown_id)
+            Intent(this, CountryActivity::class.java)
+        else
+            Intent(this, SectorActivity::class.java).apply {
+                putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
+                putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, defaultRegionId)
+                putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _db.getRegion(defaultRegionId)?.name.orEmpty())
+            }
+        startActivity(intent)
         finish()
     }
 }

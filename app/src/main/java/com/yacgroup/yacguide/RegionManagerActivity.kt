@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Axel Paetzold
+ * Copyright (C) 2021, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,16 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
@@ -37,6 +41,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
     private lateinit var _regionParser: RegionParser
     private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _customSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +50,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _regionParser = RegionParser(_db, "")
         _sectorParser = SectorParser(_db, 0)
         _updateHandler = UpdateHandler(this, _sectorParser)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _displayContent()
     }
@@ -66,6 +72,10 @@ class RegionManagerActivity : BaseNavigationActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
+        val defaultColor = ContextCompat.getColor(this, R.color.colorSecondaryLight)
+        val highlightedColor = ContextCompat.getColor(this, R.color.colorAccentLight)
+        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
+        val defaultRegionIcon = getString(R.string.startup_arrow)
         var currentCountryName = ""
         val regions = _db.getNonEmptyRegions() // already sorted by country name
         for (region in regions) {
@@ -78,8 +88,18 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 currentCountryName = region.country.orEmpty()
             }
 
+            var regionDispName = region.name.orEmpty()
+            var bgColor = defaultColor
+            if (region.id == defaultRegionId) {
+                regionDispName = "$defaultRegionIcon $regionDispName"
+                bgColor = highlightedColor
+            }
             val innerLayout = WidgetUtils.createCommonRowLayout(this,
-                textLeft = region.name.orEmpty()
+                textLeft = regionDispName,
+                onClickListener = {
+                    _selectDefaultRegion(region.id)
+                },
+                bgColor = bgColor
             )
 
             val updateButton = ImageButton(this).apply {
@@ -158,5 +178,22 @@ class RegionManagerActivity : BaseNavigationActivity() {
         } catch (e: NoSuchElementException) {
             _updateHandler.finish()
         }
+    }
+
+    private fun _selectDefaultRegion(regionId: Int) {
+        val key = getString(R.string.default_region_key)
+        val defaultRegionId = _customSettings.getInt(key, R.integer.unknown_id)
+        val newDefaultRegionId = if (regionId == defaultRegionId) {
+            Toast.makeText(this, R.string.default_region_reset, Toast.LENGTH_SHORT).show()
+            R.integer.unknown_id
+        } else {
+            Toast.makeText(this, R.string.default_region_set, Toast.LENGTH_SHORT).show()
+            regionId
+        }
+        _customSettings.edit().apply {
+            putInt(key, newDefaultRegionId)
+            apply()
+        }
+        _displayContent()
     }
 }
