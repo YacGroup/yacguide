@@ -67,4 +67,7 @@
 
     <integer name="default_region_id">@integer/unknown_id</integer>
 
+    <!-- Custom settings keys -->
+    <string name="default_region_key">default_region</string>
+
 </resources>

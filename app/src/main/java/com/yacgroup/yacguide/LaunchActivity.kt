@@ -51,7 +51,7 @@ class LaunchActivity : AppCompatActivity() {
     }
 
     private fun _switchToDatabase() {
-        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region), R.integer.unknown_id)
+        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
         val intent = if (defaultRegionId == R.integer.unknown_id)
             Intent(this, CountryActivity::class.java)
         else

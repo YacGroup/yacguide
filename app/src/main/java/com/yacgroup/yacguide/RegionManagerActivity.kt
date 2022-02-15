@@ -72,7 +72,9 @@ class RegionManagerActivity : BaseNavigationActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
-        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region), R.integer.unknown_id)
+        val defaultColor = ContextCompat.getColor(this, R.color.colorSecondaryLight)
+        val highlightedColor = ContextCompat.getColor(this, R.color.colorAccentLight)
+        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
         val defaultRegionIcon = getString(R.string.startup_arrow)
         var currentCountryName = ""
         val regions = _db.getNonEmptyRegions() // already sorted by country name
@@ -87,10 +89,10 @@ class RegionManagerActivity : BaseNavigationActivity() {
             }
 
             var regionDispName = region.name.orEmpty()
-            var bgColor = Color.WHITE
+            var bgColor = defaultColor
             if (region.id == defaultRegionId) {
                 regionDispName = "$defaultRegionIcon $regionDispName"
-                bgColor = ContextCompat.getColor(this, R.color.colorAccentLight)
+                bgColor = highlightedColor
             }
             val innerLayout = WidgetUtils.createCommonRowLayout(this,
                 textLeft = regionDispName,
@@ -179,7 +181,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
     }
 
     private fun _selectDefaultRegion(regionId: Int) {
-        val key = getString(R.string.default_region)
+        val key = getString(R.string.default_region_key)
         val defaultRegionId = _customSettings.getInt(key, R.integer.unknown_id)
         val newDefaultRegionId = if (regionId == defaultRegionId) {
             Toast.makeText(this, R.string.default_region_reset, Toast.LENGTH_SHORT).show()
