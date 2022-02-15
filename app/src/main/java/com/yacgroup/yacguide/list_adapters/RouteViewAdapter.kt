@@ -33,17 +33,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.ClimbingObjectLevel
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.DatabaseWrapper
-import com.yacgroup.yacguide.database.Rock
+import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
-class RockViewAdapter(
+class RouteViewAdapter(
     context: Context,
     customSettings: SharedPreferences,
     private val _climbingObjectLevel: ClimbingObjectLevel,
     private val _db: DatabaseWrapper,
     private val _onClick: (Int, String) -> Unit)
-    : ListAdapter<Rock, RecyclerView.ViewHolder>(RockDiffCallback) {
+    : ListAdapter<Route, RecyclerView.ViewHolder>(RouteDiffCallback) {
 
     private val _defaultBgColor = ContextCompat.getColor(context, R.color.colorSecondaryLight)
     private val _prohibitedBgColor = ContextCompat.getColor(context, R.color.colorSecondary)
@@ -58,7 +58,7 @@ class RockViewAdapter(
     private val _watchingIcon = context.getString(R.string.watching)
     private val _arrow = context.getString(R.string.right_arrow)
 
-    inner class RockViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class RouteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
         private val _infoTextLayout = view.findViewById<ConstraintLayout>(R.id.infoTextLayout)
         private val _infoLeftTextView = view.findViewById<TextView>(R.id.infoLeftTextView)
@@ -66,84 +66,89 @@ class RockViewAdapter(
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
 
-        fun bind(rock: Rock) {
-            val rockName = ParserUtils.decodeObjectNames(rock.name)
+        fun bind(route: Route) {
+            val routeName = ParserUtils.decodeObjectNames(route.name)
+            val commentCount = _db.getRouteCommentCount(route.id)
+            val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
             var bgColor = _defaultBgColor
             var typeface = Typeface.BOLD
-            var typeAdd = ""
-            if (rock.type != Rock.typeSummit) {
-                typeface = Typeface.NORMAL
-                typeAdd = "  (${rock.type})"
-            }
-            if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed) {
+            if (route.statusId == Route.STATUS_CLOSED) {
                 typeface = Typeface.ITALIC
                 bgColor = _prohibitedBgColor
             }
             bgColor = AscendStyle.deriveAscentColor(
-                rock.ascendsBitMask,
+                route.ascendsBitMask,
                 _leadBgColor,
                 _followBgColor,
                 defaultColor = bgColor)
             val decorationAdd = AscendStyle.deriveAscentDecoration(
-                rock.ascendsBitMask,
+                route.ascendsBitMask,
                 _botchIcon,
                 _projectIcon,
                 _watchingIcon
             )
-            val sectorInfo = _getSectorInfo(rock)
+            val sectorInfo = _getSectorInfo(route)
             if (sectorInfo.isNotEmpty()) {
                 _infoTextLayout.visibility = View.VISIBLE
                 _infoLeftTextView.text = sectorInfo
             }
             _mainLeftTextView.setTypeface(null, typeface)
-            _mainLeftTextView.text = "${rock.nr}  ${rockName.first}$typeAdd$decorationAdd"
+            _mainLeftTextView.text = "${routeName.first}$commentCountAdd$decorationAdd"
             _mainRightTextView.setTypeface(null, typeface)
-            _mainRightTextView.text = rock.status.toString()
+            _mainRightTextView.text = route.grade.orEmpty()
             _subTextView.setTypeface(null, typeface)
-            _subTextView.text = rockName.second
+            _subTextView.text = routeName.second
             _listItemLayout.apply {
                 setBackgroundColor(bgColor)
                 setOnClickListener {
-                    _onClick(rock.id, rock.name.orEmpty())
+                    _onClick(route.id, route.name.orEmpty())
                 }
             }
         }
 
-        private fun _getSectorInfo(rock: Rock): String {
+        private fun _getSectorInfo(route: Route): String {
             var sectorInfo = ""
-            if (_climbingObjectLevel < ClimbingObjectLevel.eRock) {
-                val sector = _db.getSector(rock.parentId)!!
-                if (_climbingObjectLevel < ClimbingObjectLevel.eSector) {
-                    val region = _db.getRegion(sector.parentId)!!
-                    sectorInfo = "${region.name} $_arrow "
-                }
-                val sectorNames = ParserUtils.decodeObjectNames(sector.name)
-                sectorInfo += sectorNames.first
-                if (sectorNames.second.isNotEmpty()) {
-                    sectorInfo += " / ${sectorNames.second}"
+            if (_climbingObjectLevel < ClimbingObjectLevel.eRoute) {
+                _db.getRock(route.parentId)?.let { rock ->
+                    if (_climbingObjectLevel < ClimbingObjectLevel.eRock) {
+                        _db.getSector(rock.parentId)?.let { sector ->
+                            if (_climbingObjectLevel < ClimbingObjectLevel.eSector) {
+                                _db.getRegion(sector.parentId)?.let { region ->
+                                    sectorInfo = "${region.name} $_arrow "
+                                }
+                            }
+                            val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+                            val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
+                            sectorInfo += "${sectorNames.first} $altName $_arrow "
+                        }
+                    }
+                    val rockNames = ParserUtils.decodeObjectNames(rock.name)
+                    val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
+                    sectorInfo += "${rockNames.first} $altName"
                 }
             }
             return sectorInfo
         }
+
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
         val view = inflater.inflate(R.layout.list_data_item, viewGroup, false)
-        return RockViewHolder(view)
+        return RouteViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        (viewHolder as RockViewHolder).bind(getItem(position) as Rock)
+        (viewHolder as RouteViewHolder).bind(getItem(position) as Route)
     }
 }
 
-object RockDiffCallback : DiffUtil.ItemCallback<Rock>() {
-    override fun areItemsTheSame(oldRock: Rock, newRock: Rock): Boolean {
-        return oldRock.id == newRock.id
+object RouteDiffCallback : DiffUtil.ItemCallback<Route>() {
+    override fun areItemsTheSame(oldRoute: Route, newRoute: Route): Boolean {
+        return oldRoute.id == newRoute.id
     }
 
-    override fun areContentsTheSame(oldRock: Rock, newRock: Rock): Boolean {
-        return oldRock == newRock
+    override fun areContentsTheSame(oldRoute: Route, newRoute: Route): Boolean {
+        return oldRoute == newRoute
     }
 }

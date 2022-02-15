@@ -320,10 +320,20 @@ class DatabaseWrapper(context: Context) {
     // Some default stuff necessary for import_export if according objects have
     // been deleted from the database
     fun createUnknownRoute(): Route {
-        return Route().apply {
-            name = UNKNOWN_NAME
-            grade = UNKNOWN_NAME
-        }
+        return Route(
+            id = INVALID_ID,
+            nr = 0f,
+            statusId = 0,
+            name = UNKNOWN_NAME,
+            grade = UNKNOWN_NAME,
+            firstAscendLeader = UNKNOWN_NAME,
+            firstAscendFollower = UNKNOWN_NAME,
+            firstAscendDate = UNKNOWN_NAME,
+            typeOfClimbing = UNKNOWN_NAME,
+            description = UNKNOWN_NAME,
+            ascendsBitMask = 0,
+            parentId = INVALID_ID
+        )
     }
 
     fun createUnknownRock(): Rock {

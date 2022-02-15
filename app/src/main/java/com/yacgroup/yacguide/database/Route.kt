@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,26 +23,23 @@ import androidx.room.PrimaryKey
 import java.util.HashMap
 
 @Entity
-class Route {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var nr: Float = 0.toFloat()
-    var statusId: Int = 0
-    var name: String? = null
-    var grade: String? = null
-    var firstAscendLeader: String? = null
-    var firstAscendFollower: String? = null
-    var firstAscendDate: String? = null
-    var typeOfClimbing: String? = null
-    var description: String? = null
-    var ascendsBitMask: Int = 0 // a 32bit number for 14 ascend styles.
+data class Route(
+    @PrimaryKey val id: Int,
+    val nr: Float,
+    val statusId: Int,
+    val name: String?,
+    val grade: String?,
+    val firstAscendLeader: String?,
+    val firstAscendFollower: String?,
+    val firstAscendDate: String?,
+    val typeOfClimbing: String?,
+    val description: String?,
+    var ascendsBitMask: Int,    // a 32bit number for 14 ascend styles.
                                 // Bit index == (styleId - 1).
                                 // Bit value == 1 if route has been ascended with this style.
                                 // Note: styleId == 0 ("Unknown") corresponds to mask 0b10000...0 = -IntMax.
-    var parentId: Int = 0
-
+    val parentId: Int
+) {
     companion object {
 
         const val STATUS_ACKNOWLEDGED = 1

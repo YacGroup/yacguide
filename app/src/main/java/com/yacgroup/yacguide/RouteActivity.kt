@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,23 +19,23 @@ package com.yacgroup.yacguide
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.list_adapters.RouteViewAdapter
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.SearchBarHandler
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RouteActivity : TableActivityWithOptionsMenu() {
 
+    private lateinit var _viewAdapter: RouteViewAdapter
     private lateinit var _searchBarHandler: SearchBarHandler
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
@@ -65,6 +65,16 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         } else {
             findViewById<ImageButton>(R.id.mapButton).visibility = View.INVISIBLE
         }
+
+        _viewAdapter = RouteViewAdapter(
+            this,
+            customSettings,
+            activityLevel.level,
+            db
+        ) { routeId, routeName ->
+            _onRouteSelected(routeId, routeName)
+        }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_route
@@ -72,11 +82,10 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     @Suppress("UNUSED_PARAMETER")
     fun showMap(v: View) {
         try {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
+            startActivity(Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse("geo:${_rock?.latitude},${_rock?.longitude}")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
+            })
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, R.string.no_map_app_available, Toast.LENGTH_SHORT).show()
         }
@@ -92,9 +101,6 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     }
 
     override fun displayContent() {
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
-
         val levelName = ParserUtils.decodeObjectNames(activityLevel.parentName)
         this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
         _displayRockInfo(findViewById(R.id.infoTextView))
@@ -108,53 +114,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             routes = routes.filter{ it.name.orEmpty().lowercase().contains(_routeNamePart.lowercase()) }
         }
 
-        for (route in routes) {
-            val routeName = ParserUtils.decodeObjectNames(route.name)
-            val commentCount = db.getRouteCommentCount(route.id)
-            val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
-            val onClickListener = View.OnClickListener {
-                val intent = Intent(this@RouteActivity, DescriptionActivity::class.java)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, route.id)
-                intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, route.name)
-                startActivityForResult(intent, 0)
-            }
-            val statusId = route.statusId
-            var typeface = Typeface.BOLD
-            var bgColor = Color.WHITE
-            if (statusId == Route.STATUS_CLOSED) {
-                typeface = Typeface.ITALIC
-                bgColor = Color.LTGRAY
-            }
-            bgColor = colorizeEntry(route.ascendsBitMask, bgColor)
-            val decorationAdd = decorateEntry(route.ascendsBitMask)
-
-            val sectorInfo = _getSectorInfo(route)
-            if (sectorInfo.isNotEmpty()) {
-                layout.addView(
-                    WidgetUtils.createCommonRowLayout(
-                        this,
-                        textLeft = sectorInfo,
-                        textSizeDp = WidgetUtils.textFontSizeDp,
-                        onClickListener = onClickListener,
-                        bgColor = bgColor,
-                        typeface = Typeface.NORMAL
-                    )
-                )
-            }
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${routeName.first}$commentCountAdd$decorationAdd",
-                    textRight = route.grade.orEmpty(),
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    typeface = typeface))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = routeName.second,
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    typeface = typeface))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        }
+        _viewAdapter.submitList(routes)
     }
 
     override fun onStop() {
@@ -191,31 +151,6 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         else -> emptyList()
     }
 
-    private fun _getSectorInfo(route: Route): String {
-        val arrow = getString(R.string.right_arrow)
-        var sectorInfo = ""
-        if (activityLevel.level.value < ClimbingObjectLevel.eRoute.value) {
-            db.getRock(route.parentId)?.let { rock ->
-                if (activityLevel.level.value < ClimbingObjectLevel.eRock.value) {
-                    db.getSector(rock.parentId)?.let { sector ->
-                        if (activityLevel.level.value < ClimbingObjectLevel.eSector.value) {
-                            db.getRegion(sector.parentId)?.let { region ->
-                                sectorInfo = "${region.name} $arrow "
-                            }
-                        }
-                        val sectorNames = ParserUtils.decodeObjectNames(sector.name)
-                        val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
-                        sectorInfo += "${sectorNames.first} $altName $arrow "
-                    }
-                }
-                val rockNames = ParserUtils.decodeObjectNames(rock.name)
-                val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
-                sectorInfo += "${rockNames.first} $altName"
-            }
-        }
-        return sectorInfo
-    }
-
     private fun _displayRockInfo(infoTextView: TextView) {
         infoTextView.text = when (_rock?.status){
             Rock.statusCollapsed -> getString(R.string.rock_collapsed)
@@ -242,6 +177,14 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         return route.statusId != Route.STATUS_CLOSED
             && route.statusId != Route.STATUS_UNACKNOWLEDGED
             && route.statusId != Route.STATUS_UNFINISHED
+    }
+
+    private fun _onRouteSelected(routeId: Int, routeName: String) {
+        startActivity(Intent(this@RouteActivity, DescriptionActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eUnknown.value)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, routeId)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, routeName)
+        })
     }
 }
 
