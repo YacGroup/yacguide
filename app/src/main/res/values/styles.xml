@@ -51,7 +51,6 @@
         <item name="android:listDivider">@color/colorSecondary</item>
         <item name="android:layout_marginLeft">8dp</item>
         <item name="android:layout_marginRight">8dp</item>
-
     </style>
 
     <style name="AppTheme.Secondary.TextView" parent="Widget.AppCompat.TextView">
