@@ -26,6 +26,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
+import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.list_adapters.RouteViewAdapter
@@ -37,8 +38,10 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _viewAdapter: RouteViewAdapter
     private lateinit var _searchBarHandler: SearchBarHandler
+    private lateinit var _routeGettersMap: Map<ClimbingObjectLevel, RouteGetter>
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
+    private var _filterName: String = ""
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
@@ -46,10 +49,47 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
-        properties = arrayListOf(AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            AscentFilterable(this)
+        )
+
+        _routeGettersMap = mapOf(
+            ClimbingObjectLevel.eCountry to RouteGetter(
+                getAll = { db.getRoutes() },
+                getByName = { db.getRoutesByName(_filterName) },
+                getProjects = { db.getProjectedRoutes() },
+                getBotches = { db.getBotchedRoutes() }
+            ),
+            ClimbingObjectLevel.eRegion to RouteGetter(
+                getAll = { db.getRoutesForCountry(activityLevel.parentName) },
+                getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
+                getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentName) },
+                getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentName) }
+            ),
+            ClimbingObjectLevel.eSector to RouteGetter(
+                getAll = { db.getRoutesForRegion(activityLevel.parentId) },
+                getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
+                getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentId) },
+                getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentId) }
+            ),
+            ClimbingObjectLevel.eRock to RouteGetter(
+                getAll = { db.getRoutesForSector(activityLevel.parentId) },
+                getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
+                getProjects = { db.getProjectedRoutesForSector(activityLevel.parentId) },
+                getBotches = { db.getBotchedRoutesForSector(activityLevel.parentId) }
+            ),
+            ClimbingObjectLevel.eRoute to RouteGetter(
+                getAll = { db.getRoutesForRock(activityLevel.parentId) },
+                getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
+                getProjects = { db.getProjectedRoutesForRock(activityLevel.parentId) },
+                getBotches = { db.getBotchedRoutesForRock(activityLevel.parentId) }
+            )
+        )
 
         _searchBarHandler = SearchBarHandler(
             findViewById(R.id.searchBarLayout),
@@ -122,33 +162,17 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         super.onStop()
     }
 
-    private fun _getAndFilterRoutes(): List<Route> = when (activityLevel.level) {
-        ClimbingObjectLevel.eCountry -> {
-            if (_filterProjects) db.getProjectedRoutes()
-            else if (_filterBotches) db.getBotchedRoutes()
-            else db.getRoutes()
+    private fun _getAndFilterRoutes(): List<Route> {
+        val routeGetter = _routeGettersMap[activityLevel.level]!!
+        return if (_filterProjects) {
+            routeGetter.getProjects()
+        } else if (_filterBotches) {
+            routeGetter.getBotches()
+        } else if (_filterName.isNotEmpty()) {
+            routeGetter.getByName()
+        } else {
+            routeGetter.getAll()
         }
-        ClimbingObjectLevel.eRegion -> {
-            if (_filterProjects) db.getProjectedRoutesForCountry(activityLevel.parentName)
-            else if (_filterBotches) db.getBotchedRoutesForCountry(activityLevel.parentName)
-            else db.getRoutesForCountry(activityLevel.parentName)
-        }
-        ClimbingObjectLevel.eSector -> {
-            if (_filterProjects) db.getProjectedRoutesForRegion(activityLevel.parentId)
-            else if (_filterBotches) db.getBotchedRoutesForRegion(activityLevel.parentId)
-            else db.getRoutesForRegion(activityLevel.parentId)
-        }
-        ClimbingObjectLevel.eRock -> {
-            if (_filterProjects) db.getProjectedRoutesForSector(activityLevel.parentId)
-            else if (_filterBotches) db.getBotchedRoutesForSector(activityLevel.parentId)
-            else db.getRoutesForSector(activityLevel.parentId)
-        }
-        ClimbingObjectLevel.eRoute -> {
-            if (_filterProjects) db.getProjectedRoutesForRock(activityLevel.parentId)
-            else if (_filterBotches) db.getBotchedRoutesForRock(activityLevel.parentId)
-            else db.getRoutesForRock(activityLevel.parentId)
-        }
-        else -> emptyList()
     }
 
     private fun _displayRockInfo(infoTextView: TextView) {
@@ -187,4 +211,11 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         })
     }
 }
+
+class RouteGetter(
+    val getAll: () -> List<Route>,
+    val getByName: () -> List<Route>,
+    val getProjects: () -> List<Route>,
+    val getBotches: () -> List<Route>
+)
 

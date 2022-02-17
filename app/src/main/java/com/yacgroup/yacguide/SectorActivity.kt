@@ -36,7 +36,11 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this)
+        )
 
         _viewAdapter = SectorViewAdapter(this, customSettings, db) { sectorId, sectorName -> _onSectorSelected(sectorId, sectorName) }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
