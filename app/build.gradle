@@ -35,7 +35,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.yacgroup.yacguide"
-        minSdkVersion 22
+        minSdkVersion 27
         targetSdkVersion 31
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
