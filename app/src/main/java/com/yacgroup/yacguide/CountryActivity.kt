@@ -34,7 +34,11 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _updateHandler = UpdateHandler(this, CountryParser(db))
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this)
+        )
 
         _viewAdapter = CountryViewAdapter { countryName -> _onCountrySelected(countryName) }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter

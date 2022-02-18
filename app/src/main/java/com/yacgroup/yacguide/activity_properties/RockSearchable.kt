@@ -34,7 +34,7 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
 
     override fun onMenuAction(menuItemId: Int) {
         val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog)
-        searchDialog.setContentView(R.layout.search_dialog)
+        searchDialog.setContentView(R.layout.rock_search_dialog)
         searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         var maxRelevanceId = RockComment.RELEVANCE_NONE

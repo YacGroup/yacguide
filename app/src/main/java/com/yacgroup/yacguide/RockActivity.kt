@@ -24,6 +24,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
+import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.list_adapters.RockViewAdapter
 import com.yacgroup.yacguide.database.comment.RockComment
@@ -47,7 +48,11 @@ class RockActivity : TableActivityWithOptionsMenu() {
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
         _filterMaxRelevanceId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RockComment.RELEVANCE_NONE)
 
-        properties = arrayListOf(RockSearchable(this), AscentFilterable(this))
+        properties = arrayListOf(
+            RouteSearchable(this),
+            RockSearchable(this),
+            AscentFilterable(this)
+        )
 
         _rockGettersMap = mapOf(
             ClimbingObjectLevel.eCountry to RockGetter(
