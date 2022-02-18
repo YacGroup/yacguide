@@ -2,7 +2,7 @@
 # https://github.com/marketplace/actions/android-emulator-runner
 
 name: Instrumentation Tests
-on: push
+on: [push, workflow_dispatch]
 jobs:
   test:
     runs-on: macos-latest
