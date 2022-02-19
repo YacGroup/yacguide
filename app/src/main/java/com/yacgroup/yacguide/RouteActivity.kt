@@ -29,6 +29,7 @@ import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.list_adapters.RouteViewAdapter
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -42,6 +43,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
     private var _filterName: String = ""
+    private var _filterMaxQualityId: Int = RouteComment.QUALITY_NONE
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
@@ -50,6 +52,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
+        _filterMaxQualityId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RouteComment.QUALITY_NONE)
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
@@ -62,30 +65,35 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eCountry to RouteGetter(
                 getAll = { db.getRoutes() },
                 getByName = { db.getRoutesByName(_filterName) },
+                getByQuality = { db.getRoutesByQuality(_filterMaxQualityId) },
                 getProjects = { db.getProjectedRoutes() },
                 getBotches = { db.getBotchedRoutes() }
             ),
             ClimbingObjectLevel.eRegion to RouteGetter(
                 getAll = { db.getRoutesForCountry(activityLevel.parentName) },
                 getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
+                getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentName, _filterMaxQualityId) },
                 getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentName) },
                 getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentName) }
             ),
             ClimbingObjectLevel.eSector to RouteGetter(
                 getAll = { db.getRoutesForRegion(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
+                getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentId, _filterMaxQualityId) },
                 getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentId) }
             ),
             ClimbingObjectLevel.eRock to RouteGetter(
                 getAll = { db.getRoutesForSector(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
+                getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentId, _filterMaxQualityId) },
                 getProjects = { db.getProjectedRoutesForSector(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForSector(activityLevel.parentId) }
             ),
             ClimbingObjectLevel.eRoute to RouteGetter(
                 getAll = { db.getRoutesForRock(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
+                getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentId, _filterMaxQualityId) },
                 getProjects = { db.getProjectedRoutesForRock(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRock(activityLevel.parentId) }
             )
@@ -168,10 +176,18 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             routeGetter.getProjects()
         } else if (_filterBotches) {
             routeGetter.getBotches()
-        } else if (_filterName.isNotEmpty()) {
-            routeGetter.getByName()
-        } else {
+        } else if (_filterName.isEmpty() && _filterMaxQualityId == RouteComment.QUALITY_NONE) {
             routeGetter.getAll()
+        } else {
+            val nameFilteredRoutes =
+                if (_filterName.isEmpty()) null
+                else routeGetter.getByName().toSet()
+            val qualityFilteredRoutes =
+                if (_filterMaxQualityId == RouteComment.QUALITY_NONE) null
+                else routeGetter.getByQuality().toSet()
+            listOfNotNull(nameFilteredRoutes, qualityFilteredRoutes).reduce {
+                    intersection, filteredRoutes -> intersection.intersect(filteredRoutes)
+            }.toList()
         }
     }
 
@@ -215,6 +231,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 class RouteGetter(
     val getAll: () -> List<Route>,
     val getByName: () -> List<Route>,
+    val getByQuality: () -> List<Route>,
     val getProjects: () -> List<Route>,
     val getBotches: () -> List<Route>
 )

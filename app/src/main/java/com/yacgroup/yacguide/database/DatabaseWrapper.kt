@@ -93,6 +93,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForRock(rockId: Int, namePart: String) = _db.routeDao().getAllByNameAtRock(rockId, "%$namePart%")
 
+    fun getRoutesByQualityForRock(rockId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityAtRock(rockId, maxQualityId)
+
     fun getProjectedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.eBOTCHED.id)
@@ -100,6 +102,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSector(sectorId)
 
     fun getRoutesByNameForSector(sectorId: Int, namePart: String) = _db.routeDao().getAllByNameInSector(sectorId, "%$namePart%")
+
+    fun getRoutesByQualityForSector(sectorId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityInSector(sectorId, maxQualityId)
 
     fun getProjectedRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSectorForStyle(sectorId, AscendStyle.ePROJECT.id)
 
@@ -109,6 +113,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForRegion(regionId: Int, namePart: String) = _db.routeDao().getAllByNameInRegion(regionId, "%$namePart%")
 
+    fun getRoutesByQualityForRegion(regionId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityInRegion(regionId, maxQualityId)
+
     fun getProjectedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.eBOTCHED.id)
@@ -117,6 +123,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForCountry(countryName: String, namePart: String) = _db.routeDao().getAllByNameInCountry(countryName, "%$namePart%")
 
+    fun getRoutesByQualityForCountry(countryName: String, maxQualityId: Int) = _db.routeDao().getAllByQualityInCountry(countryName, maxQualityId)
+
     fun getProjectedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.eBOTCHED.id)
@@ -124,6 +132,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutes() = _db.routeDao().all
 
     fun getRoutesByName(namePart: String) = _db.routeDao().getAllByName("%$namePart%")
+
+    fun getRoutesByQuality(maxQualityId: Int) = _db.routeDao().getAllByQuality(maxQualityId)
 
     fun getProjectedRoutes() = _db.routeDao().getAllForStyle(AscendStyle.ePROJECT.id)
 

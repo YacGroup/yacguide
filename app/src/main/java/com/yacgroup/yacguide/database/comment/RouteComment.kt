@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,12 @@ class RouteComment {
 
     companion object {
 
+        const val QUALITY_NONE = 0
+
         // This needs to be in sync with sandsteinklettern.de!
-        val QUALITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
+        val QUALITY_MAP: Map<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
+                put(QUALITY_NONE, "keine Angabe")
                 put(1, "sehr lohnend")
                 put(2, "lohnend")
                 put(3, "ok")
