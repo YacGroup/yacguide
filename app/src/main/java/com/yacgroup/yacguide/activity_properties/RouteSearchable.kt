@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatDialog
@@ -26,9 +25,13 @@ import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.RouteActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.database.comment.RouteComment
+import com.yacgroup.yacguide.utils.FilterSpinner
+import com.yacgroup.yacguide.utils.FilterSpinnerListener
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
+class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
+
+    private var _maxQualityId: Int = RouteComment.QUALITY_NONE
 
     override fun getMenuGroupId() = R.id.group_route_search
 
@@ -37,24 +40,11 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         searchDialog.setContentView(R.layout.route_search_dialog)
         searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        var maxQualityId = RouteComment.QUALITY_NONE
-
-        val spinner = searchDialog.findViewById<Spinner>(R.id.routeQualitySpinner)
-        val adapter = ArrayAdapter<CharSequence>(searchDialog.context, R.layout.spinner_item, RouteComment.QUALITY_MAP.values.toTypedArray())
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner?.adapter = adapter
-        spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val qualityName = parent.getItemAtPosition(position).toString()
-                maxQualityId = RouteComment.QUALITY_MAP.keys.first { RouteComment.QUALITY_MAP[it] == qualityName }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-        spinner?.setSelection(adapter.getPosition(RouteComment.QUALITY_MAP[maxQualityId]))
+        FilterSpinner(searchDialog, R.id.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
 
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val routeName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
-            if (routeName.isEmpty() && maxQualityId == RouteComment.QUALITY_NONE) {
+            if (routeName.isEmpty() && _maxQualityId == RouteComment.QUALITY_NONE) {
                 Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
             } else {
                 _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
@@ -62,7 +52,7 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
                     putExtra(IntentConstants.FILTER_NAME, routeName)
-                    putExtra(IntentConstants.FILTER_RELEVANCE, maxQualityId)
+                    putExtra(IntentConstants.FILTER_RELEVANCE, _maxQualityId)
                 })
                 searchDialog.dismiss()
             }
@@ -71,5 +61,11 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         searchDialog.setCancelable(false)
         searchDialog.setCanceledOnTouchOutside(false)
         searchDialog.show()
+    }
+
+    override fun onFilterSelected(resourceId: Int, selectionKey: Int) {
+        when (resourceId) {
+            R.id.routeQualitySpinner -> _maxQualityId = selectionKey
+        }
     }
 }

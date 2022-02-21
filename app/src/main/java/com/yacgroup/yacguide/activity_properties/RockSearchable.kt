@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatDialog
@@ -26,9 +25,13 @@ import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.RockActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.database.comment.RockComment
+import com.yacgroup.yacguide.utils.FilterSpinner
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.FilterSpinnerListener
 
-class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
+class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
+
+    private var _maxRelevanceId: Int = RockComment.RELEVANCE_NONE
 
     override fun getMenuGroupId() = R.id.group_rock_search
 
@@ -37,24 +40,11 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
         searchDialog.setContentView(R.layout.rock_search_dialog)
         searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        var maxRelevanceId = RockComment.RELEVANCE_NONE
-
-        val spinner = searchDialog.findViewById<Spinner>(R.id.rockRelevanceSpinner)
-        val adapter = ArrayAdapter<CharSequence>(searchDialog.context, R.layout.spinner_item, RockComment.RELEVANCE_MAP.values.toTypedArray())
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner?.adapter = adapter
-        spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val qualityName = parent.getItemAtPosition(position).toString()
-                maxRelevanceId = RockComment.RELEVANCE_MAP.keys.first { RockComment.RELEVANCE_MAP[it] == qualityName }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-        spinner?.setSelection(adapter.getPosition(RockComment.RELEVANCE_MAP[maxRelevanceId]))
+        FilterSpinner(searchDialog, R.id.rockRelevanceSpinner, RockComment.RELEVANCE_MAP, this).create()
 
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
-            if (rockName.isEmpty() && maxRelevanceId == RockComment.RELEVANCE_NONE) {
+            if (rockName.isEmpty() && _maxRelevanceId == RockComment.RELEVANCE_NONE) {
                 Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
             } else {
                 _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
@@ -62,7 +52,7 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
                     putExtra(IntentConstants.FILTER_NAME, rockName)
-                    putExtra(IntentConstants.FILTER_RELEVANCE, maxRelevanceId)
+                    putExtra(IntentConstants.FILTER_RELEVANCE, _maxRelevanceId)
                 })
                 searchDialog.dismiss()
             }
@@ -72,5 +62,11 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
         searchDialog.setCancelable(false)
         searchDialog.setCanceledOnTouchOutside(false)
         searchDialog.show()
+    }
+
+    override fun onFilterSelected(resourceId: Int, selectionKey: Int) {
+        when (resourceId) {
+            R.id.rockRelevanceSpinner -> _maxRelevanceId = selectionKey
+        }
     }
 }

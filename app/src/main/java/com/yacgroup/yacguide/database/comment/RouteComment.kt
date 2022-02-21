@@ -38,7 +38,7 @@ class RouteComment {
         const val QUALITY_NONE = 0
 
         // This needs to be in sync with sandsteinklettern.de!
-        val QUALITY_MAP: Map<Int, String> = object : LinkedHashMap<Int, String>() {
+        val QUALITY_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(QUALITY_NONE, "keine Angabe")
                 put(1, "sehr lohnend")
@@ -50,7 +50,7 @@ class RouteComment {
         }
 
         // This needs to be in sync with sandsteinklettern.de!
-        val GRADE_MAP: Map<Int, String> = object : HashMap<Int, String>() {
+        val GRADE_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(1, "I")
                 put(2, "II")
@@ -80,7 +80,7 @@ class RouteComment {
         }
 
         // This needs to be in sync with sandsteinklettern.de!
-        val SECURITY_MAP: Map<Int, String> = object : HashMap<Int, String>() {
+        val SECURITY_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(1, "übersichert")
                 put(2, "gut")
@@ -92,7 +92,7 @@ class RouteComment {
         }
 
         // This needs to be in sync with sandsteinklettern.de!
-        val WETNESS_MAP: Map<Int, String> = object : HashMap<Int, String>() {
+        val WETNESS_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(1, "Regenweg")
                 put(2, "schnellabtrocknend")
