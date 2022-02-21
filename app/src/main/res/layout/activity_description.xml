@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 Axel Paetzold
+  Copyright (C) 2018, 2022 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,15 @@
 
         <include layout="@layout/textview_info"/>
 
-        <include layout="@layout/content_table"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
+
+            <include layout="@layout/route_description"/>
+
+        </ScrollView>
 
     </LinearLayout>
 

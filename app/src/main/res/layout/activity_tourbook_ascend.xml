@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 Axel Paetzold
+  Copyright (C) 2018, 2022 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@
         android:orientation="vertical">
 
         <include layout="@layout/appbar_empty"/>
-
-        <include layout="@layout/nav_tourbook"/>
 
         <include layout="@layout/content_table"/>
 

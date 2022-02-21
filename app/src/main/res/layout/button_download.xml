@@ -17,7 +17,7 @@
 
 <ImageButton
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/AppTheme.Secondary.SpecialImageButton"
+    style="@style/AppTheme.Secondary.ImageButton"
     android:id="@+id/downloadButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

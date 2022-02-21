@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Axel Pätzold
+ * Copyright (C) 2019, 2022 Axel Pätzold
  * Copyright (C) 2021 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -146,28 +146,17 @@ class TourbookExporter(
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
         _db.deletePartners()
-        val ascends = mutableListOf<Ascend>()
+        val ascents = mutableListOf<Ascend>()
         val partners = mutableListOf<Partner>()
-        var ascendId = 1
+        var ascentId = 1
         var partnerId = 1
         for (i in 0 until jsonAscends.length()) {
             val jsonAscend = jsonAscends.getJSONObject(i)
-            val ascend = Ascend().apply {
-                id = ascendId++
-                routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey)
-                styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey)
-                year = ParserUtils.jsonField2Int(jsonAscend, _yearKey)
-                month = ParserUtils.jsonField2Int(jsonAscend, _monthKey)
-                day = ParserUtils.jsonField2Int(jsonAscend, _dayKey)
-                notes = jsonAscend.getString(_notesKey)
-            }
             val partnerNames = jsonAscend.getJSONArray(_partnersKey)
             val partnerIds = ArrayList<Int>()
             for (j in 0 until partnerNames.length()) {
                 val name = partnerNames.getString(j).trim { it <= ' ' }
-
                 var partner = partners.find { name == it.name }
-
                 if (partner == null) {
                     partner = Partner()
                     partner.id = partnerId++
@@ -176,11 +165,19 @@ class TourbookExporter(
                 }
                 partnerIds.add(partner.id)
             }
-
-            ascend.partnerIds = partnerIds
-            ascends.add(ascend)
+            val ascent = Ascend(
+                id = ascentId++,
+                routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey),
+                styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey),
+                year = ParserUtils.jsonField2Int(jsonAscend, _yearKey),
+                month = ParserUtils.jsonField2Int(jsonAscend, _monthKey),
+                day = ParserUtils.jsonField2Int(jsonAscend, _dayKey),
+                partnerIds = partnerIds,
+                notes = jsonAscend.getString(_notesKey)
+            )
+            ascents.add(ascent)
         }
         _db.addPartners(partners)
-        _db.addAscends(ascends)
+        _db.addAscends(ascents)
     }
 }
