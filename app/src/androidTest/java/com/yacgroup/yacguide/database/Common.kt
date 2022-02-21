@@ -24,7 +24,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
  * Database structure:
  * - Country1:
  *      - Region1
+ *          - Sector1
+ *          - Sector2
  *      - Region2
+ *          - Sector3
  * - Country2
  *      - Region3
  * - Country3
@@ -32,6 +35,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class TestDB {
 
     companion object {
+        const val INVALID_ID = 42
+
         val COUNTRIES = listOf(
             Country("Country1"),
             Country("Country2"),
@@ -44,6 +49,12 @@ class TestDB {
             Region(3, "Region3", "Country2")
         )
 
+        val SECTORS = listOf(
+            Sector(1, 1f, "Sector1", 1),
+            Sector(2, 2f, "Sector2", 1),
+            Sector(3, 3f, "Sector3", 2)
+        )
+
         fun initCountries(countryDao: CountryDao) {
             assertTrue(countryDao.all.isEmpty())
             countryDao.insert(COUNTRIES)
@@ -54,6 +65,12 @@ class TestDB {
             assertTrue(regionDao.all.isEmpty())
             regionDao.insert(REGIONS)
             assertTrue(equal(REGIONS, regionDao.all))
+        }
+
+        fun initSectors(sectorDao: SectorDao) {
+            assertTrue(sectorDao.all.isEmpty())
+            sectorDao.insert(SECTORS)
+            assertTrue(equal(SECTORS, sectorDao.all))
         }
     }
 }
