@@ -31,6 +31,7 @@
 
     <!-- File names -->
     <string name="preferences_filename">yacguide_settings</string>
+    <string name="default_export_tourbook_name">Tourenbuch</string>
 
     <!-- Preference keys -->
     <string name="preference_key_version_code">version_code</string>

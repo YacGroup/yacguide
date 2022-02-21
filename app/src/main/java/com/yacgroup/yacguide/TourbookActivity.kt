@@ -24,26 +24,24 @@ import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-
+import androidx.core.content.ContextCompat
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.TourbookExportFormat
 import com.yacgroup.yacguide.database.tourbook.TourbookExporter
 import com.yacgroup.yacguide.utils.*
-
 import org.json.JSONException
-
 import java.io.IOException
+import java.util.*
 
-import java.util.Arrays
 
 class TourbookActivity : BaseNavigationActivity() {
 
@@ -347,8 +345,14 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _selectExportFile(mimeType: String) {
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
+            putExtra(
+                Intent.EXTRA_TITLE,
+                "${getString(R.string.default_export_tourbook_name)}.${extension}"
+            )
             type = mimeType
         }
         _exportResultLauncher.launch(intent)
