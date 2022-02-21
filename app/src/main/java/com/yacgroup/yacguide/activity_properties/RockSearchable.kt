@@ -54,16 +54,18 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
 
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
-
-            _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
-                putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
-                putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
-                putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
-                putExtra(IntentConstants.FILTER_NAME, rockName)
-                putExtra(IntentConstants.FILTER_RELEVANCE, maxRelevanceId)
-            })
-
-            searchDialog.dismiss()
+            if (rockName.isEmpty() && maxRelevanceId == RockComment.RELEVANCE_NONE) {
+                Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
+            } else {
+                _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
+                    putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+                    putExtra(IntentConstants.FILTER_NAME, rockName)
+                    putExtra(IntentConstants.FILTER_RELEVANCE, maxRelevanceId)
+                })
+                searchDialog.dismiss()
+            }
         }
 
         searchDialog.findViewById<Button>(R.id.cancelButton)?.setOnClickListener { searchDialog.dismiss() }

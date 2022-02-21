@@ -35,6 +35,29 @@
     <View style="@style/ThinDivider"/>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/route_quality_filter"/>
+
+        <Spinner
+            android:id="@+id/routeQualitySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <View style="@style/ThinDivider"/>
+
+    <LinearLayout
         style="?android:attr/buttonBarStyle"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
