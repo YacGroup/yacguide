@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -69,9 +68,6 @@ class TourbookActivity : BaseNavigationActivity() {
         eAscends,
         eBotches
     }
-
-    private val _MIME_TYPE_JSON = "application/json"
-    private val _MIME_TYPE_CSV = "text/comma-separated-values"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,18 +321,18 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = _MIME_TYPE_JSON
+            type = MimeTypeMap.eJSON.mimeType
         }
         _importResultLauncher.launch(intent)
     }
 
     private fun _selectExportFormat() {
-        var mimeType = _MIME_TYPE_JSON
+        var mimeType = MimeTypeMap.eJSON.mimeType
         DialogWidgetBuilder(this, R.string.export_format).apply {
             setSingleChoiceItems(R.array.exportFormats, _tourbookExporter.exportFormat.id) {_, which ->
                 _tourbookExporter.exportFormat = TourbookExportFormat.fromId(which)!!
                 if (which == TourbookExportFormat.eCSV.id) {
-                    mimeType = _MIME_TYPE_CSV
+                    mimeType = MimeTypeMap.eCVS.mimeType
                 }
             }
             setNegativeButton()
@@ -345,8 +341,7 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _selectExportFile(mimeType: String) {
-        val mimeTypeMap = MimeTypeMap.getSingleton()
-        val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
+        val extension = com.yacgroup.yacguide.utils.MimeTypeMap.getExtensionFromMimeType(mimeType)
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(
