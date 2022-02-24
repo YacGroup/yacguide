@@ -30,19 +30,11 @@ enum class TourbookExportFormat (val id: Int, val extension: String, val mimeTyp
 
     companion object {
         private val _by_id = HashMap<Int, TourbookExportFormat>()
-        private val _extension_by_mimeType = HashMap<String, String>()
 
         init {
             values().forEach { _by_id[it.id] = it }
-            values().forEach {
-                _extension_by_mimeType[it.mimeType] = it.extension
-            }
         }
 
         fun fromId(id: Int): TourbookExportFormat? = _by_id[id]
-
-        fun getExtensionFromMimeType(mimeType: String): String? {
-            return _extension_by_mimeType[mimeType]
-        }
     }
 }
