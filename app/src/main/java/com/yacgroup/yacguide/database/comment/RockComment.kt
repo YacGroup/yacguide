@@ -35,7 +35,7 @@ class RockComment {
         const val RELEVANCE_NONE = 0
 
         // This needs to be in sync with sandsteinklettern.de!
-        val RELEVANCE_MAP: Map<Int, String> = object : LinkedHashMap<Int, String>() {
+        val RELEVANCE_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(RELEVANCE_NONE, "keine Angabe")
                 put(1, "Hauptgipfel")
