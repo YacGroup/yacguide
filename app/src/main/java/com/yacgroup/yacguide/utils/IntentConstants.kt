@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ object IntentConstants {
     const val CLIMBING_OBJECT_PARENT_NAME = "ClimbingObjectParentName"
     const val FILTER_NAME = "FilterName"
     const val FILTER_RELEVANCE = "FilterRelevance"
+    const val FILTER_PROTECTION = "FilterProtection"
     const val FILTER_PROJECTS = "FilterProjects"
     const val FILTER_BOTCHES = "FilterBotches"
 

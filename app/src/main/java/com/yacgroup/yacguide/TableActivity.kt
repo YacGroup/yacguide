@@ -116,7 +116,7 @@ abstract class TableActivity : BaseNavigationActivity() {
                     it.addView(WidgetUtils.createHorizontalLine(this, 1))
                     _addCommentPropertyView(it, R.string.route_quality, RouteComment.QUALITY_MAP, comment.qualityId)
                     _addCommentPropertyView(it, R.string.grade, RouteComment.GRADE_MAP, comment.gradeId)
-                    _addCommentPropertyView(it, R.string.protection, RouteComment.SECURITY_MAP, comment.securityId)
+                    _addCommentPropertyView(it, R.string.protection, RouteComment.PROTECTION_MAP, comment.securityId)
                     _addCommentPropertyView(it, R.string.drying, RouteComment.WETNESS_MAP, comment.wetnessId)
                     _addCommentTextView(it, comment.text.orEmpty())
                 }

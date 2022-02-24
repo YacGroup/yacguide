@@ -44,6 +44,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private var _routeNamePart: String = ""
     private var _filterName: String = ""
     private var _filterMaxQualityId: Int = RouteComment.QUALITY_NONE
+    private var _filterMaxProtectionId: Int = RouteComment.PROTECTION_NONE
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
@@ -53,6 +54,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
         _filterMaxQualityId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RouteComment.QUALITY_NONE)
+        _filterMaxProtectionId = intent.getIntExtra(IntentConstants.FILTER_PROTECTION, RouteComment.PROTECTION_NONE)
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
@@ -66,6 +68,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getAll = { db.getRoutes() },
                 getByName = { db.getRoutesByName(_filterName) },
                 getByQuality = { db.getRoutesByQuality(_filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtection(_filterMaxProtectionId) },
                 getProjects = { db.getProjectedRoutes() },
                 getBotches = { db.getBotchedRoutes() }
             ),
@@ -73,6 +76,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getAll = { db.getRoutesForCountry(activityLevel.parentName) },
                 getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
                 getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentName, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForCountry(activityLevel.parentName, _filterMaxProtectionId) },
                 getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentName) },
                 getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentName) }
             ),
@@ -80,6 +84,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getAll = { db.getRoutesForRegion(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentId, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForRegion(activityLevel.parentId, _filterMaxProtectionId) },
                 getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentId) }
             ),
@@ -87,6 +92,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getAll = { db.getRoutesForSector(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentId, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForSector(activityLevel.parentId, _filterMaxProtectionId) },
                 getProjects = { db.getProjectedRoutesForSector(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForSector(activityLevel.parentId) }
             ),
@@ -94,6 +100,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getAll = { db.getRoutesForRock(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentId, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForRock(activityLevel.parentId, _filterMaxProtectionId) },
                 getProjects = { db.getProjectedRoutesForRock(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRock(activityLevel.parentId) }
             )
@@ -176,7 +183,9 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             routeGetter.getProjects()
         } else if (_filterBotches) {
             routeGetter.getBotches()
-        } else if (_filterName.isEmpty() && _filterMaxQualityId == RouteComment.QUALITY_NONE) {
+        } else if (_filterName.isEmpty()
+            && _filterMaxQualityId == RouteComment.QUALITY_NONE
+            && _filterMaxProtectionId == RouteComment.PROTECTION_NONE) {
             routeGetter.getAll()
         } else {
             val nameFilteredRoutes =
@@ -185,7 +194,12 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             val qualityFilteredRoutes =
                 if (_filterMaxQualityId == RouteComment.QUALITY_NONE) null
                 else routeGetter.getByQuality().toSet()
-            listOfNotNull(nameFilteredRoutes, qualityFilteredRoutes).reduce {
+            val protectionFilteredRoutes =
+                if (_filterMaxProtectionId == RouteComment.PROTECTION_NONE) null
+                else routeGetter.getByProtection().toSet()
+            listOfNotNull(nameFilteredRoutes,
+                          qualityFilteredRoutes,
+                          protectionFilteredRoutes).reduce {
                     intersection, filteredRoutes -> intersection.intersect(filteredRoutes)
             }.toList()
         }
@@ -232,6 +246,7 @@ class RouteGetter(
     val getAll: () -> List<Route>,
     val getByName: () -> List<Route>,
     val getByQuality: () -> List<Route>,
+    val getByProtection: () -> List<Route>,
     val getProjects: () -> List<Route>,
     val getBotches: () -> List<Route>
 )
