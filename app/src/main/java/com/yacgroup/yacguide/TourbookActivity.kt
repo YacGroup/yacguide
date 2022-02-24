@@ -321,34 +321,33 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = MimeTypeMap.eJSON.mimeType
+            type = TourbookExportFormat.eJSON.mimeType
         }
         _importResultLauncher.launch(intent)
     }
 
     private fun _selectExportFormat() {
-        var mimeType = MimeTypeMap.eJSON.mimeType
+        var format = TourbookExportFormat.eJSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
             setSingleChoiceItems(R.array.exportFormats, _tourbookExporter.exportFormat.id) {_, which ->
                 _tourbookExporter.exportFormat = TourbookExportFormat.fromId(which)!!
                 if (which == TourbookExportFormat.eCSV.id) {
-                    mimeType = MimeTypeMap.eCVS.mimeType
+                    format = TourbookExportFormat.eCSV
                 }
             }
             setNegativeButton()
-            setPositiveButton{ _, _ -> _selectExportFile(mimeType) }
+            setPositiveButton{ _, _ -> _selectExportFile(format) }
         }.show()
     }
 
-    private fun _selectExportFile(mimeType: String) {
-        val extension = com.yacgroup.yacguide.utils.MimeTypeMap.getExtensionFromMimeType(mimeType)
+    private fun _selectExportFile(format: TourbookExportFormat) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(
                 Intent.EXTRA_TITLE,
-                "${getString(R.string.default_export_tourbook_name)}.${extension}"
+                "${getString(R.string.default_export_tourbook_name)}.${format.extension}"
             )
-            type = mimeType
+            type = format.mimeType
         }
         _exportResultLauncher.launch(intent)
     }
