@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
 
@@ -33,10 +32,7 @@ import com.yacgroup.yacguide.utils.*
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private var _ascends: MutableList<Ascend> = mutableListOf<Ascend>()
-    private var _currentAscendIdx: Int = 0
-    private var _maxAscendIdx: Int = 0
-    private var _routeId: Int = 0
+    private lateinit var _ascent: Ascend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,21 +40,10 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
 
-        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
-        _routeId = intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID)
-        if (ascendId != DatabaseWrapper.INVALID_ID) {
-            _db.getAscend(ascendId)?.let {
-                _ascends = mutableListOf(it)
-            }
-            _routeId = _ascends[0].routeId
-        } else if (_routeId != DatabaseWrapper.INVALID_ID) {
-            _ascends = _db.getRouteAscends(_routeId).toMutableList()
-            findViewById<View>(R.id.nextButton).visibility = if (_ascends.size > 1) View.VISIBLE else View.INVISIBLE
-        }
-        _maxAscendIdx = _ascends.size - 1
-        if (_ascends.isNotEmpty()) {
-            _displayContent(_ascends[_currentAscendIdx])
-        }
+        val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
+        _ascent = _db.getAscend(ascentId)!!
+
+        _displayContent()
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook_ascend
@@ -72,26 +57,8 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == IntentConstants.RESULT_UPDATED) {
             Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
-            _ascends[_currentAscendIdx] = _db.getAscend(_ascends[_currentAscendIdx].id)!!
-            _displayContent(_ascends[_currentAscendIdx])
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun goToNext(v: View) {
-        if (++_currentAscendIdx <= _maxAscendIdx) {
-            findViewById<View>(R.id.prevButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.nextButton).visibility = if (_currentAscendIdx == _maxAscendIdx) View.INVISIBLE else View.VISIBLE
-            _displayContent(_ascends[_currentAscendIdx])
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    fun goToPrevious(v: View) {
-        if (--_currentAscendIdx >= 0) {
-            findViewById<View>(R.id.nextButton).visibility = View.VISIBLE
-            findViewById<View>(R.id.prevButton).visibility = if (_currentAscendIdx == 0) View.INVISIBLE else View.VISIBLE
-            _displayContent(_ascends[_currentAscendIdx])
+            _ascent = _db.getAscend(_ascent.id)!!
+            _displayContent()
         }
     }
 
@@ -106,7 +73,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
     private fun edit() {
         val intent = Intent(this@TourbookAscendActivity, AscendActivity::class.java)
-        intent.putExtra(IntentConstants.ASCEND_ID, _ascends[_currentAscendIdx].id)
+        intent.putExtra(IntentConstants.ASCEND_ID, _ascent.id)
         startActivityForResult(intent, 0)
     }
 
@@ -115,7 +82,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
-                _db.deleteAscend(_ascends[_currentAscendIdx])
+                _db.deleteAscend(_ascent)
                 val resultIntent = Intent()
                 setResult(IntentConstants.RESULT_UPDATED, resultIntent)
                 finish()
@@ -123,11 +90,11 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         }.show()
     }
 
-    private fun _displayContent(ascend: Ascend) {
+    private fun _displayContent() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
-        var route = _db.getRoute(_routeId)
+        var route = _db.getRoute(_ascent.routeId)
         val rock: Rock
         val sector: Sector
         val region: Region
@@ -143,11 +110,11 @@ class TourbookAscendActivity : BaseNavigationActivity() {
             Toast.makeText(this, R.string.corresponding_route_not_found, Toast.LENGTH_LONG).show()
         }
 
-        val partnerNames = _db.getPartnerNames(ascend.partnerIds?.toList().orEmpty())
+        val partnerNames = _db.getPartnerNames(_ascent.partnerIds?.toList().orEmpty())
         val partnersString = TextUtils.join(", ", partnerNames)
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = "${ascend.day}.${ascend.month}.${ascend.year}",
+                textLeft = "${_ascent.day}.${_ascent.month}.${_ascent.year}",
                 textRight = region.name.orEmpty(),
                 textSizeDp = WidgetUtils.infoFontSizeDp,
                 bgColor = WidgetUtils.tourHeaderColor))
@@ -186,7 +153,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 textLeft = route.grade.orEmpty(),
-                textRight = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()))
+                textRight = AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty()))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 textLeft = getString(R.string.partner),
@@ -200,7 +167,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 textSizeDp = WidgetUtils.textFontSizeDp,
                 typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = ascend.notes?.takeUnless { it.isBlank() } ?: " - "))
+                textLeft = _ascent.notes?.takeUnless { it.isBlank() } ?: " - "))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
     }
 

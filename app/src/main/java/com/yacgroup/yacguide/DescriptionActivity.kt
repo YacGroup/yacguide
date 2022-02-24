@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,20 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.list_adapters.AscentViewAdapter
 import com.yacgroup.yacguide.utils.*
+import kotlinx.android.synthetic.main.list_data_item.*
 
 class DescriptionActivity : TableActivity() {
 
+    private lateinit var _viewAdapter: AscentViewAdapter
     private lateinit var _route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +43,11 @@ class DescriptionActivity : TableActivity() {
             findViewById<TextView>(R.id.infoTextView).text =
                     "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
         }
+
+        _viewAdapter = AscentViewAdapter(this, customSettings) {
+            ascentId -> _onAscentSelected(ascentId)
+        }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_description
@@ -64,57 +72,42 @@ class DescriptionActivity : TableActivity() {
         startActivityForResult(intent, 0)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun goToAscends(v: View) {
-        val intent = Intent(this@DescriptionActivity, TourbookAscendActivity::class.java)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _route.id)
-        startActivityForResult(intent, 0)
-    }
-
     override fun displayContent() {
-        findViewById<View>(R.id.ascendsButton).visibility =
-                if (AscendStyle.hasAscendBit(_route.ascendsBitMask))
-                    View.VISIBLE
-                else
-                    View.INVISIBLE
-
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
         val routeName = ParserUtils.decodeObjectNames(_route.name)
         this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route.grade.orEmpty()}"
 
-        var firstAscendClimbers = _route.firstAscendLeader
+        var firstAscentClimbers = _route.firstAscendLeader
                 ?.takeUnless { it.isEmpty() }
                 ?: getString(R.string.first_ascend_unknown)
-
-        firstAscendClimbers += _route.firstAscendFollower
+        firstAscentClimbers += _route.firstAscendFollower
                 ?.takeUnless { it.isEmpty() }
                 ?.let { ", $it" }
                 ?: ""
-
-        val firstAscendDate = _route.firstAscendDate
+        val firstAscentDate = _route.firstAscendDate
                 ?.takeUnless { it == DateUtils.UNKNOWN_DATE }
                 ?.let { DateUtils.formatDate(it) }
                 ?: getString(R.string.date_unknown)
 
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = firstAscendClimbers,
-                textRight = firstAscendDate,
-                textSizeDp = WidgetUtils.infoFontSizeDp))
+        findViewById<TextView>(R.id.firstAscentClimbersTextView).text = firstAscentClimbers
+        findViewById<TextView>(R.id.firstAscentDateTextView).text = firstAscentDate
 
         _route.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = getString(R.string.type_of_climbing),
-                    textSizeDp = WidgetUtils.infoFontSizeDp,
-                    padding = WidgetUtils.Padding(40, 20, 20, 0)))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = it,
-                    textSizeDp = WidgetUtils.infoFontSizeDp,
-                    typeface = Typeface.NORMAL,
-                    padding = WidgetUtils.Padding(40, 0, 20, 0)))
+            findViewById<ConstraintLayout>(R.id.typeOfClimbingLayout).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.typeOfClimbingTextView).text = it
         }
 
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = _route.description.orEmpty()))
+        findViewById<TextView>(R.id.routeDescriptionTextView).text = _route.description
+
+        val ascents = db.getRouteAscends(_route.id)
+        findViewById<TextView>(R.id.myAscentsTextView).visibility =
+            if (ascents.isEmpty()) View.GONE
+            else View.VISIBLE
+        _viewAdapter.submitList(ascents)
+    }
+
+    private fun _onAscentSelected(ascentId: Int) {
+        startActivity(Intent(this@DescriptionActivity, TourbookAscendActivity::class.java).apply {
+            putExtra(IntentConstants.ASCEND_ID, ascentId)
+        })
     }
 }

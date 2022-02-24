@@ -64,13 +64,8 @@
     </style>
 
     <style name="AppTheme.Secondary.ImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="android:background">@color/colorSecondaryLight</item>
-        <item name="android:tint">@color/colorSecondaryDark</item>
-    </style>
-
-    <style name="AppTheme.Secondary.SpecialImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@color/colorSecondary</item>
-        <item name="android:tint">@color/colorOnSecondaryLight</item>
+        <item name="android:tint">@color/colorSecondaryDark</item>
     </style>
 
     <style name="ThinDivider">

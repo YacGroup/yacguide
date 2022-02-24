@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,16 +65,16 @@ class AscendActivity : AppCompatActivity() {
         _route = _db.getRoute(_outdatedAscend?.routeId
                     ?: intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID))
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
-        _ascend = Ascend().apply {
-                    id = _outdatedAscend?.id ?: 0
-                    routeId = _outdatedAscend?.routeId ?: _route!!.id
-                    styleId = _outdatedAscend?.styleId ?: 0
-                    year = _outdatedAscend?.year ?: 0
-                    month = _outdatedAscend?.month ?: 0
-                    day = _outdatedAscend?.day ?: 0
-                    partnerIds = _outdatedAscend?.partnerIds ?: ArrayList()
-                    notes = _outdatedAscend?.notes ?: ""
-                }
+        _ascend = Ascend(
+            id = _outdatedAscend?.id ?: 0,
+            routeId = _outdatedAscend?.routeId ?: _route!!.id,
+            styleId = _outdatedAscend?.styleId ?: 0,
+            year = _outdatedAscend?.year ?: 0,
+            month = _outdatedAscend?.month ?: 0,
+            day = _outdatedAscend?.day ?: 0,
+            partnerIds = _outdatedAscend?.partnerIds ?: ArrayList(),
+            notes = _outdatedAscend?.notes ?: ""
+        )
 
         findViewById<EditText>(R.id.notesEditText).let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->

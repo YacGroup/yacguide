@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,16 +23,13 @@ import androidx.room.PrimaryKey
 import java.util.ArrayList
 
 @Entity
-class Ascend {
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-
-    var routeId: Int = 0
-    var styleId: Int = 0 // id for os, RP, af, ...
-    var year: Int = 0
-    var month: Int = 0
-    var day: Int = 0
-    var partnerIds: ArrayList<Int>? = null
-    var notes: String? = null
-}
+data class Ascend (
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val routeId: Int,
+    var styleId: Int,
+    var year: Int,
+    var month: Int,
+    var day: Int,
+    var partnerIds: ArrayList<Int>?,
+    var notes: String?
+)
