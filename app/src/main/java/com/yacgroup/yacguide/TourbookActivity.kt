@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -69,9 +68,6 @@ class TourbookActivity : BaseNavigationActivity() {
         eAscends,
         eBotches
     }
-
-    private val _MIME_TYPE_JSON = "application/json"
-    private val _MIME_TYPE_CSV = "text/comma-separated-values"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -325,35 +321,33 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = _MIME_TYPE_JSON
+            type = TourbookExportFormat.eJSON.mimeType
         }
         _importResultLauncher.launch(intent)
     }
 
     private fun _selectExportFormat() {
-        var mimeType = _MIME_TYPE_JSON
+        var format = TourbookExportFormat.eJSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
             setSingleChoiceItems(R.array.exportFormats, _tourbookExporter.exportFormat.id) {_, which ->
                 _tourbookExporter.exportFormat = TourbookExportFormat.fromId(which)!!
                 if (which == TourbookExportFormat.eCSV.id) {
-                    mimeType = _MIME_TYPE_CSV
+                    format = TourbookExportFormat.eCSV
                 }
             }
             setNegativeButton()
-            setPositiveButton{ _, _ -> _selectExportFile(mimeType) }
+            setPositiveButton{ _, _ -> _selectExportFile(format) }
         }.show()
     }
 
-    private fun _selectExportFile(mimeType: String) {
-        val mimeTypeMap = MimeTypeMap.getSingleton()
-        val extension = mimeTypeMap.getExtensionFromMimeType(mimeType)
+    private fun _selectExportFile(format: TourbookExportFormat) {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             putExtra(
                 Intent.EXTRA_TITLE,
-                "${getString(R.string.default_export_tourbook_name)}.${extension}"
+                "${getString(R.string.default_export_tourbook_name)}.${format.extension}"
             )
-            type = mimeType
+            type = format.mimeType
         }
         _exportResultLauncher.launch(intent)
     }

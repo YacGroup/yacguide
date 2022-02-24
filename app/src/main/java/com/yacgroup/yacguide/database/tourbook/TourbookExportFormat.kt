@@ -17,10 +17,16 @@
 
 package com.yacgroup.yacguide.database.tourbook
 
-enum class TourbookExportFormat (val id: Int) {
-    eJSON(0),
-    eJSONVERBOSE(1),
-    eCSV(2);
+/*
+ * Normally the mapping between MIME type and extension is provided by library
+ * android.webkit.MimeTypeMap.
+ * The library seems to have a bug in API 26 and 27 (and maybe in other versions),
+ * so that the file extension cannot be determined by MIME type "application/json".
+ */
+enum class TourbookExportFormat (val id: Int, val extension: String, val mimeType: String) {
+    eJSON(0, "json", "application/json"),
+    eJSONVERBOSE(1, "json", "application/json"),
+    eCSV(2, "csv", "text/comma-separated-values");
 
     companion object {
         private val _by_id = HashMap<Int, TourbookExportFormat>()
