@@ -29,7 +29,7 @@ interface SectorDao {
     val all: List<Sector>
 
     @Query("$SELECT_SECTORS WHERE Sector.parentId = :regionId $ORDERED_BY_SECTOR")
-    fun getAll(regionId: Int): List<Sector>
+    fun getAllInRegion(regionId: Int): List<Sector>
 
     @Query("$SELECT_SECTORS $VIA_SECTORS_REGION WHERE Region.country = :countryName")
     fun getAllInCountry(countryName: String): List<Sector>

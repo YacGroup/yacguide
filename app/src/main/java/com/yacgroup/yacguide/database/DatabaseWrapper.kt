@@ -47,7 +47,7 @@ class DatabaseWrapper(context: Context) {
 
     fun getNonEmptyCountries() = _db.countryDao().getAllNonEmpty()
 
-    fun getRegions(countryName: String) = _db.regionDao().getAll(countryName)
+    fun getRegions(countryName: String) = _db.regionDao().getAllInCountry(countryName)
 
     fun getNonEmptyRegions() = _db.regionDao().getAllNonEmpty()
 
@@ -55,7 +55,7 @@ class DatabaseWrapper(context: Context) {
 
     fun getRegionComments(regionId: Int) = _db.regionCommentDao().getAll(regionId)
 
-    fun getSectors(regionId: Int) = _db.sectorDao().getAll(regionId)
+    fun getSectors(regionId: Int) = _db.sectorDao().getAllInRegion(regionId)
 
     fun getSector(sectorId: Int) = _db.sectorDao().getSector(sectorId)
 

@@ -30,7 +30,7 @@ interface RegionDao {
     val all: List<Region>
 
     @Query("$SELECT_REGIONS WHERE Region.country = :countryName")
-    fun getAll(countryName: String): List<Region>
+    fun getAllInCountry(countryName: String): List<Region>
 
     @Query("$SELECT_REGIONS $VIA_REGIONS_SECTORS $VIA_REGIONS_COUNTRY $ORDERED_BY_COUNTRY")
     fun getAllNonEmpty(): List<Region>
