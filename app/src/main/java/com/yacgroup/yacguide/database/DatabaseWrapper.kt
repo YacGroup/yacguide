@@ -173,6 +173,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getPartners() = _db.partnerDao().all
 
+    fun getPartner(partnerId: Int) = _db.partnerDao().getPartner(partnerId)
+
     fun getPartnerId(partnerName: String) = _db.partnerDao().getId(partnerName)
 
     fun getPartnerIds(partnerNames: List<String>) = partnerNames.map { _db.partnerDao().getId(it) }
