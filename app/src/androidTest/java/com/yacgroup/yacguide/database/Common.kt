@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 class TestDB {
 
     companion object {
+        const val INVALID_NAME = "???"
         const val INVALID_ID = 42
 
         val COUNTRIES = listOf(
