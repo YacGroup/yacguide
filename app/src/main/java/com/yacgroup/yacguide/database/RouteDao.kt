@@ -26,6 +26,7 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_PROTECTION
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_QUALITY
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
@@ -41,6 +42,9 @@ interface RouteDao {
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY WHERE QualityAvg.quality <= :maxQualityId")
     fun getAllByQuality(maxQualityId: Int): List<Route>
 
+    @Query("$SELECT_ROUTES $VIA_ROUTES_PROTECTION WHERE ProtectionAvg.protection <= :maxProtectionId")
+    fun getAllByProtection(maxProtectionId: Int): List<Route>
+
     @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
     fun getAllForStyle(styleId: Int): List<Route>
 
@@ -52,6 +56,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInCountry(countryName: String, maxQualityId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_PROTECTION $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND ProtectionAvg.protection <= :maxProtectionId")
+    fun getAllByProtectionInCountry(countryName: String, maxProtectionId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION $VIA_ROUTES_ASCENDS WHERE Region.country = :countryName AND Ascend.styleId = :styleId $ORDERED_BY_REGION")
     fun getAllInCountryForStyle(countryName: String, styleId: Int): List<Route>
@@ -65,6 +72,9 @@ interface RouteDao {
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInRegion(regionId: Int, maxQualityId: Int): List<Route>
 
+    @Query("$SELECT_ROUTES $VIA_ROUTES_PROTECTION $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND ProtectionAvg.protection <= :maxProtectionId")
+    fun getAllByProtectionInRegion(regionId: Int, maxProtectionId: Int): List<Route>
+
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_ROUTES_ASCENDS WHERE Sector.parentId = :regionId AND Ascend.styleId = :styleId $ORDERED_BY_SECTOR")
     fun getAllInRegionForStyle(regionId: Int, styleId: Int): List<Route>
 
@@ -77,6 +87,9 @@ interface RouteDao {
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInSector(sectorId: Int, maxQualityId: Int): List<Route>
 
+    @Query("$SELECT_ROUTES $VIA_ROUTES_PROTECTION $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId AND ProtectionAvg.protection <= :maxProtectionId")
+    fun getAllByProtectionInSector(sectorId: Int, maxProtectionId: Int): List<Route>
+
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROUTES_ASCENDS WHERE Rock.parentId = :sectorId AND Ascend.styleId = :styleId $ORDERED_BY_ROCK")
     fun getAllInSectorForStyle(sectorId: Int, styleId: Int): List<Route>
 
@@ -88,6 +101,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY WHERE Route.parentId = :rockId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityAtRock(rockId: Int, maxQualityId: Int): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_PROTECTION WHERE Route.parentId = :rockId AND ProtectionAvg.protection <= :maxProtectionId")
+    fun getAllByProtectionAtRock(rockId: Int, maxProtectionId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_ASCENDS WHERE Route.parentId = :rockId AND Ascend.styleId = :styleId $ORDERED_BY_ROUTE")
     fun getAllAtRockForStyle(rockId: Int, styleId: Int): List<Route>
