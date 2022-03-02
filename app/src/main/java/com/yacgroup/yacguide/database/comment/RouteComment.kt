@@ -35,11 +35,12 @@ class RouteComment {
 
     companion object {
 
+        const val NO_INFO_ID = 0
+
         // This needs to be in sync with sandsteinklettern.de!
-        const val QUALITY_NONE = 0
         val QUALITY_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
-                put(QUALITY_NONE, "keine Angabe")
+                put(NO_INFO_ID, "keine Angabe")
                 put(1, "sehr lohnend")
                 put(2, "lohnend")
                 put(3, "ok")
@@ -79,10 +80,9 @@ class RouteComment {
         }
 
         // This needs to be in sync with sandsteinklettern.de!
-        const val PROTECTION_NONE = 0
         val PROTECTION_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
-                put(PROTECTION_NONE, "keine Angabe")
+                put(NO_INFO_ID, "keine Angabe")
                 put(1, "übersichert")
                 put(2, "gut")
                 put(3, "ausreichend")
@@ -93,8 +93,9 @@ class RouteComment {
         }
 
         // This needs to be in sync with sandsteinklettern.de!
-        val WETNESS_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
+        val DRYING_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
+                put(NO_INFO_ID, "keine Angabe")
                 put(1, "Regenweg")
                 put(2, "schnellabtrocknend")
                 put(3, "normal abtrocknend")

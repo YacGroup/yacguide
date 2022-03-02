@@ -43,8 +43,9 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
     private var _filterName: String = ""
-    private var _filterMaxQualityId: Int = RouteComment.QUALITY_NONE
-    private var _filterMaxProtectionId: Int = RouteComment.PROTECTION_NONE
+    private var _filterMaxQualityId: Int = RouteComment.NO_INFO_ID
+    private var _filterMaxProtectionId: Int = RouteComment.NO_INFO_ID
+    private var _filterMaxDryingId: Int = RouteComment.NO_INFO_ID
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
@@ -53,8 +54,9 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
-        _filterMaxQualityId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RouteComment.QUALITY_NONE)
-        _filterMaxProtectionId = intent.getIntExtra(IntentConstants.FILTER_PROTECTION, RouteComment.PROTECTION_NONE)
+        _filterMaxQualityId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RouteComment.NO_INFO_ID)
+        _filterMaxProtectionId = intent.getIntExtra(IntentConstants.FILTER_PROTECTION, RouteComment.NO_INFO_ID)
+        _filterMaxDryingId = intent.getIntExtra(IntentConstants.FILTER_DRYING, RouteComment.NO_INFO_ID)
         _filterProjects = intent.getBooleanExtra(IntentConstants.FILTER_PROJECTS, false)
         _filterBotches = intent.getBooleanExtra(IntentConstants.FILTER_BOTCHES, false)
 
@@ -69,6 +71,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getByName = { db.getRoutesByName(_filterName) },
                 getByQuality = { db.getRoutesByQuality(_filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtection(_filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDrying(_filterMaxDryingId) },
                 getProjects = { db.getProjectedRoutes() },
                 getBotches = { db.getBotchedRoutes() }
             ),
@@ -77,6 +80,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
                 getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentName, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForCountry(activityLevel.parentName, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForCountry(activityLevel.parentName, _filterMaxDryingId) },
                 getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentName) },
                 getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentName) }
             ),
@@ -85,6 +89,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForRegion(activityLevel.parentId, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForRegion(activityLevel.parentId, _filterMaxDryingId) },
                 getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentId) }
             ),
@@ -93,6 +98,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForSector(activityLevel.parentId, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForSector(activityLevel.parentId, _filterMaxDryingId) },
                 getProjects = { db.getProjectedRoutesForSector(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForSector(activityLevel.parentId) }
             ),
@@ -101,6 +107,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
                 getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForRock(activityLevel.parentId, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForRock(activityLevel.parentId, _filterMaxDryingId) },
                 getProjects = { db.getProjectedRoutesForRock(activityLevel.parentId) },
                 getBotches = { db.getBotchedRoutesForRock(activityLevel.parentId) }
             )
@@ -184,22 +191,27 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         } else if (_filterBotches) {
             routeGetter.getBotches()
         } else if (_filterName.isEmpty()
-            && _filterMaxQualityId == RouteComment.QUALITY_NONE
-            && _filterMaxProtectionId == RouteComment.PROTECTION_NONE) {
+            && _filterMaxQualityId == RouteComment.NO_INFO_ID
+            && _filterMaxProtectionId == RouteComment.NO_INFO_ID
+            && _filterMaxDryingId == RouteComment.NO_INFO_ID) {
             routeGetter.getAll()
         } else {
             val nameFilteredRoutes =
                 if (_filterName.isEmpty()) null
                 else routeGetter.getByName().toSet()
             val qualityFilteredRoutes =
-                if (_filterMaxQualityId == RouteComment.QUALITY_NONE) null
+                if (_filterMaxQualityId == RouteComment.NO_INFO_ID) null
                 else routeGetter.getByQuality().toSet()
             val protectionFilteredRoutes =
-                if (_filterMaxProtectionId == RouteComment.PROTECTION_NONE) null
+                if (_filterMaxProtectionId == RouteComment.NO_INFO_ID) null
                 else routeGetter.getByProtection().toSet()
+            val dryingFilteredRoutes =
+                if (_filterMaxDryingId == RouteComment.NO_INFO_ID) null
+                else routeGetter.getByDrying().toSet()
             listOfNotNull(nameFilteredRoutes,
                           qualityFilteredRoutes,
-                          protectionFilteredRoutes).reduce {
+                          protectionFilteredRoutes,
+                          dryingFilteredRoutes).reduce {
                     intersection, filteredRoutes -> intersection.intersect(filteredRoutes)
             }.toList()
         }
@@ -247,6 +259,7 @@ class RouteGetter(
     val getByName: () -> List<Route>,
     val getByQuality: () -> List<Route>,
     val getByProtection: () -> List<Route>,
+    val getByDrying: () -> List<Route>,
     val getProjects: () -> List<Route>,
     val getBotches: () -> List<Route>
 )

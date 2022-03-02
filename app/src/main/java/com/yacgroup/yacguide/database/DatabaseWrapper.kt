@@ -97,6 +97,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByProtectionForRock(rockId: Int, maxProtectionId: Int) = _db.routeDao().getAllByProtectionAtRock(rockId, maxProtectionId)
 
+    fun getRoutesByDryingForRock(rockId: Int, maxDryingId: Int) = _db.routeDao().getAllByDryingAtRock(rockId, maxDryingId)
+
     fun getProjectedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRock(rockId: Int) = _db.routeDao().getAllAtRockForStyle(rockId, AscendStyle.eBOTCHED.id)
@@ -108,6 +110,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutesByQualityForSector(sectorId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityInSector(sectorId, maxQualityId)
 
     fun getRoutesByProtectionForSector(sectorId: Int, maxProtectionId: Int) = _db.routeDao().getAllByProtectionInSector(sectorId, maxProtectionId)
+
+    fun getRoutesByDryingForSector(sectorId: Int, maxDryingId: Int) = _db.routeDao().getAllByDryingInSector(sectorId, maxDryingId)
 
     fun getProjectedRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSectorForStyle(sectorId, AscendStyle.ePROJECT.id)
 
@@ -121,6 +125,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByProtectionForRegion(regionId: Int, maxProtectionId: Int) = _db.routeDao().getAllByProtectionInRegion(regionId, maxProtectionId)
 
+    fun getRoutesByDryingForRegion(regionId: Int, maxDryingId: Int) = _db.routeDao().getAllByDryingInRegion(regionId, maxDryingId)
+
     fun getProjectedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForRegion(regionId: Int) = _db.routeDao().getAllInRegionForStyle(regionId, AscendStyle.eBOTCHED.id)
@@ -133,6 +139,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByProtectionForCountry(countryName: String, maxProtectionId: Int) = _db.routeDao().getAllByProtectionInCountry(countryName, maxProtectionId)
 
+    fun getRoutesByDryingForCountry(countryName: String, maxDryingId: Int) = _db.routeDao().getAllByDryingInCountry(countryName, maxDryingId)
+
     fun getProjectedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.ePROJECT.id)
 
     fun getBotchedRoutesForCountry(countryName: String) = _db.routeDao().getAllInCountryForStyle(countryName, AscendStyle.eBOTCHED.id)
@@ -144,6 +152,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutesByQuality(maxQualityId: Int) = _db.routeDao().getAllByQuality(maxQualityId)
 
     fun getRoutesByProtection(maxProtectionId: Int) = _db.routeDao().getAllByProtection(maxProtectionId)
+
+    fun getRoutesByDrying(maxDryingId: Int) = _db.routeDao().getAllByDrying(maxDryingId)
 
     fun getProjectedRoutes() = _db.routeDao().getAllForStyle(AscendStyle.ePROJECT.id)
 

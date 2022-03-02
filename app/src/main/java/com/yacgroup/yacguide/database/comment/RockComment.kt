@@ -32,12 +32,12 @@ class RockComment {
 
     companion object {
 
-        const val RELEVANCE_NONE = 0
+        const val NO_INFO_ID = 0
 
         // This needs to be in sync with sandsteinklettern.de!
         val RELEVANCE_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
-                put(RELEVANCE_NONE, "keine Angabe")
+                put(NO_INFO_ID, "keine Angabe")
                 put(1, "Hauptgipfel")
                 put(2, "lohnender Gipfel")
                 put(3, "Durchschnittsgipfel")
