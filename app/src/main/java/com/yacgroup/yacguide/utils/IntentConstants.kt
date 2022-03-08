@@ -26,6 +26,7 @@ object IntentConstants {
     const val FILTER_NAME = "FilterName"
     const val FILTER_RELEVANCE = "FilterRelevance"
     const val FILTER_PROTECTION = "FilterProtection"
+    const val FILTER_DRYING = "FilterDrying"
     const val FILTER_PROJECTS = "FilterProjects"
     const val FILTER_BOTCHES = "FilterBotches"
 

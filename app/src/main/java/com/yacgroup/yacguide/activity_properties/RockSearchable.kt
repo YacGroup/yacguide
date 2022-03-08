@@ -31,7 +31,7 @@ import com.yacgroup.yacguide.utils.FilterSpinnerListener
 
 class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
 
-    private var _maxRelevanceId: Int = RockComment.RELEVANCE_NONE
+    private var _maxRelevanceId: Int = RockComment.NO_INFO_ID
 
     override fun getMenuGroupId() = R.id.group_rock_search
 
@@ -44,7 +44,7 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
 
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val rockName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
-            if (rockName.isEmpty() && _maxRelevanceId == RockComment.RELEVANCE_NONE) {
+            if (rockName.isEmpty() && _maxRelevanceId == RockComment.NO_INFO_ID) {
                 Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
             } else {
                 _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {

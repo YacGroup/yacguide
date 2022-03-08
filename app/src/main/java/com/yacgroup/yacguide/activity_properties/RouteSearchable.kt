@@ -31,8 +31,9 @@ import com.yacgroup.yacguide.utils.IntentConstants
 
 class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
 
-    private var _maxQualityId: Int = RouteComment.QUALITY_NONE
-    private var _maxProtectionId: Int = RouteComment.PROTECTION_NONE
+    private var _maxQualityId: Int = RouteComment.NO_INFO_ID
+    private var _maxProtectionId: Int = RouteComment.NO_INFO_ID
+    private var _maxDryingId: Int = RouteComment.NO_INFO_ID
 
     override fun getMenuGroupId() = R.id.group_route_search
 
@@ -43,12 +44,14 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
 
         FilterSpinner(searchDialog, R.id.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
+        FilterSpinner(searchDialog, R.id.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
 
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val routeName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
             if (routeName.isEmpty()
-                && _maxQualityId == RouteComment.QUALITY_NONE
-                && _maxProtectionId == RouteComment.PROTECTION_NONE) {
+                && _maxQualityId == RouteComment.NO_INFO_ID
+                && _maxProtectionId == RouteComment.NO_INFO_ID
+                && _maxDryingId == RouteComment.NO_INFO_ID) {
                     Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
             } else {
                 _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
@@ -58,6 +61,7 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
                     putExtra(IntentConstants.FILTER_NAME, routeName)
                     putExtra(IntentConstants.FILTER_RELEVANCE, _maxQualityId)
                     putExtra(IntentConstants.FILTER_PROTECTION, _maxProtectionId)
+                    putExtra(IntentConstants.FILTER_DRYING, _maxDryingId)
                 })
                 searchDialog.dismiss()
             }
@@ -72,6 +76,7 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         when (resourceId) {
             R.id.routeQualitySpinner -> _maxQualityId = selectionKey
             R.id.routeProtectionSpinner -> _maxProtectionId = selectionKey
+            R.id.routeDryingSpinner -> _maxDryingId = selectionKey
         }
     }
 }

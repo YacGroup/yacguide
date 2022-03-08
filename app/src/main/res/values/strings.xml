@@ -82,6 +82,7 @@
     <string name="rock_relevance_filter">Bedeutung: mindestens</string>
     <string name="route_quality_filter">Qualität: mindestens</string>
     <string name="route_protection_filter">Absicherung: mindestens</string>
+    <string name="route_drying_filter">Abtrocknung: mindestens</string>
 
     <!-- Toasts -->
     <string name="successful_refresh">Aktualisierung erfolgreich</string>

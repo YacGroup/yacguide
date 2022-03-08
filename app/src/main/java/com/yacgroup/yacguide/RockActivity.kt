@@ -40,13 +40,13 @@ class RockActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialSummits: Boolean = false
     private var _rockNamePart: String = ""
     private var _filterName: String = ""
-    private var _filterMaxRelevanceId: Int = RockComment.RELEVANCE_NONE
+    private var _filterMaxRelevanceId: Int = RockComment.NO_INFO_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
-        _filterMaxRelevanceId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RockComment.RELEVANCE_NONE)
+        _filterMaxRelevanceId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RockComment.NO_INFO_ID)
 
         properties = arrayListOf(
             RouteSearchable(this),
@@ -136,7 +136,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
                 if (_filterName.isEmpty()) null
                 else rockGetter.getByName().toSet()
             val relevanceFilteredRocks =
-                if (_filterMaxRelevanceId == RockComment.RELEVANCE_NONE) null
+                if (_filterMaxRelevanceId == RockComment.NO_INFO_ID) null
                 else rockGetter.getByRelevance().toSet()
             listOfNotNull(nameFilteredRocks, relevanceFilteredRocks).reduce {
                     intersection, filteredRocks -> intersection.intersect(filteredRocks)

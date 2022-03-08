@@ -117,7 +117,7 @@ abstract class TableActivity : BaseNavigationActivity() {
                     _addCommentPropertyView(it, R.string.route_quality, RouteComment.QUALITY_MAP, comment.qualityId)
                     _addCommentPropertyView(it, R.string.grade, RouteComment.GRADE_MAP, comment.gradeId)
                     _addCommentPropertyView(it, R.string.protection, RouteComment.PROTECTION_MAP, comment.securityId)
-                    _addCommentPropertyView(it, R.string.drying, RouteComment.WETNESS_MAP, comment.wetnessId)
+                    _addCommentPropertyView(it, R.string.drying, RouteComment.DRYING_MAP, comment.wetnessId)
                     _addCommentTextView(it, comment.text.orEmpty())
                 }
                 it.addView(WidgetUtils.createHorizontalLine(this, 1))
@@ -159,7 +159,7 @@ abstract class TableActivity : BaseNavigationActivity() {
     }
 
     private fun _addCommentPropertyView(layout: LinearLayout, titleRes: Int, propertyMap: Map<Int, String>, propertyKey: Int) {
-        if (propertyMap.containsKey(propertyKey)) {
+        if (propertyMap.containsKey(propertyKey) && propertyKey > RouteComment.NO_INFO_ID) {
             _addCommentTextView(layout, getString(titleRes), propertyMap[propertyKey].orEmpty())
         }
     }
