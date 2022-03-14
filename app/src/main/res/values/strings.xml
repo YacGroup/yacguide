@@ -80,6 +80,8 @@
     <string name="route_search">Weg suchen</string>
     <string name="partner_search">Partner suchen</string>
     <string name="rock_relevance_filter">Bedeutung: mindestens</string>
+    <string name="route_grade_filter">Schwierigkeitseinschätzung:</string>
+    <string name="route_grade_filter_to">bis</string>
     <string name="route_quality_filter">Qualität: mindestens</string>
     <string name="route_protection_filter">Absicherung: mindestens</string>
     <string name="route_drying_filter">Abtrocknung: mindestens</string>

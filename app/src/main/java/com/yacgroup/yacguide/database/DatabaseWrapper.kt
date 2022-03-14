@@ -93,6 +93,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForRock(rockId: Int, namePart: String) = _db.routeDao().getAllByNameAtRock(rockId, "%$namePart%")
 
+    fun getRoutesByGradeForRock(rockId: Int, minGradeId: Int, maxGradeId: Int) = _db.routeDao().getAllByGradeAtRock(rockId, minGradeId, maxGradeId)
+
     fun getRoutesByQualityForRock(rockId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityAtRock(rockId, maxQualityId)
 
     fun getRoutesByProtectionForRock(rockId: Int, maxProtectionId: Int) = _db.routeDao().getAllByProtectionAtRock(rockId, maxProtectionId)
@@ -106,6 +108,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutesForSector(sectorId: Int) = _db.routeDao().getAllInSector(sectorId)
 
     fun getRoutesByNameForSector(sectorId: Int, namePart: String) = _db.routeDao().getAllByNameInSector(sectorId, "%$namePart%")
+
+    fun getRoutesByGradeForSector(sectorId: Int, minGradeId: Int, maxGradeId: Int) = _db.routeDao().getAllByGradeInSector(sectorId, minGradeId, maxGradeId)
 
     fun getRoutesByQualityForSector(sectorId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityInSector(sectorId, maxQualityId)
 
@@ -121,6 +125,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForRegion(regionId: Int, namePart: String) = _db.routeDao().getAllByNameInRegion(regionId, "%$namePart%")
 
+    fun getRoutesByGradeForRegion(regionId: Int, minGradeId: Int, maxGradeId: Int) = _db.routeDao().getAllByGradeInRegion(regionId, minGradeId, maxGradeId)
+
     fun getRoutesByQualityForRegion(regionId: Int, maxQualityId: Int) = _db.routeDao().getAllByQualityInRegion(regionId, maxQualityId)
 
     fun getRoutesByProtectionForRegion(regionId: Int, maxProtectionId: Int) = _db.routeDao().getAllByProtectionInRegion(regionId, maxProtectionId)
@@ -135,6 +141,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRoutesByNameForCountry(countryName: String, namePart: String) = _db.routeDao().getAllByNameInCountry(countryName, "%$namePart%")
 
+    fun getRoutesByGradeForCountry(countryName: String, minGradeId: Int, maxGradeId: Int) = _db.routeDao().getAllByGradeInCountry(countryName, minGradeId, maxGradeId)
+
     fun getRoutesByQualityForCountry(countryName: String, maxQualityId: Int) = _db.routeDao().getAllByQualityInCountry(countryName, maxQualityId)
 
     fun getRoutesByProtectionForCountry(countryName: String, maxProtectionId: Int) = _db.routeDao().getAllByProtectionInCountry(countryName, maxProtectionId)
@@ -148,6 +156,8 @@ class DatabaseWrapper(context: Context) {
     fun getRoutes() = _db.routeDao().all
 
     fun getRoutesByName(namePart: String) = _db.routeDao().getAllByName("%$namePart%")
+
+    fun getRoutesByGrade(minGradeId: Int, maxGradeId: Int) = _db.routeDao().getAllByGrade(minGradeId, maxGradeId)
 
     fun getRoutesByQuality(maxQualityId: Int) = _db.routeDao().getAllByQuality(maxQualityId)
 

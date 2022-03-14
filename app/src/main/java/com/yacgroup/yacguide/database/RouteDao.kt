@@ -27,6 +27,7 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ROUTES
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROCKS_SECTOR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ASCENDS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_DRYING
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_GRADE
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_PROTECTION
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_QUALITY
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
@@ -39,6 +40,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES WHERE LOWER(Route.name) LIKE LOWER(:name)")
     fun getAllByName(name: String): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_GRADE WHERE GradeAvg.grade BETWEEN :minGradeId AND :maxGradeId")
+    fun getAllByGrade(minGradeId: Int, maxGradeId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY WHERE QualityAvg.quality <= :maxQualityId")
     fun getAllByQuality(maxQualityId: Int): List<Route>
@@ -58,6 +62,9 @@ interface RouteDao {
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND LOWER(Route.name) LIKE LOWER(:name) $ORDERED_BY_REGION")
     fun getAllByNameInCountry(countryName: String, name: String): List<Route>
 
+    @Query("$SELECT_ROUTES $VIA_ROUTES_GRADE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND GradeAvg.grade BETWEEN :minGradeId AND :maxGradeId")
+    fun getAllByGradeInCountry(countryName: String, minGradeId: Int, maxGradeId: Int): List<Route>
+
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR $VIA_SECTORS_REGION WHERE Region.country = :countryName AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInCountry(countryName: String, maxQualityId: Int): List<Route>
 
@@ -75,6 +82,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND LOWER(Route.name) LIKE LOWER(:name) $ORDERED_BY_SECTOR")
     fun getAllByNameInRegion(regionId: Int, name: String): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_GRADE $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND GradeAvg.grade BETWEEN :minGradeId AND :maxGradeId")
+    fun getAllByGradeInRegion(regionId: Int, minGradeId: Int, maxGradeId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK $VIA_ROCKS_SECTOR WHERE Sector.parentId = :regionId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInRegion(regionId: Int, maxQualityId: Int): List<Route>
@@ -94,6 +104,9 @@ interface RouteDao {
     @Query("$SELECT_ROUTES $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId AND LOWER(Route.name) LIKE LOWER(:name) $ORDERED_BY_ROCK")
     fun getAllByNameInSector(sectorId: Int, name: String): List<Route>
 
+    @Query("$SELECT_ROUTES $VIA_ROUTES_GRADE $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId AND GradeAvg.grade BETWEEN :minGradeId AND :maxGradeId")
+    fun getAllByGradeInSector(sectorId: Int, minGradeId: Int, maxGradeId: Int): List<Route>
+
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY $VIA_ROUTES_ROCK WHERE Rock.parentId = :sectorId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityInSector(sectorId: Int, maxQualityId: Int): List<Route>
 
@@ -111,6 +124,9 @@ interface RouteDao {
 
     @Query("$SELECT_ROUTES WHERE Route.parentId = :rockId AND LOWER(Route.name) LIKE LOWER(:name) $ORDERED_BY_ROUTE")
     fun getAllByNameAtRock(rockId: Int, name: String): List<Route>
+
+    @Query("$SELECT_ROUTES $VIA_ROUTES_GRADE WHERE Route.parentId = :rockId AND GradeAvg.grade BETWEEN :minGradeId AND :maxGradeId")
+    fun getAllByGradeAtRock(rockId: Int, minGradeId: Int, maxGradeId: Int): List<Route>
 
     @Query("$SELECT_ROUTES $VIA_ROUTES_QUALITY WHERE Route.parentId = :rockId AND QualityAvg.quality <= :maxQualityId")
     fun getAllByQualityAtRock(rockId: Int, maxQualityId: Int): List<Route>

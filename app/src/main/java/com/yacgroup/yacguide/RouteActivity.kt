@@ -43,6 +43,8 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private var _onlyOfficialRoutes: Boolean = false
     private var _routeNamePart: String = ""
     private var _filterName: String = ""
+    private var _filterMinGradeId: Int = RouteComment.NO_INFO_ID
+    private var _filterMaxGradeId: Int = RouteComment.NO_INFO_ID
     private var _filterMaxQualityId: Int = RouteComment.NO_INFO_ID
     private var _filterMaxProtectionId: Int = RouteComment.NO_INFO_ID
     private var _filterMaxDryingId: Int = RouteComment.NO_INFO_ID
@@ -54,6 +56,8 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         super.onCreate(savedInstanceState)
 
         _filterName = intent.getStringExtra(IntentConstants.FILTER_NAME).orEmpty()
+        _filterMinGradeId = intent.getIntExtra(IntentConstants.FILTER_GRADE_FROM, RouteComment.NO_INFO_ID)
+        _filterMaxGradeId = intent.getIntExtra(IntentConstants.FILTER_GRADE_TO, RouteComment.NO_INFO_ID)
         _filterMaxQualityId = intent.getIntExtra(IntentConstants.FILTER_RELEVANCE, RouteComment.NO_INFO_ID)
         _filterMaxProtectionId = intent.getIntExtra(IntentConstants.FILTER_PROTECTION, RouteComment.NO_INFO_ID)
         _filterMaxDryingId = intent.getIntExtra(IntentConstants.FILTER_DRYING, RouteComment.NO_INFO_ID)
@@ -69,6 +73,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eCountry to RouteGetter(
                 getAll = { db.getRoutes() },
                 getByName = { db.getRoutesByName(_filterName) },
+                getByGrade = { db.getRoutesByGrade(_filterMinGradeId, _filterMaxGradeId) },
                 getByQuality = { db.getRoutesByQuality(_filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtection(_filterMaxProtectionId) },
                 getByDrying = { db.getRoutesByDrying(_filterMaxDryingId) },
@@ -78,6 +83,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eRegion to RouteGetter(
                 getAll = { db.getRoutesForCountry(activityLevel.parentName) },
                 getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
+                getByGrade = { db.getRoutesByGradeForCountry(activityLevel.parentName, _filterMinGradeId, _filterMaxGradeId) },
                 getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentName, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForCountry(activityLevel.parentName, _filterMaxProtectionId) },
                 getByDrying = { db.getRoutesByDryingForCountry(activityLevel.parentName, _filterMaxDryingId) },
@@ -87,6 +93,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eSector to RouteGetter(
                 getAll = { db.getRoutesForRegion(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
+                getByGrade = { db.getRoutesByGradeForRegion(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
                 getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForRegion(activityLevel.parentId, _filterMaxProtectionId) },
                 getByDrying = { db.getRoutesByDryingForRegion(activityLevel.parentId, _filterMaxDryingId) },
@@ -96,6 +103,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eRock to RouteGetter(
                 getAll = { db.getRoutesForSector(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
+                getByGrade = { db.getRoutesByGradeForSector(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
                 getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForSector(activityLevel.parentId, _filterMaxProtectionId) },
                 getByDrying = { db.getRoutesByDryingForSector(activityLevel.parentId, _filterMaxDryingId) },
@@ -105,6 +113,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             ClimbingObjectLevel.eRoute to RouteGetter(
                 getAll = { db.getRoutesForRock(activityLevel.parentId) },
                 getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
+                getByGrade = { db.getRoutesByGradeForRock(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
                 getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentId, _filterMaxQualityId) },
                 getByProtection = { db.getRoutesByProtectionForRock(activityLevel.parentId, _filterMaxProtectionId) },
                 getByDrying = { db.getRoutesByDryingForRock(activityLevel.parentId, _filterMaxDryingId) },
@@ -190,25 +199,37 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             routeGetter.getProjects()
         } else if (_filterBotches) {
             routeGetter.getBotches()
-        } else if (_filterName.isEmpty()
-            && _filterMaxQualityId == RouteComment.NO_INFO_ID
-            && _filterMaxProtectionId == RouteComment.NO_INFO_ID
-            && _filterMaxDryingId == RouteComment.NO_INFO_ID) {
+        } else if (_noNameFilter()
+                && _noGradeFilter()
+                && _noQualityFilter()
+                && _noProtectionFilter()
+                && _noDryingFilter()) {
             routeGetter.getAll()
         } else {
             val nameFilteredRoutes =
-                if (_filterName.isEmpty()) null
+                if (_noNameFilter()) null
                 else routeGetter.getByName().toSet()
+            val gradeFilteredRoutes =
+                if (_noGradeFilter()) null
+                else {
+                    _filterMaxGradeId =
+                        if (_filterMaxGradeId == RouteComment.NO_INFO_ID)
+                            RouteComment.GRADE_MAP.maxOf { it.key }
+                        else
+                            _filterMaxGradeId
+                    routeGetter.getByGrade().toSet()
+                }
             val qualityFilteredRoutes =
-                if (_filterMaxQualityId == RouteComment.NO_INFO_ID) null
+                if (_noQualityFilter()) null
                 else routeGetter.getByQuality().toSet()
             val protectionFilteredRoutes =
-                if (_filterMaxProtectionId == RouteComment.NO_INFO_ID) null
+                if (_noProtectionFilter()) null
                 else routeGetter.getByProtection().toSet()
             val dryingFilteredRoutes =
-                if (_filterMaxDryingId == RouteComment.NO_INFO_ID) null
+                if (_noDryingFilter()) null
                 else routeGetter.getByDrying().toSet()
             listOfNotNull(nameFilteredRoutes,
+                          gradeFilteredRoutes,
                           qualityFilteredRoutes,
                           protectionFilteredRoutes,
                           dryingFilteredRoutes).reduce {
@@ -252,11 +273,19 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, routeName)
         })
     }
+
+    private inline fun _noNameFilter() = _filterName.isEmpty()
+    private inline fun _noGradeFilter() = _filterMinGradeId == RouteComment.NO_INFO_ID
+                                       && _filterMaxGradeId == RouteComment.NO_INFO_ID
+    private inline fun _noQualityFilter() = _filterMaxQualityId == RouteComment.NO_INFO_ID
+    private inline fun _noProtectionFilter() = _filterMaxProtectionId == RouteComment.NO_INFO_ID
+    private inline fun _noDryingFilter() = _filterMaxDryingId == RouteComment.NO_INFO_ID
 }
 
 class RouteGetter(
     val getAll: () -> List<Route>,
     val getByName: () -> List<Route>,
+    val getByGrade: () -> List<Route>,
     val getByQuality: () -> List<Route>,
     val getByProtection: () -> List<Route>,
     val getByDrying: () -> List<Route>,

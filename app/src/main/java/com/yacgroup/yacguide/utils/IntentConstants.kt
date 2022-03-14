@@ -25,6 +25,8 @@ object IntentConstants {
     const val CLIMBING_OBJECT_PARENT_NAME = "ClimbingObjectParentName"
     const val FILTER_NAME = "FilterName"
     const val FILTER_RELEVANCE = "FilterRelevance"
+    const val FILTER_GRADE_FROM = "FilterGradeFrom"
+    const val FILTER_GRADE_TO = "FilterGradeTo"
     const val FILTER_PROTECTION = "FilterProtection"
     const val FILTER_DRYING = "FilterDrying"
     const val FILTER_PROJECTS = "FilterProjects"

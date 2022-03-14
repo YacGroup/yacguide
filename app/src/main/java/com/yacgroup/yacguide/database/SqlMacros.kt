@@ -71,6 +71,7 @@ class SqlMacros {
         const val VIA_COUNTRIES_REGIONS = "JOIN Region ON Region.country = Country.name"
 
         const val VIA_ROCKS_RELEVANCE = "JOIN (SELECT RockComment.rockId, ROUND(AVG(RockComment.qualityId)) AS relevance FROM RockComment WHERE RockComment.qualityId > 0 GROUP BY RockComment.rockId) RelevanceAvg ON RelevanceAvg.rockId = Rock.id"
+        const val VIA_ROUTES_GRADE = "JOIN (SELECT RouteComment.routeId, ROUND(AVG(RouteComment.gradeId)) AS grade FROM RouteComment WHERE RouteComment.gradeId > 0 GROUP BY RouteComment.routeId) GradeAvg ON GradeAvg.routeId = Route.id"
         const val VIA_ROUTES_QUALITY = "JOIN (SELECT RouteComment.routeId, ROUND(AVG(RouteComment.qualityId)) AS quality FROM RouteComment WHERE RouteComment.qualityId > 0 GROUP BY RouteComment.routeId) QualityAvg ON QualityAvg.routeId = Route.id"
         const val VIA_ROUTES_PROTECTION = "JOIN (SELECT RouteComment.routeId, ROUND(AVG(RouteComment.securityId)) AS protection FROM RouteComment WHERE RouteComment.securityId > 0 GROUP BY RouteComment.routeId) ProtectionAvg ON ProtectionAvg.routeId = Route.id"
         const val VIA_ROUTES_DRYING = "JOIN (SELECT RouteComment.routeId, ROUND(AVG(RouteComment.wetnessId)) AS drying FROM RouteComment WHERE RouteComment.wetnessId > 0 GROUP BY RouteComment.routeId) DryingAvg ON DryingAvg.routeId = Route.id"
