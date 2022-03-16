@@ -52,6 +52,7 @@ class RouteComment {
         // This needs to be in sync with sandsteinklettern.de!
         val GRADE_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
+                put(NO_INFO_ID, "k.A.")
                 put(1, "I")
                 put(2, "II")
                 put(3, "III")

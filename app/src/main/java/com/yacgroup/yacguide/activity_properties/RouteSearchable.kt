@@ -31,6 +31,8 @@ import com.yacgroup.yacguide.utils.IntentConstants
 
 class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
 
+    private var _minGradeId: Int = RouteComment.NO_INFO_ID
+    private var _maxGradeId: Int = RouteComment.NO_INFO_ID
     private var _maxQualityId: Int = RouteComment.NO_INFO_ID
     private var _maxProtectionId: Int = RouteComment.NO_INFO_ID
     private var _maxDryingId: Int = RouteComment.NO_INFO_ID
@@ -42,6 +44,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         searchDialog.setContentView(R.layout.route_search_dialog)
         searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+        FilterSpinner(searchDialog, R.id.routeGradeFromSpinner, RouteComment.GRADE_MAP, this).create()
+        FilterSpinner(searchDialog, R.id.routeGradeToSpinner, RouteComment.GRADE_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
@@ -49,6 +53,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
             val routeName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
             if (routeName.isEmpty()
+                && _minGradeId == RouteComment.NO_INFO_ID
+                && _maxGradeId == RouteComment.NO_INFO_ID
                 && _maxQualityId == RouteComment.NO_INFO_ID
                 && _maxProtectionId == RouteComment.NO_INFO_ID
                 && _maxDryingId == RouteComment.NO_INFO_ID) {
@@ -59,6 +65,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
                     putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
                     putExtra(IntentConstants.FILTER_NAME, routeName)
+                    putExtra(IntentConstants.FILTER_GRADE_FROM, _minGradeId)
+                    putExtra(IntentConstants.FILTER_GRADE_TO, _maxGradeId)
                     putExtra(IntentConstants.FILTER_RELEVANCE, _maxQualityId)
                     putExtra(IntentConstants.FILTER_PROTECTION, _maxProtectionId)
                     putExtra(IntentConstants.FILTER_DRYING, _maxDryingId)
@@ -74,6 +82,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
 
     override fun onFilterSelected(resourceId: Int, selectionKey: Int) {
         when (resourceId) {
+            R.id.routeGradeFromSpinner -> _minGradeId = selectionKey
+            R.id.routeGradeToSpinner -> _maxGradeId = selectionKey
             R.id.routeQualitySpinner -> _maxQualityId = selectionKey
             R.id.routeProtectionSpinner -> _maxProtectionId = selectionKey
             R.id.routeDryingSpinner -> _maxDryingId = selectionKey
