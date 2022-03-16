@@ -26,7 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.IntentConstants
 
-const val TIME_OUT_MS = 3000L
+const val TIME_OUT_MS = 1500L
 
 class LaunchActivity : AppCompatActivity() {
 
