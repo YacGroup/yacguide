@@ -76,8 +76,8 @@ android {
         dev {
             dimension 'default'
             applicationIdSuffix '.dev'
-            versionCode 20220106
-            versionName '20220106'
+            versionCode 20220317
+            versionName '20220317'
         }
     }
     playConfigs {
