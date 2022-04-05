@@ -23,7 +23,7 @@ To create a release tag, do the following steps:
    the corresponding issue or pull request, as shown in the example
    below:
    ```markdown
-   ## Änderungen
+   ## Neuigkeiten und Änderungen
 
    * Zeige alternative Sektor- und and Wegnamen ([#167](https://github.com/YacGroup/yacguide/issues/167))
    * Zeige den Fortschritt während eines Datenbank-Updates ([#106](https://github.com/YacGroup/yacguide/issues/106))
