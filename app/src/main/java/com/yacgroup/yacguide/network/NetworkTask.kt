@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,31 @@
 
 package com.yacgroup.yacguide.network
 
-import android.os.AsyncTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.coroutines.CoroutineContext
 
 class NetworkTask(private val _requestId: NetworkRequestUId,
-                  private val _listener: NetworkListener) : AsyncTask<String, Void, String>() {
+                  private val _listener: NetworkListener) : CoroutineScope {
 
-    override fun doInBackground(vararg urls: String): String? {
-        if (urls.size != 1) {
-            System.err.println("Can only process one url")
-            return null
-        }
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 
-        val connection = URL(urls[0]).openConnection() as HttpURLConnection
+    fun execute(url: String) = launch {
+        val result = _doInBackground(url)
+        _onPostExecute(result)
+    }
 
-        return try {
+    private suspend fun _doInBackground(url: String): String = withContext(Dispatchers.IO) {
+        val connection = URL(url).openConnection() as HttpURLConnection
+
+        return@withContext try {
             connection.inputStream.bufferedReader().readText()
         } catch (e: IOException) {
             System.err.println(e)
@@ -44,7 +51,7 @@ class NetworkTask(private val _requestId: NetworkRequestUId,
         }
     }
 
-    override fun onPostExecute(result: String) {
+    private fun _onPostExecute(result: String) {
         _listener.onNetworkTaskResolved(_requestId, result)
     }
 }

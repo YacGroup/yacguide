@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.list_adapters.AscentViewAdapter
 import com.yacgroup.yacguide.utils.*
-import kotlinx.android.synthetic.main.list_data_item.*
 
 class DescriptionActivity : TableActivity() {
 
