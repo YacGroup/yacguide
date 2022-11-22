@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Pätzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,9 @@ object ParserUtils {
         val matcher = Pattern.compile("&#([0-9]+);").matcher(text)
         while (matcher.find()) {
             val charUnicode: Int = try {
-                Integer.parseInt(matcher.group(1))
+                Integer.parseInt(matcher.group(1) ?: "")
             } catch (e: NumberFormatException) {
-                783 // "?"
+                783 // = "?"
             }
 
             matcher.appendReplacement(buffer, charUnicode.toChar().toString())

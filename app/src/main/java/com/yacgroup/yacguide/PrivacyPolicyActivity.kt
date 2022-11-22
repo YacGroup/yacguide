@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2020 Christian Sommer
+ * Copyright (C) 2020 Christian Sommer,
+ *               2022 Axel Pätzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item?.itemId == android.R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
             return true
         }
