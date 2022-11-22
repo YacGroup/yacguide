@@ -29,6 +29,7 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.*
 
+
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
@@ -42,8 +43,6 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
         val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
         _ascent = _db.getAscend(ascentId)!!
-
-        _displayContent()
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook_ascend
@@ -53,13 +52,10 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         return true
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == IntentConstants.RESULT_UPDATED) {
-            Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
-            _ascent = _db.getAscend(_ascent.id)!!
-            _displayContent()
-        }
+    override fun onResume() {
+        super.onResume()
+        _ascent = _db.getAscend(_ascent.id)!!
+        _displayContent()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -72,9 +68,9 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     private fun edit() {
-        val intent = Intent(this@TourbookAscendActivity, AscendActivity::class.java)
-        intent.putExtra(IntentConstants.ASCEND_ID, _ascent.id)
-        startActivityForResult(intent, 0)
+        startActivity(Intent(this@TourbookAscendActivity, AscendActivity::class.java).apply {
+            putExtra(IntentConstants.ASCEND_ID, _ascent.id)
+        })
     }
 
     private fun delete() {
@@ -83,8 +79,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
             setNegativeButton()
             setPositiveButton { _, _ ->
                 _db.deleteAscend(_ascent)
-                val resultIntent = Intent()
-                setResult(IntentConstants.RESULT_UPDATED, resultIntent)
+                Toast.makeText(this@TourbookAscendActivity, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
                 finish()
             }
         }.show()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Pätzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,13 +106,6 @@ class TourbookActivity : BaseNavigationActivity() {
             _currentYear = mostRecentYear
         }
         _displayContent()
-    }
-
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == IntentConstants.RESULT_UPDATED) {
-            Toast.makeText(this, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
-        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -276,9 +269,9 @@ class TourbookActivity : BaseNavigationActivity() {
                 currentRegionId = region.id
             }
             val onClickListener = View.OnClickListener {
-                val intent = Intent(this@TourbookActivity, TourbookAscendActivity::class.java)
-                intent.putExtra(IntentConstants.ASCEND_ID, ascend.id)
-                startActivityForResult(intent, 0)
+                startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
+                    putExtra(IntentConstants.ASCEND_ID, ascend.id)
+                })
             }
 
             val bgColor = when {
