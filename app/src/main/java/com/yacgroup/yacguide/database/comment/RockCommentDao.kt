@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RockCommentDao {
+    @get:Query(SELECT_ROCK_COMMENTS)
+    val all: List<RockComment>
+
     @Query("$SELECT_ROCK_COMMENTS WHERE RockComment.rockId = :rockId")
     fun getAll(rockId: Int): List<RockComment>
 

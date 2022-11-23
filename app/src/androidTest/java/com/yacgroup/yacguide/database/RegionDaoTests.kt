@@ -43,16 +43,10 @@ class RegionDaoTests {
             .allowMainThreadQueries()
             .build()
         _regionDao = _db.regionDao()
-    }
 
-    @BeforeEach
-    fun init() {
+        TestDB.initCountries(_db.countryDao())
         TestDB.initRegions(_regionDao)
-    }
-
-    @AfterEach
-    fun clear() {
-        _db.clearAllTables()
+        TestDB.initSectors(_db.sectorDao())
     }
 
     @AfterAll
@@ -76,26 +70,14 @@ class RegionDaoTests {
         val regionsInCountry1 = REGIONS.filter {
             it.country == country1Name
         }
-
         assertTrue(equal(regionsInCountry1, _regionDao.getAllInCountry(country1Name)))
     }
 
     @Test
-    fun getAllNonEmpty_noSectorsAvailable_returnsEmptyList() = runBlockingTest {
-        TestDB.initCountries(_db.countryDao())
-
-        assertTrue(_regionDao.getAllNonEmpty().isEmpty())
-    }
-
-    @Test
     fun getAllNonEmpty_sectorsWithParentRegionsAvailable_returnsCorrespondingRegions() = runBlockingTest {
-        TestDB.initCountries(_db.countryDao())
-        TestDB.initSectors(_db.sectorDao())
-
-        val nonEmptyRegions = REGIONS.filter { regionIt ->
-            SECTORS.any { it.parentId == regionIt.id }
+        val nonEmptyRegions = REGIONS.filter { region ->
+            SECTORS.any { it.parentId == region.id }
         }
-
         assertTrue(equal(nonEmptyRegions, _regionDao.getAllNonEmpty()))
     }
 
@@ -107,26 +89,56 @@ class RegionDaoTests {
     @Test
     fun getRegion_regionAvailable_returnsRegion() = runBlockingTest {
         val region = REGIONS.first()
-
         assertTrue(_regionDao.getRegion(region.id) == region)
     }
+}
+
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class RegionDaoDeletionTests {
+
+    private lateinit var _db: AppDatabase
+    private lateinit var _regionDao: RegionDao
+
+    @BeforeAll
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        _regionDao = _db.regionDao()
+    }
+
+    @BeforeEach
+    fun init() {
+        TestDB.initRegions(_regionDao)
+    }
+
+    @AfterEach
+    fun clear() {
+        _db.clearAllTables()
+    }
+
+    @AfterAll
+    fun teardown() {
+        _db.close()
+    }
+
 
     @Test
     fun deleteAll_regionTableBecomesEmpty() = runBlockingTest {
         _regionDao.deleteAll()
-
         assertTrue(_regionDao.all.isEmpty())
     }
 
     @Test
-    fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() {
+    fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() = runBlockingTest {
         val country1Name = COUNTRIES.first().name
         val regionsInCountry1 = REGIONS.filter {
             it.country == country1Name
         }
         _regionDao.deleteAll(country1Name)
-
-        regionsInCountry1.forEach{
+        regionsInCountry1.forEach {
             assertFalse(_regionDao.all.contains(it))
         }
     }

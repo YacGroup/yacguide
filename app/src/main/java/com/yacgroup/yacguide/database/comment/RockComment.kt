@@ -21,28 +21,30 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class RockComment {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var qualityId: Int = 0
-    var text: String? = null
-    var rockId: Int = 0
-
+data class RockComment(
+    @PrimaryKey val id: Int,
+    val qualityId: Int,
+    val text: String?,
+    val rockId: Int
+) {
     companion object {
 
         const val NO_INFO_ID = 0
+        const val RELEVANCE_MAJOR = 1
+        const val RELEVANCE_WORTHWHILE = 2
+        const val RELEVANCE_AVERAGE = 3
+        const val RELEVANCE_MINOR = 4
+        const val RELEVANCE_MUCK = 5
 
         // This needs to be in sync with sandsteinklettern.de!
         val RELEVANCE_MAP: LinkedHashMap<Int, String> = object : LinkedHashMap<Int, String>() {
             init {
                 put(NO_INFO_ID, "keine Angabe")
-                put(1, "Hauptgipfel")
-                put(2, "lohnender Gipfel")
-                put(3, "Durchschnittsgipfel")
-                put(4, "Quacke")
-                put(5, "Dreckhaufen")
+                put(RELEVANCE_MAJOR, "Hauptgipfel")
+                put(RELEVANCE_WORTHWHILE, "lohnender Gipfel")
+                put(RELEVANCE_AVERAGE, "Durchschnittsgipfel")
+                put(RELEVANCE_MINOR, "Quacke")
+                put(RELEVANCE_MUCK, "Dreckhaufen")
             }
         }
     }
