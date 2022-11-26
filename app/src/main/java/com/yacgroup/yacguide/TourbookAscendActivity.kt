@@ -29,7 +29,6 @@ import android.widget.Toast
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.utils.*
 
-
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper

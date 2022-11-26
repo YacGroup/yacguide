@@ -38,7 +38,7 @@ class DescriptionActivity : TableActivity() {
         _route = db.getRoute(activityLevel.parentId)!!
         if (_route.statusId > 1) {
             findViewById<TextView>(R.id.infoTextView).text =
-                "Achtung: Der Weg ist ${Route.STATUS[_route.statusId]}"
+                "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
         _viewAdapter = AscentViewAdapter(this, customSettings) {
