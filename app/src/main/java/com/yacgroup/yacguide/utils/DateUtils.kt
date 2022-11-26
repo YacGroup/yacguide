@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,21 @@
 
 package com.yacgroup.yacguide.utils
 
-import android.annotation.SuppressLint
 import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object DateUtils {
 
     const val UNKNOWN_DATE = "0000-00-00"
 
-    @SuppressLint("SimpleDateFormat")
     fun formatDate(date: String): String {
-        val format = SimpleDateFormat("yyyy-MM-dd")
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         return try {
-            val formattedDate = format.parse(date)
-            val cal = Calendar.getInstance()
-            cal.time = formattedDate
-            "${cal.get(Calendar.DAY_OF_MONTH)}.${cal.get(Calendar.MONTH) + 1}.${cal.get(Calendar.YEAR)}"
+            val formattedDate = LocalDate.parse(date, format)
+            "${formattedDate.dayOfMonth}.${formattedDate.monthValue}.${formattedDate.year}"
         } catch (e: ParseException) {
             ""
         }
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Axel Paetzold
+ * Copyright (C) 2020, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,11 +88,12 @@ class PreferencesActivity : BaseNavigationActivity() {
         view.setBackgroundColor(nextColor)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun resetDatabase(view: View) {
         DialogWidgetBuilder(this, R.string.reset_database).apply {
             setMessage(R.string.reset_database_confirm)
             setNegativeButton()
-            setPositiveButton(R.string.ok) {dialog, which ->
+            setPositiveButton(R.string.ok) {_, _ ->
                 _db.deleteCountriesRecursively()
                 _db.deleteAscends()
                 _resetCustomSettings()
@@ -103,7 +104,7 @@ class PreferencesActivity : BaseNavigationActivity() {
 
     private fun _resetCustomSettings() {
         val editor = _customSettings.edit()
-        for ((checkboxId, keyPair) in _settingKeysMap) {
+        for ((_, keyPair) in _settingKeysMap) {
             editor.putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
         }
         editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))

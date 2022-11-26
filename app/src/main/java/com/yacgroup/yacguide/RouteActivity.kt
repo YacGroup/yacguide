@@ -274,12 +274,12 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         })
     }
 
-    private inline fun _noNameFilter() = _filterName.isEmpty()
-    private inline fun _noGradeFilter() = _filterMinGradeId == RouteComment.NO_INFO_ID
+    private fun _noNameFilter() = _filterName.isEmpty()
+    private fun _noGradeFilter() = _filterMinGradeId == RouteComment.NO_INFO_ID
                                        && _filterMaxGradeId == RouteComment.NO_INFO_ID
-    private inline fun _noQualityFilter() = _filterMaxQualityId == RouteComment.NO_INFO_ID
-    private inline fun _noProtectionFilter() = _filterMaxProtectionId == RouteComment.NO_INFO_ID
-    private inline fun _noDryingFilter() = _filterMaxDryingId == RouteComment.NO_INFO_ID
+    private fun _noQualityFilter() = _filterMaxQualityId == RouteComment.NO_INFO_ID
+    private fun _noProtectionFilter() = _filterMaxProtectionId == RouteComment.NO_INFO_ID
+    private fun _noDryingFilter() = _filterMaxDryingId == RouteComment.NO_INFO_ID
 }
 
 class RouteGetter(
