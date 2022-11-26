@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Christian Sommer,
- *               2022 Axel Pätzold
+ *               2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
