@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,14 @@ package com.yacgroup.yacguide.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import java.net.URLEncoder
 
 object NetworkUtils {
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo = connectivityManager.activeNetworkInfo
-        return activeNetworkInfo?.isConnected ?: false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET) == true
     }
 
     fun encodeString2Url(str: String): String {
