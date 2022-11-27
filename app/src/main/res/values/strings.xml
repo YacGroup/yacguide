@@ -127,6 +127,7 @@
     <string name="rock_partly_prohibited">Achtung: Der Felsen ist teilweise gesperrt.</string>
     <string name="rock_inofficial">Achtung: Der Felsen ist nicht anerkannt.</string>
     <string name="rock_collapsed">Achtung: Der Felsen existiert nicht mehr.</string>
+    <string name="route_restricted">Achtung: Der Weg ist</string>
 
     <!-- Tourbook -->
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>

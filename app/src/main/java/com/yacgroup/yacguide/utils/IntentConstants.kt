@@ -31,7 +31,4 @@ object IntentConstants {
     const val FILTER_DRYING = "FilterDrying"
     const val FILTER_PROJECTS = "FilterProjects"
     const val FILTER_BOTCHES = "FilterBotches"
-
-    // Result codes
-    const val RESULT_UPDATED = 1000
 }

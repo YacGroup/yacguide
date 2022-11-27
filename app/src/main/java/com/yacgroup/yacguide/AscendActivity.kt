@@ -29,10 +29,9 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
+import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -48,6 +47,7 @@ class AscendActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
+    private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
     private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
 
@@ -76,6 +76,13 @@ class AscendActivity : AppCompatActivity() {
             notes = _outdatedAscend?.notes ?: ""
         )
 
+        _partnerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                _ascend.partnerIds = result.data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
+                    ?: ArrayList()
+            }
+        }
+
         findViewById<EditText>(R.id.notesEditText).let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -91,14 +98,6 @@ class AscendActivity : AppCompatActivity() {
         }
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            _ascend.partnerIds = data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
-                    ?: ArrayList()
-        }
-    }
-
     public override fun onResume() {
         super.onResume()
         _displayContent()
@@ -108,15 +107,12 @@ class AscendActivity : AppCompatActivity() {
     fun enter(v: View) {
         _outdatedAscend?.let { _db.deleteAscend(it) }
         _db.addAscend(_ascend)
-        val resultIntent = Intent()
-        setResult(IntentConstants.RESULT_UPDATED, resultIntent)
+        Toast.makeText(this, getString(R.string.ascends_refreshed), Toast.LENGTH_SHORT).show()
         finish()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun cancel(v: View) {
-        val resultIntent = Intent()
-        setResult(Activity.RESULT_CANCELED, resultIntent)
         finish()
     }
 
@@ -141,9 +137,9 @@ class AscendActivity : AppCompatActivity() {
     fun selectPartners(v: View) {
         val partnerNames = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val partnerIds = _db.getPartnerIds(partnerNames.toList()).filter { it > 0 } as ArrayList<Int>
-        val intent = Intent(this@AscendActivity, PartnersActivity::class.java)
-        intent.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
-        startActivityForResult(intent, 0)
+        _partnerResultLauncher.launch(Intent(this@AscendActivity, PartnersActivity::class.java).apply {
+            putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
+        })
     }
 
     @SuppressLint("SetTextI18n")

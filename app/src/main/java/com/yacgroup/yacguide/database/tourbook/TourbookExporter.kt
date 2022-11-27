@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Pätzold
+ * Copyright (C) 2019, 2022 Axel Paetzold
  * Copyright (C) 2021 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify

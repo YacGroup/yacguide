@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Route
@@ -37,10 +36,9 @@ class DescriptionActivity : TableActivity() {
         super.onCreate(savedInstanceState)
 
         _route = db.getRoute(activityLevel.parentId)!!
-        val routeStatusId = _route.statusId
-        if (routeStatusId > 1) {
+        if (_route.statusId > 1) {
             findViewById<TextView>(R.id.infoTextView).text =
-                    "Achtung: Der Weg ist ${Route.STATUS[routeStatusId]}"
+                "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
         _viewAdapter = AscentViewAdapter(this, customSettings) {
@@ -51,13 +49,9 @@ class DescriptionActivity : TableActivity() {
 
     override fun getLayoutId() = R.layout.activity_description
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == IntentConstants.RESULT_UPDATED) {
-            _route = db.getRoute(activityLevel.parentId)!! // update route instance
-            displayContent()
-            Toast.makeText(this, R.string.ascends_refreshed, Toast.LENGTH_SHORT).show()
-        }
+    override fun onResume() {
+        super.onResume()
+        displayContent()
     }
 
     override fun showComments(v: View) {
@@ -66,9 +60,9 @@ class DescriptionActivity : TableActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun enterAscend(v: View) {
-        val intent = Intent(this@DescriptionActivity, AscendActivity::class.java)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _route.id)
-        startActivityForResult(intent, 0)
+        startActivity(Intent(this@DescriptionActivity, AscendActivity::class.java).apply {
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _route.id)
+        })
     }
 
     override fun displayContent() {
