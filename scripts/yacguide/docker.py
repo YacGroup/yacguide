@@ -26,7 +26,7 @@ import git
 
 from . import utils
 
-IMG_VER = "20211122"
+IMG_VER = "20221129"
 IMG = "yacgroup/yacguide-build:" + IMG_VER
 CONTAINER_NAME = "yacguide-build"
 NETWORK_NAME = "yacnet"
