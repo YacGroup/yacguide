@@ -17,9 +17,9 @@
 
 package com.yacgroup.yacguide.utils
 
-import java.text.ParseException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 object DateUtils {
 
@@ -30,7 +30,7 @@ object DateUtils {
         return try {
             val formattedDate = LocalDate.parse(date, format)
             "${formattedDate.dayOfMonth}.${formattedDate.monthValue}.${formattedDate.year}"
-        } catch (e: ParseException) {
+        } catch (e: DateTimeParseException) {
             ""
         }
     }
