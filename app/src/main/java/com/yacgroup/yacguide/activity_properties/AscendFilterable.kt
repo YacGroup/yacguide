@@ -23,7 +23,7 @@ import com.yacgroup.yacguide.RouteActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class AscentFilterable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
+class AscendFilterable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty {
 
     override fun getMenuGroupId() = R.id.group_filter
 

@@ -24,12 +24,12 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Route
-import com.yacgroup.yacguide.list_adapters.AscentViewAdapter
+import com.yacgroup.yacguide.list_adapters.AscendViewAdapter
 import com.yacgroup.yacguide.utils.*
 
 class DescriptionActivity : TableActivity() {
 
-    private lateinit var _viewAdapter: AscentViewAdapter
+    private lateinit var _viewAdapter: AscendViewAdapter
     private lateinit var _route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +41,8 @@ class DescriptionActivity : TableActivity() {
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
-        _viewAdapter = AscentViewAdapter(this, customSettings) {
-            ascentId -> _onAscentSelected(ascentId)
+        _viewAdapter = AscendViewAdapter(this, customSettings) {
+            ascendId -> _onAscendSelected(ascendId)
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
@@ -69,20 +69,20 @@ class DescriptionActivity : TableActivity() {
         val routeName = ParserUtils.decodeObjectNames(_route.name)
         this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route.grade.orEmpty()}"
 
-        var firstAscentClimbers = _route.firstAscendLeader
+        var firstAscendClimbers = _route.firstAscendLeader
                 ?.takeUnless { it.isEmpty() }
                 ?: getString(R.string.first_ascend_unknown)
-        firstAscentClimbers += _route.firstAscendFollower
+        firstAscendClimbers += _route.firstAscendFollower
                 ?.takeUnless { it.isEmpty() }
                 ?.let { ", $it" }
                 ?: ""
-        val firstAscentDate = _route.firstAscendDate
+        val firstAscendDate = _route.firstAscendDate
                 ?.takeUnless { it == DateUtils.UNKNOWN_DATE }
                 ?.let { DateUtils.formatDate(it) }
                 ?: getString(R.string.date_unknown)
 
-        findViewById<TextView>(R.id.firstAscentClimbersTextView).text = firstAscentClimbers
-        findViewById<TextView>(R.id.firstAscentDateTextView).text = firstAscentDate
+        findViewById<TextView>(R.id.firstAscendClimbersTextView).text = firstAscendClimbers
+        findViewById<TextView>(R.id.firstAscendDateTextView).text = firstAscendDate
 
         _route.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
             findViewById<ConstraintLayout>(R.id.typeOfClimbingLayout).visibility = View.VISIBLE
@@ -91,16 +91,16 @@ class DescriptionActivity : TableActivity() {
 
         findViewById<TextView>(R.id.routeDescriptionTextView).text = _route.description
 
-        val ascents = db.getRouteAscends(_route.id)
-        findViewById<TextView>(R.id.myAscentsTextView).visibility =
-            if (ascents.isEmpty()) View.GONE
+        val ascends = db.getRouteAscends(_route.id)
+        findViewById<TextView>(R.id.myAscendsTextView).visibility =
+            if (ascends.isEmpty()) View.GONE
             else View.VISIBLE
-        _viewAdapter.submitList(ascents)
+        _viewAdapter.submitList(ascends)
     }
 
-    private fun _onAscentSelected(ascentId: Int) {
+    private fun _onAscendSelected(ascendId: Int) {
         startActivity(Intent(this@DescriptionActivity, TourbookAscendActivity::class.java).apply {
-            putExtra(IntentConstants.ASCEND_ID, ascentId)
+            putExtra(IntentConstants.ASCEND_ID, ascendId)
         })
     }
 }

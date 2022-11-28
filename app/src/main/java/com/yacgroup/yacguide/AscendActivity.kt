@@ -58,10 +58,10 @@ class AscendActivity : AppCompatActivity() {
         _db = DatabaseWrapper(this)
 
         // The database query is different from null,
-        // if this activity is called from the TourbookAscendActivity (on editing an ascent).
+        // if this activity is called from the TourbookAscendActivity (on editing an ascend).
         _outdatedAscend = _db.getAscend(intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID))
         // The intent constant CLIMBING_OBJECT_PARENT_ID is only available, if this activity is called from
-        // the route DescriptionActivity (on entering a new ascent).
+        // the route DescriptionActivity (on entering a new ascend).
         _route = _db.getRoute(_outdatedAscend?.routeId
                     ?: intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID))
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)

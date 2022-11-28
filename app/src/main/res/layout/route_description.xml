@@ -29,7 +29,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/firstAscentClimbersTextView"
+            android:id="@+id/firstAscendClimbersTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -39,10 +39,10 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/firstAscentDateTextView"
+            app:layout_constraintEnd_toStartOf="@+id/firstAscendDateTextView"
             app:layout_constraintTop_toTopOf="parent"/>
         <TextView
-            android:id="@+id/firstAscentDateTextView"
+            android:id="@+id/firstAscendDateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -92,7 +92,7 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/myAscentsTextView"
+        android:id="@+id/myAscendsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

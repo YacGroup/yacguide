@@ -18,8 +18,8 @@
 package com.yacgroup.yacguide.utils
 
 object IntentConstants {
-    const val ASCEND_ID = "AscentId"
-    const val ASCEND_PARTNER_IDS = "AscentPartnerIds"
+    const val ASCEND_ID = "AscendId"
+    const val ASCEND_PARTNER_IDS = "AscendPartnerIds"
     const val CLIMBING_OBJECT_LEVEL = "ClimbingObjectLevel"
     const val CLIMBING_OBJECT_PARENT_ID = "ClimbingObjectParentId"
     const val CLIMBING_OBJECT_PARENT_NAME = "ClimbingObjectParentName"

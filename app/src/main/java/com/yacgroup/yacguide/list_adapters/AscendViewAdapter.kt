@@ -32,11 +32,11 @@ import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.utils.AscendStyle
 
-class AscentViewAdapter(
+class AscendViewAdapter(
     context: Context,
     customSettings: SharedPreferences,
     private val _onClick: (Int) -> Unit)
-    : ListAdapter<Ascend, RecyclerView.ViewHolder>(AscentDiffCallback) {
+    : ListAdapter<Ascend, RecyclerView.ViewHolder>(AscendDiffCallback) {
 
     private val _defaultBgColor = ContextCompat.getColor(context, R.color.colorSecondaryLight)
     private val _leadBgColor = customSettings.getInt(
@@ -46,25 +46,25 @@ class AscentViewAdapter(
         context.getString(R.string.follow),
         ContextCompat.getColor(context, R.color.color_follow))
 
-    inner class AscentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class AscendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
 
-        fun bind(ascent: Ascend) {
+        fun bind(ascend: Ascend) {
             val bgColor =
-                if (AscendStyle.isLead(AscendStyle.bitMask(ascent.styleId)))
+                if (AscendStyle.isLead(AscendStyle.bitMask(ascend.styleId)))
                     _leadBgColor
-                else if (AscendStyle.isFollow(AscendStyle.bitMask(ascent.styleId)))
+                else if (AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)))
                     _followBgColor
                 else
                     _defaultBgColor
-            _mainLeftTextView.text = "${ascent.day}.${ascent.month}.${ascent.year}"
-            _subTextView.text = AscendStyle.fromId(ascent.styleId)?.styleName.orEmpty()
+            _mainLeftTextView.text = "${ascend.day}.${ascend.month}.${ascend.year}"
+            _subTextView.text = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
             _listItemLayout.apply {
                 setBackgroundColor(bgColor)
                 setOnClickListener {
-                    _onClick(ascent.id)
+                    _onClick(ascend.id)
                 }
             }
         }
@@ -73,20 +73,20 @@ class AscentViewAdapter(
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
         val view = inflater.inflate(R.layout.list_data_item, viewGroup, false)
-        return AscentViewHolder(view)
+        return AscendViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        (viewHolder as AscentViewHolder).bind(getItem(position) as Ascend)
+        (viewHolder as AscendViewHolder).bind(getItem(position) as Ascend)
     }
 }
 
-object AscentDiffCallback : DiffUtil.ItemCallback<Ascend>() {
-    override fun areItemsTheSame(oldAscent: Ascend, newAscent: Ascend): Boolean {
-        return oldAscent.id == newAscent.id
+object AscendDiffCallback : DiffUtil.ItemCallback<Ascend>() {
+    override fun areItemsTheSame(oldAscend: Ascend, newAscend: Ascend): Boolean {
+        return oldAscend.id == newAscend.id
     }
 
-    override fun areContentsTheSame(oldAscent: Ascend, newAscent: Ascend): Boolean {
-        return oldAscent == newAscent
+    override fun areContentsTheSame(oldAscend: Ascend, newAscend: Ascend): Boolean {
+        return oldAscend == newAscend
     }
 }

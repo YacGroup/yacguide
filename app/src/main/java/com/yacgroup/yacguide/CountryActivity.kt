@@ -37,7 +37,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
-            AscentFilterable(this)
+            AscendFilterable(this)
         )
 
         _viewAdapter = CountryViewAdapter { countryName -> _onCountrySelected(countryName) }

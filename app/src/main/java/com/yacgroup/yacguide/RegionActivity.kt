@@ -37,7 +37,7 @@ class RegionActivity : TableActivityWithOptionsMenu() {
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
-            AscentFilterable(this)
+            AscendFilterable(this)
         )
 
         _viewAdapter = RegionViewAdapter(this, db) { regionId, regionName -> _onRegionSelected(regionId, regionName) }

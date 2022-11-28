@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.list_adapters.SectorViewAdapter
@@ -39,7 +38,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
-            AscentFilterable(this)
+            AscendFilterable(this)
         )
 
         _viewAdapter = SectorViewAdapter(this, customSettings, db) { sectorId, sectorName -> _onSectorSelected(sectorId, sectorName) }

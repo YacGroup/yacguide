@@ -105,13 +105,13 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             return hasAscendBit(mask and _PROJECT_BIT_MASK)
         }
 
-        fun deriveAscentColor(ascentBitMask: Int, leadColor: Int, followColor: Int, defaultColor: Int) = when {
-            isLead(ascentBitMask) -> leadColor
-            isFollow(ascentBitMask) -> followColor
+        fun deriveAscendColor(ascendsBitMask: Int, leadColor: Int, followColor: Int, defaultColor: Int) = when {
+            isLead(ascendsBitMask) -> leadColor
+            isFollow(ascendsBitMask) -> followColor
             else -> defaultColor
         }
 
-        fun deriveAscentDecoration(ascendsBitMask: Int, botchIcon: String, projectIcon: String, watchingIcon:String): String {
+        fun deriveAscendDecoration(ascendsBitMask: Int, botchIcon: String, projectIcon: String, watchingIcon:String): String {
             val botchAdd = if (isBotch(ascendsBitMask)) botchIcon else ""
             val projectAdd = if (isProject(ascendsBitMask)) projectIcon else ""
             val watchingAdd = if (isWatching(ascendsBitMask)) watchingIcon else ""

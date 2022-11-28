@@ -79,12 +79,12 @@ class RockViewAdapter(
                 typeface = Typeface.ITALIC
                 bgColor = _prohibitedBgColor
             }
-            bgColor = AscendStyle.deriveAscentColor(
+            bgColor = AscendStyle.deriveAscendColor(
                 rock.ascendsBitMask,
                 _leadBgColor,
                 _followBgColor,
                 defaultColor = bgColor)
-            val decorationAdd = AscendStyle.deriveAscentDecoration(
+            val decorationAdd = AscendStyle.deriveAscendDecoration(
                 rock.ascendsBitMask,
                 _botchIcon,
                 _projectIcon,

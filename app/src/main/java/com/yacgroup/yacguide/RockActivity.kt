@@ -20,9 +20,8 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.yacgroup.yacguide.activity_properties.AscentFilterable
+import com.yacgroup.yacguide.activity_properties.AscendFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
@@ -51,7 +50,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
-            AscentFilterable(this)
+            AscendFilterable(this)
         )
 
         _rockGettersMap = mapOf(

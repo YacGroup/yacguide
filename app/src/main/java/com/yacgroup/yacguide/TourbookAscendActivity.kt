@@ -32,7 +32,7 @@ import com.yacgroup.yacguide.utils.*
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private lateinit var _ascent: Ascend
+    private lateinit var _ascend: Ascend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,8 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
 
-        val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
-        _ascent = _db.getAscend(ascentId)!!
+        val ascendId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
+        _ascend = _db.getAscend(ascendId)!!
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook_ascend
@@ -53,7 +53,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
     override fun onResume() {
         super.onResume()
-        _ascent = _db.getAscend(_ascent.id)!!
+        _ascend = _db.getAscend(_ascend.id)!!
         _displayContent()
     }
 
@@ -68,7 +68,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
 
     private fun edit() {
         startActivity(Intent(this@TourbookAscendActivity, AscendActivity::class.java).apply {
-            putExtra(IntentConstants.ASCEND_ID, _ascent.id)
+            putExtra(IntentConstants.ASCEND_ID, _ascend.id)
         })
     }
 
@@ -77,7 +77,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
-                _db.deleteAscend(_ascent)
+                _db.deleteAscend(_ascend)
                 Toast.makeText(this@TourbookAscendActivity, R.string.ascend_deleted, Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -88,7 +88,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         val layout = findViewById<LinearLayout>(R.id.tableLayout)
         layout.removeAllViews()
 
-        var route = _db.getRoute(_ascent.routeId)
+        var route = _db.getRoute(_ascend.routeId)
         val rock: Rock
         val sector: Sector
         val region: Region
@@ -104,11 +104,11 @@ class TourbookAscendActivity : BaseNavigationActivity() {
             Toast.makeText(this, R.string.corresponding_route_not_found, Toast.LENGTH_LONG).show()
         }
 
-        val partnerNames = _db.getPartnerNames(_ascent.partnerIds?.toList().orEmpty())
+        val partnerNames = _db.getPartnerNames(_ascend.partnerIds?.toList().orEmpty())
         val partnersString = TextUtils.join(", ", partnerNames)
 
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = "${_ascent.day}.${_ascent.month}.${_ascent.year}",
+                textLeft = "${_ascend.day}.${_ascend.month}.${_ascend.year}",
                 textRight = region.name.orEmpty(),
                 textSizeDp = WidgetUtils.infoFontSizeDp,
                 bgColor = WidgetUtils.tourHeaderColor))
@@ -147,7 +147,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 textLeft = route.grade.orEmpty(),
-                textRight = AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty()))
+                textRight = AscendStyle.fromId(_ascend.styleId)?.styleName.orEmpty()))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
                 textLeft = getString(R.string.partner),
@@ -161,7 +161,7 @@ class TourbookAscendActivity : BaseNavigationActivity() {
                 textSizeDp = WidgetUtils.textFontSizeDp,
                 typeface = Typeface.NORMAL))
         layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = _ascent.notes?.takeUnless { it.isBlank() } ?: " - "))
+                textLeft = _ascend.notes?.takeUnless { it.isBlank() } ?: " - "))
         layout.addView(WidgetUtils.createHorizontalLine(this, 1))
     }
 

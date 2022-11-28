@@ -76,12 +76,12 @@ class RouteViewAdapter(
                 typeface = Typeface.ITALIC
                 bgColor = _prohibitedBgColor
             }
-            bgColor = AscendStyle.deriveAscentColor(
+            bgColor = AscendStyle.deriveAscendColor(
                 route.ascendsBitMask,
                 _leadBgColor,
                 _followBgColor,
                 defaultColor = bgColor)
-            val decorationAdd = AscendStyle.deriveAscentDecoration(
+            val decorationAdd = AscendStyle.deriveAscendDecoration(
                 route.ascendsBitMask,
                 _botchIcon,
                 _projectIcon,

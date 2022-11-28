@@ -146,9 +146,9 @@ class TourbookExporter(
         val jsonAscends = JSONArray(jsonString)
         _db.deleteAscends()
         _db.deletePartners()
-        val ascents = mutableListOf<Ascend>()
+        val ascends = mutableListOf<Ascend>()
         val partners = mutableListOf<Partner>()
-        var ascentId = 1
+        var ascendId = 1
         var partnerId = 1
         for (i in 0 until jsonAscends.length()) {
             val jsonAscend = jsonAscends.getJSONObject(i)
@@ -165,8 +165,8 @@ class TourbookExporter(
                 }
                 partnerIds.add(partner.id)
             }
-            val ascent = Ascend(
-                id = ascentId++,
+            val ascend = Ascend(
+                id = ascendId++,
                 routeId = ParserUtils.jsonField2Int(jsonAscend, _routeIdKey),
                 styleId = ParserUtils.jsonField2Int(jsonAscend, _styleIdKey),
                 year = ParserUtils.jsonField2Int(jsonAscend, _yearKey),
@@ -175,9 +175,9 @@ class TourbookExporter(
                 partnerIds = partnerIds,
                 notes = jsonAscend.getString(_notesKey)
             )
-            ascents.add(ascent)
+            ascends.add(ascend)
         }
         _db.addPartners(partners)
-        _db.addAscends(ascents)
+        _db.addAscends(ascends)
     }
 }
