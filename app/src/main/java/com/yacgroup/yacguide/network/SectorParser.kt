@@ -246,11 +246,12 @@ class SectorParser(private val _db: DatabaseWrapper,
                     _routeComments.add(comment)
                 }
                 rockId != 0 -> {
-                    val comment = RockComment()
-                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
-                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
-                    comment.rockId = rockId
+                    val comment = RockComment(
+                        id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
+                        qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
+                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        rockId = rockId
+                    )
                     _rockComments.add(comment)
                 }
                 sectorId != 0 -> {

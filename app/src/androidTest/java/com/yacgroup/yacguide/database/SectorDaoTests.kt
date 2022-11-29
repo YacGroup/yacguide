@@ -43,16 +43,10 @@ class SectorDaoTests {
             .allowMainThreadQueries()
             .build()
         _sectorDao = _db.sectorDao()
-    }
 
-    @BeforeEach
-    fun init() {
+        TestDB.initCountries(_db.countryDao())
+        TestDB.initRegions(_db.regionDao())
         TestDB.initSectors(_sectorDao)
-    }
-
-    @AfterEach
-    fun clear() {
-        _db.clearAllTables()
     }
 
     @AfterAll
@@ -81,27 +75,22 @@ class SectorDaoTests {
 
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runBlockingTest {
-        TestDB.initRegions(_db.regionDao())
-
         assertTrue(_sectorDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @Test
     fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runBlockingTest {
-        TestDB.initRegions(_db.regionDao())
-
         assertTrue(_sectorDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @Test
     fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectors() = runBlockingTest {
-        TestDB.initRegions(_db.regionDao())
-
         val country1Name = COUNTRIES.first().name
-        val sectorsInCountry1 = SECTORS.filter { sectorIt ->
-            REGIONS.any { it.id == sectorIt.parentId && it.country == country1Name }
+        val sectorsInCountry1 = SECTORS.filter { sector ->
+            REGIONS.any {
+                it.id == sector.parentId && it.country == country1Name
+            }
         }
-
         assertTrue(equal(sectorsInCountry1, _sectorDao.getAllInCountry(country1Name)))
     }
 
@@ -113,26 +102,55 @@ class SectorDaoTests {
     @Test
     fun getSector_sectorAvailable_returnsSector() = runBlockingTest {
         val sector = SECTORS.first()
-
         assertTrue(_sectorDao.getSector(sector.id) == sector)
     }
+}
+
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class SectorDaoDeletionTests {
+    private lateinit var _db: AppDatabase
+    private lateinit var _sectorDao: SectorDao
+
+    @BeforeAll
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
+            .allowMainThreadQueries()
+            .build()
+        _sectorDao = _db.sectorDao()
+    }
+
+    @BeforeEach
+    fun init() {
+        TestDB.initSectors(_sectorDao)
+    }
+
+    @AfterEach
+    fun clear() {
+        _db.clearAllTables()
+    }
+
+    @AfterAll
+    fun teardown() {
+        _db.close()
+    }
+
 
     @Test
     fun deleteAll_sectorTableBecomesEmpty() = runBlockingTest {
         _sectorDao.deleteAll()
-
         assertTrue(_sectorDao.all.isEmpty())
     }
 
     @Test
-    fun deleteAll_regionIdGiven_sectorTableDoesNotContainCorrespondingSectorsAnymore() {
+    fun deleteAll_regionIdGiven_sectorTableDoesNotContainCorrespondingSectorsAnymore() = runBlockingTest {
         val region1Id = REGIONS.first().id
         val sectorsInRegion1 = SECTORS.filter {
             it.parentId == region1Id
         }
         _sectorDao.deleteAll(region1Id)
-
-        sectorsInRegion1.forEach{
+        sectorsInRegion1.forEach {
             assertFalse(_sectorDao.all.contains(it))
         }
     }
