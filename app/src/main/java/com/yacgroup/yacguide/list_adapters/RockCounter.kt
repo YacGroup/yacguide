@@ -36,13 +36,13 @@ class RockCounter(private val _config: RockCounterConfig) {
     fun calculateRockCount(rocks: List<Rock>): RockCount {
         val consideredRocks = _filterConsideredRocks(rocks)
 
-        val filteredRocks = if (_config.countOnlyLeads) {
+        val ascendedRocks = if (_config.countOnlyLeads) {
             consideredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
         } else {
             consideredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) || AscendStyle.isFollow(it.ascendsBitMask) }
         }
 
-        return RockCount(ascended = filteredRocks.size,
+        return RockCount(ascended = ascendedRocks.size,
                          total = consideredRocks.size)
     }
 

@@ -39,8 +39,18 @@ class SectorViewAdapter(
     private val _onClick: (Int, String) -> Unit)
     : ListAdapter<Sector, RecyclerView.ViewHolder>(SectorDiffCallback) {
 
-    private val _rockCounter = RockCounter(RockCounterConfig.generate(context, customSettings))
+    private val _generateRockCountString: (sectorId: Int) -> String
 
+    init {
+        val counter = RockCounter(RockCounterConfig.generate(context, customSettings))
+        _generateRockCountString = if (counter.isApplicable()) {
+            sectorId: Int ->
+                val rockCount = counter.calculateRockCount(_db.getRocksForSector(sectorId))
+                "(${rockCount.ascended} / ${rockCount.total})"
+            } else {
+                _ -> ""
+            }
+    }
     inner class SectorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
@@ -50,10 +60,7 @@ class SectorViewAdapter(
         fun bind(sector: Sector) {
             val sectorName = ParserUtils.decodeObjectNames(sector.name)
             _mainLeftTextView.text = sectorName.first
-            _mainRightTextView.text = if (_rockCounter.isApplicable()) {
-                val rockCount = _rockCounter.calculateRockCount(_db.getRocksForSector(sector.id))
-                "(${rockCount.ascended} / ${rockCount.total})"
-            } else ""
+            _mainRightTextView.text = _generateRockCountString(sector.id)
             _subTextView.text = sectorName.second
             _listItemLayout.apply {
                 setOnClickListener {

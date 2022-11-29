@@ -40,7 +40,18 @@ class RegionViewAdapter(
 
     private val _emptyIcon = context.getString(R.string.empty_box)
     private val _tickedIcon = context.getString(R.string.tick)
-    private val _rockCounter = RockCounter(RockCounterConfig.generate(context, customSettings))
+    private val _generateRockCountString: (regionId: Int) -> String
+
+    init {
+        val counter = RockCounter(RockCounterConfig.generate(context, customSettings))
+        _generateRockCountString = if (counter.isApplicable()) {
+            regionId: Int ->
+                val rockCount = counter.calculateRockCount(_db.getRocksForRegion(regionId))
+                "(${rockCount.ascended} / ${rockCount.total})"
+            } else {
+                _ -> ""
+            }
+    }
 
     inner class RegionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
@@ -57,10 +68,7 @@ class RegionViewAdapter(
             }
             _mainLeftTextView.text = region.name
             _mainRightTextView.text = icon
-            _subTextView.text = if (_rockCounter.isApplicable()) {
-                    val rockCount = _rockCounter.calculateRockCount(_db.getRocksForRegion(region.id))
-                    "(${rockCount.ascended} / ${rockCount.total})"
-                } else ""
+            _subTextView.text = _generateRockCountString(region.id)
             _listItemLayout.apply {
                 setBackgroundResource(background)
                 setOnClickListener {
