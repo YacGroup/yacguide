@@ -91,11 +91,7 @@ class DescriptionActivity : TableActivity() {
 
         findViewById<TextView>(R.id.routeDescriptionTextView).text = _route.description
 
-        val ascents = db.getRouteAscends(_route.id)
-        findViewById<TextView>(R.id.myAscentsTextView).visibility =
-            if (ascents.isEmpty()) View.GONE
-            else View.VISIBLE
-        _viewAdapter.submitList(ascents)
+        _viewAdapter.submitList(db.getRouteAscends(_route.id))
     }
 
     private fun _onAscentSelected(ascentId: Int) {

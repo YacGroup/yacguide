@@ -33,8 +33,6 @@
 
         <include layout="@layout/appbar_info"/>
 
-        <include layout="@layout/ascendbar_description"/>
-
         <include layout="@layout/textview_info"/>
 
         <ScrollView
