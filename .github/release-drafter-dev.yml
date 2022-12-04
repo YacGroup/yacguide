@@ -3,6 +3,9 @@
 name-template: 'YacGuide dev-YYYYMMDD'
 tag-template: 'dev-YYYYMMDD'
 prerelease: true
+# Set explicitly to master to avoid issue
+# https://github.com/release-drafter/release-drafter/issues/1125
+commitish: master
 change-template: '* $TITLE ([#$NUMBER]($URL))'
 categories:
   - title: "What's Changed"
