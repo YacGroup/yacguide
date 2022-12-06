@@ -163,9 +163,9 @@ class SectorParser(private val _db: DatabaseWrapper,
                     "${baseUrl}jsonkomment.php?app=yacguide&sektorid=$sectorId")
         )
         networkRequests.addAll(requests)
-        requests.map {
-            NetworkTask(it.requestId, this).execute(it.url) }
-
+        requests.forEach {
+            NetworkTask(it.requestId, this).execute(it.url)
+        }
     }
 
     @Throws(JSONException::class)
@@ -192,7 +192,6 @@ class SectorParser(private val _db: DatabaseWrapper,
             )
             _rocks.add(rock)
         }
-        listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
 
     @Throws(JSONException::class)
@@ -205,7 +204,9 @@ class SectorParser(private val _db: DatabaseWrapper,
             val secondName = jsonRoute.getString("wegname_cz")
             var ascentsBitMask = 0
             // re-store route's bitmask if it is re-added after being marked as ascended in the past
-            _db.getRouteAscends(routeId).forEach { ascentsBitMask = (ascentsBitMask or AscendStyle.bitMask(it.styleId)) }
+            _db.getRouteAscends(routeId).forEach {
+                ascentsBitMask = ascentsBitMask or AscendStyle.bitMask(it.styleId)
+            }
             val route = Route(
                 id = routeId,
                 nr = ParserUtils.jsonField2Float(jsonRoute, "wegnr"),
@@ -222,6 +223,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             )
             _routes.add(route)
         }
+        listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
 
     @Throws(JSONException::class)
@@ -269,11 +271,11 @@ class SectorParser(private val _db: DatabaseWrapper,
 
     private fun _updateAscendedRocks() {
         // update already ascended rocks
-        val updatedRocks = _rocks.map {
-            for (ascend in _db.getRockAscends(it.id)) {
-                it.ascendsBitMask = it.ascendsBitMask or AscendStyle.bitMask(ascend.styleId)
+        val updatedRocks = _rocks.map { rock ->
+            _db.getRockAscends(rock.id).forEach { ascent ->
+                rock.ascendsBitMask = rock.ascendsBitMask or AscendStyle.bitMask(ascent.styleId)
             }
-            it
+            rock
         }
         _db.updateRocks(updatedRocks)
     }

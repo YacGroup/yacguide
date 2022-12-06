@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ abstract class JSONWebParser : NetworkListener {
     fun fetchData() {
         _processedRequestsCount = 0
         initNetworkRequests()
-        for (request in networkRequests) {
-            NetworkTask(request.requestId, this).execute(request.url)
+        networkRequests.forEach {
+            NetworkTask(it.requestId, this).execute(it.url)
         }
     }
 
