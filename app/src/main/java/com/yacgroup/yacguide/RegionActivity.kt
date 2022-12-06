@@ -40,7 +40,7 @@ class RegionActivity : TableActivityWithOptionsMenu() {
             AscentFilterable(this)
         )
 
-        _viewAdapter = RegionViewAdapter(this, db) { regionId, regionName -> _onRegionSelected(regionId, regionName) }
+        _viewAdapter = RegionViewAdapter(this, customSettings, db) { regionId, regionName -> _onRegionSelected(regionId, regionName) }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 

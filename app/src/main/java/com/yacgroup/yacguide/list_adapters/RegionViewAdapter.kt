@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide.list_adapters
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,17 +33,31 @@ import com.yacgroup.yacguide.database.Region
 
 class RegionViewAdapter(
     context: Context,
+    customSettings: SharedPreferences,
     private val _db: DatabaseWrapper,
     private val _onClick: (Int, String) -> Unit)
     : ListAdapter<Region, RecyclerView.ViewHolder>(RegionDiffCallback) {
 
     private val _emptyIcon = context.getString(R.string.empty_box)
     private val _tickedIcon = context.getString(R.string.tick)
+    private val _generateRockCountString: (regionId: Int) -> String
+
+    init {
+        val counter = RockCounter(RockCounterConfig.generate(context, customSettings))
+        _generateRockCountString = if (counter.isApplicable()) {
+            regionId: Int ->
+                val rockCount = counter.calculateRockCount(_db.getRocksForRegion(regionId))
+                "(${rockCount.ascended} / ${rockCount.total})"
+            } else {
+                _ -> ""
+            }
+    }
 
     inner class RegionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
+        private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
 
         fun bind(region: Region) {
             var icon = _emptyIcon
@@ -53,6 +68,7 @@ class RegionViewAdapter(
             }
             _mainLeftTextView.text = region.name
             _mainRightTextView.text = icon
+            _subTextView.text = _generateRockCountString(region.id)
             _listItemLayout.apply {
                 setBackgroundResource(background)
                 setOnClickListener {

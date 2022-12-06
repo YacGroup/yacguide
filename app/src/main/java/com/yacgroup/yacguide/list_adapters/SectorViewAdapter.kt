@@ -29,9 +29,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.DatabaseWrapper
-import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Sector
-import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
 class SectorViewAdapter(
@@ -41,31 +39,18 @@ class SectorViewAdapter(
     private val _onClick: (Int, String) -> Unit)
     : ListAdapter<Sector, RecyclerView.ViewHolder>(SectorDiffCallback) {
 
-    private val _countSummits = customSettings.getBoolean(
-        context.getString(R.string.count_summits),
-        context.resources.getBoolean(R.bool.count_summits))
-    private val _countMassifs = customSettings.getBoolean(
-        context.getString(R.string.count_massifs),
-        context.resources.getBoolean(R.bool.count_massifs))
-    private val _countBoulders = customSettings.getBoolean(
-        context.getString(R.string.count_boulders),
-        context.resources.getBoolean(R.bool.count_boulders))
-    private val _countCaves = customSettings.getBoolean(
-        context.getString(R.string.count_caves),
-        context.resources.getBoolean(R.bool.count_caves))
-    private val _countUnofficialRocks = customSettings.getBoolean(
-        context.getString(R.string.count_unofficial_rocks),
-        context.resources.getBoolean(R.bool.count_unofficial_rocks))
-    private val _countProhibitedRocks = customSettings.getBoolean(
-        context.getString(R.string.count_prohibited_rocks),
-        context.resources.getBoolean(R.bool.count_prohibited_rocks))
-    private val _countCollapsedRocks = customSettings.getBoolean(
-        context.getString(R.string.count_collapsed_rocks),
-        context.resources.getBoolean(R.bool.count_collapsed_rocks))
-    private val _countOnlyLeads = customSettings.getBoolean(
-        context.getString(R.string.count_only_leads),
-        context.resources.getBoolean(R.bool.count_only_leads))
+    private val _generateRockCountString: (sectorId: Int) -> String
 
+    init {
+        val counter = RockCounter(RockCounterConfig.generate(context, customSettings))
+        _generateRockCountString = if (counter.isApplicable()) {
+            sectorId: Int ->
+                val rockCount = counter.calculateRockCount(_db.getRocksForSector(sectorId))
+                "(${rockCount.ascended} / ${rockCount.total})"
+            } else {
+                _ -> ""
+            }
+    }
     inner class SectorViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
@@ -74,54 +59,14 @@ class SectorViewAdapter(
 
         fun bind(sector: Sector) {
             val sectorName = ParserUtils.decodeObjectNames(sector.name)
-            val rocks = _db.getRocksForSector(sector.id)
             _mainLeftTextView.text = sectorName.first
-            _mainRightTextView.text = _generateRockCountString(rocks)
+            _mainRightTextView.text = _generateRockCountString(sector.id)
             _subTextView.text = sectorName.second
             _listItemLayout.apply {
                 setOnClickListener {
                     _onClick(sector.id, sector.name.orEmpty())
                 }
             }
-        }
-
-        private fun _generateRockCountString(rocks: List<Rock>): String {
-            if (!(_countSummits || _countMassifs || _countBoulders || _countCaves)) {
-                return ""
-            }
-
-            var filteredRocks = rocks
-            if (!_countSummits) {
-                filteredRocks = filteredRocks.filter{ it.type != Rock.typeSummit && it.type != Rock.typeAlpine }
-            }
-            if (!_countMassifs) {
-                filteredRocks = filteredRocks.filter { it.type != Rock.typeMassif && it.type != Rock.typeStonePit }
-            }
-            if (!_countBoulders) {
-                filteredRocks = filteredRocks.filter { it.type != Rock.typeBoulder }
-            }
-            if (!_countCaves) {
-                filteredRocks = filteredRocks.filter { it.type != Rock.typeCave }
-            }
-
-            if (!_countUnofficialRocks) {
-                filteredRocks = filteredRocks.filter { it.type != Rock.typeUnofficial }
-            }
-            if (!_countProhibitedRocks) {
-                filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
-            }
-            if (!_countCollapsedRocks) {
-                filteredRocks = filteredRocks.filter { it.status != Rock.statusCollapsed }
-            }
-            val allRockCount = filteredRocks.size
-
-            filteredRocks = if (_countOnlyLeads) {
-                filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
-            } else {
-                filteredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) || AscendStyle.isFollow(it.ascendsBitMask) }
-            }
-
-            return "(${filteredRocks.size} / $allRockCount)"
         }
     }
 
