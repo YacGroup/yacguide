@@ -19,6 +19,7 @@ package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.utils.ParserUtils
 
 import org.json.JSONArray
 import org.json.JSONException
@@ -30,9 +31,9 @@ class CountryParser(private val _db: DatabaseWrapper) : JSONWebParser() {
 
     override fun initNetworkRequests() {
         networkRequests = LinkedList(listOf(
-                NetworkRequest(
-                    NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
-                    "${baseUrl}jsonland.php?app=yacguide")
+            NetworkRequest(
+                NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
+                "${baseUrl}jsonland.php?app=yacguide")
         ))
     }
 
@@ -42,7 +43,7 @@ class CountryParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         for (i in 0 until jsonCountries.length()) {
             val jsonCountry = jsonCountries.getJSONObject(i)
             val country = Country(
-                jsonCountry.getString("land")
+                ParserUtils.replaceUnderscores(jsonCountry.getString("land"))
             )
             _countries.add(country)
         }

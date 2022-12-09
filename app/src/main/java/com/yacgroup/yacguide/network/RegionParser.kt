@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ class RegionParser(private val _db: DatabaseWrapper,
 
     override fun initNetworkRequests() {
         networkRequests = LinkedList(listOf(
-                NetworkRequest(
-                    NetworkRequestUId(RequestType.REGION_DATA, 0),
-                    "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(_countryName)}")
+            NetworkRequest(
+                NetworkRequestUId(RequestType.REGION_DATA, 0),
+                "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(_countryName)}")
         ))
     }
 
@@ -47,7 +47,7 @@ class RegionParser(private val _db: DatabaseWrapper,
             val jsonRegion = jsonRegions.getJSONObject(i)
             val region = Region(
                 id = ParserUtils.jsonField2Int(jsonRegion, "gebiet_ID"),
-                name = jsonRegion.getString("gebiet"),
+                name = ParserUtils.replaceUnderscores(jsonRegion.getString("gebiet")),
                 country = _countryName
             )
             _regions.add(region)
