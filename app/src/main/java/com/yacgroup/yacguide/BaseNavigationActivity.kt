@@ -31,17 +31,6 @@ import com.google.android.material.navigation.NavigationView
 
 abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val onBackPressedCallback: OnBackPressedCallback = object: OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START)
-            } else {
-                finish()
-            }
-        }
-    }
-
     abstract fun getLayoutId(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +51,15 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
 
         navView.setNavigationItemSelectedListener(this)
 
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
