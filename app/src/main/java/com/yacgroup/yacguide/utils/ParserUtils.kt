@@ -62,6 +62,10 @@ object ParserUtils {
         return result
     }
 
+    fun replaceUnderscores(text: String): String {
+        return text.replace("_", " ")
+    }
+
     fun encodeObjectNames(name1st: String, name2nd: String): String {
         return name1st.plus(_WATERMARK).plus(name2nd)
     }

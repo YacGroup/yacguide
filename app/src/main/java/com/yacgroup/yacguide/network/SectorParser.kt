@@ -60,12 +60,12 @@ class SectorParser(private val _db: DatabaseWrapper,
 
     override fun initNetworkRequests() {
         networkRequests = LinkedList(listOf(
-                NetworkRequest(
-                        NetworkRequestUId(RequestType.SECTOR_DATA, 0),
-                        "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"),
-                NetworkRequest(
-                        NetworkRequestUId(RequestType.REGION_COMMENTS, 0),
-                        "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId")
+            NetworkRequest(
+                NetworkRequestUId(RequestType.SECTOR_DATA, 0),
+                "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"),
+            NetworkRequest(
+                NetworkRequestUId(RequestType.REGION_COMMENTS, 0),
+                "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId")
         ))
     }
 
@@ -122,8 +122,8 @@ class SectorParser(private val _db: DatabaseWrapper,
         listener?.onUpdateStatus("$_regionName 0 %")
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
-            val firstName = jsonSector.getString("sektorname_d")
-            val secondName = jsonSector.getString("sektorname_cz")
+            val firstName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_d"))
+            val secondName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_cz"))
             val s = Sector(
                 id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID"),
                 name = ParserUtils.encodeObjectNames(firstName, secondName),
@@ -177,8 +177,8 @@ class SectorParser(private val _db: DatabaseWrapper,
             if (!_CLIMBING_OBJECT_TYPES.contains(type)) {
                 continue
             }
-            val firstName = jsonRock.getString("gipfelname_d")
-            val secondName = jsonRock.getString("gipfelname_cz")
+            val firstName = ParserUtils.replaceUnderscores(jsonRock.getString("gipfelname_d"))
+            val secondName = ParserUtils.replaceUnderscores(jsonRock.getString("gipfelname_cz"))
             val rock = Rock(
                 id = ParserUtils.jsonField2Int(jsonRock, "gipfel_ID"),
                 nr = ParserUtils.jsonField2Float(jsonRock, "gipfelnr"),
@@ -200,8 +200,8 @@ class SectorParser(private val _db: DatabaseWrapper,
         for (i in 0 until jsonRoutes.length()) {
             val jsonRoute = jsonRoutes.getJSONObject(i)
             val routeId = ParserUtils.jsonField2Int(jsonRoute, "weg_ID")
-            val firstName = jsonRoute.getString("wegname_d")
-            val secondName = jsonRoute.getString("wegname_cz")
+            val firstName = ParserUtils.replaceUnderscores(jsonRoute.getString("wegname_d"))
+            val secondName = ParserUtils.replaceUnderscores(jsonRoute.getString("wegname_cz"))
             var ascentsBitMask = 0
             // re-store route's bitmask if it is re-added after being marked as ascended in the past
             _db.getRouteAscends(routeId).forEach {
