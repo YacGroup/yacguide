@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
@@ -29,12 +30,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 
 abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+
+    private val onBackPressedCallback: OnBackPressedCallback = object: OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                finish()
+            }
         }
     }
 
@@ -49,8 +53,7 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navMenu: Menu = navView.getMenu()
-        navMenu.findItem(R.id.nav_about).setTitle(
-                getString(R.string.menu_about, getString(R.string.app_name)))
+        navMenu.findItem(R.id.nav_about).title = getString(R.string.menu_about, getString(R.string.app_name))
         val toggle = ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
@@ -58,6 +61,8 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
