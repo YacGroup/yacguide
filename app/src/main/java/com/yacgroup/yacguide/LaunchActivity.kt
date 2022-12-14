@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
 const val TIME_OUT_MS = 1500L
@@ -32,10 +33,12 @@ class LaunchActivity : AppCompatActivity() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
+    private lateinit var _updateHandler: UpdateHandler
 
     inner class Timer : CountDownTimer(TIME_OUT_MS, TIME_OUT_MS) {
         override fun onTick(msUntilFinish: Long) {}
         override fun onFinish() {
+            _updateHandler.abort()
             _switchToDatabase()
         }
     }
@@ -47,6 +50,8 @@ class LaunchActivity : AppCompatActivity() {
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
+        _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
+        _updateHandler.update(isRecurring = false, isSilent = true)
         Timer().start()
     }
 

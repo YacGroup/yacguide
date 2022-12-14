@@ -19,7 +19,6 @@ package com.yacgroup.yacguide
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
@@ -27,18 +26,15 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
-import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.network.CountryParser
-import com.yacgroup.yacguide.network.RegionParser
+import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionManagerActivity : BaseNavigationActivity() {
 
     private lateinit var _db: DatabaseWrapper
-    private lateinit var _regionParser: RegionParser
     private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _customSettings: SharedPreferences
@@ -47,7 +43,6 @@ class RegionManagerActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
 
         _db = DatabaseWrapper(this)
-        _regionParser = RegionParser(_db, "")
         _sectorParser = SectorParser(_db, 0)
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -147,25 +142,11 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _updateAll() {
         // We need to update regions recursively since update() is asynchronous.
-        _updateHandler.setJsonParser(CountryParser(_db))
+        _updateHandler.setJsonParser(CountryAndRegionParser(_db))
         _updateHandler.update({
-            _updateHandler.setJsonParser(_regionParser)
-            val countries = _db.getNonEmptyCountries().toMutableSet()
-            _updateNextCountry(countries)
-        }, true)
-    }
-
-    private fun _updateNextCountry(countries: MutableSet<Country>) {
-        try {
-            val nextCountry = countries.first()
-            countries.remove(nextCountry)
-            _regionParser.setCountryName(nextCountry.name)
-            _updateHandler.update({ _updateNextCountry(countries) }, true)
-        } catch (e: NoSuchElementException) {
             _updateHandler.setJsonParser(_sectorParser)
-            val regions = _db.getNonEmptyRegions().toMutableSet()
-            _updateNextRegion(regions)
-        }
+            _updateNextRegion(_db.getNonEmptyRegions().toMutableSet())
+                              }, isRecurring = true)
     }
 
     private fun _updateNextRegion(regions: MutableSet<Region>) {

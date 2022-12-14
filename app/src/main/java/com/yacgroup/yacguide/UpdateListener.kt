@@ -17,8 +17,10 @@
 
 package com.yacgroup.yacguide
 
+import com.yacgroup.yacguide.network.ExitCode
+
 interface UpdateListener {
 
     fun onUpdateStatus(statusMessage: String)
-    fun onUpdateFinished(success: Boolean)
+    fun onUpdateFinished(exitCode: ExitCode)
 }

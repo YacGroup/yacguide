@@ -22,7 +22,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.list_adapters.CountryViewAdapter
-import com.yacgroup.yacguide.network.CountryParser
+import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class CountryActivity : TableActivityWithOptionsMenu() {
@@ -33,7 +33,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, CountryParser(db))
+        _updateHandler = UpdateHandler(this, CountryAndRegionParser(db))
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),

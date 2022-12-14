@@ -263,6 +263,10 @@ class DatabaseWrapper(context: Context) {
         _db.countryDao().deleteAll()
     }
 
+    fun deleteRegions() = _dbTransaction {
+        _db.regionDao().deleteAll()
+    }
+
     fun deleteRegions(countryName: String) = _dbTransaction {
         _db.regionDao().deleteAll(countryName)
     }

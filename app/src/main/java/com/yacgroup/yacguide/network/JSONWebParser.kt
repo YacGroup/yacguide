@@ -25,15 +25,21 @@ import org.json.JSONException
 import java.util.LinkedList
 import kotlin.jvm.Throws
 
+enum class ExitCode {
+    SUCCESS,
+    ERROR,
+    ABORT
+}
+
 abstract class JSONWebParser : NetworkListener {
     var listener: UpdateListener? = null
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
-    private var _success: Boolean = true
+    private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _processedRequestsCount: Int = 0
 
     override fun onNetworkTaskResolved(requestId: NetworkRequestUId, result: String) {
-        if (_success) {
+        if (_exitCode == ExitCode.SUCCESS) {
             try {
                 if (result.equals("null", ignoreCase = true)) {
                     // sandsteinklettern.de returns "null" string if there are no elements
@@ -45,13 +51,13 @@ abstract class JSONWebParser : NetworkListener {
                         ParserUtils.resolveToUtf8(result)
                 )
             } catch (e: JSONException) {
-                _success = false
+                _exitCode = ExitCode.ERROR
             } catch (e: IllegalArgumentException) {
             }
         }
         if (++_processedRequestsCount == networkRequests.size) {
-            onFinalTaskResolved()
-            _success = true
+            onFinalTaskResolved(_exitCode)
+            _exitCode = ExitCode.SUCCESS
         }
     }
 
@@ -63,13 +69,17 @@ abstract class JSONWebParser : NetworkListener {
         }
     }
 
+    fun abort() {
+        _exitCode = ExitCode.ABORT
+    }
+
     @Throws(JSONException::class)
     protected abstract fun parseData(requestId: NetworkRequestUId, json: String)
 
     protected abstract fun initNetworkRequests()
 
     // NetworkListener
-    protected open fun onFinalTaskResolved() {
-        listener?.onUpdateFinished(_success)
+    protected open fun onFinalTaskResolved(exitCode: ExitCode) {
+        listener?.onUpdateFinished(exitCode)
     }
 }
