@@ -183,8 +183,7 @@ class PartnersActivity : AppCompatActivity() {
                         Toast.makeText(dialog.context, R.string.hint_name_already_used,
                                 Toast.LENGTH_SHORT).show()
                     else -> {
-                        val updatedPartner = partner ?: Partner()
-                        updatedPartner.name = newName
+                        val updatedPartner = partner?.apply { name = newName } ?: Partner(name = newName)
                         _db.addPartner(updatedPartner)
                         dialog.dismiss()
                         _displayContent()

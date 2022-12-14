@@ -21,10 +21,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class Partner {
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
-
-    var name: String? = null
-}
+data class Partner(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    var name: String?
+)

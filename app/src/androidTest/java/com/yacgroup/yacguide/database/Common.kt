@@ -76,6 +76,12 @@ class TestDB {
             RockComment(3, 4, "RockComment3", 2)
         )
 
+        val PARTNERS = listOf(
+            Partner(1, "Partner1"),
+            Partner(2, "Partner2"),
+            Partner(3, "Partner3")
+        )
+
         fun initCountries(countryDao: CountryDao) {
             assertTrue(countryDao.all.isEmpty())
             countryDao.insert(COUNTRIES)
@@ -104,6 +110,12 @@ class TestDB {
             assertTrue(rockCommentDao.all.isEmpty())
             rockCommentDao.insert(ROCK_COMMENTS)
             assertTrue(equal(ROCK_COMMENTS, rockCommentDao.all))
+        }
+
+        fun initPartners(partnerDao: PartnerDao) {
+            assertTrue(partnerDao.all.isEmpty())
+            partnerDao.insert(PARTNERS)
+            assertTrue(equal(PARTNERS, partnerDao.all))
         }
     }
 }

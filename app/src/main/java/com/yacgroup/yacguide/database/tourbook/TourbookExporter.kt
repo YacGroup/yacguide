@@ -158,9 +158,10 @@ class TourbookExporter(
                 val name = partnerNames.getString(j).trim { it <= ' ' }
                 var partner = partners.find { name == it.name }
                 if (partner == null) {
-                    partner = Partner()
-                    partner.id = partnerId++
-                    partner.name = name
+                    partner = Partner(
+                        id = partnerId++,
+                        name = name
+                    )
                     partners.add(partner)
                 }
                 partnerIds.add(partner.id)
