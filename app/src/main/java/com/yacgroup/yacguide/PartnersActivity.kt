@@ -39,6 +39,7 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.BaseViewItem
 import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
+import com.yacgroup.yacguide.list_adapters.SwipeConfig
 import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -80,12 +81,23 @@ class PartnersActivity : AppCompatActivity() {
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
         listView.adapter = _viewAdapter
 
-        val swipeController = SwipeController(
-            { pos -> _updatePartnerListAndDB(pos) { partner -> _updatePartner(partner, R.string.dialog_text_change_partner) } },
-            ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24)!!,
-            { pos -> _updatePartnerListAndDB(pos) { partner -> _deletePartner(partner) } },
-            ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
-        )
+        val swipeRightConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorEdit),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24)!!
+        ) { pos ->
+            _updatePartnerListAndDB(pos) { partner ->
+                _updatePartner(partner, R.string.dialog_text_change_partner)
+            }
+        }
+        val swipeLeftConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorDelete),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
+        ) { pos ->
+            _updatePartnerListAndDB(pos) { partner ->
+                _deletePartner(partner)
+            }
+        }
+        val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
         ItemTouchHelper(swipeController).attachToRecyclerView(listView)
 
         _displayContent()

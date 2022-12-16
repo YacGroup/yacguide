@@ -18,17 +18,20 @@
 package com.yacgroup.yacguide.list_adapters
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
+data class SwipeConfig(
+    val color: Int,
+    val background: Drawable,
+    val action: (position: Int) -> Unit
+)
+
 class SwipeController(
-    private val _onSwipeRightCallback: (position: Int) -> Unit,
-    private val _onSwipeRightBackground: Drawable,
-    private val _onSwipeLeftCallback: (position: Int) -> Unit,
-    private val _onSwipeLeftBackground: Drawable
+    private val _onSwipeRightConfig: SwipeConfig,
+    private val _onSwipeLeftConfig: SwipeConfig
     ) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     override fun onMove(
@@ -39,9 +42,9 @@ class SwipeController(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         if (direction == ItemTouchHelper.RIGHT) {
-            _onSwipeRightCallback(viewHolder.adapterPosition)
+            _onSwipeRightConfig.action(viewHolder.adapterPosition)
         } else {
-            _onSwipeLeftCallback(viewHolder.adapterPosition)
+            _onSwipeLeftConfig.action(viewHolder.adapterPosition)
         }
     }
 
@@ -55,28 +58,30 @@ class SwipeController(
         isCurrentlyActive: Boolean
     ) {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            val backgroundIconTop =
-                viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeRightBackground.intrinsicHeight) / 2
             if (dX > 0) {
+                val backgroundIconTop =
+                    viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeRightConfig.background.intrinsicHeight) / 2
                 c.clipRect(0f, viewHolder.itemView.top.toFloat(), dX, viewHolder.itemView.bottom.toFloat())
-                c.drawColor(Color.YELLOW)
-                _onSwipeRightBackground.bounds = Rect(
-                    _onSwipeRightBackground.intrinsicWidth / 2,
+                c.drawColor(_onSwipeRightConfig.color)
+                _onSwipeRightConfig.background.bounds = Rect(
+                    _onSwipeRightConfig.background.intrinsicWidth / 2,
                     backgroundIconTop,
-                    3 * _onSwipeRightBackground.intrinsicWidth / 2,
-                    backgroundIconTop + _onSwipeRightBackground.intrinsicHeight
+                    3 * _onSwipeRightConfig.background.intrinsicWidth / 2,
+                    backgroundIconTop + _onSwipeRightConfig.background.intrinsicHeight
                 )
-                _onSwipeRightBackground.draw(c)
+                _onSwipeRightConfig.background.draw(c)
             } else {
+                val backgroundIconTop =
+                    viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeLeftConfig.background.intrinsicHeight) / 2
                 c.clipRect(dX + viewHolder.itemView.width, viewHolder.itemView.top.toFloat(), viewHolder.itemView.width.toFloat(), viewHolder.itemView.bottom.toFloat())
-                c.drawColor(Color.RED)
-                _onSwipeLeftBackground.bounds = Rect(
-                    viewHolder.itemView.width - 3 * _onSwipeRightBackground.intrinsicWidth / 2,
+                c.drawColor(_onSwipeLeftConfig.color)
+                _onSwipeLeftConfig.background.bounds = Rect(
+                    viewHolder.itemView.width - 3 * _onSwipeLeftConfig.background.intrinsicWidth / 2,
                     backgroundIconTop,
-                    viewHolder.itemView.width - _onSwipeRightBackground.intrinsicWidth / 2,
-                    backgroundIconTop + _onSwipeRightBackground.intrinsicHeight
+                    viewHolder.itemView.width - _onSwipeLeftConfig.background.intrinsicWidth / 2,
+                    backgroundIconTop + _onSwipeLeftConfig.background.intrinsicHeight
                 )
-                _onSwipeLeftBackground.draw(c)
+                _onSwipeLeftConfig.background.draw(c)
             }
 
         }
