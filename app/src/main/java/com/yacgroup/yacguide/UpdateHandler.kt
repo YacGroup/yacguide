@@ -23,6 +23,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.yacgroup.yacguide.network.ExitCode
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.NetworkUtils
@@ -32,7 +33,8 @@ class UpdateHandler(private val _activity: AppCompatActivity,
 
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
-    private var _success: Boolean = true
+    private var _isSilentUpdate: Boolean = false
+    private var _exitCodes = mutableListOf<ExitCode>()
     private var _onUpdateFinished: () -> Unit = {}
 
     init {
@@ -45,13 +47,15 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     override fun onUpdateStatus(statusMessage: String) {
-        _activity.runOnUiThread {
-            _updateDialog.findViewById<TextView>(R.id.dialogText).text = statusMessage
+        if (!_isSilentUpdate) {
+            _activity.runOnUiThread {
+                _updateDialog.findViewById<TextView>(R.id.dialogText).text = statusMessage
+            }
         }
     }
 
-    override fun onUpdateFinished(success: Boolean) {
-        _success = _success && success
+    override fun onUpdateFinished(exitCode: ExitCode) {
+        _exitCodes.add(exitCode)
         _onUpdateFinished()
 
         if (!_isRecurringUpdate) {
@@ -64,15 +68,22 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
     }
 
-    fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false) {
+    fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
         _onUpdateFinished = onUpdateFinished
         _isRecurringUpdate = isRecurring
-        if (!NetworkUtils.isNetworkAvailable(_activity)) {
+        _isSilentUpdate = isSilent
+        if (!NetworkUtils.isNetworkAvailable(_activity) && !_isSilentUpdate) {
             Toast.makeText(_activity, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
         _jsonParser.fetchData()
-        _updateDialog.show()
+        if (!_isSilentUpdate) {
+            _updateDialog.show()
+        }
+    }
+
+    fun abort() {
+        _jsonParser.abort()
     }
 
     fun delete(deleteContent: () -> Unit) {
@@ -91,16 +102,21 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     fun finish() {
-        _updateDialog.dismiss()
+        if (!_isSilentUpdate) {
+            _updateDialog.dismiss()
 
-        if (_success) {
-            Toast.makeText(_activity, R.string.successful_refresh, Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
+            if (_exitCodes.any { it == ExitCode.ABORT }) {
+                Toast.makeText(_activity, R.string.refresh_aborted, Toast.LENGTH_SHORT).show()
+            } else if (_exitCodes.any { it == ExitCode.ERROR }) {
+                Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(_activity, R.string.successful_refresh, Toast.LENGTH_SHORT).show()
+            }
+
+            _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
         }
 
-        _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
-        _success = true
+        _exitCodes.clear()
     }
 
     fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {

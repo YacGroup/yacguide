@@ -27,4 +27,4 @@ enum class RequestType {
     SECTOR_COMMENTS
 }
 
-class NetworkRequestUId(val type: RequestType, val id: Int)
+class NetworkRequestUId(val type: RequestType, val id: Int, val name: String = "")

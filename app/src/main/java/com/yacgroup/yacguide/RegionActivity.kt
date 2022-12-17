@@ -22,18 +22,15 @@ import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.list_adapters.RegionViewAdapter
-import com.yacgroup.yacguide.network.RegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class RegionActivity : TableActivityWithOptionsMenu() {
 
     private lateinit var _viewAdapter: RegionViewAdapter
-    private lateinit var _updateHandler: UpdateHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, RegionParser(db, activityLevel.parentName))
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
@@ -50,7 +47,6 @@ class RegionActivity : TableActivityWithOptionsMenu() {
         this.title = activityLevel.parentName
         val regions = db.getRegions(activityLevel.parentName)
         _viewAdapter.submitList(regions)
-        _updateHandler.configureDownloadButton(regions.isEmpty()) { displayContent() }
     }
 
     private fun _onRegionSelected(regionId: Int, regionName: String) {

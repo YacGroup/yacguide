@@ -81,18 +81,20 @@ class SectorParser(private val _db: DatabaseWrapper,
         }
     }
 
-    override fun onFinalTaskResolved() {
-        _db.deleteSectorsRecursively(_regionId)
+    override fun onFinalTaskResolved(exitCode: ExitCode) {
+        if (exitCode == ExitCode.SUCCESS) {
+            _db.deleteSectorsRecursively(_regionId)
 
-        _db.addSectors(_sectors)
-        _db.addRocks(_rocks)
-        _db.addRoutes(_routes)
-        _db.addRegionComments(_regionComments)
-        _db.addSectorComments(_sectorComments)
-        _db.addRockComments(_rockComments)
-        _db.addRouteComments(_routeComments)
+            _db.addSectors(_sectors)
+            _db.addRocks(_rocks)
+            _db.addRoutes(_routes)
+            _db.addRegionComments(_regionComments)
+            _db.addSectorComments(_sectorComments)
+            _db.addRockComments(_rockComments)
+            _db.addRouteComments(_routeComments)
 
-        _updateAscendedRocks()
+            _updateAscendedRocks()
+        }
 
         // Clear lists for the case of updating multiple regions
         _sectors.clear()
@@ -103,7 +105,7 @@ class SectorParser(private val _db: DatabaseWrapper,
         _rockComments.clear()
         _routeComments.clear()
 
-        super.onFinalTaskResolved()
+        super.onFinalTaskResolved(exitCode)
     }
 
     fun setRegionId(id: Int) {
