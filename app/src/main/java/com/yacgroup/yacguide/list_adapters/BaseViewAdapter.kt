@@ -20,7 +20,6 @@ package com.yacgroup.yacguide.list_adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -28,38 +27,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.R
 
-class BaseViewAdapter(
-    private val _onClick: (Int) -> Unit,
-    private val _button1IconResource: Int,
-    private val _onButton1Click: (Int) -> Unit,
-    private val _button2IconResource: Int,
-    private val _onButton2Click: (Int) -> Unit)
+class BaseViewAdapter(private val _onClick: (Int) -> Unit)
     : ListAdapter<BaseViewItem, RecyclerView.ViewHolder>(BaseItemDiffCallback) {
 
     inner class BaseItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
-        private val _mainTextView = view.findViewById<TextView>(R.id.mainTextView)
-        private val _firstButton = view.findViewById<ImageButton>(R.id.firstImageButton)
-        private val _secondButton = view.findViewById<ImageButton>(R.id.secondImageButton)
+        private val _mainTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
+        private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
 
         fun bind(viewItem: BaseViewItem) {
             _mainTextView.text = viewItem.name
+            _subTextView.text = viewItem.additionalInfo
             _listItemLayout.apply {
                 setBackgroundResource(viewItem.backgroundResource)
                 setOnClickListener {
                     _onClick(viewItem.id)
-                }
-            }
-            _firstButton.apply {
-                setImageResource(_button1IconResource)
-                setOnClickListener {
-                    _onButton1Click(viewItem.id)
-                }
-            }
-            _secondButton.apply {
-                setImageResource(_button2IconResource)
-                setOnClickListener {
-                    _onButton2Click(viewItem.id)
                 }
             }
         }
@@ -67,13 +49,15 @@ class BaseViewAdapter(
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
-        val view = inflater.inflate(R.layout.list_data_item_with_buttons, viewGroup, false)
+        val view = inflater.inflate(R.layout.list_data_item, viewGroup, false)
         return BaseItemViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         (viewHolder as BaseItemViewHolder).bind(getItem(position) as BaseViewItem)
     }
+
+    fun getItemAt(position: Int) = getItem(position) as BaseViewItem
 }
 
 object BaseItemDiffCallback : DiffUtil.ItemCallback<BaseViewItem>() {

@@ -31,12 +31,16 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.BaseViewItem
 import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
+import com.yacgroup.yacguide.list_adapters.SwipeConfig
+import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
 
@@ -73,14 +77,28 @@ class PartnersActivity : AppCompatActivity() {
             }
         })
 
-        _viewAdapter = BaseViewAdapter(
-            { partnerId -> _onPartnerSelected(partnerId) },
-            android.R.drawable.ic_menu_edit,
-            { partnerId -> _onUpdatePartner(partnerId) },
-            android.R.drawable.ic_menu_delete,
-            { partnerId -> _onDeletePartner(partnerId) }
-        )
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        _viewAdapter = BaseViewAdapter { partnerId -> _onPartnerSelected(partnerId) }
+        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
+        listView.adapter = _viewAdapter
+
+        val swipeRightConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorEdit),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24)!!
+        ) { pos ->
+            _updatePartnerListAndDB(pos) { partner ->
+                _updatePartner(partner, R.string.dialog_text_change_partner)
+            }
+        }
+        val swipeLeftConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorDelete),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
+        ) { pos ->
+            _updatePartnerListAndDB(pos) { partner ->
+                _deletePartner(partner)
+            }
+        }
+        val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
+        ItemTouchHelper(swipeController).attachToRecyclerView(listView)
 
         _displayContent()
     }
@@ -112,12 +130,10 @@ class PartnersActivity : AppCompatActivity() {
 
         // We need to sort the partners according to the number of ascends you have done with them
         val ascendPartnerCount = SparseIntArray()
-        for (ascend in _db.getAscends()) {
-            ascend.partnerIds?.let {
-                for (id in it) {
-                    val prevValue = ascendPartnerCount.get(id, 0)
-                    ascendPartnerCount.put(id, prevValue + 1)
-                }
+        _db.getAscends().forEach { ascend ->
+            ascend.partnerIds?.forEach { id ->
+                val prevValue = ascendPartnerCount.get(id, 0)
+                ascendPartnerCount.put(id, prevValue + 1)
             }
         }
 
@@ -132,11 +148,13 @@ class PartnersActivity : AppCompatActivity() {
                 BaseViewItem(
                     id = it.id,
                     name = "${getString(R.string.tick)} ${it.name.orEmpty()}",
+                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})",
                     backgroundResource = R.color.colorAccentLight)
             } else {
                 BaseViewItem(
                     id = it.id,
                     name = "${getString(R.string.empty_box)} ${it.name.orEmpty()}",
+                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})",
                     backgroundResource = R.color.colorSecondaryLight)
             }
         }
@@ -203,15 +221,9 @@ class PartnersActivity : AppCompatActivity() {
         _displayContent()
     }
 
-    private fun _onUpdatePartner(partnerId: Int) {
-        _db.getPartner(partnerId)?.let {
-            _updatePartner(it, R.string.dialog_text_change_partner)
-        }
-    }
-
-    private fun _onDeletePartner(partnerId: Int) {
-        _db.getPartner(partnerId)?.let {
-            _deletePartner(it)
-        }
+    private inline fun _updatePartnerListAndDB(position: Int, dbAction: (partner: Partner) -> Unit) {
+        val item = _viewAdapter.getItemAt(position)
+        _db.getPartner(item.id)?.let { dbAction(it) }
+        _viewAdapter.notifyItemChanged(position)
     }
 }

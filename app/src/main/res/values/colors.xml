@@ -40,7 +40,10 @@
 
     <color name="colorAccent">@color/colorPrimaryLight</color>
     <color name="colorAccentLight">#e8eaf6</color>
-    <color name="colorError">#dd2c00</color>
+    <color name="colorError">#f44336</color>
+
+    <color name="colorEdit">#ffeb3b</color>
+    <color name="colorDelete">@color/colorError</color>
 
     <color name="colorPrimaryText">@color/colorBlack</color>
     <color name="colorSecondaryText">@color/colorSecondaryDark</color>
