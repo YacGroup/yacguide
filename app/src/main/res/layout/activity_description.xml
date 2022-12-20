@@ -25,27 +25,43 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/colorSecondaryLight">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/appbar_info"/>
-
-        <include layout="@layout/textview_info"/>
-
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true">
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/colorSecondaryLight">
 
-            <include layout="@layout/route_description"/>
+            <include layout="@layout/appbar_info"/>
 
-        </ScrollView>
+            <include layout="@layout/textview_info"/>
 
-    </LinearLayout>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true">
+
+                <include layout="@layout/route_description"/>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="enterAscend"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/FloatingActionButton"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/nav_view"/>
 
