@@ -102,7 +102,7 @@ class SectorDaoTests {
     @Test
     fun getSector_sectorAvailable_returnsSector() = runBlockingTest {
         val sector = SECTORS.first()
-        assertTrue(_sectorDao.getSector(sector.id) == sector)
+        assertEquals(_sectorDao.getSector(sector.id), sector)
     }
 }
 

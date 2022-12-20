@@ -239,14 +239,15 @@ class SectorParser(private val _db: DatabaseWrapper,
             val user = jsonComment.getString("username")
             when {
                 routeId != 0 -> {
-                    val comment = RouteComment()
-                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
-                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-                    comment.gradeId = ParserUtils.jsonField2Int(jsonComment, "schwer")
-                    comment.securityId = ParserUtils.jsonField2Int(jsonComment, "sicher")
-                    comment.wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass")
-                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
-                    comment.routeId = routeId
+                    val comment = RouteComment(
+                        id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
+                        qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
+                        gradeId = ParserUtils.jsonField2Int(jsonComment, "schwer"),
+                        securityId = ParserUtils.jsonField2Int(jsonComment, "sicher"),
+                        wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass"),
+                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        routeId = routeId
+                    )
                     _routeComments.add(comment)
                 }
                 rockId != 0 -> {

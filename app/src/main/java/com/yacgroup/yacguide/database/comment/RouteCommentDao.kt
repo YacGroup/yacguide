@@ -28,6 +28,9 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_SECTORS_REGION
 
 @Dao
 interface RouteCommentDao {
+    @get:Query(SELECT_ROUTE_COMMENTS)
+    val all: List<RouteComment>
+
     @Query("$SELECT_ROUTE_COMMENTS WHERE RouteComment.routeId = :routeId")
     fun getAll(routeId: Int): List<RouteComment>
 

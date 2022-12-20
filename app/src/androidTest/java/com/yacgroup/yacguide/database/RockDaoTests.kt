@@ -159,7 +159,7 @@ class RockDaoTests {
     @Test
     fun getRock_rockAvailable_returnsRock() = runBlockingTest {
         val rock = ROCKS.first()
-        assertTrue(_rockDao.getRock(rock.id) == rock)
+        assertEquals(_rockDao.getRock(rock.id), rock)
     }
 }
 
