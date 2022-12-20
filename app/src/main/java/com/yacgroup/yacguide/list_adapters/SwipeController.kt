@@ -41,10 +41,12 @@ class SwipeController(
     ): Boolean = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        if (direction == ItemTouchHelper.RIGHT) {
-            _onSwipeRightConfig.action(viewHolder.adapterPosition)
-        } else {
-            _onSwipeLeftConfig.action(viewHolder.adapterPosition)
+        if (!(viewHolder as BaseViewAdapter.BaseItemViewHolder).isHeader()) {
+            if (direction == ItemTouchHelper.RIGHT) {
+                _onSwipeRightConfig.action(viewHolder.adapterPosition)
+            } else {
+                _onSwipeLeftConfig.action(viewHolder.adapterPosition)
+            }
         }
     }
 
@@ -57,7 +59,7 @@ class SwipeController(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        if (!(viewHolder as BaseViewAdapter.BaseItemViewHolder).isHeader() && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             if (dX > 0) {
                 val backgroundIconTop =
                     viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeRightConfig.background.intrinsicHeight) / 2
@@ -84,9 +86,9 @@ class SwipeController(
                 _onSwipeLeftConfig.background.draw(c)
             }
 
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
 
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
 }

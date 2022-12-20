@@ -148,14 +148,14 @@ class PartnersActivity : AppCompatActivity() {
                 BaseViewItem(
                     id = it.id,
                     name = "${getString(R.string.tick)} ${it.name.orEmpty()}",
-                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})",
-                    backgroundResource = R.color.colorAccentLight)
+                    backgroundResource = R.color.colorAccentLight,
+                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
             } else {
                 BaseViewItem(
                     id = it.id,
                     name = "${getString(R.string.empty_box)} ${it.name.orEmpty()}",
-                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})",
-                    backgroundResource = R.color.colorSecondaryLight)
+                    backgroundResource = R.color.colorSecondaryLight,
+                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
             }
         }
         _viewAdapter.submitList(partnerItemList)
