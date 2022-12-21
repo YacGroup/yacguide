@@ -19,6 +19,7 @@ package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -34,16 +35,16 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
-    private var _exitCodes = mutableListOf<ExitCode>()
-    private var _onUpdateFinished: () -> Unit = {}
+    private var _onSuccessfulUpdate: () -> Unit = {}
 
     init {
         _jsonParser.listener = this
 
         _updateDialog = Dialog(_activity)
         _updateDialog.setContentView(R.layout.info_dialog)
-        _updateDialog.setCancelable(false)
-        _updateDialog.setCanceledOnTouchOutside(false)
+        _updateDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+            abort()
+        }
     }
 
     override fun onUpdateStatus(statusMessage: String) {
@@ -55,11 +56,13 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     override fun onUpdateFinished(exitCode: ExitCode) {
-        _exitCodes.add(exitCode)
-        _onUpdateFinished()
-
-        if (!_isRecurringUpdate) {
-            finish()
+        if (exitCode == ExitCode.SUCCESS) {
+            _onSuccessfulUpdate()
+            if (!_isRecurringUpdate) {
+                finish(exitCode)
+            }
+        } else {
+            finish(exitCode)
         }
     }
 
@@ -68,8 +71,8 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
     }
 
-    fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
-        _onUpdateFinished = onUpdateFinished
+    fun update(onSuccessfulUpdate: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
+        _onSuccessfulUpdate = onSuccessfulUpdate
         _isRecurringUpdate = isRecurring
         _isSilentUpdate = isSilent
         if (!NetworkUtils.isNetworkAvailable(_activity) && !_isSilentUpdate) {
@@ -101,30 +104,27 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         }.show()
     }
 
-    fun finish() {
+    fun finish(exitCode: ExitCode = ExitCode.SUCCESS) {
         if (!_isSilentUpdate) {
             _updateDialog.dismiss()
 
-            if (_exitCodes.any { it == ExitCode.ABORT }) {
-                Toast.makeText(_activity, R.string.refresh_aborted, Toast.LENGTH_SHORT).show()
-            } else if (_exitCodes.any { it == ExitCode.ERROR }) {
-                Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(_activity, R.string.successful_refresh, Toast.LENGTH_SHORT).show()
+            val finishMsgResource = when (exitCode) {
+                ExitCode.ABORT -> R.string.refresh_aborted
+                ExitCode.ERROR -> R.string.refresh_failed
+                else -> R.string.refresh_successful
             }
+            Toast.makeText(_activity, finishMsgResource, Toast.LENGTH_SHORT).show()
 
             _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
         }
-
-        _exitCodes.clear()
     }
 
-    fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
+    fun configureDownloadButton(enabled: Boolean, onSuccessfulUpdate: () -> Unit) {
         val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
         if (enabled) {
             button.visibility = View.VISIBLE
             button.setOnClickListener{
-                update({ onUpdateFinished() })
+                update({ onSuccessfulUpdate() })
             }
         } else {
             button.visibility = View.GONE

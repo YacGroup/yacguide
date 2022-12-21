@@ -52,16 +52,18 @@ abstract class JSONWebParser : NetworkListener {
                 )
             } catch (e: JSONException) {
                 _exitCode = ExitCode.ERROR
+                onFinalTaskResolved(_exitCode)
+                return
             } catch (e: IllegalArgumentException) {
             }
-        }
-        if (++_processedRequestsCount == networkRequests.size) {
-            onFinalTaskResolved(_exitCode)
-            _exitCode = ExitCode.SUCCESS
+            if (++_processedRequestsCount == networkRequests.size) {
+                onFinalTaskResolved(_exitCode)
+            }
         }
     }
 
     fun fetchData() {
+        _exitCode = ExitCode.SUCCESS
         _processedRequestsCount = 0
         initNetworkRequests()
         networkRequests.forEach {
@@ -71,6 +73,7 @@ abstract class JSONWebParser : NetworkListener {
 
     fun abort() {
         _exitCode = ExitCode.ABORT
+        onFinalTaskResolved(_exitCode)
     }
 
     @Throws(JSONException::class)

@@ -20,7 +20,10 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,7 +33,14 @@
         android:textStyle="bold"
         android:textSize="20dp"
         android:text="@string/dialog_loading"
-        android:id="@+id/dialogText"
-    />
+        android:id="@+id/dialogText"/>
+
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/cancel"
+        style="?android:attr/buttonBarButtonStyle"/>
 
 </LinearLayout>
