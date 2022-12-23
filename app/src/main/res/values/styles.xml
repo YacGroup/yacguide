@@ -68,6 +68,13 @@
         <item name="android:tint">@color/colorSecondaryDark</item>
     </style>
 
+    <style name="FloatingActionButton">
+        <item name="tint">@color/colorOnPrimary</item>
+        <item name="backgroundTint">@color/colorAccent</item>
+        <item name="android:layout_margin">26dp</item>
+        <item name="android:src">@android:drawable/ic_input_add</item>
+    </style>
+
     <style name="ThinDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
