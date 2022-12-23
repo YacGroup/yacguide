@@ -89,7 +89,7 @@ class RegionDaoTests {
     @Test
     fun getRegion_regionAvailable_returnsRegion() = runBlockingTest {
         val region = REGIONS.first()
-        assertTrue(_regionDao.getRegion(region.id) == region)
+        assertEquals(_regionDao.getRegion(region.id), region)
     }
 }
 

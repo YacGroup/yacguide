@@ -21,18 +21,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class RouteComment {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var qualityId: Int = 0
-    var securityId: Int = 0
-    var wetnessId: Int = 0
-    var gradeId: Int = 0
-    var text: String? = null
-    var routeId: Int = 0
-
+data class RouteComment(
+    @PrimaryKey val id: Int,
+    val qualityId: Int,
+    val securityId: Int,
+    val wetnessId: Int,
+    val gradeId: Int,
+    val text: String?,
+    val routeId: Int
+) {
     companion object {
 
         const val NO_INFO_ID = 0
