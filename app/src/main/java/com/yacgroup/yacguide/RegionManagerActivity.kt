@@ -20,20 +20,24 @@ package com.yacgroup.yacguide
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
+import com.yacgroup.yacguide.list_adapters.BaseViewItem
+import com.yacgroup.yacguide.list_adapters.SwipeConfig
+import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.network.SectorParser
-import com.yacgroup.yacguide.utils.WidgetUtils
 
 class RegionManagerActivity : BaseNavigationActivity() {
 
+    private lateinit var _viewAdapter: BaseViewAdapter
     private lateinit var _db: DatabaseWrapper
     private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
@@ -46,6 +50,35 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _sectorParser = SectorParser(_db, 0)
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+
+        _viewAdapter = BaseViewAdapter { regionId -> _selectDefaultRegion(regionId) }
+        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
+        listView.adapter = _viewAdapter
+
+        val swipeRightConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorSync),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_sync_24)!!
+        ) { pos ->
+            _updateRegionListAndDB(pos) { region ->
+                _updateHandler.setJsonParser(_sectorParser)
+                _sectorParser.setRegionId(region.id)
+                _sectorParser.setRegionName(region.name.orEmpty())
+                _updateHandler.update()
+            }
+        }
+        val swipeLeftConfig = SwipeConfig(
+            color = ContextCompat.getColor(this, R.color.colorDelete),
+            background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
+        ) { pos ->
+            _updateRegionListAndDB(pos) { region ->
+                _updateHandler.delete {
+                    _db.deleteSectorsRecursively(region.id)
+                    _displayContent()
+                }
+            }
+        }
+        val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
+        ItemTouchHelper(swipeController).attachToRecyclerView(listView)
 
         _displayContent()
     }
@@ -64,80 +97,33 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _displayContent() {
         this.setTitle(R.string.menu_region_manager)
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
-
-        val defaultColor = ContextCompat.getColor(this, R.color.colorSecondaryLight)
-        val highlightedColor = ContextCompat.getColor(this, R.color.colorAccentLight)
         val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
-        val defaultRegionIcon = getString(R.string.startup_arrow)
         var currentCountryName = ""
         val regions = _db.getNonEmptyRegions() // already sorted by country name
-        for (region in regions) {
+        val regionItemList = mutableListOf<BaseViewItem>()
+
+        regions.forEach { region ->
             if (!region.country.equals(currentCountryName)) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = region.country.orEmpty(),
-                    textSizeDp = WidgetUtils.infoFontSizeDp,
-                    bgColor = WidgetUtils.tourHeaderColor))
-                layout.addView(WidgetUtils.createHorizontalLine(this, 5))
                 currentCountryName = region.country.orEmpty()
+                regionItemList.add(BaseViewItem(
+                    id = 0,
+                    name = currentCountryName,
+                    backgroundResource = R.color.colorSecondary,
+                    isHeader = true))
             }
-
-            var regionDispName = region.name.orEmpty()
-            var bgColor = defaultColor
+            var regionName = region.name.orEmpty()
+            var backgroundResource = R.color.colorSecondaryLight
             if (region.id == defaultRegionId) {
-                regionDispName = "$defaultRegionIcon $regionDispName"
-                bgColor = highlightedColor
+                regionName = "${getString(R.string.startup_arrow)} $regionName"
+                backgroundResource = R.color.colorAccentLight
             }
-            val innerLayout = WidgetUtils.createCommonRowLayout(this,
-                textLeft = regionDispName,
-                onClickListener = {
-                    _selectDefaultRegion(region.id)
-                },
-                bgColor = bgColor
-            )
-
-            val updateButton = ImageButton(this).apply {
-                id = View.generateViewId()
-                setImageResource(android.R.drawable.stat_notify_sync)
-                setOnClickListener {
-                    _updateHandler.setJsonParser(_sectorParser)
-                    _sectorParser.setRegionId(region.id)
-                    _sectorParser.setRegionName(region.name.orEmpty())
-                    _updateHandler.update()
-                }
-            }
-            innerLayout.addView(updateButton)
-
-            val deleteButton = ImageButton(this).apply {
-                id = View.generateViewId()
-                setImageResource(android.R.drawable.ic_menu_delete)
-                setOnClickListener {
-                    _updateHandler.delete {
-                        _db.deleteSectorsRecursively(region.id)
-                        _displayContent()
-                    }
-                }
-            }
-            innerLayout.addView(deleteButton)
-
-            val buttonWidthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f,
-                    resources.displayMetrics).toInt()
-            (deleteButton.layoutParams as RelativeLayout.LayoutParams).let {
-                it.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE)
-                it.height = buttonWidthPx
-                it.width = it.height
-            }
-
-            (updateButton.layoutParams as RelativeLayout.LayoutParams).let {
-                it.addRule(RelativeLayout.LEFT_OF, deleteButton.id)
-                it.height = buttonWidthPx
-                it.width = it.height
-            }
-
-            layout.addView(innerLayout)
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
+            regionItemList.add(BaseViewItem(
+                id = region.id,
+                name = regionName,
+                backgroundResource = backgroundResource))
         }
+
+        _viewAdapter.submitList(regionItemList)
     }
 
     private fun _updateAll() {
@@ -176,5 +162,11 @@ class RegionManagerActivity : BaseNavigationActivity() {
             apply()
         }
         _displayContent()
+    }
+
+    private inline fun _updateRegionListAndDB(position: Int, dbAction: (region: Region) -> Unit) {
+        val item = _viewAdapter.getItemAt(position)
+        _db.getRegion(item.id)?.let { dbAction(it) }
+        _viewAdapter.notifyItemChanged(position)
     }
 }

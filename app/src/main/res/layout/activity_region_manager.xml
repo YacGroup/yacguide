@@ -32,7 +32,7 @@
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/content_table"/>
+        <include layout="@layout/list_view_content"/>
 
     </LinearLayout>
 

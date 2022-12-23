@@ -20,6 +20,7 @@ package com.yacgroup.yacguide.list_adapters
 data class BaseViewItem(
     val id: Int,
     val name: String,
-    val additionalInfo: String,
-    val backgroundResource: Int
+    val backgroundResource: Int,
+    val additionalInfo: String = "",
+    val isHeader: Boolean = false
 )

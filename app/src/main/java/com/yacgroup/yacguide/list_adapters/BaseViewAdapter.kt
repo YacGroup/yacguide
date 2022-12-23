@@ -32,19 +32,31 @@ class BaseViewAdapter(private val _onClick: (Int) -> Unit)
 
     inner class BaseItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
-        private val _mainTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
+        private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
+        private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
+        private var _isHeader = false
 
         fun bind(viewItem: BaseViewItem) {
-            _mainTextView.text = viewItem.name
-            _subTextView.text = viewItem.additionalInfo
+            _isHeader = viewItem.isHeader
             _listItemLayout.apply {
                 setBackgroundResource(viewItem.backgroundResource)
-                setOnClickListener {
-                    _onClick(viewItem.id)
+            }
+            if (_isHeader) {
+                _mainRightTextView.text = viewItem.name
+                _subTextView.visibility = View.GONE
+            } else {
+                _mainLeftTextView.text = viewItem.name
+                _subTextView.text = viewItem.additionalInfo
+                _listItemLayout.apply {
+                    setOnClickListener {
+                        _onClick(viewItem.id)
+                    }
                 }
             }
         }
+
+        fun isHeader() = _isHeader
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

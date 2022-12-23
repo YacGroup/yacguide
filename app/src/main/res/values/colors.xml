@@ -42,6 +42,7 @@
     <color name="colorAccentLight">#e8eaf6</color>
     <color name="colorError">#f44336</color>
 
+    <color name="colorSync">#4fc3f7</color>
     <color name="colorEdit">#ffeb3b</color>
     <color name="colorDelete">@color/colorError</color>
 
