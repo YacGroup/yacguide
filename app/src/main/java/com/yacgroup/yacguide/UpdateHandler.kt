@@ -35,7 +35,8 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
-    private var _onSuccessfulUpdate: () -> Unit = {}
+    private var _exitCode: ExitCode = ExitCode.SUCCESS
+    private var _onUpdateFinished: () -> Unit = {}
 
     init {
         _jsonParser.listener = this
@@ -56,13 +57,17 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     override fun onUpdateFinished(exitCode: ExitCode) {
-        if (exitCode == ExitCode.SUCCESS) {
-            _onSuccessfulUpdate()
-            if (!_isRecurringUpdate) {
-                finish(exitCode)
-            }
+        if (exitCode == ExitCode.ABORT) {
+            _exitCode = ExitCode.ABORT
+            finish()
         } else {
-            finish(exitCode)
+            if (exitCode == ExitCode.ERROR) {
+                _exitCode = ExitCode.ERROR
+            }
+            _onUpdateFinished()
+            if (!_isRecurringUpdate) {
+                finish()
+            }
         }
     }
 
@@ -71,8 +76,8 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
     }
 
-    fun update(onSuccessfulUpdate: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
-        _onSuccessfulUpdate = onSuccessfulUpdate
+    fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
+        _onUpdateFinished = onUpdateFinished
         _isRecurringUpdate = isRecurring
         _isSilentUpdate = isSilent
         if (!NetworkUtils.isNetworkAvailable(_activity) && !_isSilentUpdate) {
@@ -104,11 +109,11 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         }.show()
     }
 
-    fun finish(exitCode: ExitCode = ExitCode.SUCCESS) {
+    fun finish() {
         if (!_isSilentUpdate) {
             _updateDialog.dismiss()
 
-            val finishMsgResource = when (exitCode) {
+            val finishMsgResource = when (_exitCode) {
                 ExitCode.ABORT -> R.string.refresh_aborted
                 ExitCode.ERROR -> R.string.refresh_failed
                 else -> R.string.refresh_successful
@@ -117,14 +122,16 @@ class UpdateHandler(private val _activity: AppCompatActivity,
 
             _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
         }
+
+        _exitCode = ExitCode.SUCCESS
     }
 
-    fun configureDownloadButton(enabled: Boolean, onSuccessfulUpdate: () -> Unit) {
+    fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
         val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
         if (enabled) {
             button.visibility = View.VISIBLE
             button.setOnClickListener{
-                update({ onSuccessfulUpdate() })
+                update({ onUpdateFinished() })
             }
         } else {
             button.visibility = View.GONE

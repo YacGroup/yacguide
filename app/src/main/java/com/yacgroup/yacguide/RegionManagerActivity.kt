@@ -131,9 +131,11 @@ class RegionManagerActivity : BaseNavigationActivity() {
     private fun _updateAll() {
         // We need to update regions recursively since update() is asynchronous.
         _updateHandler.setJsonParser(_countryAndRegionParser)
-        _updateHandler.update({
-            _updateHandler.setJsonParser(_sectorParser)
-            _updateNextRegion(_db.getNonEmptyRegions().toMutableSet()) }, isRecurring = true)
+        _updateHandler.update(
+            onUpdateFinished = {
+                _updateHandler.setJsonParser(_sectorParser)
+                _updateNextRegion(_db.getNonEmptyRegions().toMutableSet()) },
+            isRecurring = true)
     }
 
     private fun _updateNextRegion(regions: MutableSet<Region>) {
@@ -142,7 +144,9 @@ class RegionManagerActivity : BaseNavigationActivity() {
             regions.remove(nextRegion)
             _sectorParser.setRegionId(nextRegion.id)
             _sectorParser.setRegionName(nextRegion.name.orEmpty())
-            _updateHandler.update({ _updateNextRegion(regions) }, isRecurring = true)
+            _updateHandler.update(
+                onUpdateFinished = { _updateNextRegion(regions) },
+                isRecurring = true)
         } catch (e: NoSuchElementException) {
             _updateHandler.finish()
         }
