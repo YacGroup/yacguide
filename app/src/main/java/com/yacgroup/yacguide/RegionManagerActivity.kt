@@ -39,6 +39,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private lateinit var _viewAdapter: BaseViewAdapter
     private lateinit var _db: DatabaseWrapper
+    private lateinit var _countryAndRegionParser: CountryAndRegionParser
     private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _customSettings: SharedPreferences
@@ -47,6 +48,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         super.onCreate(savedInstanceState)
 
         _db = DatabaseWrapper(this)
+        _countryAndRegionParser = CountryAndRegionParser(_db)
         _sectorParser = SectorParser(_db, 0)
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -128,11 +130,12 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _updateAll() {
         // We need to update regions recursively since update() is asynchronous.
-        _updateHandler.setJsonParser(CountryAndRegionParser(_db))
-        _updateHandler.update({
-            _updateHandler.setJsonParser(_sectorParser)
-            _updateNextRegion(_db.getNonEmptyRegions().toMutableSet())
-                              }, isRecurring = true)
+        _updateHandler.setJsonParser(_countryAndRegionParser)
+        _updateHandler.update(
+            onUpdateFinished = {
+                _updateHandler.setJsonParser(_sectorParser)
+                _updateNextRegion(_db.getNonEmptyRegions().toMutableSet()) },
+            isRecurring = true)
     }
 
     private fun _updateNextRegion(regions: MutableSet<Region>) {
@@ -141,7 +144,9 @@ class RegionManagerActivity : BaseNavigationActivity() {
             regions.remove(nextRegion)
             _sectorParser.setRegionId(nextRegion.id)
             _sectorParser.setRegionName(nextRegion.name.orEmpty())
-            _updateHandler.update({ _updateNextRegion(regions) }, true)
+            _updateHandler.update(
+                onUpdateFinished = { _updateNextRegion(regions) },
+                isRecurring = true)
         } catch (e: NoSuchElementException) {
             _updateHandler.finish()
         }

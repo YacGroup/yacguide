@@ -19,6 +19,7 @@ package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -34,7 +35,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
-    private var _exitCodes = mutableListOf<ExitCode>()
+    private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _onUpdateFinished: () -> Unit = {}
 
     init {
@@ -42,8 +43,9 @@ class UpdateHandler(private val _activity: AppCompatActivity,
 
         _updateDialog = Dialog(_activity)
         _updateDialog.setContentView(R.layout.info_dialog)
-        _updateDialog.setCancelable(false)
-        _updateDialog.setCanceledOnTouchOutside(false)
+        _updateDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+            abort()
+        }
     }
 
     override fun onUpdateStatus(statusMessage: String) {
@@ -55,11 +57,17 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     override fun onUpdateFinished(exitCode: ExitCode) {
-        _exitCodes.add(exitCode)
-        _onUpdateFinished()
-
-        if (!_isRecurringUpdate) {
+        if (exitCode == ExitCode.ABORT) {
+            _exitCode = ExitCode.ABORT
             finish()
+        } else {
+            if (exitCode == ExitCode.ERROR) {
+                _exitCode = ExitCode.ERROR
+            }
+            _onUpdateFinished()
+            if (!_isRecurringUpdate) {
+                finish()
+            }
         }
     }
 
@@ -105,18 +113,17 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         if (!_isSilentUpdate) {
             _updateDialog.dismiss()
 
-            if (_exitCodes.any { it == ExitCode.ABORT }) {
-                Toast.makeText(_activity, R.string.refresh_aborted, Toast.LENGTH_SHORT).show()
-            } else if (_exitCodes.any { it == ExitCode.ERROR }) {
-                Toast.makeText(_activity, R.string.error_on_refresh, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(_activity, R.string.successful_refresh, Toast.LENGTH_SHORT).show()
+            val finishMsgResource = when (_exitCode) {
+                ExitCode.ABORT -> R.string.refresh_aborted
+                ExitCode.ERROR -> R.string.refresh_failed
+                else -> R.string.refresh_successful
             }
+            Toast.makeText(_activity, finishMsgResource, Toast.LENGTH_SHORT).show()
 
             _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
         }
 
-        _exitCodes.clear()
+        _exitCode = ExitCode.SUCCESS
     }
 
     fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
