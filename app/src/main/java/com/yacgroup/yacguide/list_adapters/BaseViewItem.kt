@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,9 @@ package com.yacgroup.yacguide.list_adapters
 
 data class BaseViewItem(
     val id: Int,
-    val name: String,
-    val backgroundResource: Int,
+    val textLeft: String = "",
+    val textRight: String = "",
+    val backgroundColor: Int,
     val additionalInfo: String = "",
     val isHeader: Boolean = false
 )
