@@ -75,6 +75,12 @@
             android:parentActivityName=".AboutActivity"
             android:theme="@style/AppTheme.ActionBar">
         </activity>
+        <activity
+            android:name=".AboutLibrariesActivity"
+            android:exported="false"
+            android:parentActivityName=".AboutActivity"
+            android:theme="@style/AppTheme.ActionBar">
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -1,5 +1,6 @@
 plugins {
     id "com.github.triplet.play" version "3.6.0"
+    id "com.mikepenz.aboutlibraries.plugin"
 }
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
@@ -99,6 +100,11 @@ android {
     }
 }
 
+// https://github.com/mikepenz/AboutLibraries/blob/develop/plugin-build/plugin/src/main/kotlin/com/mikepenz/aboutlibraries/plugin/AboutLibrariesExtension.kt
+aboutLibraries {
+    prettyPrint = true
+}
+
 dependencies {
     // Room
     implementation fileTree(include: ["*.jar"], dir: "libs")
@@ -156,6 +162,15 @@ dependencies {
 
     // For introspection
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.0"
+
+    /*
+     * Listing all used libraries
+     *
+     * https://github.com/mikepenz/AboutLibraries
+     */
+    implementation "com.mikepenz:aboutlibraries-core:${aboutlibrariesVersion}"
+    //implementation "com.mikepenz:aboutlibraries-compose:${aboutlibrariesVersion}"
+    //implementation "com.mikepenz:aboutlibraries:${aboutlibrariesVersion}"
 }
 repositories {
     mavenCentral()

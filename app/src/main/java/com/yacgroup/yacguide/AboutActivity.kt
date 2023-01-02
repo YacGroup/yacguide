@@ -44,6 +44,11 @@ class AboutActivity : BaseNavigationActivity() {
         _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
         _createEntry(getString(R.string.license), getString(R.string.license_url))
         _createEntry(
+            getString(R.string.open_source_libraries),
+            getString(R.string.open_source_libraries_details),
+            callback = { _showLibraries()}
+        )
+        _createEntry(
             getString(R.string.whats_new),
             WhatsNewInfo(this).getReleaseNotesUrl()
         )
@@ -81,5 +86,10 @@ class AboutActivity : BaseNavigationActivity() {
             }
             setNegativeButton()
         }.show()
+    }
+
+    private fun _showLibraries() {
+        val intent = Intent(this, AboutLibrariesActivity::class.java)
+        startActivity(intent)
     }
 }
