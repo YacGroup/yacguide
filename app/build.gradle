@@ -113,23 +113,23 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.test:core-ktx:1.5.0"
 
-    def room_version = "2.4.3"
+    def roomVersion = "2.4.3"
 
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
 
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-ktx:$roomVersion"
 
     // optional - RxJava support for Room
-    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation "androidx.room:room-rxjava2:$roomVersion"
 
     // optional - Guava support for Room, including Optional and ListenableFuture
-    implementation "androidx.room:room-guava:$room_version"
+    implementation "androidx.room:room-guava:$roomVersion"
 
     implementation "net.sf.kxml:kxml2:2.3.0"
     implementation "com.caverock:androidsvg:1.4"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
     // Tests
@@ -149,9 +149,9 @@ dependencies {
      *
      * https://github.com/noties/Markwon
      */
-    def markwon_version = "4.6.2"
-    implementation "io.noties.markwon:core:$markwon_version"
-    implementation "io.noties.markwon:linkify:$markwon_version"
+    def markwonVersion = "4.6.2"
+    implementation "io.noties.markwon:core:$markwonVersion"
+    implementation "io.noties.markwon:linkify:$markwonVersion"
 
     /*
      * CSV library for tour book export
