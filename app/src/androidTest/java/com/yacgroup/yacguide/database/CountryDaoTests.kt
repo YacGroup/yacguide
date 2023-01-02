@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.yacgroup.yacguide.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -52,21 +52,21 @@ class CountryDaoTests {
     }
 
     @Test
-    fun all_countriesUnordered_returnsOrderedList() = runBlockingTest {
+    fun all_countriesUnordered_returnsOrderedList() = runTest {
         _countryDao.insert(TestDB.COUNTRIES.reversed())
 
         assertTrue(equal(TestDB.COUNTRIES, _countryDao.all))
     }
 
     @Test
-    fun getAllNonEmpty_noRegionsAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllNonEmpty_noRegionsAvailable_returnsEmptyList() = runTest {
         TestDB.initCountries(_countryDao)
 
         assertTrue(_countryDao.getAllNonEmpty().isEmpty())
     }
 
     @Test
-    fun getAllNonEmpty_regionsWithParentCountriesAvailable_returnsCorrespondingCountries() = runBlockingTest {
+    fun getAllNonEmpty_regionsWithParentCountriesAvailable_returnsCorrespondingCountries() = runTest {
         TestDB.initCountries(_countryDao)
         TestDB.initRegions(_db.regionDao())
         val nonEmptyCountries = TestDB.COUNTRIES.filter { countryIt ->
@@ -77,7 +77,7 @@ class CountryDaoTests {
     }
 
     @Test
-    fun deleteAll_countryCountBecomesZero() = runBlockingTest {
+    fun deleteAll_countryCountBecomesZero() = runTest {
         TestDB.initCountries(_countryDao)
 
         _countryDao.deleteAll()

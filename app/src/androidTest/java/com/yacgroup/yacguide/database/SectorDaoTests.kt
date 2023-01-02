@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
 import com.yacgroup.yacguide.equal
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -55,17 +55,17 @@ class SectorDaoTests {
     }
 
     @Test
-    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_noSectorsAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_noSectorsAvailable_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_sectorsAvailable_returnsCorrespondingSectors() = runBlockingTest {
+    fun getAllInRegion_sectorsAvailable_returnsCorrespondingSectors() = runTest {
         val region1Id = REGIONS.first().id
         val sectorsInRegion1 = SECTORS.filter {
             it.parentId == region1Id
@@ -74,17 +74,17 @@ class SectorDaoTests {
     }
 
     @Test
-    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectors() = runBlockingTest {
+    fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectors() = runTest {
         val country1Name = COUNTRIES.first().name
         val sectorsInCountry1 = SECTORS.filter { sector ->
             REGIONS.any {
@@ -95,12 +95,12 @@ class SectorDaoTests {
     }
 
     @Test
-    fun getSector_invalidSectorId_returnsNull() = runBlockingTest {
+    fun getSector_invalidSectorId_returnsNull() = runTest {
         assertNull(_sectorDao.getSector(INVALID_ID))
     }
 
     @Test
-    fun getSector_sectorAvailable_returnsSector() = runBlockingTest {
+    fun getSector_sectorAvailable_returnsSector() = runTest {
         val sector = SECTORS.first()
         assertEquals(_sectorDao.getSector(sector.id), sector)
     }
@@ -138,13 +138,13 @@ class SectorDaoDeletionTests {
 
 
     @Test
-    fun deleteAll_sectorTableBecomesEmpty() = runBlockingTest {
+    fun deleteAll_sectorTableBecomesEmpty() = runTest {
         _sectorDao.deleteAll()
         assertTrue(_sectorDao.all.isEmpty())
     }
 
     @Test
-    fun deleteAll_regionIdGiven_sectorTableDoesNotContainCorrespondingSectorsAnymore() = runBlockingTest {
+    fun deleteAll_regionIdGiven_sectorTableDoesNotContainCorrespondingSectorsAnymore() = runTest {
         val region1Id = REGIONS.first().id
         val sectorsInRegion1 = SECTORS.filter {
             it.parentId == region1Id

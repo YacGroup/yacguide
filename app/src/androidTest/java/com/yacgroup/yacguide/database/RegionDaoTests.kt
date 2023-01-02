@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -55,17 +55,17 @@ class RegionDaoTests {
     }
 
     @Test
-    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_noRegionsAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_noRegionsAvailable_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runBlockingTest {
+    fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runTest {
         val country1Name = COUNTRIES.first().name
         val regionsInCountry1 = REGIONS.filter {
             it.country == country1Name
@@ -74,7 +74,7 @@ class RegionDaoTests {
     }
 
     @Test
-    fun getAllNonEmpty_sectorsWithParentRegionsAvailable_returnsCorrespondingRegions() = runBlockingTest {
+    fun getAllNonEmpty_sectorsWithParentRegionsAvailable_returnsCorrespondingRegions() = runTest {
         val nonEmptyRegions = REGIONS.filter { region ->
             SECTORS.any { it.parentId == region.id }
         }
@@ -82,12 +82,12 @@ class RegionDaoTests {
     }
 
     @Test
-    fun getRegion_invalidRegionId_returnsNull() = runBlockingTest {
+    fun getRegion_invalidRegionId_returnsNull() = runTest {
         assertNull(_regionDao.getRegion(INVALID_ID))
     }
 
     @Test
-    fun getRegion_regionAvailable_returnsRegion() = runBlockingTest {
+    fun getRegion_regionAvailable_returnsRegion() = runTest {
         val region = REGIONS.first()
         assertEquals(_regionDao.getRegion(region.id), region)
     }
@@ -126,13 +126,13 @@ class RegionDaoDeletionTests {
 
 
     @Test
-    fun deleteAll_regionTableBecomesEmpty() = runBlockingTest {
+    fun deleteAll_regionTableBecomesEmpty() = runTest {
         _regionDao.deleteAll()
         assertTrue(_regionDao.all.isEmpty())
     }
 
     @Test
-    fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() = runBlockingTest {
+    fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() = runTest {
         val country1Name = COUNTRIES.first().name
         val regionsInCountry1 = REGIONS.filter {
             it.country == country1Name

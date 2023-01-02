@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.PARTNERS
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -51,23 +51,23 @@ class PartnerDaoTests {
     }
 
     @Test
-    fun getId_invalidName_returnsZero() = runBlockingTest {
+    fun getId_invalidName_returnsZero() = runTest {
         assertEquals(0, _partnerDao.getId(INVALID_NAME))
     }
 
     @Test
-    fun getId_nameIsAvailable_returnsCorrespondingId() = runBlockingTest {
+    fun getId_nameIsAvailable_returnsCorrespondingId() = runTest {
         val partner = PARTNERS.first()
         assertEquals(partner.id, _partnerDao.getId(partner.name!!))
     }
 
     @Test
-    fun getPartner_invalidId_returnsNull() = runBlockingTest {
+    fun getPartner_invalidId_returnsNull() = runTest {
         assertNull(_partnerDao.getPartner(INVALID_ID))
     }
 
     @Test
-    fun getPartner_idIsAvailable_returnsCorrespondingPartner() = runBlockingTest {
+    fun getPartner_idIsAvailable_returnsCorrespondingPartner() = runTest {
         val partner = PARTNERS.first()
         assertEquals(partner, _partnerDao.getPartner(partner.id))
     }
@@ -95,7 +95,7 @@ class PartnerDaoDeletionTests {
 
 
     @Test
-    fun deleteAll_partnerTableBecomesEmpty() = runBlockingTest {
+    fun deleteAll_partnerTableBecomesEmpty() = runTest {
         TestDB.initPartners(_partnerDao)
 
         _partnerDao.deleteAll()

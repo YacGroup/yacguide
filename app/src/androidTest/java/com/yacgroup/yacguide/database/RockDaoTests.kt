@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.ROCK_COMMENTS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.equal
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -60,18 +60,18 @@ class RockDaoTests {
     }
 
     @Test
-    fun getAllByName_nameNotAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllByName_nameNotAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllByName(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllByName_nameAvailable_returnsCorrespondingRocks() = runBlockingTest {
+    fun getAllByName_nameAvailable_returnsCorrespondingRocks() = runTest {
         val rock = ROCKS.first()
         assertTrue(equal(listOf(rock), _rockDao.getAllByName(rock.name!!)))
     }
 
     @Test
-    fun getAllByRelevance_rocksForEveryRelevanceRequested_returnsCorrespondingRocksRespectively() = runBlockingTest {
+    fun getAllByRelevance_rocksForEveryRelevanceRequested_returnsCorrespondingRocksRespectively() = runTest {
         RockComment.RELEVANCE_MAP.keys.forEach { relevance ->
             val rocks = ROCKS.filter { rock ->
                 val comments = ROCK_COMMENTS.filter {
@@ -86,17 +86,17 @@ class RockDaoTests {
     }
 
     @Test
-    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_noRocksAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_rocksAvailable_returnsCorrespondingRocks() = runBlockingTest {
+    fun getAllInCountry_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val country1Name = COUNTRIES.first().name
         val rocksInCountry1 = ROCKS.filter { rock ->
             SECTORS.any { sector ->
@@ -109,17 +109,17 @@ class RockDaoTests {
     }
 
     @Test
-    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_noRocksAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_rocksAvailable_returnsCorrespondingRocks() = runBlockingTest {
+    fun getAllInRegion_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val region1Id = REGIONS.first().id
         val rocksInRegion1 = ROCKS.filter { rock ->
             SECTORS.any { it.id == rock.parentId && it.parentId == region1Id }
@@ -128,17 +128,17 @@ class RockDaoTests {
     }
 
     @Test
-    fun getAllInSector_invalidSectorId_returnsEmptyList() = runBlockingTest {
+    fun getAllInSector_invalidSectorId_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInSector(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllInSector_noRocksAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInSector_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInSector(SECTORS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllInSector_rocksAvailable_returnsCorrespondingRocks() = runBlockingTest {
+    fun getAllInSector_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val sector1Id = SECTORS.first().id
         val rocksInSector1 = ROCKS.filter {
             it.parentId == sector1Id
@@ -147,17 +147,17 @@ class RockDaoTests {
     }
 
     @Test
-    fun getAllByNameInSector_nameAvailableInDifferentSector_returnsEmptyList() = runBlockingTest {
+    fun getAllByNameInSector_nameAvailableInDifferentSector_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllByNameInSector(SECTORS.first().id, ROCKS.last().name!!).isEmpty())
     }
 
     @Test
-    fun getRock_invalidRockId_returnsNull() = runBlockingTest {
+    fun getRock_invalidRockId_returnsNull() = runTest {
         assertNull(_rockDao.getRock(INVALID_ID))
     }
 
     @Test
-    fun getRock_rockAvailable_returnsRock() = runBlockingTest {
+    fun getRock_rockAvailable_returnsRock() = runTest {
         val rock = ROCKS.first()
         assertEquals(_rockDao.getRock(rock.id), rock)
     }
@@ -187,7 +187,7 @@ class RockDaoDeletionTests {
     }
 
     @Test
-    fun deleteAll_rockTableBecomesEmpty() = runBlockingTest {
+    fun deleteAll_rockTableBecomesEmpty() = runTest {
         _rockDao.deleteAll()
         assertTrue(_rockDao.all.isEmpty())
     }
