@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,9 +101,9 @@ class TestDB {
         )
 
         val ASCENDS = listOf(
-            Ascend(1, ROUTES[0].id, AscendStyle.eONSIGHT.id, 0, 0, 0, ArrayList(), ""),
+            Ascend(1, ROUTES[0].id, AscendStyle.eONSIGHT.id, 2000, 10, 10, ArrayList(), ""),
             Ascend(2, ROUTES[0].id, AscendStyle.eFOLLOWED.id, 0, 0, 0, ArrayList(), ""),
-            Ascend(3, ROUTES[1].id, AscendStyle.ePROJECT.id, 0, 0, 0, ArrayList(), "")
+            Ascend(3, ROUTES[1].id, AscendStyle.ePROJECT.id, 2000, 3, 3, ArrayList(), "")
         )
 
         val PARTNERS = listOf(
