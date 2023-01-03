@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:textAlignment="textStart"
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"/>
@@ -37,16 +37,14 @@
         android:id="@+id/aboutEntryDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:textAlignment="textStart"
         android:textSize="14sp"
         android:textColor="?android:textColorSecondary"/>
 
     <View
         android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="?android:attr/listDivider"/>
+        style="@style/ThinDivider"/>
 
 </LinearLayout>

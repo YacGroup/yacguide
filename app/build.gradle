@@ -170,8 +170,6 @@ dependencies {
      * https://github.com/mikepenz/AboutLibraries
      */
     implementation "com.mikepenz:aboutlibraries-core:${aboutlibrariesVersion}"
-    //implementation "com.mikepenz:aboutlibraries-compose:${aboutlibrariesVersion}"
-    //implementation "com.mikepenz:aboutlibraries:${aboutlibrariesVersion}"
 }
 repositories {
     mavenCentral()

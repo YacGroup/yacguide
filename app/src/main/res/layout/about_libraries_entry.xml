@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright (C) 2022 Christian Sommer
+  Copyright (C) 2023 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:textAlignment="textStart"
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"/>
@@ -44,7 +44,7 @@
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:textAlignment="textStart"
             android:textSize="14sp"
             android:textColor="?android:textColorSecondary"/>
@@ -55,7 +55,7 @@
             android:layout_weight="0.2"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:textAlignment="textEnd"
             android:textSize="14sp"
             android:textColor="?android:textColorSecondary"/>
@@ -63,9 +63,7 @@
 
     <View
         android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="?android:attr/listDivider"/>
+        style="@style/ThinDivider"/>
 
 </LinearLayout>

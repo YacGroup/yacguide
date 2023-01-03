@@ -60,8 +60,7 @@
     <string name="data_src">Datenbezugsquelle</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="license">Lizenz</string>
-    <string name="open_source_libraries">Bibliotheken und Lizenzen</string>
-    <string name="open_source_libraries_details">Bibliotheken die diese App möglich machen.</string>
+    <string name="software_and_licenses">Externe Software und Lizenzen</string>
     <string name="version">Version</string>
     <string name="contact">Kontakt</string>
     <string name="contact_details">Generelles Feedback und Fehler melden</string>
