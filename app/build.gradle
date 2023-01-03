@@ -103,6 +103,7 @@ android {
 // https://github.com/mikepenz/AboutLibraries/blob/develop/plugin-build/plugin/src/main/kotlin/com/mikepenz/aboutlibraries/plugin/AboutLibrariesExtension.kt
 aboutLibraries {
     prettyPrint = true
+    configPath = "config/aboutLibraries"
 }
 
 dependencies {
