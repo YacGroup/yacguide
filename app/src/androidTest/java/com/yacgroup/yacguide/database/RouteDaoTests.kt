@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.comment.RouteComment.Companion.NO_INFO_ID
 import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -66,18 +66,18 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllByName_nameNotAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllByName_nameNotAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllByName(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllByName_nameAvailable_returnsCorrespondingRoutes() = runBlockingTest {
+    fun getAllByName_nameAvailable_returnsCorrespondingRoutes() = runTest {
         val route = ROUTES.first()
         assertTrue(equal(listOf(route), _routeDao.getAllByName(route.name!!)))
     }
 
     @Test
-    fun getAllByGrade_returnsOnlyRoutesInRequestedGradeRange() = runBlockingTest {
+    fun getAllByGrade_returnsOnlyRoutesInRequestedGradeRange() = runTest {
         RouteComment.GRADE_MAP.keys.forEach { gradeId ->
             val routes = ROUTES.filter { route ->
                 val comments = ROUTE_COMMENTS.filter {
@@ -90,7 +90,7 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllByQuality_returnsOnlyRoutesOfRequestedOrBetterQuality() = runBlockingTest {
+    fun getAllByQuality_returnsOnlyRoutesOfRequestedOrBetterQuality() = runTest {
         RouteComment.QUALITY_MAP.keys.forEach { maxQualityId ->
             val routes = ROUTES.filter { route ->
                 val comments = ROUTE_COMMENTS.filter {
@@ -103,7 +103,7 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllByProtection_returnsOnlyRoutesOfRequestedOrBetterProtection() = runBlockingTest {
+    fun getAllByProtection_returnsOnlyRoutesOfRequestedOrBetterProtection() = runTest {
         RouteComment.PROTECTION_MAP.keys.forEach { maxProtectionId ->
             val routes = ROUTES.filter { route ->
                 val comments = ROUTE_COMMENTS.filter {
@@ -116,7 +116,7 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllByDrying_returnsOnlyRoutesOfRequestedOrBetterDrying() = runBlockingTest {
+    fun getAllByDrying_returnsOnlyRoutesOfRequestedOrBetterDrying() = runTest {
         RouteComment.DRYING_MAP.keys.forEach { maxDryingId ->
             val routes = ROUTES.filter { route ->
                 val comments = ROUTE_COMMENTS.filter {
@@ -129,7 +129,7 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllForStyle_returnsOnlyRoutesAscendedWithRequestedStyle() = runBlockingTest {
+    fun getAllForStyle_returnsOnlyRoutesAscendedWithRequestedStyle() = runTest {
         AscendStyle.values().forEach { style ->
             val routes = ROUTES.filter { route ->
                 ASCENDS.any {
@@ -141,17 +141,17 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_noRoutesAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInCountry_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @Test
-    fun getAllInCountry_routesAvailable_returnsCorrespondingRoutes() = runBlockingTest {
+    fun getAllInCountry_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val country1Name = COUNTRIES.first().name
         val routesInCountry1 = ROUTES.filter { route ->
             ROCKS.any { rock ->
@@ -166,17 +166,17 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_noRoutesAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInRegion_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllInRegion_routesAvailable_returnsCorrespondingRoutes() = runBlockingTest {
+    fun getAllInRegion_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val region1Id = REGIONS.first().id
         val routesInRegion1 = ROUTES.filter { route ->
             ROCKS.any { rock ->
@@ -188,17 +188,17 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllInSector_invalidSectorId_returnsEmptyList() = runBlockingTest {
+    fun getAllInSector_invalidSectorId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInSector(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllInSector_noRoutesAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllInSector_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInSector(SECTORS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllInSector_routesAvailable_returnsCorrespondingRoutes() = runBlockingTest {
+    fun getAllInSector_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val sector1Id = SECTORS.first().id
         val routesInSector1 = ROUTES.filter { route ->
             ROCKS.any {
@@ -209,17 +209,17 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllAtRock_invalidRockId_returnsEmptyList() = runBlockingTest {
+    fun getAllAtRock_invalidRockId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllAtRock(INVALID_ID).isEmpty())
     }
 
     @Test
-    fun getAllAtRock_noRoutesAvailable_returnsEmptyList() = runBlockingTest {
+    fun getAllAtRock_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllAtRock(ROCKS.last().id).isEmpty())
     }
 
     @Test
-    fun getAllAtRock_routesAvailable_returnsCorrespondingRoutes() = runBlockingTest {
+    fun getAllAtRock_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val rock1Id = ROCKS.first().id
         val routesAtRock1 = ROUTES.filter {
             it.parentId == rock1Id
@@ -228,17 +228,17 @@ class RouteDaoTests {
     }
 
     @Test
-    fun getAllByNameAtRock_nameAvailableAtDifferentRock_returnsEmptyList() = runBlockingTest {
+    fun getAllByNameAtRock_nameAvailableAtDifferentRock_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllByNameAtRock(ROCKS.first().id, ROUTES.last().name!!).isEmpty())
     }
 
     @Test
-    fun getRoute_invalidRouteId_returnsNull() = runBlockingTest {
+    fun getRoute_invalidRouteId_returnsNull() = runTest {
         assertNull(_routeDao.getRoute(INVALID_ID))
     }
 
     @Test
-    fun getRoute_routeAvailable_returnsRoute() = runBlockingTest {
+    fun getRoute_routeAvailable_returnsRoute() = runTest {
         val route = ROUTES.first()
         assertEquals(_routeDao.getRoute(route.id), route)
     }
@@ -268,7 +268,7 @@ class RouteDaoDeletionTests {
     }
 
     @Test
-    fun deleteAll_routeTableBecomesEmpty() = runBlockingTest {
+    fun deleteAll_routeTableBecomesEmpty() = runTest {
         _routeDao.deleteAll()
         assertTrue(_routeDao.all.isEmpty())
     }
