@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021, 2022 Axel Paetzold
+ * Copyright (C) 2021 - 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,8 +109,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 currentCountryName = region.country.orEmpty()
                 regionItemList.add(BaseViewItem(
                     id = 0,
-                    name = currentCountryName,
-                    backgroundResource = R.color.colorSecondary,
+                    textLeft = currentCountryName,
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
                     isHeader = true))
             }
             var regionName = region.name.orEmpty()
@@ -121,8 +121,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
             }
             regionItemList.add(BaseViewItem(
                 id = region.id,
-                name = regionName,
-                backgroundResource = backgroundResource))
+                textLeft = regionName,
+                backgroundColor = ContextCompat.getColor(this, backgroundResource)))
         }
 
         _viewAdapter.submitList(regionItemList)

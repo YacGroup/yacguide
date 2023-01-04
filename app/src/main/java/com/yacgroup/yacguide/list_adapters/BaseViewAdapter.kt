@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,13 +40,13 @@ class BaseViewAdapter(private val _onClick: (Int) -> Unit)
         fun bind(viewItem: BaseViewItem) {
             _isHeader = viewItem.isHeader
             _listItemLayout.apply {
-                setBackgroundResource(viewItem.backgroundResource)
+                setBackgroundColor(viewItem.backgroundColor)
             }
+            _mainLeftTextView.text = viewItem.textLeft
+            _mainRightTextView.text = viewItem.textRight
             if (_isHeader) {
-                _mainRightTextView.text = viewItem.name
                 _subTextView.visibility = View.GONE
             } else {
-                _mainLeftTextView.text = viewItem.name
                 _subTextView.text = viewItem.additionalInfo
                 _listItemLayout.apply {
                     setOnClickListener {

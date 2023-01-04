@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,14 +147,14 @@ class PartnersActivity : AppCompatActivity() {
             if (_selectedPartnerIds.contains(it.id)) {
                 BaseViewItem(
                     id = it.id,
-                    name = "${getString(R.string.tick)} ${it.name.orEmpty()}",
-                    backgroundResource = R.color.colorAccentLight,
+                    textLeft = "${getString(R.string.tick)} ${it.name.orEmpty()}",
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorAccentLight),
                     additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
             } else {
                 BaseViewItem(
                     id = it.id,
-                    name = "${getString(R.string.empty_box)} ${it.name.orEmpty()}",
-                    backgroundResource = R.color.colorSecondaryLight,
+                    textLeft = "${getString(R.string.empty_box)} ${it.name.orEmpty()}",
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondaryLight),
                     additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
             }
         }

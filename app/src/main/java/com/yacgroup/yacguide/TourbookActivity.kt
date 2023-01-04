@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,34 +21,29 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.TourbookExportFormat
 import com.yacgroup.yacguide.database.tourbook.TourbookExporter
+import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
+import com.yacgroup.yacguide.list_adapters.BaseViewItem
 import com.yacgroup.yacguide.utils.*
 import org.json.JSONException
 import java.io.IOException
 import java.util.*
 
-
 class TourbookActivity : BaseNavigationActivity() {
 
-    private lateinit var _db: DatabaseWrapper
-    private lateinit var _availableYears: IntArray
-    private lateinit var _tourbookExporter: TourbookExporter
-    private var _currentYear: Int = 0
-    private var _tourbookType: TourbookType = TourbookType.eAscends
     private val _exportResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK) {
@@ -61,8 +56,14 @@ class TourbookActivity : BaseNavigationActivity() {
             it.data?.data?.also { uri -> _import(uri) }
         }
     }
-
+    private lateinit var _listView: RecyclerView
+    private lateinit var _viewAdapter: BaseViewAdapter
+    private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
+    private lateinit var _availableYears: IntArray
+    private lateinit var _tourbookExporter: TourbookExporter
+    private var _currentYear: Int = -1
+    private var _tourbookType: TourbookType = TourbookType.eAscends
 
     private enum class TourbookType {
         eAscends,
@@ -75,11 +76,15 @@ class TourbookActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-
         _tourbookExporter = TourbookExporter(_db, contentResolver)
 
-        _currentYear = _initYears()
-        _displayContent()
+        _viewAdapter = BaseViewAdapter { ascendId ->
+            startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
+                putExtra(IntentConstants.ASCEND_ID, ascendId)
+            })
+        }
+        _listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
+        _listView.adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook
@@ -216,35 +221,30 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _displayContent() {
         findViewById<View>(R.id.nextButton).visibility = if (_isLastYear()) View.INVISIBLE else View.VISIBLE
         findViewById<View>(R.id.prevButton).visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
-
-        val ascends = _getAscends().toMutableList()
-        if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
-            ascends.reverse()
-        }
-
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
         (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
+
+        val defaultColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+        val (leadColor, followColor) =
+            if (_customSettings.getBoolean(getString(R.string.colorize_tourbook_entries), resources.getBoolean(R.bool.colorize_tourbook_entries)))
+                Pair(_customSettings.getInt(getString(R.string.lead), defaultColor), _customSettings.getInt(getString(R.string.follow), defaultColor))
+            else
+                Pair(defaultColor, defaultColor)
 
         var currentMonth = -1
         var currentDay = -1
         var currentRegionId = -1
 
-        val defaultColor = ContextCompat.getColor(this, R.color.white)
-        var leadColor = defaultColor
-        var followColor = defaultColor
-        if (_customSettings.getBoolean(getString(R.string.colorize_tourbook_entries),
-                                       resources.getBoolean(R.bool.colorize_tourbook_entries))) {
-            leadColor = _customSettings.getInt(getString(R.string.lead), defaultColor)
-            followColor = _customSettings.getInt(getString(R.string.follow), defaultColor)
+        val ascends = _getAscends().toMutableList()
+        if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
+            ascends.reverse()
         }
-        for (ascend in ascends) {
+        val ascendItemList = mutableListOf<BaseViewItem>()
+
+        ascends.forEach { ascend ->
             val month = ascend.month
             val day = ascend.day
-
             var route = _db.getRoute(ascend.routeId)
             val rock: Rock
-            val sector: Sector
             val region: Region
             if (route == null) {
                 // The database entry has been deleted
@@ -253,27 +253,22 @@ class TourbookActivity : BaseNavigationActivity() {
                 region = _db.createUnknownRegion()
             } else {
                 rock = _db.getRock(route.parentId)!!
-                sector = _db.getSector(rock.parentId)!!
+                val sector = _db.getSector(rock.parentId)!!
                 region = _db.getRegion(sector.parentId)!!
             }
 
             if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
-                layout.addView(WidgetUtils.createCommonRowLayout(this,
-                        textLeft = if (_currentYear == 0) "" else "$day.$month.$_currentYear",
-                        textRight = region.name.orEmpty(),
-                        textSizeDp = WidgetUtils.infoFontSizeDp,
-                        bgColor = WidgetUtils.tourHeaderColor))
-                layout.addView(WidgetUtils.createHorizontalLine(this, 5))
+                ascendItemList.add(BaseViewItem(
+                    id = region.id,
+                    textLeft = if (_currentYear == 0) "" else "$day.$month.$_currentYear",
+                    textRight = region.name.orEmpty(),
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
+                    isHeader = true
+                ))
                 currentMonth = month
                 currentDay = day
                 currentRegionId = region.id
             }
-            val onClickListener = View.OnClickListener {
-                startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
-                    putExtra(IntentConstants.ASCEND_ID, ascend.id)
-                })
-            }
-
             val bgColor = when {
                 AscendStyle.isLead(AscendStyle.bitMask(ascend.styleId)) -> leadColor
                 AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)) -> followColor
@@ -281,19 +276,18 @@ class TourbookActivity : BaseNavigationActivity() {
             }
             val rockName = ParserUtils.decodeObjectNames(rock.name)
             val routeName = ParserUtils.decodeObjectNames(route.name)
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${rockName.first} - ${routeName.first}",
-                    textRight = route.grade.orEmpty(),
-                    onClickListener = onClickListener,
-                    bgColor = bgColor))
-            layout.addView(WidgetUtils.createCommonRowLayout(this,
-                    textLeft = "${rockName.second} - ${routeName.second}",
-                    textSizeDp = WidgetUtils.textFontSizeDp,
-                    onClickListener = onClickListener,
-                    bgColor = bgColor,
-                    typeface = Typeface.NORMAL))
-            layout.addView(WidgetUtils.createHorizontalLine(this, 1))
+            ascendItemList.add(BaseViewItem(
+                id = ascend.id,
+                textLeft = "${rockName.first} - ${routeName.first}",
+                textRight = route.grade.orEmpty(),
+                backgroundColor = bgColor,
+                additionalInfo = "${rockName.second} - ${routeName.second}"
+            ))
         }
+
+        // We need to reset the ListAdapter because the list might contain completely different content
+        _listView.adapter = _viewAdapter
+        _viewAdapter.submitList(ascendItemList)
     }
 
     private fun _isFirstYear(): Boolean {
