@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright (C) 2020 Christian Sommer,
-                2022 Axel Paetzold
+                2022, 2023 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 
     <!-- Preference keys -->
     <string name="preference_key_version_code">version_code</string>
+    <string name="pinned_countries">pinned_countries</string>
 
     <!-- Colors -->
     <color name="greenblue">#00cc99</color>

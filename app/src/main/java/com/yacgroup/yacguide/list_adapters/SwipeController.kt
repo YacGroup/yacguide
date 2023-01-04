@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class SwipeController(
     ): Boolean = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        if (!(viewHolder as BaseViewAdapter.BaseItemViewHolder).isHeader()) {
+        if (_isSwipable(viewHolder)) {
             if (direction == ItemTouchHelper.RIGHT) {
                 _onSwipeRightConfig.action(viewHolder.adapterPosition)
             } else {
@@ -59,36 +59,43 @@ class SwipeController(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (!(viewHolder as BaseViewAdapter.BaseItemViewHolder).isHeader() && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        if (_isSwipable(viewHolder) && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             if (dX > 0) {
-                val backgroundIconTop =
-                    viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeRightConfig.background.intrinsicHeight) / 2
-                c.clipRect(0f, viewHolder.itemView.top.toFloat(), dX, viewHolder.itemView.bottom.toFloat())
-                c.drawColor(_onSwipeRightConfig.color)
-                _onSwipeRightConfig.background.bounds = Rect(
-                    _onSwipeRightConfig.background.intrinsicWidth / 2,
-                    backgroundIconTop,
-                    3 * _onSwipeRightConfig.background.intrinsicWidth / 2,
-                    backgroundIconTop + _onSwipeRightConfig.background.intrinsicHeight
-                )
-                _onSwipeRightConfig.background.draw(c)
+                _onSwipeRightConfig.let {
+                    val backgroundIconTop =
+                        viewHolder.itemView.top + (viewHolder.itemView.height - it.background.intrinsicHeight) / 2
+                    c.clipRect(0f, viewHolder.itemView.top.toFloat(), dX, viewHolder.itemView.bottom.toFloat())
+                    c.drawColor(it.color)
+                    it.background.bounds = Rect(
+                        it.background.intrinsicWidth / 2,
+                        backgroundIconTop,
+                        3 * it.background.intrinsicWidth / 2,
+                        backgroundIconTop + it.background.intrinsicHeight
+                    )
+                    it.background.draw(c)
+                }
             } else {
-                val backgroundIconTop =
-                    viewHolder.itemView.top + (viewHolder.itemView.height - _onSwipeLeftConfig.background.intrinsicHeight) / 2
-                c.clipRect(dX + viewHolder.itemView.width, viewHolder.itemView.top.toFloat(), viewHolder.itemView.width.toFloat(), viewHolder.itemView.bottom.toFloat())
-                c.drawColor(_onSwipeLeftConfig.color)
-                _onSwipeLeftConfig.background.bounds = Rect(
-                    viewHolder.itemView.width - 3 * _onSwipeLeftConfig.background.intrinsicWidth / 2,
-                    backgroundIconTop,
-                    viewHolder.itemView.width - _onSwipeLeftConfig.background.intrinsicWidth / 2,
-                    backgroundIconTop + _onSwipeLeftConfig.background.intrinsicHeight
-                )
-                _onSwipeLeftConfig.background.draw(c)
+                _onSwipeLeftConfig.let {
+                    val backgroundIconTop =
+                        viewHolder.itemView.top + (viewHolder.itemView.height - it.background.intrinsicHeight) / 2
+                    c.clipRect(dX + viewHolder.itemView.width, viewHolder.itemView.top.toFloat(), viewHolder.itemView.width.toFloat(), viewHolder.itemView.bottom.toFloat())
+                    c.drawColor(it.color)
+                    it.background.bounds = Rect(
+                        viewHolder.itemView.width - 3 * it.background.intrinsicWidth / 2,
+                        backgroundIconTop,
+                        viewHolder.itemView.width - it.background.intrinsicWidth / 2,
+                        backgroundIconTop + it.background.intrinsicHeight
+                    )
+                    it.background.draw(c)
+                }
             }
 
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
+    }
 
+    private fun _isSwipable(viewHolder: RecyclerView.ViewHolder): Boolean {
+        return !(viewHolder is BaseViewAdapter.BaseItemViewHolder && viewHolder.isHeader())
     }
 
 }
