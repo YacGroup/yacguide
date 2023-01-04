@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,12 +142,13 @@ class SectorParser(private val _db: DatabaseWrapper,
         val jsonComments = JSONArray(json)
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
-            val comment = RegionComment()
-            comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
-            comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
             val user = jsonComment.getString("username")
-            comment.text = jsonComment.getString("kommentar") + "   [$user]"
-            comment.regionId = _regionId
+            val comment = RegionComment(
+                id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
+                qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
+                text = jsonComment.getString("kommentar") + "   [$user]",
+                regionId = _regionId
+            )
             _regionComments.add(comment)
         }
     }
