@@ -31,7 +31,6 @@ class PrivacyPolicyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.privacy_policy)
         setContentView(R.layout.activity_privacy_policy)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         _displayContent()
     }
 

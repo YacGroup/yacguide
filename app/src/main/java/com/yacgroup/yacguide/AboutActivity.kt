@@ -44,6 +44,10 @@ class AboutActivity : BaseNavigationActivity() {
         _createEntry(getString(R.string.source_code_and_support), getString(R.string.github_url))
         _createEntry(getString(R.string.license), getString(R.string.license_url))
         _createEntry(
+            getString(R.string.software_and_licenses),
+            callback = { _showLibraries()}
+        )
+        _createEntry(
             getString(R.string.whats_new),
             WhatsNewInfo(this).getReleaseNotesUrl()
         )
@@ -57,17 +61,15 @@ class AboutActivity : BaseNavigationActivity() {
             description: String = "",
             callback: (() -> Unit)? = null) {
         layoutInflater.inflate(R.layout.about_entry, null).let {
-            val contentAbout = findViewById<LinearLayout>(R.id.aboutContent)
             it.setOnClickListener { callback?.invoke() ?: _activityUtils.openUrl(description) }
             it.findViewById<TextView>(R.id.aboutEntryTitle).text = title
             it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
-            contentAbout.addView(it)
+            findViewById<LinearLayout>(R.id.aboutContent).addView(it)
         }
     }
 
     private fun _showPrivacyPolicy() {
-        val intent = Intent(this, PrivacyPolicyActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, PrivacyPolicyActivity::class.java))
     }
 
     private fun _selectContactConcern() {
@@ -81,5 +83,9 @@ class AboutActivity : BaseNavigationActivity() {
             }
             setNegativeButton()
         }.show()
+    }
+
+    private fun _showLibraries() {
+        startActivity(Intent(this, AboutLibrariesActivity::class.java))
     }
 }

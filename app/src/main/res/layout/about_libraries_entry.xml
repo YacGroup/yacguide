@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (C) 2020 Christan Sommer
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (C) 2023 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,23 +23,43 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <TextView
-        android:id="@+id/aboutEntryTitle"
+        android:id="@+id/aboutLibrariesName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:textAlignment="textStart"
         android:textSize="16sp"
         android:textColor="?android:textColorPrimary"/>
 
-    <TextView
-        android:id="@+id/aboutEntryDescription"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:textAlignment="textStart"
-        android:textSize="14sp"
-        android:textColor="?android:textColorSecondary"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/aboutLibrariesLicenses"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:textAlignment="textStart"
+            android:textSize="14sp"
+            android:textColor="?android:textColorSecondary"/>
+
+        <TextView
+            android:id="@+id/aboutLibrariesVersion"
+            android:layout_width="0dp"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:textAlignment="textEnd"
+            android:textSize="14sp"
+            android:textColor="?android:textColorSecondary"/>
+    </LinearLayout>
 
     <View
         android:id="@+id/divider"
