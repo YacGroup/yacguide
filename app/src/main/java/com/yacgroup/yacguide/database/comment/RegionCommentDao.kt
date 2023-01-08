@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COMMENTS_REGION
 
 @Dao
 interface RegionCommentDao {
+    @get:Query("$SELECT_REGION_COMMENTS")
+    val all: List<RegionComment>
+
     @Query("$SELECT_REGION_COMMENTS WHERE RegionComment.regionId = :regionId")
     fun getAll(regionId: Int): List<RegionComment>
 

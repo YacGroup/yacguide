@@ -17,10 +17,7 @@
 
 package com.yacgroup.yacguide.database
 
-import com.yacgroup.yacguide.database.comment.RockComment
-import com.yacgroup.yacguide.database.comment.RockCommentDao
-import com.yacgroup.yacguide.database.comment.RouteComment
-import com.yacgroup.yacguide.database.comment.RouteCommentDao
+import com.yacgroup.yacguide.database.comment.*
 import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -29,6 +26,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
  * Database structure:
  * - Country1:
  *      - Region1
+ *          - RegionComment1
+ *          - RegionComment2
  *          - Sector1
  *              - Rock1
  *                  - RockComment1
@@ -47,6 +46,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
  *          - Sector2
  *              - Rock3
  *      - Region2
+ *          - RegionComment3
  *          - Sector3
  * - Country2
  *      - Region3
@@ -65,9 +65,15 @@ class TestDB {
         )
 
         val REGIONS = listOf(
-            Region(1, "Region1", "Country1"),
-            Region(2, "Region2", "Country1"),
-            Region(3, "Region3", "Country2")
+            Region(1, "Region1", COUNTRIES[0].name),
+            Region(2, "Region2", COUNTRIES[0].name),
+            Region(3, "Region3", COUNTRIES[1].name)
+        )
+
+        val REGION_COMMENTS = listOf(
+            RegionComment(1, 0, "RegionComment1", REGIONS[0].id),
+            RegionComment(2, 0, "RegionComment2", REGIONS[0].id),
+            RegionComment(3, 0, "RegionComment3", REGIONS[1].id)
         )
 
         val SECTORS = listOf(
@@ -122,6 +128,12 @@ class TestDB {
             assertTrue(regionDao.all.isEmpty())
             regionDao.insert(REGIONS)
             assertTrue(equal(REGIONS, regionDao.all))
+        }
+
+        fun initRegionComments(regionCommentDao: RegionCommentDao) {
+            assertTrue(regionCommentDao.all.isEmpty())
+            regionCommentDao.insert(REGION_COMMENTS)
+            assertTrue(equal(REGION_COMMENTS, regionCommentDao.all))
         }
 
         fun initSectors(sectorDao: SectorDao) {

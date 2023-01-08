@@ -25,7 +25,6 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_COUNTRIES_REGIONS
 
 @Dao
 interface CountryDao {
-
     @get:Query("$SELECT_COUNTRIES $ORDERED_BY_COUNTRY")
     val all: List<Country>
 
