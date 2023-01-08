@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022 Axel Paetzold
+ * Copyright (C) 2020, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,7 @@ class PreferencesActivity : BaseNavigationActivity() {
         }
         editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
         editor.putInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
+        editor.putStringSet(getString(R.string.pinned_countries), emptySet<String>())
 
         editor.apply()
 

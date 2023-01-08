@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 - 2022 Axel Paetzold
+  Copyright (C) 2018 - 2023 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -107,6 +107,10 @@
     <string name="cannot_create_logfile">Fehler beim Erzeugen der Log-Datei</string>
     <string name="default_region_set">Standardgebiet festgelegt</string>
     <string name="default_region_reset">Standardgebiet zurückgesetzt</string>
+    <string name="country_pinned">Land gepinnt</string>
+    <string name="country_already_pinned">Land bereits gepinnt</string>
+    <string name="country_unpinned">Land abgepinnt</string>
+    <string name="country_not_yet_pinned">Land nicht gepinnt</string>
 
     <!-- Data -->
     <string name="region">Teilgebiet</string>

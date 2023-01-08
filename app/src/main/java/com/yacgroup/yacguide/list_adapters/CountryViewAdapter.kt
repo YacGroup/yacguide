@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 package com.yacgroup.yacguide.list_adapters
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +30,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.Country
 
-class CountryViewAdapter(private val _onClick: (String) -> Unit)
+class CountryViewAdapter(
+    private val _context: Context,
+    private val _customSettings: SharedPreferences,
+    private val _onClick: (String) -> Unit)
     : ListAdapter<Country, RecyclerView.ViewHolder>(CountryDiffCallback) {
 
     inner class CountryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -37,6 +42,12 @@ class CountryViewAdapter(private val _onClick: (String) -> Unit)
 
         fun bind(country: Country) {
             _mainLeftTextView.text = country.name
+            val pinnedCountries = _customSettings.getStringSet(_context.getString(R.string.pinned_countries), emptySet()).orEmpty()
+            _listItemLayout.setBackgroundResource(
+                if (pinnedCountries.contains(country.name))
+                    R.color.colorAccentLight
+                else
+                    R.color.colorOnPrimary)
             _listItemLayout.setOnClickListener {
                 _onClick(country.name)
             }
@@ -52,6 +63,8 @@ class CountryViewAdapter(private val _onClick: (String) -> Unit)
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         (viewHolder as CountryViewHolder).bind(getItem(position) as Country)
     }
+
+    fun getItemAt(position: Int) = getItem(position) as Country
 }
 
 object CountryDiffCallback : DiffUtil.ItemCallback<Country>() {
