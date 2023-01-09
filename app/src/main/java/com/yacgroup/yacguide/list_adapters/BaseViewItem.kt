@@ -19,6 +19,8 @@ package com.yacgroup.yacguide.list_adapters
 
 data class BaseViewItem(
     val id: Int,
+    val titleLeft: String = "",
+    val titleRight: String = "",
     val textLeft: String = "",
     val textRight: String = "",
     val backgroundColor: Int,

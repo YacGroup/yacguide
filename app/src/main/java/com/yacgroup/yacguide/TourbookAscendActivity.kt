@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,22 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 
 import com.yacgroup.yacguide.database.*
+import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
+import com.yacgroup.yacguide.list_adapters.BaseViewItem
 import com.yacgroup.yacguide.utils.*
 
 class TourbookAscendActivity : BaseNavigationActivity() {
 
+    private lateinit var _listView: RecyclerView
+    private lateinit var _viewAdapter: BaseViewAdapter
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascent: Ascend
 
@@ -39,6 +42,9 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         setTitle(R.string.menu_tourbook)
 
         _db = DatabaseWrapper(this)
+
+        _listView = findViewById(R.id.tableRecyclerView)
+        _viewAdapter = BaseViewAdapter(_withItemTitles = true)
 
         val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
         _ascent = _db.getAscend(ascentId)!!
@@ -85,9 +91,6 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent() {
-        val layout = findViewById<LinearLayout>(R.id.tableLayout)
-        layout.removeAllViews()
-
         var route = _db.getRoute(_ascent.routeId)
         val rock: Rock
         val sector: Sector
@@ -105,64 +108,63 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         }
 
         val partnerNames = _db.getPartnerNames(_ascent.partnerIds?.toList().orEmpty())
-        val partnersString = TextUtils.join(", ", partnerNames)
-
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = "${_ascent.day}.${_ascent.month}.${_ascent.year}",
-                textRight = region.name.orEmpty(),
-                textSizeDp = WidgetUtils.infoFontSizeDp,
-                bgColor = WidgetUtils.tourHeaderColor))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.region),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
         val sectorName = ParserUtils.decodeObjectNames(sector.name)
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = sectorName.first,
-                textRight = sectorName.second))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.rock),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
         val rockName = ParserUtils.decodeObjectNames(rock.name)
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = rockName.first,
-                textRight = rockName.second))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.route),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
         val routeName = ParserUtils.decodeObjectNames(route.name)
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = routeName.first,
-                textRight = routeName.second))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.grade),
-                textRight = getString(R.string.style),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = route.grade.orEmpty(),
-                textRight = AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty()))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.partner),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = partnersString.takeUnless { it.isEmpty() } ?: " - "))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = getString(R.string.notes),
-                textSizeDp = WidgetUtils.textFontSizeDp,
-                typeface = Typeface.NORMAL))
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-                textLeft = _ascent.notes?.takeUnless { it.isBlank() } ?: " - "))
-        layout.addView(WidgetUtils.createHorizontalLine(this, 1))
+
+        var itemId = 0
+        _listView.adapter = _viewAdapter
+        _viewAdapter.submitList(listOf(
+                BaseViewItem(
+                    id = itemId++,
+                    textLeft = "${_ascent.day}.${_ascent.month}.${_ascent.year}",
+                    textRight = region.name.orEmpty(),
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
+                    isHeader = true
+                ),
+                BaseViewItem(
+                    id = itemId++,
+                    titleLeft = getString(R.string.sector),
+                    textLeft = sectorName.first,
+                    textRight = sectorName.second,
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                ),
+                BaseViewItem(
+                    id = itemId++,
+                    titleLeft = getString(R.string.rock),
+                    textLeft = rockName.first,
+                    textRight = rockName.second,
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                ),
+                BaseViewItem(
+                    id = itemId++,
+                    titleLeft = getString(R.string.route),
+                    textLeft = routeName.first,
+                    textRight = routeName.second,
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                ),
+                BaseViewItem(
+                    id = itemId++,
+                    titleLeft = getString(R.string.grade),
+                    titleRight = getString(R.string.style),
+                    textLeft = route.grade.orEmpty(),
+                    textRight = AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty(),
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                ),
+                BaseViewItem(
+                    id = itemId,
+                    titleLeft = getString(R.string.partner),
+                    textLeft = partnerNames.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: " - ",
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                ),
+                BaseViewItem(
+                    id = itemId,
+                    titleLeft = getString(R.string.notes),
+                    textLeft = _ascent.notes?.takeUnless { it.isBlank() } ?: " - ",
+                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
+                )
+            )
+        )
     }
 
 }

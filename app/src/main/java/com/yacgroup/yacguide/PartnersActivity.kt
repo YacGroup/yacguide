@@ -77,7 +77,7 @@ class PartnersActivity : AppCompatActivity() {
             }
         })
 
-        _viewAdapter = BaseViewAdapter { partnerId -> _onPartnerSelected(partnerId) }
+        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { partnerId -> _onPartnerSelected(partnerId) }
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
         listView.adapter = _viewAdapter
 

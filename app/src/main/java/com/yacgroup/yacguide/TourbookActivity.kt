@@ -78,13 +78,12 @@ class TourbookActivity : BaseNavigationActivity() {
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         _tourbookExporter = TourbookExporter(_db, contentResolver)
 
-        _viewAdapter = BaseViewAdapter { ascendId ->
+        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { ascendId ->
             startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
                 putExtra(IntentConstants.ASCEND_ID, ascendId)
             })
         }
-        _listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
-        _listView.adapter = _viewAdapter
+        _listView = findViewById(R.id.tableRecyclerView)
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook
