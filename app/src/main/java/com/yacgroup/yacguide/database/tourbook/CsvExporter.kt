@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
- * Copyright (C) 2021 Christian Sommer
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,29 +20,31 @@ package com.yacgroup.yacguide.database.tourbook
 import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.DatabaseWrapper
-import org.json.JSONException
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import java.io.IOException
 
-class TourbookExporter(
+class CsvExporter(
     private val _db: DatabaseWrapper,
-    private val _contentResolver: ContentResolver) {
+    _contentResolver: ContentResolver): BaseExporter(_contentResolver) {
 
-    var exportFormat = TourbookExportFormat.eJSON
-
+    /*
+     * See https://commons.apache.org/proper/commons-csv/apidocs/index.html
+     */
     @Throws(IOException::class)
-    fun exportTourbook(uri: Uri) {
-        when (exportFormat) {
-            TourbookExportFormat.eJSON, TourbookExportFormat.eJSONVERBOSE -> {
-                JsonExporter(_db, _contentResolver).export(uri, exportFormat)
+    override fun export(uri: Uri, exportFormat: TourbookExportFormat) {
+        val writer = StringBuffer()
+        val csvFormat = CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
+            setHeader(*TourbookEntryVerbose.keys().toTypedArray())
+            setTrim(true)
+        }.build()
+        CSVPrinter(writer, csvFormat).apply {
+            _db.getAscends().forEach {
+                printRecord(TourbookEntryVerbose(it, _db).values())
             }
-            TourbookExportFormat.eCSV -> {
-                CsvExporter(_db, _contentResolver).export(uri, exportFormat)
-            }
+            flush()
+            close()
+            writeStrToUri(uri, writer.toString())
         }
-    }
-
-    @Throws(JSONException::class, IOException::class)
-    fun importTourbook(uri: Uri) {
-        JsonImporter(_db, _contentResolver).import(uri)
     }
 }

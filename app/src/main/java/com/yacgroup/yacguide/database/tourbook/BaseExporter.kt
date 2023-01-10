@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
- * Copyright (C) 2021 Christian Sommer
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,30 +19,19 @@ package com.yacgroup.yacguide.database.tourbook
 
 import android.content.ContentResolver
 import android.net.Uri
-import com.yacgroup.yacguide.database.DatabaseWrapper
-import org.json.JSONException
+import java.io.FileOutputStream
 import java.io.IOException
 
-class TourbookExporter(
-    private val _db: DatabaseWrapper,
-    private val _contentResolver: ContentResolver) {
+abstract class BaseExporter(private val _contentResolver: ContentResolver) {
 
-    var exportFormat = TourbookExportFormat.eJSON
+    abstract fun export(uri: Uri, exportFormat: TourbookExportFormat)
 
     @Throws(IOException::class)
-    fun exportTourbook(uri: Uri) {
-        when (exportFormat) {
-            TourbookExportFormat.eJSON, TourbookExportFormat.eJSONVERBOSE -> {
-                JsonExporter(_db, _contentResolver).export(uri, exportFormat)
-            }
-            TourbookExportFormat.eCSV -> {
-                CsvExporter(_db, _contentResolver).export(uri, exportFormat)
+    protected fun writeStrToUri(uri: Uri, str: String) {
+        _contentResolver.openFileDescriptor(uri, "w")?.use { fileDescriptor ->
+            FileOutputStream(fileDescriptor.fileDescriptor).use {
+                it.write(str.toByteArray(Charsets.UTF_8))
             }
         }
-    }
-
-    @Throws(JSONException::class, IOException::class)
-    fun importTourbook(uri: Uri) {
-        JsonImporter(_db, _contentResolver).import(uri)
     }
 }
