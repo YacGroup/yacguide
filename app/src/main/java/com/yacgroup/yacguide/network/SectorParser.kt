@@ -261,11 +261,12 @@ class SectorParser(private val _db: DatabaseWrapper,
                     _rockComments.add(comment)
                 }
                 sectorId != 0 -> {
-                    val comment = SectorComment()
-                    comment.id = ParserUtils.jsonField2Int(jsonComment, "komment_ID")
-                    comment.qualityId = ParserUtils.jsonField2Int(jsonComment, "qual")
-                    comment.text = jsonComment.getString("kommentar") + "   [$user]"
-                    comment.sectorId = sectorId
+                    val comment = SectorComment(
+                        id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
+                        qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
+                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        sectorId = sectorId
+                    )
                     _sectorComments.add(comment)
                 }
                 else -> throw JSONException("Unknown comment origin")

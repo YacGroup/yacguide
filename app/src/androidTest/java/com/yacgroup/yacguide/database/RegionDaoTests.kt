@@ -26,6 +26,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -54,16 +55,19 @@ class RegionDaoTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_noRegionsAvailable_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runTest {
         val country1Name = COUNTRIES.first().name
@@ -73,6 +77,7 @@ class RegionDaoTests {
         assertTrue(equal(regionsInCountry1, _regionDao.getAllInCountry(country1Name)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllNonEmpty_sectorsWithParentRegionsAvailable_returnsCorrespondingRegions() = runTest {
         val nonEmptyRegions = REGIONS.filter { region ->
@@ -81,11 +86,13 @@ class RegionDaoTests {
         assertTrue(equal(nonEmptyRegions, _regionDao.getAllNonEmpty()))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegion_invalidRegionId_returnsNull() = runTest {
         assertNull(_regionDao.getRegion(INVALID_ID))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegion_regionAvailable_returnsRegion() = runTest {
         val region = REGIONS.first()
@@ -125,12 +132,14 @@ class RegionDaoDeletionTests {
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_regionTableBecomesEmpty() = runTest {
         _regionDao.deleteAll()
         assertTrue(_regionDao.all.isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() = runTest {
         val country1Name = COUNTRIES.first().name

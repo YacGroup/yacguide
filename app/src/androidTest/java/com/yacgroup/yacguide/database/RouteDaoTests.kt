@@ -33,6 +33,7 @@ import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.comment.RouteComment.Companion.NO_INFO_ID
 import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -65,17 +66,20 @@ class RouteDaoTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByName_nameNotAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllByName(INVALID_NAME).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByName_nameAvailable_returnsCorrespondingRoutes() = runTest {
         val route = ROUTES.first()
         assertTrue(equal(listOf(route), _routeDao.getAllByName(route.name!!)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByGrade_returnsOnlyRoutesInRequestedGradeRange() = runTest {
         RouteComment.GRADE_MAP.keys.forEach { gradeId ->
@@ -89,6 +93,7 @@ class RouteDaoTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByQuality_returnsOnlyRoutesOfRequestedOrBetterQuality() = runTest {
         RouteComment.QUALITY_MAP.keys.forEach { maxQualityId ->
@@ -102,6 +107,7 @@ class RouteDaoTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByProtection_returnsOnlyRoutesOfRequestedOrBetterProtection() = runTest {
         RouteComment.PROTECTION_MAP.keys.forEach { maxProtectionId ->
@@ -115,6 +121,7 @@ class RouteDaoTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByDrying_returnsOnlyRoutesOfRequestedOrBetterDrying() = runTest {
         RouteComment.DRYING_MAP.keys.forEach { maxDryingId ->
@@ -128,6 +135,7 @@ class RouteDaoTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllForStyle_returnsOnlyRoutesAscendedWithRequestedStyle() = runTest {
         AscendStyle.values().forEach { style ->
@@ -140,16 +148,19 @@ class RouteDaoTests {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val country1Name = COUNTRIES.first().name
@@ -165,16 +176,19 @@ class RouteDaoTests {
         assertTrue(equal(routesInCountry1, _routeDao.getAllInCountry(country1Name)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val region1Id = REGIONS.first().id
@@ -187,16 +201,19 @@ class RouteDaoTests {
         assertTrue(equal(routesInRegion1, _routeDao.getAllInRegion(region1Id)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_invalidSectorId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInSector(INVALID_ID).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllInSector(SECTORS.last().id).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val sector1Id = SECTORS.first().id
@@ -208,16 +225,19 @@ class RouteDaoTests {
         assertTrue(equal(routesInSector1, _routeDao.getAllInSector(sector1Id)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllAtRock_invalidRockId_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllAtRock(INVALID_ID).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllAtRock_noRoutesAvailable_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllAtRock(ROCKS.last().id).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllAtRock_routesAvailable_returnsCorrespondingRoutes() = runTest {
         val rock1Id = ROCKS.first().id
@@ -227,16 +247,19 @@ class RouteDaoTests {
         assertTrue(equal(routesAtRock1, _routeDao.getAllAtRock(rock1Id)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByNameAtRock_nameAvailableAtDifferentRock_returnsEmptyList() = runTest {
         assertTrue(_routeDao.getAllByNameAtRock(ROCKS.first().id, ROUTES.last().name!!).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRoute_invalidRouteId_returnsNull() = runTest {
         assertNull(_routeDao.getRoute(INVALID_ID))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRoute_routeAvailable_returnsRoute() = runTest {
         val route = ROUTES.first()
@@ -267,6 +290,7 @@ class RouteDaoDeletionTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_routeTableBecomesEmpty() = runTest {
         _routeDao.deleteAll()

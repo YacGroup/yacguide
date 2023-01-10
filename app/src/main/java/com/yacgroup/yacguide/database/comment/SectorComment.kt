@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-class SectorComment {
-
-    @PrimaryKey
-    var id: Int = 0
-
-    var qualityId: Int = 0
-    var text: String? = null
-    var sectorId: Int = 0
-
+data class SectorComment(
+    @PrimaryKey val id: Int,
+    val qualityId: Int,
+    val text: String?,
+    val sectorId: Int
+) {
     companion object {
 
         // This needs to be in sync with sandsteinklettern.de!
