@@ -53,7 +53,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
-        _viewAdapter = BaseViewAdapter { regionId -> _selectDefaultRegion(regionId) }
+        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { regionId -> _selectDefaultRegion(regionId) }
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
         listView.adapter = _viewAdapter
 

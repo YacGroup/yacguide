@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,7 @@ import android.widget.TextView
 object WidgetUtils {
 
     const val tableFontSizeDp = 18
-    const val infoFontSizeDp = 16
     const val textFontSizeDp = 14
-    // That must be in sync with the color definition colorSecondaryLight.
-    // FIXME: Find a better solution to get this color string.
-    val tourHeaderColor: Int
-        get() = Color.parseColor("#cfcfcf")
 
     class Padding (val left: Int, val top: Int, val right: Int, val bottom: Int)
 

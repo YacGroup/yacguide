@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
