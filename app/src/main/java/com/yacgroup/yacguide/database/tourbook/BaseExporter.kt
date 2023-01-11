@@ -19,19 +19,22 @@ package com.yacgroup.yacguide.database.tourbook
 
 import android.content.ContentResolver
 import android.net.Uri
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import java.io.FileOutputStream
 import java.io.IOException
 
-abstract class BaseExporter(private val _contentResolver: ContentResolver) {
+abstract class BaseExporter {
+    lateinit var contentResolver: ContentResolver
+    lateinit var db: DatabaseWrapper
 
-    abstract fun export(uri: Uri, exportFormat: TourbookExportFormat)
+    abstract fun export(uri: Uri)
 
     @Throws(IOException::class)
-    protected fun writeStrToUri(uri: Uri, str: String) {
-        _contentResolver.openFileDescriptor(uri, "w")?.use { fileDescriptor ->
-            FileOutputStream(fileDescriptor.fileDescriptor).use {
-                it.write(str.toByteArray(Charsets.UTF_8))
-            }
+    fun writeStrToUri(uri: Uri, str: String) {
+        contentResolver.openFileDescriptor(uri, "w")?.use {
+            FileOutputStream(it.fileDescriptor).write(
+                str.toByteArray(Charsets.UTF_8)
+            )
         }
     }
 }

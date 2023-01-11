@@ -40,8 +40,6 @@ class JsonImporter(
     @Throws(JSONException::class)
     private fun _writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
-        _db.deleteAscends()
-        _db.deletePartners()
         val ascents = mutableListOf<Ascend>()
         val partners = mutableListOf<Partner>()
         var ascentId = 1
@@ -72,6 +70,8 @@ class JsonImporter(
                 partnerIds = partnerIds,
                 notes = jsonAscend.getString(TourbookExchangeKeys.eNOTES.key)
             )
+            _db.deleteAscends()
+            _db.deletePartners()
             ascents.add(ascent)
         }
         _db.addPartners(partners)

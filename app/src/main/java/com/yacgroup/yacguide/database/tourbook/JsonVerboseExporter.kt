@@ -18,38 +18,16 @@
 package com.yacgroup.yacguide.database.tourbook
 
 import android.net.Uri
-import com.yacgroup.yacguide.database.Ascend
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
 
-open class JsonExporter: BaseExporter() {
-    companion object {
-        const val JSON_INDENT_SPACE = 2
-    }
-
+class JsonVerboseExporter: JsonExporter() {
     @Throws(IOException::class)
     override fun export(uri: Uri) {
         val jsonAscends = JSONArray().apply {
-            db.getAscends().forEach { put(_ascend2Json(it)) }
+            db.getAscends().forEach { put(JSONObject(TourbookEntryVerbose(it, db).asMap())) }
         }
         writeStrToUri(uri, jsonAscends.toString(JSON_INDENT_SPACE))
-    }
-
-    @Throws(JSONException::class)
-    private fun _ascend2Json(ascend: Ascend): JSONObject {
-        val partnerList = JSONArray().apply {
-            db.getPartnerNames(ascend.partnerIds.orEmpty()).map { put(it) }
-        }
-        return JSONObject().apply {
-            put(TourbookExchangeKeys.eROUTE.key, ascend.routeId.toString())
-            put(TourbookExchangeKeys.eSTYLE.key, ascend.styleId.toString())
-            put(TourbookExchangeKeys.eYEAR.key, ascend.year.toString())
-            put(TourbookExchangeKeys.eMONTH.key, ascend.month.toString())
-            put(TourbookExchangeKeys.eDAY.key, ascend.day.toString())
-            put(TourbookExchangeKeys.ePARTNERS.key, partnerList)
-            put(TourbookExchangeKeys.eNOTES.key, ascend.notes)
-        }
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.database.tourbook.TourbookExportFormat
-import com.yacgroup.yacguide.database.tourbook.TourbookExporter
+import com.yacgroup.yacguide.database.tourbook.*
 import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
 import com.yacgroup.yacguide.list_adapters.BaseViewItem
 import com.yacgroup.yacguide.utils.*
@@ -61,7 +61,7 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _availableYears: IntArray
-    private lateinit var _tourbookExporter: TourbookExporter
+    private var _tourbookExportFormat: TourbookExportFormat = TourbookExportFormat.eJSON
     private var _currentYear: Int = -1
     private var _tourbookType: TourbookType = TourbookType.eAscends
 
@@ -76,7 +76,6 @@ class TourbookActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-        _tourbookExporter = TourbookExporter(_db, contentResolver)
 
         _viewAdapter = BaseViewAdapter { ascendId ->
             startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
@@ -152,7 +151,7 @@ class TourbookActivity : BaseNavigationActivity() {
             setNegativeButton()
             setPositiveButton { _, _ ->
                 try {
-                    _tourbookExporter.importTourbook(uri)
+                    JsonImporter(_db, contentResolver).import(uri)
                     Toast.makeText(
                             this@TourbookActivity,
                             R.string.tourbook_import_successfull,
@@ -193,7 +192,7 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _export(uri: Uri) {
         try {
-            _tourbookExporter.exportTourbook(uri)
+            TourbookExporterFactory(_db, contentResolver).create(_tourbookExportFormat).export(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
                     Toast.LENGTH_SHORT).show()
         } catch (e: IOException) {
@@ -314,16 +313,15 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _selectExportFormat() {
-        var format = TourbookExportFormat.eJSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
-            setSingleChoiceItems(R.array.exportFormats, _tourbookExporter.exportFormat.id) {_, which ->
-                _tourbookExporter.exportFormat = TourbookExportFormat.fromId(which)!!
+            setSingleChoiceItems(R.array.exportFormats, _tourbookExportFormat.id) {_, which ->
+                _tourbookExportFormat = TourbookExportFormat.fromId(which)!!
                 if (which == TourbookExportFormat.eCSV.id) {
-                    format = TourbookExportFormat.eCSV
+                    _tourbookExportFormat = TourbookExportFormat.eCSV
                 }
             }
             setNegativeButton()
-            setPositiveButton{ _, _ -> _selectExportFile(format) }
+            setPositiveButton{ _, _ -> _selectExportFile(_tourbookExportFormat) }
         }.show()
     }
 
