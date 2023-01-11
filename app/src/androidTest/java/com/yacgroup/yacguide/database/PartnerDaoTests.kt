@@ -23,6 +23,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.PARTNERS
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -50,22 +51,26 @@ class PartnerDaoTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getId_invalidName_returnsZero() = runTest {
         assertEquals(0, _partnerDao.getId(INVALID_NAME))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getId_nameIsAvailable_returnsCorrespondingId() = runTest {
         val partner = PARTNERS.first()
         assertEquals(partner.id, _partnerDao.getId(partner.name!!))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getPartner_invalidId_returnsNull() = runTest {
         assertNull(_partnerDao.getPartner(INVALID_ID))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getPartner_idIsAvailable_returnsCorrespondingPartner() = runTest {
         val partner = PARTNERS.first()
@@ -94,6 +99,7 @@ class PartnerDaoDeletionTests {
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_partnerTableBecomesEmpty() = runTest {
         TestDB.initPartners(_partnerDao)

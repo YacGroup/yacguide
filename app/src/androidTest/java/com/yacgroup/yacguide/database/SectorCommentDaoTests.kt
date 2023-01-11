@@ -25,18 +25,19 @@ import com.yacgroup.yacguide.database.TestDB.Companion.COUNTRIES
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
-import com.yacgroup.yacguide.database.TestDB.Companion.REGION_COMMENTS
-import com.yacgroup.yacguide.database.comment.RegionCommentDao
+import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
+import com.yacgroup.yacguide.database.TestDB.Companion.SECTOR_COMMENTS
+import com.yacgroup.yacguide.database.comment.SectorCommentDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class RegionCommentDaoTests {
+class SectorCommentDaoTests {
 
     private lateinit var _db: AppDatabase
-    private lateinit var _regionCommentDao: RegionCommentDao
+    private lateinit var _sectorCommentDao: SectorCommentDao
 
     @BeforeAll
     fun setup() {
@@ -44,10 +45,11 @@ class RegionCommentDaoTests {
         _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        _regionCommentDao = _db.regionCommentDao()
+        _sectorCommentDao = _db.sectorCommentDao()
 
         TestDB.initRegions(_db.regionDao())
-        TestDB.initRegionComments(_regionCommentDao)
+        TestDB.initSectors(_db.sectorDao())
+        TestDB.initSectorComments(_sectorCommentDao)
     }
 
     @AfterAll
@@ -57,51 +59,77 @@ class RegionCommentDaoTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_invalidRegionId_returnsEmptyList() = runTest {
-        assertTrue(_regionCommentDao.getAll(INVALID_ID).isEmpty())
+    fun getAll_invalidSectorId_returnsEmptyList() = runTest {
+        assertTrue(_sectorCommentDao.getAll(INVALID_ID).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_regionAvailable_returnsCorrespondingRegionComments() = runTest {
-        val regionId = REGION_COMMENTS.first().regionId
-        val regionComments = REGION_COMMENTS.filter {
-            it.regionId == regionId
+    fun getAll_sectorAvailable_returnsCorrespondingSectors() = runTest {
+        val sectorId = SECTOR_COMMENTS.first().sectorId
+        val sectorComments = SECTOR_COMMENTS.filter {
+            it.sectorId == sectorId
         }
-        assertTrue(equal(regionComments, _regionCommentDao.getAll(regionId)))
+        assertTrue(equal(sectorComments, _sectorCommentDao.getAll(sectorId)))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
+        assertTrue(_sectorCommentDao.getAllInRegion(INVALID_ID).isEmpty())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAllInRegion_noSectorsAvailable_returnsEmptyList() = runTest {
+        assertTrue(_sectorCommentDao.getAllInRegion(REGIONS.last().id).isEmpty())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAllInRegion_sectorsAvailable_returnsCorrespondingSectors() = runTest {
+        val regionId = REGIONS.first().id
+        val sectorComments = SECTOR_COMMENTS.filter { comment ->
+            SECTORS.any {
+                it.id == comment.sectorId && it.parentId == regionId
+            }
+        }
+        assertTrue(equal(sectorComments, _sectorCommentDao.getAllInRegion(regionId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
-        assertTrue(_regionCommentDao.getAllInCountry(INVALID_NAME).isEmpty())
+        assertTrue(_sectorCommentDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInCountry_noRegionsAvailable_returnsEmptyList() = runTest {
-        assertTrue(_regionCommentDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
+    fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runTest {
+        assertTrue(_sectorCommentDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runTest {
+    fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectors() = runTest {
         val countryName = COUNTRIES.first().name
-        val regionComments = REGION_COMMENTS.filter { comment ->
-            REGIONS.any {
-                it.id == comment.regionId && it.country == countryName
+        val sectorComments = SECTOR_COMMENTS.filter { comment ->
+            SECTORS.any { sector ->
+                sector.id == comment.sectorId && REGIONS.any {
+                    it.id == sector.parentId && it.country == countryName
+                }
             }
         }
-        assertTrue(equal(regionComments, _regionCommentDao.getAllInCountry(countryName)))
+        assertTrue(equal(sectorComments, _sectorCommentDao.getAllInCountry(countryName)))
     }
 }
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class RegionCommentDaoDeletionTests {
+class SectorCommentDaoDeletionTests {
 
     private lateinit var _db: AppDatabase
-    private lateinit var _regionCommentDao: RegionCommentDao
+    private lateinit var _sectorCommentDao: SectorCommentDao
 
     @BeforeAll
     fun setup() {
@@ -109,12 +137,12 @@ class RegionCommentDaoDeletionTests {
         _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        _regionCommentDao = _db.regionCommentDao()
+        _sectorCommentDao = _db.sectorCommentDao()
     }
 
     @BeforeEach
     fun init() {
-        TestDB.initRegionComments(_regionCommentDao)
+        TestDB.initSectorComments(_sectorCommentDao)
     }
 
     @AfterEach
@@ -129,21 +157,8 @@ class RegionCommentDaoDeletionTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun deleteAll_regionCommentsTableBecomesEmpty() = runTest {
-        _regionCommentDao.deleteAll()
-        assertTrue(_regionCommentDao.all.isEmpty())
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun deleteAll_regionIdGiven_regionCommentsTableDoesNotContainCorrespondingCommentsAnymore() = runTest {
-        val regionId = REGION_COMMENTS.first().regionId
-        val regionComments = REGION_COMMENTS.filter {
-            it.regionId == regionId
-        }
-        _regionCommentDao.deleteAll(regionId)
-        regionComments.forEach {
-            assertFalse(_regionCommentDao.all.contains(it))
-        }
+    fun deleteAll_sectorTableBecomesEmpty() = runTest {
+        _sectorCommentDao.deleteAll()
+        assertTrue(_sectorCommentDao.all.isEmpty())
     }
 }

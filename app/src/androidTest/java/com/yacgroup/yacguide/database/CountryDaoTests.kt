@@ -21,6 +21,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.yacgroup.yacguide.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 
@@ -51,6 +52,7 @@ class CountryDaoTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun all_countriesUnordered_returnsOrderedList() = runTest {
         _countryDao.insert(TestDB.COUNTRIES.reversed())
@@ -58,6 +60,7 @@ class CountryDaoTests {
         assertTrue(equal(TestDB.COUNTRIES, _countryDao.all))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllNonEmpty_noRegionsAvailable_returnsEmptyList() = runTest {
         TestDB.initCountries(_countryDao)
@@ -65,6 +68,7 @@ class CountryDaoTests {
         assertTrue(_countryDao.getAllNonEmpty().isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllNonEmpty_regionsWithParentCountriesAvailable_returnsCorrespondingCountries() = runTest {
         TestDB.initCountries(_countryDao)
@@ -76,6 +80,7 @@ class CountryDaoTests {
         assertTrue(equal(nonEmptyCountries, _countryDao.getAllNonEmpty()))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_countryCountBecomesZero() = runTest {
         TestDB.initCountries(_countryDao)

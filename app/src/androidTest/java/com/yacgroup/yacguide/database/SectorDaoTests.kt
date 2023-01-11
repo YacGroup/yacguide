@@ -26,6 +26,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
 import com.yacgroup.yacguide.equal
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -54,16 +55,19 @@ class SectorDaoTests {
         _db.close()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_noSectorsAvailable_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_sectorsAvailable_returnsCorrespondingSectors() = runTest {
         val region1Id = REGIONS.first().id
@@ -73,16 +77,19 @@ class SectorDaoTests {
         assertTrue(equal(sectorsInRegion1, _sectorDao.getAllInRegion(region1Id)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runTest {
         assertTrue(_sectorDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectors() = runTest {
         val country1Name = COUNTRIES.first().name
@@ -94,11 +101,13 @@ class SectorDaoTests {
         assertTrue(equal(sectorsInCountry1, _sectorDao.getAllInCountry(country1Name)))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getSector_invalidSectorId_returnsNull() = runTest {
         assertNull(_sectorDao.getSector(INVALID_ID))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getSector_sectorAvailable_returnsSector() = runTest {
         val sector = SECTORS.first()
@@ -137,12 +146,14 @@ class SectorDaoDeletionTests {
     }
 
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_sectorTableBecomesEmpty() = runTest {
         _sectorDao.deleteAll()
         assertTrue(_sectorDao.all.isEmpty())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_regionIdGiven_sectorTableDoesNotContainCorrespondingSectorsAnymore() = runTest {
         val region1Id = REGIONS.first().id

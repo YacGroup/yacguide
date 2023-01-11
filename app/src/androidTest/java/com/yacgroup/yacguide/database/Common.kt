@@ -29,6 +29,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
  *          - RegionComment1
  *          - RegionComment2
  *          - Sector1
+ *              - SectorComment1
+ *              - SectorComment2
  *              - Rock1
  *                  - RockComment1
  *                  - RockComment2
@@ -44,6 +46,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
  *                  - RockComment3
  *                  - Route3
  *          - Sector2
+ *              - SectorComment3
  *              - Rock3
  *      - Region2
  *          - RegionComment3
@@ -80,6 +83,12 @@ class TestDB {
             Sector(1, 1f, "Sector1", REGIONS[0].id),
             Sector(2, 2f, "Sector2", REGIONS[0].id),
             Sector(3, 3f, "Sector3", REGIONS[1].id)
+        )
+
+        val SECTOR_COMMENTS = listOf(
+            SectorComment(1, 0, "SectorComment1", SECTORS[0].id),
+            SectorComment(2, 0, "SectorComment2", SECTORS[0].id),
+            SectorComment(3, 0, "SectorComment3", SECTORS[1].id)
         )
 
         val ROCKS = listOf(
@@ -140,6 +149,12 @@ class TestDB {
             assertTrue(sectorDao.all.isEmpty())
             sectorDao.insert(SECTORS)
             assertTrue(equal(SECTORS, sectorDao.all))
+        }
+
+        fun initSectorComments(sectorCommentDao: SectorCommentDao) {
+            assertTrue(sectorCommentDao.all.isEmpty())
+            sectorCommentDao.insert(SECTOR_COMMENTS)
+            assertTrue(equal(SECTOR_COMMENTS, sectorCommentDao.all))
         }
 
         fun initRocks(rockDao: RockDao) {
