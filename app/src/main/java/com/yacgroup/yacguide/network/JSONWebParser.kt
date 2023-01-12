@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ package com.yacgroup.yacguide.network
 
 import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.utils.DataUId
 
 import org.json.JSONException
 
@@ -35,39 +36,42 @@ abstract class JSONWebParser : NetworkListener {
     var listener: UpdateListener? = null
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
+    private var _dataUId: DataUId = DataUId(0, "")
     private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _processedRequestsCount: Int = 0
 
-    override fun onNetworkTaskResolved(requestId: NetworkRequestUId, result: String) {
-        if (_exitCode == ExitCode.SUCCESS) {
-            try {
-                if (result.equals("null", ignoreCase = true)) {
-                    // sandsteinklettern.de returns "null" string if there are no elements
-                    throw IllegalArgumentException("")
-                }
-                // remove HTML-encoded characters
-                parseData(
-                        requestId,
+    override fun onNetworkTaskResolved(request: NetworkRequest, result: String) {
+        when (_exitCode) {
+            ExitCode.ABORT -> return
+            ExitCode.ERROR -> _exitOnFinalTask()
+            ExitCode.SUCCESS -> {
+                try {
+                    if (result.equals("null", ignoreCase = true)) {
+                        // sandsteinklettern.de returns "null" string if there are no elements
+                        throw IllegalArgumentException("")
+                    }
+                    // remove HTML-encoded characters
+                    parseData(
+                        request,
                         ParserUtils.resolveToUtf8(result)
-                )
-            } catch (e: JSONException) {
-                _exitCode = ExitCode.ERROR
-                onFinalTaskResolved(_exitCode)
-                return
-            } catch (e: IllegalArgumentException) {
-            }
-            if (++_processedRequestsCount == networkRequests.size) {
-                onFinalTaskResolved(_exitCode)
+                    )
+                } catch (e: JSONException) {
+                    _exitCode = ExitCode.ERROR
+                    listener?.onUpdateError(_dataUId.name)
+                } catch (e: IllegalArgumentException) {
+                }
+                _exitOnFinalTask()
             }
         }
     }
 
-    fun fetchData() {
+    fun fetchData(dataUId: DataUId) {
+        _dataUId = dataUId
         _exitCode = ExitCode.SUCCESS
         _processedRequestsCount = 0
-        initNetworkRequests()
+        initNetworkRequests(dataUId)
         networkRequests.forEach {
-            NetworkTask(it.requestId, this).execute(it.url)
+            NetworkTask(it, this).execute()
         }
     }
 
@@ -77,12 +81,17 @@ abstract class JSONWebParser : NetworkListener {
     }
 
     @Throws(JSONException::class)
-    protected abstract fun parseData(requestId: NetworkRequestUId, json: String)
+    protected abstract fun parseData(request: NetworkRequest, json: String)
 
-    protected abstract fun initNetworkRequests()
+    protected abstract fun initNetworkRequests(dataUId: DataUId)
 
-    // NetworkListener
     protected open fun onFinalTaskResolved(exitCode: ExitCode) {
         listener?.onUpdateFinished(exitCode)
+    }
+
+    private fun _exitOnFinalTask() {
+        if (++_processedRequestsCount == networkRequests.size) {
+            onFinalTaskResolved(_exitCode)
+        }
     }
 }

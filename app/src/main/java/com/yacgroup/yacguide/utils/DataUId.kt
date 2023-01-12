@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.network
+package com.yacgroup.yacguide.utils
 
-enum class RequestType {
-    COUNTRY_DATA,
-    REGION_DATA,
-    SECTOR_DATA,
-    ROCK_DATA,
-    ROUTE_DATA,
-    REGION_COMMENTS,
-    SECTOR_COMMENTS
-}
-
-class NetworkRequestUId(val type: RequestType, val id: Int, val name: String = "")
+class DataUId(val id: Int, val name: String)

@@ -28,6 +28,7 @@ import com.yacgroup.yacguide.list_adapters.CountryViewAdapter
 import com.yacgroup.yacguide.list_adapters.SwipeConfig
 import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.network.CountryAndRegionParser
+import com.yacgroup.yacguide.utils.DataUId
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class CountryActivity : TableActivityWithOptionsMenu() {
@@ -82,7 +83,10 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         val countries = db.getCountries()
         val pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty()
         _viewAdapter.submitList(countries.sortedBy { !pinnedCountries.contains(it.name) })
-        _updateHandler.configureDownloadButton(countries.isEmpty()){ displayContent() }
+        _updateHandler.configureDownloadButton(
+            enabled = countries.isEmpty(),
+            dataUId = DataUId(0, getString(R.string.countries_and_regions))
+        ){ displayContent() }
     }
 
     private fun _onCountrySelected(countryName: String) {

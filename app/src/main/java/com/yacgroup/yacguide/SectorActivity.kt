@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.list_adapters.SectorViewAdapter
 import com.yacgroup.yacguide.network.SectorParser
+import com.yacgroup.yacguide.utils.DataUId
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class SectorActivity : TableActivityWithOptionsMenu() {
@@ -34,7 +35,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
+        _updateHandler = UpdateHandler(this, SectorParser(db))
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
@@ -55,7 +56,10 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         this.title = activityLevel.parentName
         val sectors = db.getSectors(activityLevel.parentId)
         _viewAdapter.submitList(sectors)
-        _updateHandler.configureDownloadButton(sectors.isEmpty()) { displayContent() }
+        _updateHandler.configureDownloadButton(
+            enabled = sectors.isEmpty(),
+            dataUId = DataUId(activityLevel.parentId, activityLevel.parentName)
+        ) { displayContent() }
     }
 
     private fun _onSectorSelected(sectorId: Int, sectorName: String) {

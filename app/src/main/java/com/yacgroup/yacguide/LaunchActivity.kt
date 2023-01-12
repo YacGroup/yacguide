@@ -51,7 +51,7 @@ class LaunchActivity : AppCompatActivity() {
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
-        _updateHandler.update(isRecurring = false, isSilent = true)
+        _updateHandler.update(isSilent = true)
         Timer().start()
     }
 
