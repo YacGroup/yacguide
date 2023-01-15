@@ -61,7 +61,7 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _availableYears: IntArray
-    private var _tourbookExportFormat: TourbookExportFormat = TourbookExportFormat.eJSON
+    private var _tourbookExporter: BaseExporter? = null
     private var _currentYear: Int = -1
     private var _tourbookType: TourbookType = TourbookType.eAscends
 
@@ -192,10 +192,10 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _export(uri: Uri) {
         try {
-            TourbookExporterFactory(_db, contentResolver).create(_tourbookExportFormat).export(uri)
+            _tourbookExporter!!.export(uri)
             Toast.makeText(this, getString(R.string.tourbook_export_successfull),
                     Toast.LENGTH_SHORT).show()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             Toast.makeText(this, getString(R.string.tourbook_export_error),
                     Toast.LENGTH_SHORT).show()
         }
@@ -313,15 +313,16 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _selectExportFormat() {
+        var format: TourbookExportFormat = TourbookExportFormat.eJSON
         DialogWidgetBuilder(this, R.string.export_format).apply {
-            setSingleChoiceItems(R.array.exportFormats, _tourbookExportFormat.id) {_, which ->
-                _tourbookExportFormat = TourbookExportFormat.fromId(which)!!
-                if (which == TourbookExportFormat.eCSV.id) {
-                    _tourbookExportFormat = TourbookExportFormat.eCSV
-                }
+            setSingleChoiceItems(R.array.exportFormats, format.id) { _, which ->
+                format = TourbookExportFormat.fromId(which)!!
             }
             setNegativeButton()
-            setPositiveButton{ _, _ -> _selectExportFile(_tourbookExportFormat) }
+            setPositiveButton{ _, _ ->
+                _tourbookExporter = TourbookExporterFactory(_db, contentResolver).create(format)
+                _selectExportFile(format)
+            }
         }.show()
     }
 

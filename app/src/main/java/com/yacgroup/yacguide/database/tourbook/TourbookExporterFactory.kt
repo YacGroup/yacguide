@@ -19,7 +19,6 @@ package com.yacgroup.yacguide.database.tourbook
 
 import android.content.ContentResolver
 import com.yacgroup.yacguide.database.DatabaseWrapper
-import kotlin.reflect.full.createInstance
 
 class TourbookExporterFactory(
     private val _db: DatabaseWrapper,
@@ -27,12 +26,9 @@ class TourbookExporterFactory(
 
     fun create(format: TourbookExportFormat): BaseExporter {
         return when (format) {
-            TourbookExportFormat.eJSON -> JsonExporter::class
-            TourbookExportFormat.eJSONVERBOSE -> JsonVerboseExporter::class
-            TourbookExportFormat.eCSV -> CsvExporter::class
-        }.createInstance().apply {
-            db = _db
-            contentResolver = _contentResolver
+            TourbookExportFormat.eJSON -> JsonExporter(_contentResolver, _db)
+            TourbookExportFormat.eJSONVERBOSE -> JsonVerboseExporter(_contentResolver, _db)
+            TourbookExportFormat.eCSV -> CsvExporter(_contentResolver, _db)
         }
     }
 }

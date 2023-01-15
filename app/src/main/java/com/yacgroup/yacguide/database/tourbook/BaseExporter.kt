@@ -21,17 +21,15 @@ import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import java.io.FileOutputStream
-import java.io.IOException
 
-abstract class BaseExporter {
-    lateinit var contentResolver: ContentResolver
-    lateinit var db: DatabaseWrapper
+abstract class BaseExporter(
+    private val _contentResolver: ContentResolver,
+    private val _db: DatabaseWrapper) {
 
     abstract fun export(uri: Uri)
 
-    @Throws(IOException::class)
-    fun writeStrToUri(uri: Uri, str: String) {
-        contentResolver.openFileDescriptor(uri, "w")?.use {
+    protected fun writeStrToUri(uri: Uri, str: String) {
+        _contentResolver.openFileDescriptor(uri, "w")?.use {
             FileOutputStream(it.fileDescriptor).write(
                 str.toByteArray(Charsets.UTF_8)
             )

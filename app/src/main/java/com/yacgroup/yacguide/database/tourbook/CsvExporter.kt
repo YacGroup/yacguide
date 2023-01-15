@@ -17,12 +17,16 @@
 
 package com.yacgroup.yacguide.database.tourbook
 
+import android.content.ContentResolver
 import android.net.Uri
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import java.io.IOException
 
-class CsvExporter: BaseExporter() {
+class CsvExporter(
+    contentResolver: ContentResolver,
+    private val _db: DatabaseWrapper): BaseExporter(contentResolver, _db) {
     /*
      * See https://commons.apache.org/proper/commons-csv/apidocs/index.html
      */
@@ -34,8 +38,8 @@ class CsvExporter: BaseExporter() {
             setTrim(true)
         }.build()
         CSVPrinter(writer, csvFormat).apply {
-            db.getAscends().forEach {
-                printRecord(TourbookEntryVerbose(it, db).values())
+            _db.getAscends().forEach {
+                printRecord(TourbookEntryVerbose(it, _db).values())
             }
             flush()
             close()

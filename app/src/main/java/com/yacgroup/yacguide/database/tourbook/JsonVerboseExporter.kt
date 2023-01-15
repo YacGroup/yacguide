@@ -17,17 +17,16 @@
 
 package com.yacgroup.yacguide.database.tourbook
 
-import android.net.Uri
-import org.json.JSONArray
+import android.content.ContentResolver
+import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import org.json.JSONObject
-import java.io.IOException
 
-class JsonVerboseExporter: JsonExporter() {
-    @Throws(IOException::class)
-    override fun export(uri: Uri) {
-        val jsonAscends = JSONArray().apply {
-            db.getAscends().forEach { put(JSONObject(TourbookEntryVerbose(it, db).asMap())) }
-        }
-        writeStrToUri(uri, jsonAscends.toString(JSON_INDENT_SPACE))
+class JsonVerboseExporter(
+    contentResolver: ContentResolver,
+    private val _db: DatabaseWrapper): JsonExporter(contentResolver, _db) {
+
+    override fun ascend2Json(ascend: Ascend): JSONObject {
+        return JSONObject(TourbookEntryVerbose(ascend, _db).asMap())
     }
 }

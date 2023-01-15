@@ -24,9 +24,7 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.utils.ParserUtils
 import org.json.JSONArray
-import org.json.JSONException
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStreamReader
 
 class JsonImporter(
@@ -37,7 +35,6 @@ class JsonImporter(
         _writeJsonStringToDatabase(_readTextFromUri(uri))
     }
 
-    @Throws(JSONException::class)
     private fun _writeJsonStringToDatabase(jsonString: String) {
         val jsonAscends = JSONArray(jsonString)
         val ascents = mutableListOf<Ascend>()
@@ -70,15 +67,14 @@ class JsonImporter(
                 partnerIds = partnerIds,
                 notes = jsonAscend.getString(TourbookExchangeKeys.eNOTES.key)
             )
-            _db.deleteAscends()
-            _db.deletePartners()
             ascents.add(ascent)
         }
+        _db.deleteAscends()
+        _db.deletePartners()
         _db.addPartners(partners)
         _db.addAscends(ascents)
     }
 
-    @Throws(IOException::class)
     private fun _readTextFromUri(uri: Uri): String {
         val stringBuilder = StringBuilder()
         _contentResolver.openInputStream(uri)?.use { inputStream ->

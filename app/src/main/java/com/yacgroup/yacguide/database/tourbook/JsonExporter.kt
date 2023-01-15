@@ -17,30 +17,31 @@
 
 package com.yacgroup.yacguide.database.tourbook
 
+import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.DatabaseWrapper
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
-import java.io.IOException
 
-open class JsonExporter: BaseExporter() {
+open class JsonExporter(
+    contentResolver: ContentResolver,
+    private val _db: DatabaseWrapper): BaseExporter(contentResolver, _db) {
+
     companion object {
-        const val JSON_INDENT_SPACE = 2
+        private const val _JSON_INDENT_SPACE = 2
     }
 
-    @Throws(IOException::class)
     override fun export(uri: Uri) {
         val jsonAscends = JSONArray().apply {
-            db.getAscends().forEach { put(_ascend2Json(it)) }
+            _db.getAscends().forEach { put(ascend2Json(it)) }
         }
-        writeStrToUri(uri, jsonAscends.toString(JSON_INDENT_SPACE))
+        writeStrToUri(uri, jsonAscends.toString(_JSON_INDENT_SPACE))
     }
 
-    @Throws(JSONException::class)
-    private fun _ascend2Json(ascend: Ascend): JSONObject {
+    protected open fun ascend2Json(ascend: Ascend): JSONObject {
         val partnerList = JSONArray().apply {
-            db.getPartnerNames(ascend.partnerIds.orEmpty()).map { put(it) }
+            _db.getPartnerNames(ascend.partnerIds.orEmpty()).forEach { put(it) }
         }
         return JSONObject().apply {
             put(TourbookExchangeKeys.eROUTE.key, ascend.routeId.toString())
