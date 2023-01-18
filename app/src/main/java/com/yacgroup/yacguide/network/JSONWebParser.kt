@@ -17,9 +17,9 @@
 
 package com.yacgroup.yacguide.network
 
+import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.DataUId
 
 import org.json.JSONException
 
@@ -36,7 +36,7 @@ abstract class JSONWebParser : NetworkListener {
     var listener: UpdateListener? = null
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
-    private var _dataUId: DataUId = DataUId(0, "")
+    private var _climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, "")
     private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _processedRequestsCount: Int = 0
 
@@ -57,7 +57,7 @@ abstract class JSONWebParser : NetworkListener {
                     )
                 } catch (e: JSONException) {
                     _exitCode = ExitCode.ERROR
-                    listener?.onUpdateError(_dataUId.name)
+                    listener?.onUpdateError(_climbingObjectUId.name)
                 } catch (e: IllegalArgumentException) {
                 }
                 _exitOnFinalTask()
@@ -65,11 +65,11 @@ abstract class JSONWebParser : NetworkListener {
         }
     }
 
-    fun fetchData(dataUId: DataUId) {
-        _dataUId = dataUId
+    fun fetchData(climbingObjectUId: ClimbingObjectUId) {
+        _climbingObjectUId = climbingObjectUId
         _exitCode = ExitCode.SUCCESS
         _processedRequestsCount = 0
-        initNetworkRequests(dataUId)
+        initNetworkRequests(climbingObjectUId)
         networkRequests.forEach {
             NetworkTask(it, this).execute()
         }
@@ -83,7 +83,7 @@ abstract class JSONWebParser : NetworkListener {
     @Throws(JSONException::class)
     protected abstract fun parseData(request: NetworkRequest, json: String)
 
-    protected abstract fun initNetworkRequests(dataUId: DataUId)
+    protected abstract fun initNetworkRequests(climbingObjectUId: ClimbingObjectUId)
 
     protected open fun onFinalTaskResolved(exitCode: ExitCode) {
         listener?.onUpdateFinished(exitCode)

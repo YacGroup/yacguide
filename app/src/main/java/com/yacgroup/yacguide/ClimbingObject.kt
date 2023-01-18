@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Axel Paetzold
+ * Copyright (C) 2021, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,4 +32,6 @@ enum class ClimbingObjectLevel(val value: Int) {
     }
 }
 
-class ClimbingObject(val level: ClimbingObjectLevel, val parentId: Int, val parentName: String)
+class ClimbingObjectUId(val id: Int, val name: String)
+
+class ClimbingObject(val level: ClimbingObjectLevel, val parentUId: ClimbingObjectUId)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class DescriptionActivity : TableActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _route = db.getRoute(activityLevel.parentId)!!
+        _route = db.getRoute(activityLevel.parentUId.id)!!
         if (_route.statusId > 1) {
             findViewById<TextView>(R.id.infoTextView).text =
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
@@ -55,7 +55,7 @@ class DescriptionActivity : TableActivity() {
     }
 
     override fun showComments(v: View) {
-        showRouteComments(activityLevel.parentId)
+        showRouteComments(activityLevel.parentUId.id)
     }
 
     @Suppress("UNUSED_PARAMETER")

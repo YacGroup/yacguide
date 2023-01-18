@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide.network
 
+import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
@@ -24,7 +25,6 @@ import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.DataUId
 
 import org.json.JSONArray
 import org.json.JSONException
@@ -57,15 +57,15 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
     private var _sectorCount: Int = 0
     private var _parsedSectorCount: Int = 0
 
-    override fun initNetworkRequests(dataUId: DataUId) {
-        _regionId = dataUId.id
+    override fun initNetworkRequests(climbingObjectUId: ClimbingObjectUId) {
+        _regionId = climbingObjectUId.id
         networkRequests = LinkedList(listOf(
             NetworkRequest(
-                uid = dataUId,
+                uid = climbingObjectUId,
                 type = RequestType.SECTOR_DATA,
                 url = "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"),
             NetworkRequest(
-                uid = dataUId,
+                uid = climbingObjectUId,
                 type = RequestType.REGION_COMMENTS,
                 url = "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId")
         ))
@@ -120,14 +120,14 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
             val jsonSector = jsonSectors.getJSONObject(i)
             val firstName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_d"))
             val secondName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_cz"))
-            val s = Sector(
+            val sector = Sector(
                 id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID"),
                 name = ParserUtils.encodeObjectNames(firstName, secondName),
                 nr = ParserUtils.jsonField2Float(jsonSector, "sektornr"),
                 parentId = _regionId
             )
-            _sectors.add(s)
-            _requestRocks(DataUId(s.id, s.name.orEmpty()))
+            _sectors.add(sector)
+            _requestRocks(ClimbingObjectUId(sector.id, sector.name.orEmpty()))
         }
     }
 
@@ -147,7 +147,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         }
     }
 
-    private fun _requestRocks(sectorUId: DataUId) {
+    private fun _requestRocks(sectorUId: ClimbingObjectUId) {
         val requests = listOf(
             NetworkRequest(
                 uid = sectorUId,

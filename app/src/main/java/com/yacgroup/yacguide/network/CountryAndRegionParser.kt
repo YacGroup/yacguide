@@ -17,12 +17,12 @@
 
 package com.yacgroup.yacguide.network
 
+import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.utils.NetworkUtils
 import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.DataUId
 
 import org.json.JSONArray
 import org.json.JSONException
@@ -34,10 +34,10 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
     private val _countries = mutableListOf<Country>()
     private val _regions = mutableListOf<Region>()
 
-    override fun initNetworkRequests(dataUId: DataUId) {
+    override fun initNetworkRequests(climbingObjectUId: ClimbingObjectUId) {
         networkRequests = LinkedList(listOf(
             NetworkRequest(
-                uid = dataUId,
+                uid = climbingObjectUId,
                 type = RequestType.COUNTRY_DATA,
                 url = "${baseUrl}jsonland.php?app=yacguide")
         ))
@@ -65,7 +65,7 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
 
     private fun _requestRegions(countryName: String) {
         val request = NetworkRequest(
-            uid = DataUId(0, countryName),
+            uid = ClimbingObjectUId(0, countryName),
             type = RequestType.REGION_DATA,
             url = "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(countryName)}")
         networkRequests.add(request)

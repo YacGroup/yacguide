@@ -49,8 +49,8 @@ class RockSearchable(private val _activity: TableActivityWithOptionsMenu) : Acti
             } else {
                 _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
                     putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentUId.id)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentUId.name)
                     putExtra(IntentConstants.FILTER_NAME, rockName)
                     putExtra(IntentConstants.FILTER_RELEVANCE, _maxRelevanceId)
                 })

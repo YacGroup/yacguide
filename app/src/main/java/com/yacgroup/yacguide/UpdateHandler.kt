@@ -29,7 +29,6 @@ import com.yacgroup.yacguide.network.ExitCode
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.NetworkUtils
-import com.yacgroup.yacguide.utils.DataUId
 
 class UpdateHandler(private val _activity: AppCompatActivity,
                     private var _jsonParser: JSONWebParser): UpdateListener {
@@ -38,7 +37,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
-    private var _dataUId: DataUId = DataUId(0, "")
+    private var _climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, "")
     private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _onUpdateFinished: () -> Unit = {}
 
@@ -55,7 +54,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     override fun onUpdateStatus(statusMessage: String) {
         if (!_isSilentUpdate) {
             _activity.runOnUiThread {
-                _updateDialog.findViewById<TextView>(R.id.dialogText).text = "${_dataUId.name} $statusMessage"
+                _updateDialog.findViewById<TextView>(R.id.dialogText).text = "${_climbingObjectUId.name} $statusMessage"
             }
         }
     }
@@ -84,8 +83,11 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
     }
 
-    fun update(dataUId: DataUId = DataUId(0, ""), onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
-        _dataUId = dataUId
+    fun update(climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, ""),
+               onUpdateFinished: () -> Unit = {},
+               isRecurring: Boolean = false,
+               isSilent: Boolean = false) {
+        _climbingObjectUId = climbingObjectUId
         _onUpdateFinished = onUpdateFinished
         _isRecurringUpdate = isRecurring
         _isSilentUpdate = isSilent
@@ -93,7 +95,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
             Toast.makeText(_activity, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
-        _jsonParser.fetchData(dataUId)
+        _jsonParser.fetchData(climbingObjectUId)
         if (!_isSilentUpdate) {
             _updateDialog.show()
         }
@@ -139,13 +141,13 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _failedRegionsNames.clear()
     }
 
-    fun configureDownloadButton(enabled: Boolean, dataUId: DataUId, onUpdateFinishedCallback: () -> Unit) {
+    fun configureDownloadButton(enabled: Boolean, climbingObjectUId: ClimbingObjectUId, onUpdateFinishedCallback: () -> Unit) {
         val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
         if (enabled) {
             button.visibility = View.VISIBLE
             button.setOnClickListener{
                 update(
-                    dataUId = dataUId,
+                    climbingObjectUId = climbingObjectUId,
                     onUpdateFinished = onUpdateFinishedCallback)
             }
         } else {

@@ -34,7 +34,6 @@ import com.yacgroup.yacguide.list_adapters.SwipeConfig
 import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.network.SectorParser
-import com.yacgroup.yacguide.utils.DataUId
 
 class RegionManagerActivity : BaseNavigationActivity() {
 
@@ -64,7 +63,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         ) { pos ->
             _updateRegionListAndDB(pos) { region ->
                 _updateHandler.setJsonParser(_sectorParser)
-                _updateHandler.update(DataUId(region.id, region.name.orEmpty()))
+                _updateHandler.update(ClimbingObjectUId(region.id, region.name.orEmpty()))
             }
         }
         val swipeLeftConfig = SwipeConfig(
@@ -131,7 +130,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         // We need to update regions recursively since update() is asynchronous.
         _updateHandler.setJsonParser(_countryAndRegionParser)
         _updateHandler.update(
-            dataUId = DataUId(0, getString(R.string.countries_and_regions)),
+            climbingObjectUId = ClimbingObjectUId(0, getString(R.string.countries_and_regions)),
             onUpdateFinished = {
                 _updateHandler.setJsonParser(_sectorParser)
                 _updateNextRegion(_db.getNonEmptyRegions().toMutableSet()) },
@@ -143,7 +142,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
             val nextRegion = regions.first()
             regions.remove(nextRegion)
             _updateHandler.update(
-                dataUId = DataUId(nextRegion.id, nextRegion.name.orEmpty()),
+                climbingObjectUId = ClimbingObjectUId(nextRegion.id, nextRegion.name.orEmpty()),
                 onUpdateFinished = { _updateNextRegion(regions) },
                 isRecurring = true)
         } catch (e: NoSuchElementException) {

@@ -17,7 +17,7 @@
 
 package com.yacgroup.yacguide.network
 
-import com.yacgroup.yacguide.utils.DataUId
+import com.yacgroup.yacguide.ClimbingObjectUId
 
 enum class RequestType {
     COUNTRY_DATA,
@@ -30,7 +30,7 @@ enum class RequestType {
 }
 
 class NetworkRequest(
-    val uid: DataUId,
+    val uid: ClimbingObjectUId,
     val type: RequestType,
     val url: String
 )

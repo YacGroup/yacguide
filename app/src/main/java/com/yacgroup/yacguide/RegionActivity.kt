@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ class RegionActivity : TableActivityWithOptionsMenu() {
     override fun getLayoutId() = R.layout.activity_table
 
     override fun displayContent() {
-        this.title = activityLevel.parentName
-        val regions = db.getRegions(activityLevel.parentName)
+        this.title = activityLevel.parentUId.name
+        val regions = db.getRegions(activityLevel.parentUId.name)
         _viewAdapter.submitList(regions)
     }
 

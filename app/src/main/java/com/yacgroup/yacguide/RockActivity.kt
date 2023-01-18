@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
@@ -61,19 +60,19 @@ class RockActivity : TableActivityWithOptionsMenu() {
                 getByRelevance = { db.getRocksByRelevance(_filterMaxRelevanceId) }
             ),
             ClimbingObjectLevel.eRegion to RockGetter(
-                getAll = { db.getRocksForCountry(activityLevel.parentName) },
-                getByName = { db.getRocksByNameForCountry(activityLevel.parentName, _filterName) },
-                getByRelevance = { db.getRocksByRelevanceForCountry(activityLevel.parentName, _filterMaxRelevanceId) }
+                getAll = { db.getRocksForCountry(activityLevel.parentUId.name) },
+                getByName = { db.getRocksByNameForCountry(activityLevel.parentUId.name, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForCountry(activityLevel.parentUId.name, _filterMaxRelevanceId) }
             ),
             ClimbingObjectLevel.eSector to RockGetter(
-                getAll = { db.getRocksForRegion(activityLevel.parentId) },
-                getByName = { db.getRocksByNameForRegion(activityLevel.parentId, _filterName) },
-                getByRelevance = { db.getRocksByRelevanceForRegion(activityLevel.parentId, _filterMaxRelevanceId) }
+                getAll = { db.getRocksForRegion(activityLevel.parentUId.id) },
+                getByName = { db.getRocksByNameForRegion(activityLevel.parentUId.id, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForRegion(activityLevel.parentUId.id, _filterMaxRelevanceId) }
             ),
             ClimbingObjectLevel.eRock to RockGetter(
-                getAll = { db.getRocksForSector(activityLevel.parentId) },
-                getByName = { db.getRocksByNameForSector(activityLevel.parentId, _filterName) },
-                getByRelevance = { db.getRocksByRelevanceForSector(activityLevel.parentId, _filterMaxRelevanceId) }
+                getAll = { db.getRocksForSector(activityLevel.parentUId.id) },
+                getByName = { db.getRocksByNameForSector(activityLevel.parentUId.id, _filterName) },
+                getByRelevance = { db.getRocksByRelevanceForSector(activityLevel.parentUId.id, _filterMaxRelevanceId) }
             )
         )
 
@@ -100,14 +99,14 @@ class RockActivity : TableActivityWithOptionsMenu() {
 
     override fun showComments(v: View) {
         when (activityLevel.level) {
-            ClimbingObjectLevel.eSector -> showRegionComments(activityLevel.parentId)
-            ClimbingObjectLevel.eRock -> showSectorComments(activityLevel.parentId)
+            ClimbingObjectLevel.eSector -> showRegionComments(activityLevel.parentUId.id)
+            ClimbingObjectLevel.eRock -> showSectorComments(activityLevel.parentUId.id)
             else -> showNoCommentToast()
         }
     }
 
     override fun displayContent() {
-        val levelName = ParserUtils.decodeObjectNames(activityLevel.parentName)
+        val levelName = ParserUtils.decodeObjectNames(activityLevel.parentUId.name)
         this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
 
         var rocks = _getAndFilterRocks()

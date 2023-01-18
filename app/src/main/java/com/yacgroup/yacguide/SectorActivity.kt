@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.list_adapters.SectorViewAdapter
 import com.yacgroup.yacguide.network.SectorParser
-import com.yacgroup.yacguide.utils.DataUId
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class SectorActivity : TableActivityWithOptionsMenu() {
@@ -49,16 +48,16 @@ class SectorActivity : TableActivityWithOptionsMenu() {
     override fun getLayoutId() = R.layout.activity_sector
 
     override fun showComments(v: View) {
-        showRegionComments(activityLevel.parentId)
+        showRegionComments(activityLevel.parentUId.id)
     }
 
     override fun displayContent() {
-        this.title = activityLevel.parentName
-        val sectors = db.getSectors(activityLevel.parentId)
+        this.title = activityLevel.parentUId.name
+        val sectors = db.getSectors(activityLevel.parentUId.id)
         _viewAdapter.submitList(sectors)
         _updateHandler.configureDownloadButton(
             enabled = sectors.isEmpty(),
-            dataUId = DataUId(activityLevel.parentId, activityLevel.parentName)
+            climbingObjectUId = ClimbingObjectUId(activityLevel.parentUId.id, activityLevel.parentUId.name)
         ) { displayContent() }
     }
 
