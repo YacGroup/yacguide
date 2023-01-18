@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +27,19 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.coroutines.CoroutineContext
 
-class NetworkTask(private val _requestId: NetworkRequestUId,
+class NetworkTask(private val _request: NetworkRequest,
                   private val _listener: NetworkListener) : CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
-    fun execute(url: String) = launch {
-        val result = _doInBackground(url)
-        _onPostExecute(result)
+    fun execute() = launch {
+        val result = _performNetworkRequest()
+        _listener.onNetworkTaskResolved(_request, result)
     }
 
-    private suspend fun _doInBackground(url: String): String = withContext(Dispatchers.IO) {
-        val connection = URL(url).openConnection() as HttpURLConnection
+    private suspend fun _performNetworkRequest(): String = withContext(Dispatchers.IO) {
+        val connection = URL(_request.url).openConnection() as HttpURLConnection
 
         return@withContext try {
             connection.inputStream.bufferedReader().readText()
@@ -49,9 +49,5 @@ class NetworkTask(private val _requestId: NetworkRequestUId,
         } finally {
             connection.disconnect()
         }
-    }
-
-    private fun _onPostExecute(result: String) {
-        _listener.onNetworkTaskResolved(_requestId, result)
     }
 }

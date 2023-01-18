@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,6 @@ package com.yacgroup.yacguide.network
 
 interface NetworkListener {
 
-    fun onNetworkTaskResolved(requestId: NetworkRequestUId, result: String)
+    fun onNetworkTaskResolved(request: NetworkRequest, result: String)
 
 }

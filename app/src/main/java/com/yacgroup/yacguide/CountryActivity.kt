@@ -82,7 +82,10 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         val countries = db.getCountries()
         val pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty()
         _viewAdapter.submitList(countries.sortedBy { !pinnedCountries.contains(it.name) })
-        _updateHandler.configureDownloadButton(countries.isEmpty()){ displayContent() }
+        _updateHandler.configureDownloadButton(
+            enabled = countries.isEmpty(),
+            climbingObjectUId = ClimbingObjectUId(0, getString(R.string.countries_and_regions))
+        ){ displayContent() }
     }
 
     private fun _onCountrySelected(countryName: String) {

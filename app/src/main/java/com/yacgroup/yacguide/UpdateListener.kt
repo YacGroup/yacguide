@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Axel Paetzold
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,5 +22,6 @@ import com.yacgroup.yacguide.network.ExitCode
 interface UpdateListener {
 
     fun onUpdateStatus(statusMessage: String)
+    fun onUpdateError(errorMessage: String)
     fun onUpdateFinished(exitCode: ExitCode)
 }

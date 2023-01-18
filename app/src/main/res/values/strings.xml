@@ -68,6 +68,7 @@
     <string name="choose_email_app">Wähle eine Email-App.</string>
 
     <!-- Dialogs -->
+    <string name="dialog_text_failed_regions">Aktualisierung fehlgeschlagen für</string>
     <string name="dialog_text_delete_partner">Kletterpartner löschen?</string>
     <string name="dialog_text_add_partner">Kletterpartner hinzufügen</string>
     <string name="dialog_text_change_partner">Kletterpartner ändern</string>
@@ -113,6 +114,7 @@
     <string name="country_not_yet_pinned">Land nicht gepinnt</string>
 
     <!-- Data -->
+    <string name="countries_and_regions">Länder und Gebiete</string>
     <string name="sector">Teilgebiet</string>
     <string name="rock">Felsen</string>
     <string name="route">Weg</string>

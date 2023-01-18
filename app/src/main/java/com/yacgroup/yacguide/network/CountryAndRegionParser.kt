@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide.network
 
+import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.database.Country
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
@@ -33,19 +34,20 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
     private val _countries = mutableListOf<Country>()
     private val _regions = mutableListOf<Region>()
 
-    override fun initNetworkRequests() {
+    override fun initNetworkRequests(climbingObjectUId: ClimbingObjectUId) {
         networkRequests = LinkedList(listOf(
             NetworkRequest(
-                NetworkRequestUId(RequestType.COUNTRY_DATA, 0),
-                "${baseUrl}jsonland.php?app=yacguide")
+                uid = climbingObjectUId,
+                type = RequestType.COUNTRY_DATA,
+                url = "${baseUrl}jsonland.php?app=yacguide")
         ))
     }
 
     @Throws(JSONException::class)
-    override fun parseData(requestId: NetworkRequestUId, json: String) {
-        when (requestId.type) {
+    override fun parseData(request: NetworkRequest, json: String) {
+        when (request.type) {
             RequestType.COUNTRY_DATA -> _parseCountries(json)
-            RequestType.REGION_DATA -> _parseRegions(json, requestId.name)
+            RequestType.REGION_DATA -> _parseRegions(json, request.uid.name)
             else -> throw RuntimeException("Invalid request type")
         }
     }
@@ -63,10 +65,11 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
 
     private fun _requestRegions(countryName: String) {
         val request = NetworkRequest(
-            NetworkRequestUId(RequestType.REGION_DATA, 0, countryName),
-            "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(countryName)}")
+            uid = ClimbingObjectUId(0, countryName),
+            type = RequestType.REGION_DATA,
+            url = "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(countryName)}")
         networkRequests.add(request)
-        NetworkTask(request.requestId, this).execute(request.url)
+        NetworkTask(request, this).execute()
     }
 
     private fun _parseRegions(json: String, countryName: String) {

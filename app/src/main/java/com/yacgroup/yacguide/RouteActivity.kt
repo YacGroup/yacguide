@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,44 +81,44 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 getBotches = { db.getBotchedRoutes() }
             ),
             ClimbingObjectLevel.eRegion to RouteGetter(
-                getAll = { db.getRoutesForCountry(activityLevel.parentName) },
-                getByName = { db.getRoutesByNameForCountry(activityLevel.parentName, _filterName) },
-                getByGrade = { db.getRoutesByGradeForCountry(activityLevel.parentName, _filterMinGradeId, _filterMaxGradeId) },
-                getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentName, _filterMaxQualityId) },
-                getByProtection = { db.getRoutesByProtectionForCountry(activityLevel.parentName, _filterMaxProtectionId) },
-                getByDrying = { db.getRoutesByDryingForCountry(activityLevel.parentName, _filterMaxDryingId) },
-                getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentName) },
-                getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentName) }
+                getAll = { db.getRoutesForCountry(activityLevel.parentUId.name) },
+                getByName = { db.getRoutesByNameForCountry(activityLevel.parentUId.name, _filterName) },
+                getByGrade = { db.getRoutesByGradeForCountry(activityLevel.parentUId.name, _filterMinGradeId, _filterMaxGradeId) },
+                getByQuality = { db.getRoutesByQualityForCountry(activityLevel.parentUId.name, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForCountry(activityLevel.parentUId.name, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForCountry(activityLevel.parentUId.name, _filterMaxDryingId) },
+                getProjects = { db.getProjectedRoutesForCountry(activityLevel.parentUId.name) },
+                getBotches = { db.getBotchedRoutesForCountry(activityLevel.parentUId.name) }
             ),
             ClimbingObjectLevel.eSector to RouteGetter(
-                getAll = { db.getRoutesForRegion(activityLevel.parentId) },
-                getByName = { db.getRoutesByNameForRegion(activityLevel.parentId, _filterName) },
-                getByGrade = { db.getRoutesByGradeForRegion(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
-                getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentId, _filterMaxQualityId) },
-                getByProtection = { db.getRoutesByProtectionForRegion(activityLevel.parentId, _filterMaxProtectionId) },
-                getByDrying = { db.getRoutesByDryingForRegion(activityLevel.parentId, _filterMaxDryingId) },
-                getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentId) },
-                getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentId) }
+                getAll = { db.getRoutesForRegion(activityLevel.parentUId.id) },
+                getByName = { db.getRoutesByNameForRegion(activityLevel.parentUId.id, _filterName) },
+                getByGrade = { db.getRoutesByGradeForRegion(activityLevel.parentUId.id, _filterMinGradeId, _filterMaxGradeId) },
+                getByQuality = { db.getRoutesByQualityForRegion(activityLevel.parentUId.id, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForRegion(activityLevel.parentUId.id, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForRegion(activityLevel.parentUId.id, _filterMaxDryingId) },
+                getProjects = { db.getProjectedRoutesForRegion(activityLevel.parentUId.id) },
+                getBotches = { db.getBotchedRoutesForRegion(activityLevel.parentUId.id) }
             ),
             ClimbingObjectLevel.eRock to RouteGetter(
-                getAll = { db.getRoutesForSector(activityLevel.parentId) },
-                getByName = { db.getRoutesByNameForSector(activityLevel.parentId, _filterName) },
-                getByGrade = { db.getRoutesByGradeForSector(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
-                getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentId, _filterMaxQualityId) },
-                getByProtection = { db.getRoutesByProtectionForSector(activityLevel.parentId, _filterMaxProtectionId) },
-                getByDrying = { db.getRoutesByDryingForSector(activityLevel.parentId, _filterMaxDryingId) },
-                getProjects = { db.getProjectedRoutesForSector(activityLevel.parentId) },
-                getBotches = { db.getBotchedRoutesForSector(activityLevel.parentId) }
+                getAll = { db.getRoutesForSector(activityLevel.parentUId.id) },
+                getByName = { db.getRoutesByNameForSector(activityLevel.parentUId.id, _filterName) },
+                getByGrade = { db.getRoutesByGradeForSector(activityLevel.parentUId.id, _filterMinGradeId, _filterMaxGradeId) },
+                getByQuality = { db.getRoutesByQualityForSector(activityLevel.parentUId.id, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForSector(activityLevel.parentUId.id, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForSector(activityLevel.parentUId.id, _filterMaxDryingId) },
+                getProjects = { db.getProjectedRoutesForSector(activityLevel.parentUId.id) },
+                getBotches = { db.getBotchedRoutesForSector(activityLevel.parentUId.id) }
             ),
             ClimbingObjectLevel.eRoute to RouteGetter(
-                getAll = { db.getRoutesForRock(activityLevel.parentId) },
-                getByName = { db.getRoutesByNameForRock(activityLevel.parentId, _filterName) },
-                getByGrade = { db.getRoutesByGradeForRock(activityLevel.parentId, _filterMinGradeId, _filterMaxGradeId) },
-                getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentId, _filterMaxQualityId) },
-                getByProtection = { db.getRoutesByProtectionForRock(activityLevel.parentId, _filterMaxProtectionId) },
-                getByDrying = { db.getRoutesByDryingForRock(activityLevel.parentId, _filterMaxDryingId) },
-                getProjects = { db.getProjectedRoutesForRock(activityLevel.parentId) },
-                getBotches = { db.getBotchedRoutesForRock(activityLevel.parentId) }
+                getAll = { db.getRoutesForRock(activityLevel.parentUId.id) },
+                getByName = { db.getRoutesByNameForRock(activityLevel.parentUId.id, _filterName) },
+                getByGrade = { db.getRoutesByGradeForRock(activityLevel.parentUId.id, _filterMinGradeId, _filterMaxGradeId) },
+                getByQuality = { db.getRoutesByQualityForRock(activityLevel.parentUId.id, _filterMaxQualityId) },
+                getByProtection = { db.getRoutesByProtectionForRock(activityLevel.parentUId.id, _filterMaxProtectionId) },
+                getByDrying = { db.getRoutesByDryingForRock(activityLevel.parentUId.id, _filterMaxDryingId) },
+                getProjects = { db.getProjectedRoutesForRock(activityLevel.parentUId.id) },
+                getBotches = { db.getBotchedRoutesForRock(activityLevel.parentUId.id) }
             )
         )
 
@@ -132,7 +132,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) })
 
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
-            _rock = db.getRock(activityLevel.parentId)
+            _rock = db.getRock(activityLevel.parentUId.id)
         } else {
             findViewById<ImageButton>(R.id.mapButton).visibility = View.INVISIBLE
         }
@@ -164,15 +164,15 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 
     override fun showComments(v: View) {
         when (activityLevel.level) {
-            ClimbingObjectLevel.eSector -> showRegionComments(activityLevel.parentId)
-            ClimbingObjectLevel.eRock -> showSectorComments(activityLevel.parentId)
-            ClimbingObjectLevel.eRoute -> showRockComments(activityLevel.parentId)
+            ClimbingObjectLevel.eSector -> showRegionComments(activityLevel.parentUId.id)
+            ClimbingObjectLevel.eRock -> showSectorComments(activityLevel.parentUId.id)
+            ClimbingObjectLevel.eRoute -> showRockComments(activityLevel.parentUId.id)
             else -> showNoCommentToast()
         }
     }
 
     override fun displayContent() {
-        val levelName = ParserUtils.decodeObjectNames(activityLevel.parentName)
+        val levelName = ParserUtils.decodeObjectNames(activityLevel.parentUId.name)
         this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
         _displayRockInfo(findViewById(R.id.infoTextView))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,10 @@ abstract class TableActivity : BaseNavigationActivity() {
 
         activityLevel = ClimbingObject(
             level = ClimbingObjectLevel.fromInt(intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eCountry.value)),
-            parentId = intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID),
-            parentName = intent.getStringExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME).orEmpty()
+            parentUId = ClimbingObjectUId(
+                id = intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID),
+                name = intent.getStringExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME).orEmpty()
+            )
         )
         db = DatabaseWrapper(this)
         customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)

@@ -62,8 +62,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
             } else {
                 _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
                     putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentUId.id)
+                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentUId.name)
                     putExtra(IntentConstants.FILTER_NAME, routeName)
                     putExtra(IntentConstants.FILTER_GRADE_FROM, _minGradeId)
                     putExtra(IntentConstants.FILTER_GRADE_TO, _maxGradeId)

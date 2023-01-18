@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,4 +17,20 @@
 
 package com.yacgroup.yacguide.network
 
-class NetworkRequest(val requestId: NetworkRequestUId, val url: String)
+import com.yacgroup.yacguide.ClimbingObjectUId
+
+enum class RequestType {
+    COUNTRY_DATA,
+    REGION_DATA,
+    SECTOR_DATA,
+    ROCK_DATA,
+    ROUTE_DATA,
+    REGION_COMMENTS,
+    SECTOR_COMMENTS
+}
+
+class NetworkRequest(
+    val uid: ClimbingObjectUId,
+    val type: RequestType,
+    val url: String
+)

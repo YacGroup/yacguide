@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021, 2022 Axel Paetzold
+ * Copyright (C) 2021, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ import android.app.Dialog
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -32,9 +33,11 @@ import com.yacgroup.yacguide.utils.NetworkUtils
 class UpdateHandler(private val _activity: AppCompatActivity,
                     private var _jsonParser: JSONWebParser): UpdateListener {
 
+    private val _failedRegionsNames: MutableSet<String> = emptySet<String>().toMutableSet()
     private var _updateDialog: Dialog
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
+    private var _climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, "")
     private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _onUpdateFinished: () -> Unit = {}
 
@@ -51,9 +54,13 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     override fun onUpdateStatus(statusMessage: String) {
         if (!_isSilentUpdate) {
             _activity.runOnUiThread {
-                _updateDialog.findViewById<TextView>(R.id.dialogText).text = statusMessage
+                _updateDialog.findViewById<TextView>(R.id.dialogText).text = "${_climbingObjectUId.name} $statusMessage"
             }
         }
+    }
+
+    override fun onUpdateError(errorMessage: String)  {
+        _failedRegionsNames.add(errorMessage)
     }
 
     override fun onUpdateFinished(exitCode: ExitCode) {
@@ -76,7 +83,11 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
     }
 
-    fun update(onUpdateFinished: () -> Unit = {}, isRecurring: Boolean = false, isSilent: Boolean = false) {
+    fun update(climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, ""),
+               onUpdateFinished: () -> Unit = {},
+               isRecurring: Boolean = false,
+               isSilent: Boolean = false) {
+        _climbingObjectUId = climbingObjectUId
         _onUpdateFinished = onUpdateFinished
         _isRecurringUpdate = isRecurring
         _isSilentUpdate = isSilent
@@ -84,7 +95,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
             Toast.makeText(_activity, R.string.no_internet_connection, Toast.LENGTH_LONG).show()
             return
         }
-        _jsonParser.fetchData()
+        _jsonParser.fetchData(climbingObjectUId)
         if (!_isSilentUpdate) {
             _updateDialog.show()
         }
@@ -115,7 +126,10 @@ class UpdateHandler(private val _activity: AppCompatActivity,
 
             val finishMsgResource = when (_exitCode) {
                 ExitCode.ABORT -> R.string.refresh_aborted
-                ExitCode.ERROR -> R.string.refresh_failed
+                ExitCode.ERROR -> {
+                    _showErrorDialog()
+                    R.string.refresh_failed
+                }
                 else -> R.string.refresh_successful
             }
             Toast.makeText(_activity, finishMsgResource, Toast.LENGTH_SHORT).show()
@@ -124,17 +138,36 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         }
 
         _exitCode = ExitCode.SUCCESS
+        _failedRegionsNames.clear()
     }
 
-    fun configureDownloadButton(enabled: Boolean, onUpdateFinished: () -> Unit) {
+    fun configureDownloadButton(enabled: Boolean, climbingObjectUId: ClimbingObjectUId, onUpdateFinishedCallback: () -> Unit) {
         val button = _activity.findViewById<ImageButton>(R.id.downloadButton)
         if (enabled) {
             button.visibility = View.VISIBLE
             button.setOnClickListener{
-                update({ onUpdateFinished() })
+                update(
+                    climbingObjectUId = climbingObjectUId,
+                    onUpdateFinished = onUpdateFinishedCallback)
             }
         } else {
             button.visibility = View.GONE
         }
+    }
+
+    private fun _showErrorDialog() {
+        val view = _activity.layoutInflater.inflate(R.layout.comment_dialog, null)
+        val dialog = DialogWidgetBuilder(_activity, R.string.dialog_text_failed_regions).apply {
+            setView(view)
+            setPositiveButton{ _, _ -> }
+        }.create()
+        val commentLayout = view.findViewById<LinearLayout>(R.id.commentLayout)
+        _failedRegionsNames.forEach { regionName ->
+            dialog.layoutInflater.inflate(R.layout.textview_info, commentLayout, false).let {
+                it.findViewById<TextView>(R.id.infoTextView).text = regionName
+                commentLayout.addView(it)
+            }
+        }
+        dialog.show()
     }
 }

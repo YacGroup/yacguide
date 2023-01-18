@@ -49,7 +49,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
         _countryAndRegionParser = CountryAndRegionParser(_db)
-        _sectorParser = SectorParser(_db, 0)
+        _sectorParser = SectorParser(_db)
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
@@ -63,9 +63,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         ) { pos ->
             _updateRegionListAndDB(pos) { region ->
                 _updateHandler.setJsonParser(_sectorParser)
-                _sectorParser.setRegionId(region.id)
-                _sectorParser.setRegionName(region.name.orEmpty())
-                _updateHandler.update()
+                _updateHandler.update(ClimbingObjectUId(region.id, region.name.orEmpty()))
             }
         }
         val swipeLeftConfig = SwipeConfig(
@@ -132,6 +130,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
         // We need to update regions recursively since update() is asynchronous.
         _updateHandler.setJsonParser(_countryAndRegionParser)
         _updateHandler.update(
+            climbingObjectUId = ClimbingObjectUId(0, getString(R.string.countries_and_regions)),
             onUpdateFinished = {
                 _updateHandler.setJsonParser(_sectorParser)
                 _updateNextRegion(_db.getNonEmptyRegions().toMutableSet()) },
@@ -142,9 +141,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
         try {
             val nextRegion = regions.first()
             regions.remove(nextRegion)
-            _sectorParser.setRegionId(nextRegion.id)
-            _sectorParser.setRegionName(nextRegion.name.orEmpty())
             _updateHandler.update(
+                climbingObjectUId = ClimbingObjectUId(nextRegion.id, nextRegion.name.orEmpty()),
                 onUpdateFinished = { _updateNextRegion(regions) },
                 isRecurring = true)
         } catch (e: NoSuchElementException) {

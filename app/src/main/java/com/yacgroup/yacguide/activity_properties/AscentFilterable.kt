@@ -37,8 +37,8 @@ class AscentFilterable(private val _activity: TableActivityWithOptionsMenu) : Ac
     private fun _goToFilteredRoutesView(filterIntent: String) {
         val intent = Intent(_activity, RouteActivity::class.java)
         intent.putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentId)
-        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentName)
+        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentUId.id)
+        intent.putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentUId.name)
         intent.putExtra(filterIntent, true)
         _activity.startActivity(intent)
     }

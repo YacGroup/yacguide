@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        _updateHandler = UpdateHandler(this, SectorParser(db, activityLevel.parentId))
+        _updateHandler = UpdateHandler(this, SectorParser(db))
         properties = arrayListOf(
             RouteSearchable(this),
             RockSearchable(this),
@@ -48,14 +48,17 @@ class SectorActivity : TableActivityWithOptionsMenu() {
     override fun getLayoutId() = R.layout.activity_sector
 
     override fun showComments(v: View) {
-        showRegionComments(activityLevel.parentId)
+        showRegionComments(activityLevel.parentUId.id)
     }
 
     override fun displayContent() {
-        this.title = activityLevel.parentName
-        val sectors = db.getSectors(activityLevel.parentId)
+        this.title = activityLevel.parentUId.name
+        val sectors = db.getSectors(activityLevel.parentUId.id)
         _viewAdapter.submitList(sectors)
-        _updateHandler.configureDownloadButton(sectors.isEmpty()) { displayContent() }
+        _updateHandler.configureDownloadButton(
+            enabled = sectors.isEmpty(),
+            climbingObjectUId = ClimbingObjectUId(activityLevel.parentUId.id, activityLevel.parentUId.name)
+        ) { displayContent() }
     }
 
     private fun _onSectorSelected(sectorId: Int, sectorName: String) {

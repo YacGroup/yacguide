@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide.network
 
+import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
@@ -31,9 +32,7 @@ import java.lang.RuntimeException
 import java.util.*
 import kotlin.jvm.Throws
 
-class SectorParser(private val _db: DatabaseWrapper,
-                   private var _regionId: Int,
-                   private var _regionName: String = "") : JSONWebParser() {
+class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
 
     private val _CLIMBING_OBJECT_TYPES = object : HashSet<Char>() {
         init {
@@ -54,27 +53,30 @@ class SectorParser(private val _db: DatabaseWrapper,
     private val _sectorComments = mutableListOf<SectorComment>()
     private val _rockComments = mutableListOf<RockComment>()
     private val _routeComments = mutableListOf<RouteComment>()
-
+    private var _regionId: Int = 0
     private var _sectorCount: Int = 0
     private var _parsedSectorCount: Int = 0
 
-    override fun initNetworkRequests() {
+    override fun initNetworkRequests(climbingObjectUId: ClimbingObjectUId) {
+        _regionId = climbingObjectUId.id
         networkRequests = LinkedList(listOf(
             NetworkRequest(
-                NetworkRequestUId(RequestType.SECTOR_DATA, 0),
-                "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"),
+                uid = climbingObjectUId,
+                type = RequestType.SECTOR_DATA,
+                url = "${baseUrl}jsonteilgebiet.php?app=yacguide&gebietid=$_regionId"),
             NetworkRequest(
-                NetworkRequestUId(RequestType.REGION_COMMENTS, 0),
-                "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId")
+                uid = climbingObjectUId,
+                type = RequestType.REGION_COMMENTS,
+                url = "${baseUrl}jsonkomment.php?app=yacguide&gebietid=$_regionId")
         ))
     }
 
     @Throws(JSONException::class)
-    override fun parseData(requestId: NetworkRequestUId, json: String) {
-        when (requestId.type) {
+    override fun parseData(request: NetworkRequest, json: String) {
+        when (request.type) {
             RequestType.SECTOR_DATA -> _parseSectors(json)
             RequestType.REGION_COMMENTS -> _parseRegionComments(json)
-            RequestType.ROCK_DATA -> _parseRocks(json, requestId.id)
+            RequestType.ROCK_DATA -> _parseRocks(json, request.uid.id)
             RequestType.ROUTE_DATA -> _parseRoutes(json)
             RequestType.SECTOR_COMMENTS -> _parseComments(json)
             else -> throw RuntimeException("Invalid request type")
@@ -108,32 +110,24 @@ class SectorParser(private val _db: DatabaseWrapper,
         super.onFinalTaskResolved(exitCode)
     }
 
-    fun setRegionId(id: Int) {
-        _regionId = id
-    }
-
-    fun setRegionName(name: String) {
-        _regionName = name
-    }
-
     @Throws(JSONException::class)
     private fun _parseSectors(json: String) {
         val jsonSectors = JSONArray(json)
         _sectorCount = jsonSectors.length()
         _parsedSectorCount = 0
-        listener?.onUpdateStatus("$_regionName 0 %")
+        listener?.onUpdateStatus("0 %")
         for (i in 0 until jsonSectors.length()) {
             val jsonSector = jsonSectors.getJSONObject(i)
             val firstName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_d"))
             val secondName = ParserUtils.replaceUnderscores(jsonSector.getString("sektorname_cz"))
-            val s = Sector(
+            val sector = Sector(
                 id = ParserUtils.jsonField2Int(jsonSector, "sektor_ID"),
                 name = ParserUtils.encodeObjectNames(firstName, secondName),
                 nr = ParserUtils.jsonField2Float(jsonSector, "sektornr"),
                 parentId = _regionId
             )
-            _sectors.add(s)
-            _requestRocks(s.id)
+            _sectors.add(sector)
+            _requestRocks(ClimbingObjectUId(sector.id, sector.name.orEmpty()))
         }
     }
 
@@ -153,21 +147,24 @@ class SectorParser(private val _db: DatabaseWrapper,
         }
     }
 
-    private fun _requestRocks(sectorId: Int) {
+    private fun _requestRocks(sectorUId: ClimbingObjectUId) {
         val requests = listOf(
             NetworkRequest(
-                    NetworkRequestUId(RequestType.ROCK_DATA, sectorId),
-                    "${baseUrl}jsongipfel.php?app=yacguide&sektorid=$sectorId"),
+                uid = sectorUId,
+                type = RequestType.ROCK_DATA,
+                url = "${baseUrl}jsongipfel.php?app=yacguide&sektorid=${sectorUId.id}"),
             NetworkRequest(
-                    NetworkRequestUId(RequestType.ROUTE_DATA, sectorId),
-                    "${baseUrl}jsonwege.php?app=yacguide&sektorid=$sectorId"),
+                uid = sectorUId,
+                type = RequestType.ROUTE_DATA,
+                url = "${baseUrl}jsonwege.php?app=yacguide&sektorid=${sectorUId.id}"),
             NetworkRequest(
-                    NetworkRequestUId(RequestType.SECTOR_COMMENTS, sectorId),
-                    "${baseUrl}jsonkomment.php?app=yacguide&sektorid=$sectorId")
+                uid = sectorUId,
+                type = RequestType.SECTOR_COMMENTS,
+                url = "${baseUrl}jsonkomment.php?app=yacguide&sektorid=${sectorUId.id}")
         )
         networkRequests.addAll(requests)
         requests.forEach {
-            NetworkTask(it.requestId, this).execute(it.url)
+            NetworkTask(it, this).execute()
         }
     }
 
@@ -226,7 +223,7 @@ class SectorParser(private val _db: DatabaseWrapper,
             )
             _routes.add(route)
         }
-        listener?.onUpdateStatus("$_regionName ${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
+        listener?.onUpdateStatus("${ (100 * (++_parsedSectorCount)) / _sectorCount } %")
     }
 
     @Throws(JSONException::class)
