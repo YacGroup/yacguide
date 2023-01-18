@@ -25,19 +25,20 @@ import com.yacgroup.yacguide.database.TestDB.Companion.COUNTRIES
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
+import com.yacgroup.yacguide.database.TestDB.Companion.ROCKS
+import com.yacgroup.yacguide.database.TestDB.Companion.ROCK_COMMENTS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
-import com.yacgroup.yacguide.database.TestDB.Companion.SECTOR_COMMENTS
-import com.yacgroup.yacguide.database.comment.SectorCommentDao
+import com.yacgroup.yacguide.database.comment.RockCommentDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SectorCommentDaoTests {
+class RockCommentDaoTests {
 
     private lateinit var _db: AppDatabase
-    private lateinit var _sectorCommentDao: SectorCommentDao
+    private lateinit var _rockCommentDao: RockCommentDao
 
     @BeforeAll
     fun setup() {
@@ -45,11 +46,12 @@ class SectorCommentDaoTests {
         _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        _sectorCommentDao = _db.sectorCommentDao()
+        _rockCommentDao = _db.rockCommentDao()
 
         TestDB.initRegions(_db.regionDao())
         TestDB.initSectors(_db.sectorDao())
-        TestDB.initSectorComments(_sectorCommentDao)
+        TestDB.initRocks(_db.rockDao())
+        TestDB.initRockComments(_rockCommentDao)
     }
 
     @AfterAll
@@ -59,77 +61,81 @@ class SectorCommentDaoTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_invalidSectorId_returnsEmptyList() = runTest {
-        assertTrue(_sectorCommentDao.getAll(INVALID_ID).isEmpty())
+    fun getAll_invalidRockId_returnsEmptyList() = runTest {
+        assertTrue(_rockCommentDao.getAll(INVALID_ID).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_sectorAvailable_returnsCorrespondingSectorComments() = runTest {
-        val sectorId = SECTOR_COMMENTS.first().sectorId
-        val sectorComments = SECTOR_COMMENTS.filter {
-            it.sectorId == sectorId
+    fun getAll_rockAvailable_returnsCorrespondingRockComments() = runTest {
+        val rockId = ROCK_COMMENTS.first().rockId
+        val rockComments = ROCK_COMMENTS.filter {
+            it.rockId == rockId
         }
-        assertTrue(equal(sectorComments, _sectorCommentDao.getAll(sectorId)))
+        assertTrue(equal(rockComments, _rockCommentDao.getAll(rockId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
-        assertTrue(_sectorCommentDao.getAllInRegion(INVALID_ID).isEmpty())
+        assertTrue(_rockCommentDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInRegion_noSectorsAvailable_returnsEmptyList() = runTest {
-        assertTrue(_sectorCommentDao.getAllInRegion(REGIONS.last().id).isEmpty())
+    fun getAllInRegion_noRocksAvailable_returnsEmptyList() = runTest {
+        assertTrue(_rockCommentDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInRegion_sectorsAvailable_returnsCorrespondingSectorComments() = runTest {
+    fun getAllInRegion_rocksAvailable_returnsCorrespondingRockComments() = runTest {
         val regionId = REGIONS.first().id
-        val sectorComments = SECTOR_COMMENTS.filter { comment ->
-            SECTORS.any {
-                it.id == comment.sectorId && it.parentId == regionId
+        val rockComments = ROCK_COMMENTS.filter { comment ->
+            ROCKS.any { rock ->
+                rock.id == comment.rockId && SECTORS.any {
+                    it.id == rock.parentId && it.parentId == regionId
+                }
             }
         }
-        assertTrue(equal(sectorComments, _sectorCommentDao.getAllInRegion(regionId)))
+        assertTrue(equal(rockComments, _rockCommentDao.getAllInRegion(regionId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
-        assertTrue(_sectorCommentDao.getAllInCountry(INVALID_NAME).isEmpty())
+        assertTrue(_rockCommentDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInCountry_noSectorsAvailable_returnsEmptyList() = runTest {
-        assertTrue(_sectorCommentDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
+    fun getAllInCountry_noRocksAvailable_returnsEmptyList() = runTest {
+        assertTrue(_rockCommentDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInCountry_sectorsAvailable_returnsCorrespondingSectorComments() = runTest {
+    fun getAllInCountry_rocksAvailable_returnsCorrespondingRockComments() = runTest {
         val countryName = COUNTRIES.first().name
-        val sectorComments = SECTOR_COMMENTS.filter { comment ->
-            SECTORS.any { sector ->
-                sector.id == comment.sectorId && REGIONS.any {
-                    it.id == sector.parentId && it.country == countryName
+        val rockComments = ROCK_COMMENTS.filter { comment ->
+            ROCKS.any { rock ->
+                rock.id == comment.rockId && SECTORS.any { sector ->
+                    sector.id == rock.parentId && REGIONS.any {
+                        it.id == sector.parentId && it.country == countryName
+                    }
                 }
             }
         }
-        assertTrue(equal(sectorComments, _sectorCommentDao.getAllInCountry(countryName)))
+        assertTrue(equal(rockComments, _rockCommentDao.getAllInCountry(countryName)))
     }
 }
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SectorCommentDaoDeletionTests {
+class RockCommentDaoDeletionTests {
 
     private lateinit var _db: AppDatabase
-    private lateinit var _sectorCommentDao: SectorCommentDao
+    private lateinit var _rockCommentDao: RockCommentDao
 
     @BeforeAll
     fun setup() {
@@ -137,12 +143,12 @@ class SectorCommentDaoDeletionTests {
         _db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        _sectorCommentDao = _db.sectorCommentDao()
+        _rockCommentDao = _db.rockCommentDao()
     }
 
     @BeforeEach
     fun init() {
-        TestDB.initSectorComments(_sectorCommentDao)
+        TestDB.initRockComments(_rockCommentDao)
     }
 
     @AfterEach
@@ -157,8 +163,8 @@ class SectorCommentDaoDeletionTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun deleteAll_sectorCommentTableBecomesEmpty() = runTest {
-        _sectorCommentDao.deleteAll()
-        assertTrue(_sectorCommentDao.all.isEmpty())
+    fun deleteAll_rockCommentTableBecomesEmpty() = runTest {
+        _rockCommentDao.deleteAll()
+        assertTrue(_rockCommentDao.all.isEmpty())
     }
 }

@@ -115,7 +115,7 @@
 
     <!-- Data -->
     <string name="countries_and_regions">Länder und Gebiete</string>
-    <string name="region">Teilgebiet</string>
+    <string name="sector">Teilgebiet</string>
     <string name="rock">Felsen</string>
     <string name="route">Weg</string>
     <string name="style">Stil</string>

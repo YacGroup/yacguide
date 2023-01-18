@@ -89,7 +89,7 @@ class AscendDaoTests {
         val ascends = ASCENDS.filter {
             it.year == refAscend.year && it.styleId < refAscend.styleId
         }
-        assertTrue(equal(ascends.reversed(), _ascendDao.getAllBelowStyleId(refAscend.year, refAscend.styleId)))
+        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAllBelowStyleId(refAscend.year, refAscend.styleId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -111,7 +111,7 @@ class AscendDaoTests {
         val ascends = ASCENDS.filter {
             it.routeId == route.id
         }
-        assertTrue(equal(ascends.reversed(), _ascendDao.getAscendsForRoute(route.id)))
+        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsForRoute(route.id)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

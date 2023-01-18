@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, 2023 Axel Paetzold
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.yacgroup.yacguide.list_adapters
+package com.yacgroup.yacguide.database.tourbook
 
-data class BaseViewItem(
-    val id: Int,
-    val titleLeft: String = "",
-    val titleRight: String = "",
-    val textLeft: String = "",
-    val textRight: String = "",
-    val backgroundColor: Int,
-    val additionalInfo: String = "",
-    val isHeader: Boolean = false
-)
+import android.content.ContentResolver
+import android.net.Uri
+import com.yacgroup.yacguide.database.DatabaseWrapper
+import java.io.FileOutputStream
+
+abstract class BaseExporter(
+    private val _contentResolver: ContentResolver,
+    private val _db: DatabaseWrapper) {
+
+    abstract fun export(uri: Uri)
+
+    protected fun writeStrToUri(uri: Uri, str: String) {
+        _contentResolver.openFileDescriptor(uri, "w")?.use {
+            FileOutputStream(it.fileDescriptor).write(
+                str.toByteArray(Charsets.UTF_8)
+            )
+        }
+    }
+}

@@ -22,16 +22,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.R
 
-class BaseViewAdapter(private val _onClick: (Int) -> Unit)
+class BaseViewAdapter(
+    private val _withItemTitles: Boolean = false,
+    private val _withItemFooters: Boolean = false,
+    private val _onClick: (Int) -> Unit = {})
     : ListAdapter<BaseViewItem, RecyclerView.ViewHolder>(BaseItemDiffCallback) {
 
     inner class BaseItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val _infoTextLayout = view.findViewById<ConstraintLayout>(R.id.infoTextLayout)
         private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
+        private val _titleLeftTextView = view.findViewById<TextView>(R.id.infoLeftTextView)
+        private val _titleRightTextView = view.findViewById<TextView>(R.id.infoRightTextView)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
@@ -42,9 +49,14 @@ class BaseViewAdapter(private val _onClick: (Int) -> Unit)
             _listItemLayout.apply {
                 setBackgroundColor(viewItem.backgroundColor)
             }
+            if (!_isHeader && _withItemTitles) {
+                _infoTextLayout.visibility = View.VISIBLE
+                _titleLeftTextView.text = viewItem.titleLeft
+                _titleRightTextView.text = viewItem.titleRight
+            }
             _mainLeftTextView.text = viewItem.textLeft
             _mainRightTextView.text = viewItem.textRight
-            if (_isHeader) {
+            if (_isHeader || !_withItemFooters) {
                 _subTextView.visibility = View.GONE
             } else {
                 _subTextView.text = viewItem.additionalInfo

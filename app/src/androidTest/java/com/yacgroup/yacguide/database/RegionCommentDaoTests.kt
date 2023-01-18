@@ -85,7 +85,7 @@ class RegionCommentDaoTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runTest {
+    fun getAllInCountry_regionsAvailable_returnsCorrespondingRegionComments() = runTest {
         val countryName = COUNTRIES.first().name
         val regionComments = REGION_COMMENTS.filter { comment ->
             REGIONS.any {
