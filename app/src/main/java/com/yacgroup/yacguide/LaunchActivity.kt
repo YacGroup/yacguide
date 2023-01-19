@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.network.CountryAndRegionParser
@@ -51,7 +52,9 @@ class LaunchActivity : AppCompatActivity() {
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
-        _updateHandler.update(isSilent = true)
+        _updateHandler.update(
+            onUpdateFinished = { findViewById<ImageView>(R.id.iconImageView).setImageResource(R.drawable.ic_start_done) },
+            isSilent = true)
         Timer().start()
     }
 
