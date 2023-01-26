@@ -20,19 +20,18 @@ package com.yacgroup.yacguide
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.comment.*
-import com.yacgroup.yacguide.utils.AscendStyle
-import com.yacgroup.yacguide.utils.DialogWidgetBuilder
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.WidgetUtils
+import com.yacgroup.yacguide.utils.*
 
 abstract class TableActivity : BaseNavigationActivity() {
 
@@ -63,70 +62,50 @@ abstract class TableActivity : BaseNavigationActivity() {
     }
 
     protected fun showRegionComments(regionId: Int) {
-        val comments = db.getRegionComments(regionId)
-        if (comments.isNotEmpty()) {
-            _prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for (comment in comments) {
-                    it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    _addCommentPropertyView(it, R.string.relevance, RegionComment.QUALITY_MAP, comment.qualityId)
-                    _addCommentTextView(it, comment.text.orEmpty())
-                }
-                it.addView(WidgetUtils.createHorizontalLine(this, 1))
-            }
-        } else {
-            showNoCommentToast()
-        }
+        _showComments(db.getRegionComments(regionId).map {
+            Comment(
+                text = it.text.orEmpty(),
+                properties = listOf(
+                    CommentProperty(R.id.qualityLayout, R.string.relevance, RegionComment.QUALITY_MAP, it.qualityId)
+                )
+            )
+        })
     }
 
     protected fun showSectorComments(sectorId: Int) {
-        val comments = db.getSectorComments(sectorId)
-        if (comments.isNotEmpty()) {
-            _prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for (comment in comments) {
-                    it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    _addCommentPropertyView(it, R.string.relevance, SectorComment.QUALITY_MAP, comment.qualityId)
-                    _addCommentTextView(it, comment.text.orEmpty())
-                }
-                it.addView(WidgetUtils.createHorizontalLine(this, 1))
-            }
-        } else {
-            showNoCommentToast()
-        }
+        _showComments(db.getSectorComments(sectorId).map {
+            Comment(
+                text = it.text.orEmpty(),
+                properties = listOf(
+                    CommentProperty(R.id.qualityLayout, R.string.relevance, SectorComment.QUALITY_MAP, it.qualityId)
+                )
+            )
+        })
     }
 
     protected fun showRockComments(rockId: Int) {
-        val comments = db.getRockComments(rockId)
-        if (comments.isNotEmpty()) {
-            _prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let {
-                for (comment in comments) {
-                    it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    _addCommentPropertyView(it, R.string.nature, RockComment.RELEVANCE_MAP, comment.qualityId)
-                    _addCommentTextView(it, comment.text.orEmpty())
-                }
-                it.addView(WidgetUtils.createHorizontalLine(this, 1))
-            }
-        } else {
-            showNoCommentToast()
-        }
+        _showComments(db.getRockComments(rockId).map {
+            Comment(
+                text = it.text.orEmpty(),
+                properties = listOf(
+                    CommentProperty(R.id.qualityLayout, R.string.nature, RockComment.RELEVANCE_MAP, it.qualityId)
+                )
+            )
+        })
     }
 
     protected fun showRouteComments(routeId: Int) {
-        val comments = db.getRouteComments(routeId)
-        if (comments.isNotEmpty()) {
-            _prepareCommentDialog().findViewById<LinearLayout>(R.id.commentLayout)?.let { it ->
-                for (comment in comments) {
-                    it.addView(WidgetUtils.createHorizontalLine(this, 1))
-                    _addCommentPropertyView(it, R.string.route_quality, RouteComment.QUALITY_MAP, comment.qualityId)
-                    _addCommentPropertyView(it, R.string.grade, RouteComment.GRADE_MAP, comment.gradeId)
-                    _addCommentPropertyView(it, R.string.protection, RouteComment.PROTECTION_MAP, comment.securityId)
-                    _addCommentPropertyView(it, R.string.drying, RouteComment.DRYING_MAP, comment.wetnessId)
-                    _addCommentTextView(it, comment.text.orEmpty())
-                }
-                it.addView(WidgetUtils.createHorizontalLine(this, 1))
-            }
-        } else {
-            showNoCommentToast()
-        }
+        _showComments(db.getRouteComments(routeId).map {
+            Comment(
+                text = it.text.orEmpty(),
+                properties = listOf(
+                    CommentProperty(R.id.qualityLayout, R.string.route_quality, RouteComment.QUALITY_MAP, it.qualityId),
+                    CommentProperty(R.id.gradeLayout, R.string.grade, RouteComment.GRADE_MAP, it.gradeId),
+                    CommentProperty(R.id.protectionLayout, R.string.protection, RouteComment.PROTECTION_MAP, it.securityId),
+                    CommentProperty(R.id.dryingLayout, R.string.drying, RouteComment.DRYING_MAP, it.wetnessId)
+                )
+            )
+        })
     }
 
     protected fun showNoCommentToast() {
@@ -148,6 +127,33 @@ abstract class TableActivity : BaseNavigationActivity() {
         return "$botchAdd$projectAdd$watchingAdd"
     }
 
+    private fun _showComments(comments: List<Comment>) {
+        if (comments.isNotEmpty()) {
+            val dialog = _prepareCommentDialog()
+            val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
+            val dividerResource = TypedValue()
+            theme.resolveAttribute(android.R.attr.listDivider, dividerResource, true)
+            comments.forEach { comment ->
+                dialog.layoutInflater.inflate(R.layout.comment, layout, false).let { view ->
+                    val commentLayout = view.findViewById<LinearLayout>(R.id.singleCommentLayout)
+                    commentLayout.findViewById<View>(R.id.commentDivider).setBackgroundResource(dividerResource.resourceId)
+                    comment.properties.forEach { prop ->
+                        _property2String(prop.qualityMap, prop.qualityId)?.let {
+                            val propertyLayout = commentLayout.findViewById<ConstraintLayout>(prop.layoutResource)
+                            propertyLayout.findViewById<TextView>(R.id.propertyNameTextView).setText(prop.nameResource)
+                            propertyLayout.findViewById<TextView>(R.id.propertyValueTextView).text = it
+                            propertyLayout.visibility = View.VISIBLE
+                        }
+                    }
+                    commentLayout.findViewById<TextView>(R.id.commentTextView).text = comment.text
+                    layout?.addView(commentLayout)
+                }
+            }
+        } else {
+            showNoCommentToast()
+        }
+    }
+
     private fun _prepareCommentDialog(): AlertDialog {
         val dialog = DialogWidgetBuilder(this, R.string.comments).apply {
             setPositiveButton { dialog, _ ->
@@ -160,18 +166,11 @@ abstract class TableActivity : BaseNavigationActivity() {
         return dialog
     }
 
-    private fun _addCommentPropertyView(layout: LinearLayout, titleRes: Int, propertyMap: Map<Int, String>, propertyKey: Int) {
-        if (propertyMap.containsKey(propertyKey) && propertyKey > RouteComment.NO_INFO_ID) {
-            _addCommentTextView(layout, getString(titleRes), propertyMap[propertyKey].orEmpty())
-        }
-    }
-
-    private fun _addCommentTextView(layout: LinearLayout, textLeft: String, textRight: String = "") {
-        layout.addView(WidgetUtils.createCommonRowLayout(this,
-            textLeft = textLeft,
-            textRight = textRight,
-            textSizeDp = WidgetUtils.textFontSizeDp,
-            typeface = Typeface.NORMAL))
+    private fun _property2String(propertyMap: Map<Int, String>, propertyKey: Int): String? {
+        return if (propertyMap.containsKey(propertyKey) && propertyKey > RouteComment.NO_INFO_ID)
+            propertyMap[propertyKey].orEmpty()
+        else
+            null
     }
 
     abstract fun displayContent()
