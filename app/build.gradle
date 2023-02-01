@@ -77,7 +77,7 @@ android {
         dev {
             dimension "default"
             applicationIdSuffix ".dev"
-            versionCode 20220317
+            versionCode 20230201
             versionName "20220317"
         }
     }
