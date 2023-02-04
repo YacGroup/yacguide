@@ -97,7 +97,10 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _displayContent() {
         this.setTitle(R.string.menu_region_manager)
-        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), R.integer.unknown_id)
+        val defaultRegionId = _customSettings.getInt(
+            getString(R.string.default_region_key),
+            resources.getInteger(R.integer.default_region_id)
+        )
         var currentCountryName = ""
         val regions = _db.getNonEmptyRegions() // already sorted by country name
         val regionItemList = mutableListOf<BaseViewItem>()
@@ -152,10 +155,11 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _selectDefaultRegion(regionId: Int) {
         val key = getString(R.string.default_region_key)
-        val defaultRegionId = _customSettings.getInt(key, R.integer.unknown_id)
+        val invalidId = resources.getInteger(R.integer.default_region_id)
+        val defaultRegionId = _customSettings.getInt(key, invalidId)
         val newDefaultRegionId = if (regionId == defaultRegionId) {
             Toast.makeText(this, R.string.default_region_reset, Toast.LENGTH_SHORT).show()
-            R.integer.unknown_id
+            invalidId
         } else {
             Toast.makeText(this, R.string.default_region_set, Toast.LENGTH_SHORT).show()
             regionId

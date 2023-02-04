@@ -103,28 +103,40 @@ class PreferencesActivity : BaseNavigationActivity() {
     }
 
     private fun _resetCustomSettings() {
-        val editor = _customSettings.edit()
-        for ((_, keyPair) in _settingKeysMap) {
-            editor.putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
-        }
-        editor.putInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-        editor.putInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
-        editor.putStringSet(getString(R.string.pinned_countries), emptySet<String>())
-
-        editor.apply()
+        val context = this
+        _customSettings.edit().apply {
+            for ((_, keyPair) in _settingKeysMap) {
+                putBoolean(getString(keyPair.first), resources.getBoolean(keyPair.second))
+            }
+            putInt(
+                getString(R.string.lead),
+                ContextCompat.getColor(context, R.color.color_lead))
+            putInt(
+                getString(R.string.follow),
+                ContextCompat.getColor(context, R.color.color_follow))
+            putInt(
+                getString(R.string.default_region_key),
+                resources.getInteger(R.integer.default_region_id))
+            putStringSet(
+                getString(R.string.pinned_countries),
+                emptySet<String>())
+        }.apply()
 
         _displayContent()
     }
 
     private fun _storeSettings() {
-        val editor = _customSettings.edit()
-        for ((checkboxId, keyPair) in _settingKeysMap) {
-            editor.putBoolean(getString(keyPair.first), findViewById<CheckBox>(checkboxId).isChecked)
-        }
-        editor.putInt(getString(R.string.lead), (findViewById<Button>(R.id.leadColorButton).background as ColorDrawable).color)
-        editor.putInt(getString(R.string.follow), (findViewById<Button>(R.id.followColorButton).background as ColorDrawable).color)
-
-        editor.commit()
+        _customSettings.edit().apply {
+            for ((checkboxId, keyPair) in _settingKeysMap) {
+                putBoolean(getString(keyPair.first), findViewById<CheckBox>(checkboxId).isChecked)
+            }
+            putInt(
+                getString(R.string.lead),
+                (findViewById<Button>(R.id.leadColorButton).background as ColorDrawable).color)
+            putInt(
+                getString(R.string.follow),
+                (findViewById<Button>(R.id.followColorButton).background as ColorDrawable).color)
+        }.apply()
     }
 
     private fun _displayContent() {
