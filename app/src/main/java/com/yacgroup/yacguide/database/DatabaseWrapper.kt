@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022 Axel Paetzold
+ * Copyright (C) 2020, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ class DatabaseWrapper(context: Context) {
 
     companion object {
         const val UNKNOWN_NAME = "???"
-        const val INVALID_ID = R.integer.unknown_id
+        const val INVALID_ID = -1
     }
 
     private var _db: AppDatabase = AppDatabase.getAppDatabase(context)

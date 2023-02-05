@@ -36,6 +36,7 @@
     <!-- Preference keys -->
     <string name="preference_key_version_code">version_code</string>
     <string name="pinned_countries">pinned_countries</string>
+    <string name="default_region_key">default_region</string>
 
     <!-- Colors -->
     <color name="greenblue">#00cc99</color>
@@ -45,9 +46,6 @@
     <color name="purple">#cc99ff</color>
     <color name="blue">#33ccff</color>
     <color name="white">#ffffff</color>
-
-    <!-- Database -->
-    <integer name="unknown_id">-1</integer>
 
     <!-- Default settings -->
     <bool name="order_tourbook_chronologically">false</bool>
@@ -67,9 +65,6 @@
     <color name="color_follow">@color/greenblue</color>
     <bool name="colorize_tourbook_entries">false</bool>
 
-    <integer name="default_region_id">@integer/unknown_id</integer>
-
-    <!-- Custom settings keys -->
-    <string name="default_region_key">default_region</string>
+    <integer name="default_region_id">-1</integer>
 
 </resources>
