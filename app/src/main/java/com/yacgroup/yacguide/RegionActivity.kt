@@ -45,7 +45,9 @@ class RegionActivity : TableActivityWithOptionsMenu() {
 
     override fun displayContent() {
         this.title = activityLevel.parentUId.name
-        val regions = db.getRegions(activityLevel.parentUId.name)
+        val regions = db.getRegions(activityLevel.parentUId.name).sortedBy { region ->
+            db.getSectors(region.id).isEmpty()
+        }
         _viewAdapter.submitList(regions)
     }
 
