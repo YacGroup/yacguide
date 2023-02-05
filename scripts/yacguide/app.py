@@ -134,10 +134,12 @@ class Release():
             str: Updated Gradle string.
         """
         rexpr = re.compile(
-            r'(%s\s*\{[^\}]*versionName)\s+\'[\d\.]+\'+' % flavor,
-            re.MULTILINE)
+            rf"""
+            ({flavor}\s*\{{[^\}}]*versionName)\s+('|")[\d\.]+('|")
+            """,
+            re.MULTILINE | re.VERBOSE)
         gradle_str_updated = rexpr.sub(
-            r"\1 '%s'" % name,
+            rf"\g<1> \g<2>{name}\g<3>",
             gradle_str)
         return gradle_str_updated
 
