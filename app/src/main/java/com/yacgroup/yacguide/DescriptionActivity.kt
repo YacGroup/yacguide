@@ -24,12 +24,12 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Route
-import com.yacgroup.yacguide.list_adapters.AscentViewAdapter
+import com.yacgroup.yacguide.list_adapters.AscendViewAdapter
 import com.yacgroup.yacguide.utils.*
 
 class DescriptionActivity : TableActivity() {
 
-    private lateinit var _viewAdapter: AscentViewAdapter
+    private lateinit var _viewAdapter: AscendViewAdapter
     private lateinit var _route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +41,7 @@ class DescriptionActivity : TableActivity() {
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
-        _viewAdapter = AscentViewAdapter(this, customSettings) {
+        _viewAdapter = AscendViewAdapter(this, customSettings) {
             ascentId -> _onAscentSelected(ascentId)
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter

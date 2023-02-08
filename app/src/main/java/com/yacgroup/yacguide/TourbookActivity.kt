@@ -31,12 +31,12 @@ import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.*
-import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
-import com.yacgroup.yacguide.list_adapters.BaseViewItem
+import com.yacgroup.yacguide.list_adapters.SectionViewAdapter
+import com.yacgroup.yacguide.list_adapters.SectionViewItem
+import com.yacgroup.yacguide.list_adapters.TourbookAscendViewAdapter
 import com.yacgroup.yacguide.utils.*
 import org.json.JSONException
 import java.io.IOException
@@ -56,8 +56,7 @@ class TourbookActivity : BaseNavigationActivity() {
             it.data?.data?.also { uri -> _import(uri) }
         }
     }
-    private lateinit var _listView: RecyclerView
-    private lateinit var _viewAdapter: BaseViewAdapter
+    private lateinit var _viewAdapter: SectionViewAdapter<Ascend>
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _availableYears: IntArray
@@ -77,12 +76,14 @@ class TourbookActivity : BaseNavigationActivity() {
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
-        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { ascendId ->
-            startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
-                putExtra(IntentConstants.ASCEND_ID, ascendId)
-            })
+        _viewAdapter = SectionViewAdapter(this) {
+            TourbookAscendViewAdapter(this, _customSettings, _db) { ascendId ->
+                startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
+                    putExtra(IntentConstants.ASCEND_ID, ascendId)
+                })
+            }
         }
-        _listView = findViewById(R.id.tableRecyclerView)
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook
@@ -221,71 +222,20 @@ class TourbookActivity : BaseNavigationActivity() {
         findViewById<View>(R.id.prevButton).visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
         (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
 
-        val defaultColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-        val (leadColor, followColor) =
-            if (_customSettings.getBoolean(getString(R.string.colorize_tourbook_entries), resources.getBoolean(R.bool.colorize_tourbook_entries)))
-                Pair(_customSettings.getInt(getString(R.string.lead), defaultColor), _customSettings.getInt(getString(R.string.follow), defaultColor))
-            else
-                Pair(defaultColor, defaultColor)
-
-        var currentMonth = -1
-        var currentDay = -1
-        var currentRegionId = -1
-
         val ascends = _getAscends().toMutableList()
         if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
             ascends.reverse()
         }
-        val ascendItemList = mutableListOf<BaseViewItem>()
-
-        ascends.forEach { ascend ->
-            val month = ascend.month
-            val day = ascend.day
-            var route = _db.getRoute(ascend.routeId)
-            val rock: Rock
-            val region: Region
-            if (route == null) {
-                // The database entry has been deleted
-                route = _db.createUnknownRoute()
-                rock = _db.createUnknownRock()
-                region = _db.createUnknownRegion()
-            } else {
-                rock = _db.getRock(route.parentId)!!
-                val sector = _db.getSector(rock.parentId)!!
-                region = _db.getRegion(sector.parentId)!!
-            }
-
-            if (month != currentMonth || day != currentDay || region.id != currentRegionId) {
-                ascendItemList.add(BaseViewItem(
-                    id = region.id,
-                    textLeft = if (_currentYear == 0) "" else "$day.$month.$_currentYear",
-                    textRight = region.name.orEmpty(),
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
-                    isHeader = true
-                ))
-                currentMonth = month
-                currentDay = day
-                currentRegionId = region.id
-            }
-            val bgColor = when {
-                AscendStyle.isLead(AscendStyle.bitMask(ascend.styleId)) -> leadColor
-                AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)) -> followColor
-                else -> defaultColor
-            }
-            val rockName = ParserUtils.decodeObjectNames(rock.name)
-            val routeName = ParserUtils.decodeObjectNames(route.name)
-            ascendItemList.add(BaseViewItem(
-                id = ascend.id,
-                textLeft = "${rockName.first} - ${routeName.first}",
-                textRight = route.grade.orEmpty(),
-                backgroundColor = bgColor,
-                additionalInfo = "${rockName.second} - ${routeName.second}"
-            ))
+        val sectionViews = ascends.groupBy {
+            Pair(if (_currentYear == 0) "" else "${it.day}.${it.month}.$_currentYear",
+                 (_db.getRegionForRoute(it.routeId) ?: _db.createUnknownRegion()).name.orEmpty())
+        }.map {
+            SectionViewItem(
+                title = it.key,
+                elements = it.value)
         }
 
-        // We need to reset the ListAdapter because the list might contain completely different content
-        _listView.adapter = _viewAdapter
-        _viewAdapter.submitList(ascendItemList)
+        _viewAdapter.submitList(sectionViews)
     }
 
     private fun _isFirstYear(): Boolean {

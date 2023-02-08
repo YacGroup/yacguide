@@ -53,6 +53,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getRegion(regionId: Int) = _db.regionDao().getRegion(regionId)
 
+    fun getRegionForRoute(routeId: Int) = _db.regionDao().getRegionForRoute(routeId)
+
     fun getRegionComments(regionId: Int) = _db.regionCommentDao().getAll(regionId)
 
     fun getSectors(regionId: Int) = _db.sectorDao().getAllInRegion(regionId)
