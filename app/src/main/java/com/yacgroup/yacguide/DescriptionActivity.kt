@@ -23,13 +23,16 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.Route
-import com.yacgroup.yacguide.list_adapters.AscendViewAdapter
+import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
+import com.yacgroup.yacguide.list_adapters.ListItem
+import com.yacgroup.yacguide.list_adapters.ListViewAdapter
 import com.yacgroup.yacguide.utils.*
 
 class DescriptionActivity : TableActivity() {
 
-    private lateinit var _viewAdapter: AscendViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<Ascend>
     private lateinit var _route: Route
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +44,14 @@ class DescriptionActivity : TableActivity() {
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
-        _viewAdapter = AscendViewAdapter(this, customSettings) {
-            ascentId -> _onAscentSelected(ascentId)
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { ascend1, ascend2 -> ascend1.id == ascend2.id },
+            _areContentsTheSame = { ascend1, ascend2 -> ascend1 == ascend2 }
+        )) { ascend -> ListItem(
+            backgroundColor = _getAscendBackground(ascend),
+            mainText = Pair("${ascend.day}.${ascend.month}.${ascend.year}", ""),
+            subText = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty(),
+            onClick = { _onAscendSelected(ascend) })
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
@@ -67,7 +76,7 @@ class DescriptionActivity : TableActivity() {
 
     override fun displayContent() {
         val routeName = ParserUtils.decodeObjectNames(_route.name)
-        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second}   ${_route.grade.orEmpty()}"
+        this.title = "${routeName.first.ifEmpty { routeName.second }}   ${_route.grade.orEmpty()}"
 
         var firstAscentClimbers = _route.firstAscendLeader
                 ?.takeUnless { it.isEmpty() }
@@ -94,9 +103,18 @@ class DescriptionActivity : TableActivity() {
         _viewAdapter.submitList(db.getRouteAscends(_route.id))
     }
 
-    private fun _onAscentSelected(ascentId: Int) {
+    private fun _getAscendBackground(ascend: Ascend): Int {
+        return if (AscendStyle.isLead(AscendStyle.bitMask(ascend.styleId)))
+                visualUtils.leadBgColor
+            else if (AscendStyle.isFollow(AscendStyle.bitMask(ascend.styleId)))
+                visualUtils.followBgColor
+            else
+                visualUtils.defaultBgColor
+    }
+
+    private fun _onAscendSelected(ascend: Ascend) {
         startActivity(Intent(this@DescriptionActivity, TourbookAscendActivity::class.java).apply {
-            putExtra(IntentConstants.ASCEND_ID, ascentId)
+            putExtra(IntentConstants.ASCEND_ID, ascend.id)
         })
     }
 }

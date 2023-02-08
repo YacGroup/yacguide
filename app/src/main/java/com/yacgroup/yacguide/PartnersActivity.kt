@@ -34,21 +34,20 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
-import com.yacgroup.yacguide.list_adapters.BaseViewItem
-import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
-import com.yacgroup.yacguide.list_adapters.SwipeConfig
-import com.yacgroup.yacguide.list_adapters.SwipeController
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.VisualUtils
 
 import java.util.ArrayList
 
 class PartnersActivity : AppCompatActivity() {
 
-    private lateinit var _viewAdapter: BaseViewAdapter
+    private val _ascendPartnerCount = SparseIntArray()
+    private lateinit var _viewAdapter: ListViewAdapter<Partner>
+    private lateinit var _visualUtils: VisualUtils
     private lateinit var _db: DatabaseWrapper
     private lateinit var _selectedPartnerIds: MutableList<Int>
     private var _partnerNamePart: String = ""
@@ -77,7 +76,15 @@ class PartnersActivity : AppCompatActivity() {
             }
         })
 
-        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { partnerId -> _onPartnerSelected(partnerId) }
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { partner1, partner2 -> partner1.id == partner2.id },
+            _areContentsTheSame = { partner1, partner2 -> partner1 == partner2 }
+        )) { partner -> ListItem(
+            backgroundColor = _getPartnerBackground(partner),
+            mainText = _getPartnerMainText(partner),
+            subText = "(${_ascendPartnerCount.get(partner.id)})",
+            onClick = { _onPartnerSelected(partner) })
+        }
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
         listView.adapter = _viewAdapter
 
@@ -99,6 +106,8 @@ class PartnersActivity : AppCompatActivity() {
         }
         val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
         ItemTouchHelper(swipeController).attachToRecyclerView(listView)
+
+        _visualUtils = VisualUtils(this)
 
         _displayContent()
     }
@@ -129,36 +138,20 @@ class PartnersActivity : AppCompatActivity() {
         setTitle(R.string.title_climbing_partner)
 
         // We need to sort the partners according to the number of ascends you have done with them
-        val ascendPartnerCount = SparseIntArray()
+        _ascendPartnerCount.clear()
         _db.getAscends().forEach { ascend ->
             ascend.partnerIds?.forEach { id ->
-                val prevValue = ascendPartnerCount.get(id, 0)
-                ascendPartnerCount.put(id, prevValue + 1)
+                val prevValue = _ascendPartnerCount.get(id, 0)
+                _ascendPartnerCount.put(id, prevValue + 1)
             }
         }
 
         val sortedPartners = _db.getPartners().sortedByDescending {
-            ascendPartnerCount.get(it.id, 0)
+            _ascendPartnerCount.get(it.id, 0)
         }.filter {
             it.name.orEmpty().lowercase().contains(_partnerNamePart.lowercase())
         }
-
-        val partnerItemList = sortedPartners.map {
-            if (_selectedPartnerIds.contains(it.id)) {
-                BaseViewItem(
-                    id = it.id,
-                    textLeft = "${getString(R.string.tick)} ${it.name.orEmpty()}",
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorAccentLight),
-                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
-            } else {
-                BaseViewItem(
-                    id = it.id,
-                    textLeft = "${getString(R.string.empty_box)} ${it.name.orEmpty()}",
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondaryLight),
-                    additionalInfo = "(${ascendPartnerCount.get(it.id, 0)})")
-            }
-        }
-        _viewAdapter.submitList(partnerItemList)
+        _viewAdapter.submitList(sortedPartners)
     }
 
     private fun _deletePartner(partner: Partner) {
@@ -212,13 +205,28 @@ class PartnersActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun _onPartnerSelected(partnerId: Int) {
-        if (_selectedPartnerIds.contains(partnerId)) {
-            _selectedPartnerIds.remove(partnerId)
+    private fun _getPartnerBackground(partner: Partner): Int {
+        return if (_selectedPartnerIds.contains(partner.id))
+                _visualUtils.accentBgColor
+            else
+                _visualUtils.defaultBgColor
+    }
+
+    private fun _getPartnerMainText(partner: Partner): Pair<String, String> {
+        return if (_selectedPartnerIds.contains(partner.id))
+                Pair("${_visualUtils.tickedBoxIcon} ${partner.name.orEmpty()}", "")
+            else
+                Pair("${_visualUtils.emptyBoxIcon} ${partner.name.orEmpty()}", "")
+    }
+
+    private fun _onPartnerSelected(partner: Partner) {
+        if (_selectedPartnerIds.contains(partner.id)) {
+            _selectedPartnerIds.remove(partner.id)
         } else {
-            _selectedPartnerIds.add(partnerId)
+            _selectedPartnerIds.add(partner.id)
         }
-        _displayContent()
+        val partnerPosition = _viewAdapter.currentList.indexOfFirst { it.id == partner.id }
+        _viewAdapter.notifyItemChanged(partnerPosition)
     }
 
     private inline fun _updatePartnerListAndDB(position: Int, dbAction: (partner: Partner) -> Unit) {

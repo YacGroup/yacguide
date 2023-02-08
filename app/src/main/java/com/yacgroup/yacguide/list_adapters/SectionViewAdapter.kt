@@ -23,13 +23,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.utils.VisualUtils
 
-class SectionViewAdapter<T>(
+class SectionViewAdapter<T: Any>(
     private val _context: Context,
-    private val _createInnerAdapter: () -> ListAdapter<T, RecyclerView.ViewHolder>
+    private val _createInnerAdapter: () -> ListViewAdapter<T>
 ) : ListAdapter<SectionViewItem<T>, RecyclerView.ViewHolder>(SectionDiffCallback()) {
 
     inner class SectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -40,15 +40,17 @@ class SectionViewAdapter<T>(
         private val _listAdapter = _createInnerAdapter() // the inner adapter must be created here
                                                          // and not passed as parameter
         private val _viewPool = RecyclerView.RecycledViewPool() // for optimization
+        private val _visualUtils: VisualUtils
 
         init {
             _listView.adapter = _listAdapter
+            _visualUtils = VisualUtils(_context)
         }
 
         fun bind(sectionViewItem: SectionViewItem<T>) {
             _headerLeftTextView.text = sectionViewItem.title.first
             _headerRightTextView.text = sectionViewItem.title.second
-            _sectionHeaderLayout.setBackgroundColor(ContextCompat.getColor(_context, R.color.colorSecondary))
+            _sectionHeaderLayout.setBackgroundColor(_visualUtils.headerBgColor)
 
             val sectionLayoutManager = LinearLayoutManager(_listView.context, RecyclerView.VERTICAL, false)
             sectionLayoutManager.initialPrefetchItemCount = sectionViewItem.elements.size

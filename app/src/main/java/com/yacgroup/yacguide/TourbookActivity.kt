@@ -34,9 +34,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.*
-import com.yacgroup.yacguide.list_adapters.SectionViewAdapter
-import com.yacgroup.yacguide.list_adapters.SectionViewItem
-import com.yacgroup.yacguide.list_adapters.TourbookAscendViewAdapter
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
 import org.json.JSONException
 import java.io.IOException
@@ -60,6 +58,7 @@ class TourbookActivity : BaseNavigationActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _availableYears: IntArray
+    private lateinit var _visualUtils: VisualUtils
     private var _tourbookExporter: BaseExporter? = null
     private var _currentYear: Int = -1
     private var _tourbookType: TourbookType = TourbookType.eAscends
@@ -77,13 +76,29 @@ class TourbookActivity : BaseNavigationActivity() {
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
 
         _viewAdapter = SectionViewAdapter(this) {
-            TourbookAscendViewAdapter(this, _customSettings, _db) { ascendId ->
-                startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
-                    putExtra(IntentConstants.ASCEND_ID, ascendId)
-                })
+            ListViewAdapter<Ascend>(ItemDiffCallback(
+                _areItemsTheSame = { ascend1, ascend2 -> ascend1.id == ascend2.id },
+                _areContentsTheSame = { ascend1, ascend2 -> ascend1 == ascend2 }
+            )) { ascend ->
+                val route = _db.getRoute(ascend.routeId) ?: _db.createUnknownRoute()
+                val rock = _db.getRock(route.parentId) ?: _db.createUnknownRock()
+                val routeName = ParserUtils.decodeObjectNames(route.name)
+                val rockName = ParserUtils.decodeObjectNames(rock.name)
+                ListItem(
+                    backgroundColor = _getAscendBackground(route.ascendsBitMask),
+                    mainText = Pair("${rockName.first} - ${routeName.first}", route.grade.orEmpty()),
+                    subText = "${rockName.second} - ${routeName.second}",
+                    onClick = { _onAscendSelected(ascend) })
             }
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+
+        _visualUtils = VisualUtils(
+            this,
+            _customSettings,
+            colorizeLeadsAndFollows = _customSettings.getBoolean(
+                getString(R.string.colorize_tourbook_entries),
+                resources.getBoolean(R.bool.colorize_tourbook_entries)))
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook
@@ -295,5 +310,19 @@ class TourbookActivity : BaseNavigationActivity() {
         Arrays.sort(_availableYears)
 
         return if (_availableYears.isEmpty()) 0 else _availableYears.last()
+    }
+
+    private fun _getAscendBackground(ascendsBitMask: Int): Int {
+        return AscendStyle.deriveAscentColor(
+            ascentBitMask = ascendsBitMask,
+            leadColor = _visualUtils.leadBgColor,
+            followColor = _visualUtils.followBgColor,
+            defaultColor = _visualUtils.defaultBgColor)
+    }
+
+    private fun _onAscendSelected(ascend: Ascend) {
+        startActivity(Intent(this@TourbookActivity, TourbookAscendActivity::class.java).apply {
+            putExtra(IntentConstants.ASCEND_ID, ascend.id)
+        })
     }
 }

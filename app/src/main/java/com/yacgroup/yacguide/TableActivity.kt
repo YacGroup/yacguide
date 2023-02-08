@@ -27,8 +27,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.comment.*
 import com.yacgroup.yacguide.utils.*
@@ -38,6 +36,7 @@ abstract class TableActivity : BaseNavigationActivity() {
     lateinit var activityLevel: ClimbingObject
     protected lateinit var db: DatabaseWrapper
     protected lateinit var customSettings: SharedPreferences
+    protected lateinit var visualUtils: VisualUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +50,7 @@ abstract class TableActivity : BaseNavigationActivity() {
         )
         db = DatabaseWrapper(this)
         customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        visualUtils = VisualUtils(this, customSettings)
     }
 
     open fun showComments(v: View) {}
@@ -110,21 +110,6 @@ abstract class TableActivity : BaseNavigationActivity() {
 
     protected fun showNoCommentToast() {
         Toast.makeText(this, R.string.no_comment_available, Toast.LENGTH_SHORT).show()
-    }
-
-    protected fun colorizeEntry(ascendsBitMask: Int, defaultColor: Int): Int {
-        return when {
-            AscendStyle.isLead(ascendsBitMask) -> customSettings.getInt(getString(R.string.lead), ContextCompat.getColor(this, R.color.color_lead))
-            AscendStyle.isFollow(ascendsBitMask) -> customSettings.getInt(getString(R.string.follow), ContextCompat.getColor(this, R.color.color_follow))
-            else -> defaultColor
-        }
-    }
-
-    protected fun decorateEntry(ascendsBitMask: Int): String {
-        val botchAdd = if (AscendStyle.isBotch(ascendsBitMask)) getString(R.string.botch) else ""
-        val projectAdd = if (AscendStyle.isProject(ascendsBitMask)) getString(R.string.project) else ""
-        val watchingAdd = if (AscendStyle.isWatching(ascendsBitMask)) getString(R.string.watching) else ""
-        return "$botchAdd$projectAdd$watchingAdd"
     }
 
     private fun _showComments(comments: List<Comment>) {

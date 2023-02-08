@@ -19,25 +19,25 @@ package com.yacgroup.yacguide
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.database.comment.RouteComment
-import com.yacgroup.yacguide.list_adapters.RouteViewAdapter
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.SearchBarHandler
+import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
+import com.yacgroup.yacguide.list_adapters.ListItem
+import com.yacgroup.yacguide.list_adapters.ListViewAdapter
+import com.yacgroup.yacguide.utils.*
 
 class RouteActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _viewAdapter: RouteViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<Route>
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _routeGettersMap: Map<ClimbingObjectLevel, RouteGetter>
     private var _onlyOfficialRoutes: Boolean = false
@@ -137,13 +137,16 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             findViewById<ImageButton>(R.id.mapButton).visibility = View.INVISIBLE
         }
 
-        _viewAdapter = RouteViewAdapter(
-            this,
-            customSettings,
-            activityLevel.level,
-            db
-        ) { routeId, routeName ->
-            _onRouteSelected(routeId, routeName)
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { route1, route2 -> route1.id == route2.id },
+            _areContentsTheSame = { route1, route2 -> route1 == route2 }
+        )) { route -> ListItem(
+            backgroundColor = _getRouteBackground(route),
+            typeface = _getRouteTypeface(route),
+            titleText = _getRouteSectorInfo(route),
+            mainText = _getRouteMainText(route),
+            subText = ParserUtils.decodeObjectNames(route.name).second,
+            onClick = { _onRouteSelected(route) })
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
@@ -173,7 +176,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
 
     override fun displayContent() {
         val levelName = ParserUtils.decodeObjectNames(activityLevel.parentUId.name)
-        this.title = if (levelName.first.isNotEmpty()) levelName.first else levelName.second
+        this.title = levelName.first.ifEmpty { levelName.second }
         _displayRockInfo(findViewById(R.id.infoTextView))
 
         var routes = _getAndFilterRoutes()
@@ -266,11 +269,70 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             && route.statusId != Route.STATUS_UNFINISHED
     }
 
-    private fun _onRouteSelected(routeId: Int, routeName: String) {
+    private fun _getRouteBackground(route: Route): Int {
+        val defaultBgColor = if (route.statusId == Route.STATUS_CLOSED)
+                visualUtils.prohibitedBgColor
+            else
+                visualUtils.defaultBgColor
+        return AscendStyle.deriveAscentColor(
+            ascentBitMask = route.ascendsBitMask,
+            leadColor = visualUtils.leadBgColor,
+            followColor = visualUtils.followBgColor,
+            defaultColor = defaultBgColor)
+    }
+
+    private fun _getRouteTypeface(route: Route): Int {
+        return if (route.statusId == Route.STATUS_CLOSED)
+                Typeface.ITALIC
+            else
+                Typeface.BOLD
+    }
+
+    private fun _getRouteMainText(route: Route): Pair<String, String> {
+        val routeName = ParserUtils.decodeObjectNames(route.name)
+        val commentCount = db.getRouteCommentCount(route.id)
+        val commentCountAdd = if (commentCount > 0) "   [$commentCount]" else ""
+
+        val decorationAdd = AscendStyle.deriveAscentDecoration(
+            route.ascendsBitMask,
+            visualUtils.botchIcon,
+            visualUtils.projectIcon,
+            visualUtils.watchingIcon)
+        return Pair("${routeName.first}$commentCountAdd$decorationAdd", route.grade.orEmpty())
+    }
+
+    private fun _getRouteSectorInfo(route: Route): Pair<String, String>? {
+        var sectorInfo = ""
+        if (activityLevel.level < ClimbingObjectLevel.eRoute) {
+            db.getRock(route.parentId)?.let { rock ->
+                if (activityLevel.level < ClimbingObjectLevel.eRock) {
+                    db.getSector(rock.parentId)?.let { sector ->
+                        if (activityLevel.level < ClimbingObjectLevel.eSector) {
+                            db.getRegion(sector.parentId)?.let { region ->
+                                sectorInfo = "${region.name} ${visualUtils.arrow} "
+                            }
+                        }
+                        val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+                        val altName = if (sectorNames.second.isNotEmpty()) " / ${sectorNames.second}" else ""
+                        sectorInfo += "${sectorNames.first} $altName ${visualUtils.arrow} "
+                    }
+                }
+                val rockNames = ParserUtils.decodeObjectNames(rock.name)
+                val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
+                sectorInfo += "${rockNames.first} $altName"
+            }
+        }
+        return if (sectorInfo.isNotEmpty())
+                Pair(sectorInfo, "")
+            else
+                null
+    }
+
+    private fun _onRouteSelected(route: Route) {
         startActivity(Intent(this@RouteActivity, DescriptionActivity::class.java).apply {
             putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eUnknown.value)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, routeId)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, routeName)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, route.id)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, route.name)
         })
     }
 
