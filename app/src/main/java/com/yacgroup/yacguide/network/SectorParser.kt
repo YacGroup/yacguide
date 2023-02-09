@@ -25,7 +25,6 @@ import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
-
 import org.json.JSONArray
 import org.json.JSONException
 import java.lang.RuntimeException
@@ -164,7 +163,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         )
         networkRequests.addAll(requests)
         requests.forEach {
-            NetworkTask(it, this).execute()
+            NetworkTask(it, networkScope, this).execute()
         }
     }
 

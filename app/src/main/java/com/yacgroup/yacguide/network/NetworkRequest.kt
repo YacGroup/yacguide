@@ -29,7 +29,7 @@ enum class RequestType {
     SECTOR_COMMENTS
 }
 
-class NetworkRequest(
+data class NetworkRequest(
     val uid: ClimbingObjectUId,
     val type: RequestType,
     val url: String

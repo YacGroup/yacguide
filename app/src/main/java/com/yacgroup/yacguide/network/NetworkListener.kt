@@ -17,8 +17,12 @@
 
 package com.yacgroup.yacguide.network
 
+data class NetworkAnswer(
+    val request: NetworkRequest,
+    val answer: String
+)
+
 interface NetworkListener {
 
-    fun onNetworkTaskResolved(request: NetworkRequest, result: String)
-
+    fun onNetworkTaskResolved(networkAnswer: NetworkAnswer)
 }
