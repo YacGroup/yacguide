@@ -20,10 +20,10 @@ package com.yacgroup.yacguide.network
 import com.yacgroup.yacguide.ClimbingObjectUId
 import com.yacgroup.yacguide.UpdateListener
 import com.yacgroup.yacguide.utils.ParserUtils
-
+import kotlinx.coroutines.*
 import org.json.JSONException
-
 import java.util.LinkedList
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.jvm.Throws
 
 enum class ExitCode {
@@ -34,49 +34,33 @@ enum class ExitCode {
 
 abstract class JSONWebParser : NetworkListener {
     var listener: UpdateListener? = null
+    protected val networkScope = CoroutineScope(Dispatchers.Default)
     protected val baseUrl = "http://db-sandsteinklettern.gipfelbuch.de/"
     protected var networkRequests: LinkedList<NetworkRequest> = LinkedList()
     private var _climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, "")
     private var _exitCode: ExitCode = ExitCode.SUCCESS
     private var _processedRequestsCount: Int = 0
+    private val _networkAnswersQueue = ConcurrentLinkedQueue<NetworkAnswer>()
 
-    override fun onNetworkTaskResolved(request: NetworkRequest, result: String) {
-        when (_exitCode) {
-            ExitCode.ABORT -> return
-            ExitCode.ERROR -> _exitOnFinalTask()
-            ExitCode.SUCCESS -> {
-                try {
-                    if (result.equals("null", ignoreCase = true)) {
-                        // sandsteinklettern.de returns "null" string if there are no elements
-                        throw IllegalArgumentException("")
-                    }
-                    // remove HTML-encoded characters
-                    parseData(
-                        request,
-                        ParserUtils.resolveToUtf8(result)
-                    )
-                } catch (e: JSONException) {
-                    _exitCode = ExitCode.ERROR
-                    listener?.onUpdateError(_climbingObjectUId.name)
-                } catch (e: IllegalArgumentException) {
-                }
-                _exitOnFinalTask()
-            }
-        }
+    override fun onNetworkTaskResolved(networkAnswer: NetworkAnswer) {
+        _networkAnswersQueue.add(networkAnswer)
     }
 
     fun fetchData(climbingObjectUId: ClimbingObjectUId) {
         _climbingObjectUId = climbingObjectUId
         _exitCode = ExitCode.SUCCESS
         _processedRequestsCount = 0
+        _networkAnswersQueue.clear()
         initNetworkRequests(climbingObjectUId)
         networkRequests.forEach {
-            NetworkTask(it, this).execute()
+            NetworkTask(it, networkScope, this).execute()
         }
+        _processNetworkAnswers()
     }
 
     fun abort() {
         _exitCode = ExitCode.ABORT
+        networkScope.coroutineContext.cancelChildren()
         onFinalTaskResolved(_exitCode)
     }
 
@@ -89,9 +73,29 @@ abstract class JSONWebParser : NetworkListener {
         listener?.onUpdateFinished(exitCode)
     }
 
-    private fun _exitOnFinalTask() {
-        if (++_processedRequestsCount == networkRequests.size) {
-            onFinalTaskResolved(_exitCode)
+    private fun _processNetworkAnswers() = networkScope.launch {
+        while (isActive && _processedRequestsCount < networkRequests.size) {
+            _networkAnswersQueue.poll()?.let { networkAnswer ->
+                if (_exitCode == ExitCode.SUCCESS) {
+                    try {
+                        if (networkAnswer.answer.equals("null", ignoreCase = true)) {
+                            // sandsteinklettern.de returns "null" string if there are no elements
+                            throw IllegalArgumentException("")
+                        }
+                        // remove HTML-encoded characters
+                        parseData(
+                            networkAnswer.request,
+                            ParserUtils.resolveToUtf8(networkAnswer.answer)
+                        )
+                    } catch (e: JSONException) {
+                        _exitCode = ExitCode.ERROR
+                        listener?.onUpdateError(_climbingObjectUId.name)
+                    } catch (e: IllegalArgumentException) {
+                    }
+                }
+                ++_processedRequestsCount
+            }
         }
+        onFinalTaskResolved(_exitCode)
     }
 }

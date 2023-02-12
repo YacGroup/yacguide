@@ -21,21 +21,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.coroutines.CoroutineContext
 
 class NetworkTask(private val _request: NetworkRequest,
-                  private val _listener: NetworkListener) : CoroutineScope {
+                  private val _scope: CoroutineScope,
+                  private val _listener: NetworkListener) {
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
-
-    fun execute() = launch {
+    fun execute() = _scope.launch {
         val result = _performNetworkRequest()
-        _listener.onNetworkTaskResolved(_request, result)
+        _listener.onNetworkTaskResolved(NetworkAnswer(_request, result))
     }
 
     private suspend fun _performNetworkRequest(): String = withContext(Dispatchers.IO) {

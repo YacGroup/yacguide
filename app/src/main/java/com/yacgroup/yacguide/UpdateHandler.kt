@@ -67,16 +67,18 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     override fun onUpdateFinished(exitCode: ExitCode) {
-        if (exitCode == ExitCode.ABORT) {
-            _exitCode = ExitCode.ABORT
-            finish()
-        } else {
-            if (exitCode == ExitCode.ERROR) {
-                _exitCode = ExitCode.ERROR
-            }
-            _onUpdateFinished()
-            if (!_isRecurringUpdate) {
+        _activity.runOnUiThread {
+            if (exitCode == ExitCode.ABORT) {
+                _exitCode = ExitCode.ABORT
                 finish()
+            } else {
+                if (exitCode == ExitCode.ERROR) {
+                    _exitCode = ExitCode.ERROR
+                }
+                _onUpdateFinished()
+                if (!_isRecurringUpdate) {
+                    finish()
+                }
             }
         }
     }

@@ -23,7 +23,6 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.utils.NetworkUtils
 import com.yacgroup.yacguide.utils.ParserUtils
-
 import org.json.JSONArray
 import org.json.JSONException
 import java.lang.RuntimeException
@@ -69,7 +68,7 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
             type = RequestType.REGION_DATA,
             url = "${baseUrl}jsongebiet.php?app=yacguide&land=${NetworkUtils.encodeString2Url(countryName)}")
         networkRequests.add(request)
-        NetworkTask(request, this).execute()
+        NetworkTask(request, networkScope, this).execute()
     }
 
     private fun _parseRegions(json: String, countryName: String) {
