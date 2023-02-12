@@ -25,18 +25,17 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.utils.AscendStyle
 
-class AscentViewAdapter(
+class AscendViewAdapter(
     context: Context,
     customSettings: SharedPreferences,
     private val _onClick: (Int) -> Unit)
-    : ListAdapter<Ascend, RecyclerView.ViewHolder>(AscentDiffCallback) {
+    : ListAdapter<Ascend, RecyclerView.ViewHolder>(AscendDiffCallback) {
 
     private val _defaultBgColor = ContextCompat.getColor(context, R.color.colorSecondaryLight)
     private val _leadBgColor = customSettings.getInt(
@@ -78,15 +77,5 @@ class AscentViewAdapter(
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         (viewHolder as AscentViewHolder).bind(getItem(position) as Ascend)
-    }
-}
-
-object AscentDiffCallback : DiffUtil.ItemCallback<Ascend>() {
-    override fun areItemsTheSame(oldAscent: Ascend, newAscent: Ascend): Boolean {
-        return oldAscent.id == newAscent.id
-    }
-
-    override fun areContentsTheSame(oldAscent: Ascend, newAscent: Ascend): Boolean {
-        return oldAscent == newAscent
     }
 }

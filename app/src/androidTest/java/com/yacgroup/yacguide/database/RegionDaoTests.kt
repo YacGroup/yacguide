@@ -25,6 +25,7 @@ import com.yacgroup.yacguide.database.TestDB.Companion.COUNTRIES
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_ID
 import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
+import com.yacgroup.yacguide.database.TestDB.Companion.ROUTES
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -48,6 +49,8 @@ class RegionDaoTests {
         TestDB.initCountries(_db.countryDao())
         TestDB.initRegions(_regionDao)
         TestDB.initSectors(_db.sectorDao())
+        TestDB.initRocks(_db.rockDao())
+        TestDB.initRoutes(_db.routeDao())
     }
 
     @AfterAll
@@ -97,6 +100,19 @@ class RegionDaoTests {
     fun getRegion_regionAvailable_returnsRegion() = runTest {
         val region = REGIONS.first()
         assertEquals(_regionDao.getRegion(region.id), region)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getRegionForRoute_invalidRouteId_returnsNull() = runTest {
+        assertNull(_regionDao.getRegionForRoute(INVALID_ID))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getRegionForRoute_regionForRouteAvailable_returnsAccordingRegion() = runTest {
+        val region = REGIONS.first()
+        assertEquals(region, _regionDao.getRegionForRoute(ROUTES.first().id))
     }
 }
 

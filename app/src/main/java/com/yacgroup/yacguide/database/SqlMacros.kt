@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022 Axel Paetzold
+ * Copyright (C) 2020, 2022, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@ class SqlMacros {
 
         const val VIA_ROUTES_ASCENDS = "JOIN Ascend ON Ascend.routeId = Route.id"
         const val VIA_ROCKS_ROUTES = "JOIN Route ON Route.parentId = Rock.id"
+        const val VIA_SECTORS_ROCKS = "JOIN Rock ON Rock.parentId = Sector.id"
         const val VIA_ASCENDS_ROUTE = "JOIN Route ON Route.id = Ascend.routeId"
         const val VIA_COMMENTS_ROUTE = "JOIN Route ON Route.id = RouteComment.routeId"
         const val VIA_ROUTES_ROCK = "JOIN Rock ON Rock.id = Route.parentId"
