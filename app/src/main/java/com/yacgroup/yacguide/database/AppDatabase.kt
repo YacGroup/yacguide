@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Fabian Kantereit
+ * Copyright (C) 2019 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,23 @@ import com.yacgroup.yacguide.utils.Converters
  *       DatabaseWrapper provides all necessary methods with much better runtime performance.
  */
 
-@Database(entities = [Country::class, Region::class, Sector::class, Rock::class, Route::class, Ascend::class, Partner::class, RegionComment::class, SectorComment::class, RockComment::class, RouteComment::class], version = 1)
+@Database(
+    entities = [
+        Country::class,
+        Region::class,
+        Sector::class,
+        Rock::class,
+        Route::class,
+        Ascend::class,
+        Partner::class,
+        RegionComment::class,
+        SectorComment::class,
+        RockComment::class,
+        RouteComment::class
+    ],
+    version = 1,
+    exportSchema = true,
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 

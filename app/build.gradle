@@ -43,6 +43,12 @@ android {
         testInstrumentationRunnerArguments runnerBuilder: "de.mannodermaus.junit5.AndroidJUnit5Builder"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "yacguide"
+        kapt {
+            arguments {
+                // https://developer.android.com/reference/android/arch/persistence/room/Database#exportschema
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
     buildToolsVersion = "33.0.1"
     signingConfigs {
