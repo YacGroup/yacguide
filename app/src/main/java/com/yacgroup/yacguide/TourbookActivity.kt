@@ -54,11 +54,11 @@ class TourbookActivity : BaseNavigationActivity() {
             it.data?.data?.also { uri -> _import(uri) }
         }
     }
+    private lateinit var _visualUtils: VisualUtils
     private lateinit var _viewAdapter: SectionViewAdapter<Ascend>
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _availableYears: IntArray
-    private lateinit var _visualUtils: VisualUtils
     private var _tourbookExporter: BaseExporter? = null
     private var _currentYear: Int = -1
     private var _tourbookType: TourbookType = TourbookType.eAscends
@@ -74,9 +74,14 @@ class TourbookActivity : BaseNavigationActivity() {
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
-
-        _viewAdapter = SectionViewAdapter(this) {
-            ListViewAdapter<Ascend>(ItemDiffCallback(
+        _visualUtils = VisualUtils(
+            context = this,
+            customSettings = _customSettings,
+            colorizeLeadsAndFollows = _customSettings.getBoolean(
+                getString(R.string.colorize_tourbook_entries),
+                resources.getBoolean(R.bool.colorize_tourbook_entries)))
+        _viewAdapter = SectionViewAdapter(_visualUtils) {
+            ListViewAdapter(ItemDiffCallback(
                 _areItemsTheSame = { ascend1, ascend2 -> ascend1.id == ascend2.id },
                 _areContentsTheSame = { ascend1, ascend2 -> ascend1 == ascend2 }
             )) { ascend ->
@@ -92,13 +97,6 @@ class TourbookActivity : BaseNavigationActivity() {
             }
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
-
-        _visualUtils = VisualUtils(
-            this,
-            _customSettings,
-            colorizeLeadsAndFollows = _customSettings.getBoolean(
-                getString(R.string.colorize_tourbook_entries),
-                resources.getBoolean(R.bool.colorize_tourbook_entries)))
     }
 
     override fun getLayoutId() = R.layout.activity_tourbook

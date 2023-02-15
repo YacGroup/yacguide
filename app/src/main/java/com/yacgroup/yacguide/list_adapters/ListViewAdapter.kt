@@ -52,8 +52,10 @@ class ListViewAdapter<T: Any>(
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
         private val _subTextLayout = view.findViewById<ConstraintLayout>(R.id.subTextLayout)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
+        private var _item: T? = null
 
         fun bind(item: T) {
+            _item = item
             val listItem = _generateListItem(item)
             _listItemLayout.apply {
                 setBackgroundColor(listItem.backgroundColor)
@@ -76,6 +78,10 @@ class ListViewAdapter<T: Any>(
                 _subTextView.text = it
             }
         }
+
+        fun getItem() = _item
+
+        fun getParentAdapter() = this@ListViewAdapter
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -84,11 +90,10 @@ class ListViewAdapter<T: Any>(
         return ItemViewHolder(view)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         (viewHolder as ListViewAdapter<T>.ItemViewHolder).bind(getItem(position) as T)
     }
-
-    fun getItemAt(position: Int) = getItem(position) as T
 }
 
 class ItemDiffCallback<T: Any>(

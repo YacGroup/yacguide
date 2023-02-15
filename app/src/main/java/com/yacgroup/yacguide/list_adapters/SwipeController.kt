@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 data class SwipeConfig(
     val color: Int,
     val background: Drawable,
-    val action: (position: Int) -> Unit
+    val action: (viewHolder: RecyclerView.ViewHolder) -> Unit
 )
 
 class SwipeController(
@@ -41,12 +41,10 @@ class SwipeController(
     ): Boolean = false
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        if (_isSwipable(viewHolder)) {
-            if (direction == ItemTouchHelper.RIGHT) {
-                _onSwipeRightConfig.action(viewHolder.adapterPosition)
-            } else {
-                _onSwipeLeftConfig.action(viewHolder.adapterPosition)
-            }
+        if (direction == ItemTouchHelper.RIGHT) {
+            _onSwipeRightConfig.action(viewHolder)
+        } else {
+            _onSwipeLeftConfig.action(viewHolder)
         }
     }
 
@@ -59,7 +57,7 @@ class SwipeController(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        if (_isSwipable(viewHolder) && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             if (dX > 0) {
                 _onSwipeRightConfig.let {
                     val backgroundIconTop =
@@ -93,9 +91,4 @@ class SwipeController(
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
-
-    private fun _isSwipable(viewHolder: RecyclerView.ViewHolder): Boolean {
-        return !(viewHolder is BaseViewAdapter.BaseItemViewHolder && viewHolder.isHeader())
-    }
-
 }
