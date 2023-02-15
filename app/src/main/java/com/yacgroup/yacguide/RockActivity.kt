@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -25,15 +26,15 @@ import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
-import com.yacgroup.yacguide.list_adapters.RockViewAdapter
 import com.yacgroup.yacguide.database.comment.RockComment
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.ParserUtils
-import com.yacgroup.yacguide.utils.SearchBarHandler
+import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
+import com.yacgroup.yacguide.list_adapters.ListItem
+import com.yacgroup.yacguide.list_adapters.ListViewAdapter
+import com.yacgroup.yacguide.utils.*
 
 class RockActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _viewAdapter: RockViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<Rock>
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _rockGettersMap: Map<ClimbingObjectLevel, RockGetter>
     private var _onlyOfficialSummits: Boolean = false
@@ -85,13 +86,17 @@ class RockActivity : TableActivityWithOptionsMenu() {
             { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
             { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) })
 
-        _viewAdapter = RockViewAdapter(
-            this,
-            customSettings,
-            activityLevel.level,
-            db) { rockId, rockName ->
-                _onRockSelected(rockId, rockName
-            ) }
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { rock1, rock2 -> rock1.id == rock2.id },
+            _areContentsTheSame = { rock1, rock2 -> rock1 == rock2 }
+        )) { rock -> ListItem(
+            backgroundColor = _getRockBackground(rock),
+            typeface = _getRockTypeface(rock),
+            titleText = _getRockSectorInfo(rock),
+            mainText = _getRockMainText(rock),
+            subText = ParserUtils.decodeObjectNames(rock.name).second,
+            onClick = { _onRockSelected(rock) })
+        }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
@@ -117,7 +122,6 @@ class RockActivity : TableActivityWithOptionsMenu() {
         if (_rockNamePart.isNotEmpty()) {
             rocks = rocks.filter{ it.name.orEmpty().lowercase().contains(_rockNamePart.lowercase()) }
         }
-
         _viewAdapter.submitList(rocks)
     }
 
@@ -156,11 +160,66 @@ class RockActivity : TableActivityWithOptionsMenu() {
                 && rock.status != Rock.statusCollapsed
     }
 
-    private fun _onRockSelected(rockId: Int, rockName: String) {
+    private fun _getRockBackground(rock: Rock): Int {
+        val defaultBgColor = if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed)
+                visualUtils.prohibitedBgColor
+            else
+                visualUtils.defaultBgColor
+        return AscendStyle.deriveAscentColor(
+            ascentBitMask = rock.ascendsBitMask,
+            leadColor = visualUtils.leadBgColor,
+            followColor = visualUtils.followBgColor,
+            defaultColor = defaultBgColor)
+    }
+
+    private fun _getRockTypeface(rock: Rock): Int {
+        return if (rock.status == Rock.statusProhibited || rock.status == Rock.statusCollapsed)
+                Typeface.ITALIC
+            else if (rock.type != Rock.typeSummit)
+                Typeface.NORMAL
+            else
+                Typeface.BOLD
+    }
+
+    private fun _getRockMainText(rock: Rock): Pair<String, String> {
+        val rockName = ParserUtils.decodeObjectNames(rock.name)
+        val typeAdd = if (rock.type != Rock.typeSummit)
+                "  (${rock.type})"
+            else
+                ""
+        val decorationAdd = AscendStyle.deriveAscentDecoration(
+            rock.ascendsBitMask,
+            visualUtils.botchIcon,
+            visualUtils.projectIcon,
+            visualUtils.watchingIcon)
+        return Pair("${rock.nr}  ${rockName.first}$typeAdd$decorationAdd", rock.status.toString())
+    }
+
+    private fun _getRockSectorInfo(rock: Rock): Pair<String, String>? {
+        var sectorInfo = ""
+        if (activityLevel.level < ClimbingObjectLevel.eRock) {
+            val sector = db.getSector(rock.parentId)!!
+            if (activityLevel.level < ClimbingObjectLevel.eSector) {
+                val region = db.getRegion(sector.parentId)!!
+                sectorInfo = "${region.name} ${visualUtils.arrow} "
+            }
+            val sectorNames = ParserUtils.decodeObjectNames(sector.name)
+            sectorInfo += sectorNames.first
+            if (sectorNames.second.isNotEmpty()) {
+                sectorInfo += " / ${sectorNames.second}"
+            }
+        }
+        return if (sectorInfo.isNotEmpty())
+                Pair(sectorInfo, "")
+            else
+                null
+    }
+
+    private fun _onRockSelected(rock: Rock) {
         startActivity(Intent(this@RockActivity, RouteActivity::class.java).apply {
             putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRoute.value)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, rockId)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, rockName)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, rock.id)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, rock.name)
         })
     }
 }

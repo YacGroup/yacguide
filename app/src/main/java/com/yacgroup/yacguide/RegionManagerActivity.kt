@@ -110,7 +110,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 currentCountryName = region.country.orEmpty()
                 regionItemList.add(BaseViewItem(
                     id = 0,
-                    textLeft = currentCountryName,
+                    text = Pair(currentCountryName, ""),
                     backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
                     isHeader = true))
             }
@@ -122,7 +122,7 @@ class RegionManagerActivity : BaseNavigationActivity() {
             }
             regionItemList.add(BaseViewItem(
                 id = region.id,
-                textLeft = regionName,
+                text = Pair(regionName, ""),
                 backgroundColor = ContextCompat.getColor(this, backgroundResource)))
         }
 

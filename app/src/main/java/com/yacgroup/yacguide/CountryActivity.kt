@@ -24,16 +24,16 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
-import com.yacgroup.yacguide.list_adapters.CountryViewAdapter
-import com.yacgroup.yacguide.list_adapters.SwipeConfig
-import com.yacgroup.yacguide.list_adapters.SwipeController
+import com.yacgroup.yacguide.database.Country
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
 class CountryActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _viewAdapter: CountryViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<Country>
     private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _pinnedCountries: Set<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +44,17 @@ class CountryActivity : TableActivityWithOptionsMenu() {
             RockSearchable(this),
             AscentFilterable(this)
         )
+        _pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty()
 
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
-        _viewAdapter = CountryViewAdapter(this, customSettings) { countryName -> _onCountrySelected(countryName) }
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { country1, country2 -> country1.name == country2.name },
+            _areContentsTheSame = { country1, country2 -> country1 == country2 }
+        )) { country -> ListItem(
+            backgroundColor = _getCountryBackground(country),
+            mainText = Pair(country.name, ""),
+            onClick = { _onCountrySelected(country) })
+        }
         listView.adapter = _viewAdapter
 
         val swipeRightConfig = SwipeConfig(
@@ -80,18 +88,24 @@ class CountryActivity : TableActivityWithOptionsMenu() {
     override fun displayContent() {
         setTitle(R.string.app_name)
         val countries = db.getCountries()
-        val pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty()
-        _viewAdapter.submitList(countries.sortedBy { !pinnedCountries.contains(it.name) })
+        _viewAdapter.submitList(countries.sortedBy { !_pinnedCountries.contains(it.name) })
         _updateHandler.configureDownloadButton(
             enabled = countries.isEmpty(),
             climbingObjectUId = ClimbingObjectUId(0, getString(R.string.countries_and_regions))
         ){ displayContent() }
     }
 
-    private fun _onCountrySelected(countryName: String) {
+    private fun _getCountryBackground(country: Country): Int {
+        return if (_pinnedCountries.contains(country.name))
+                visualUtils.accentBgColor
+            else
+                visualUtils.defaultBgColor
+    }
+
+    private fun _onCountrySelected(country: Country) {
         startActivity(Intent(this@CountryActivity, RegionActivity::class.java).apply {
             putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRegion.value)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, countryName)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, country.name)
         })
     }
 
@@ -131,5 +145,6 @@ class CountryActivity : TableActivityWithOptionsMenu() {
             _viewAdapter.notifyDataSetChanged()
             Toast.makeText(this, successHintResource, Toast.LENGTH_SHORT).show()
         }
+        _pinnedCountries = pinnedCountries
     }
 }

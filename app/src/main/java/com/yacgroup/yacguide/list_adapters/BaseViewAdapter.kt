@@ -41,6 +41,7 @@ class BaseViewAdapter(
         private val _titleRightTextView = view.findViewById<TextView>(R.id.infoRightTextView)
         private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
         private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
+        private val _subTextLayout = view.findViewById<ConstraintLayout>(R.id.subTextLayout)
         private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
         private var _isHeader = false
 
@@ -51,15 +52,14 @@ class BaseViewAdapter(
             }
             if (!_isHeader && _withItemTitles) {
                 _infoTextLayout.visibility = View.VISIBLE
-                _titleLeftTextView.text = viewItem.titleLeft
-                _titleRightTextView.text = viewItem.titleRight
+                _titleLeftTextView.text = viewItem.title.first
+                _titleRightTextView.text = viewItem.title.second
             }
-            _mainLeftTextView.text = viewItem.textLeft
-            _mainRightTextView.text = viewItem.textRight
-            if (_isHeader || !_withItemFooters) {
-                _subTextView.visibility = View.GONE
-            } else {
-                _subTextView.text = viewItem.additionalInfo
+            _mainLeftTextView.text = viewItem.text.first
+            _mainRightTextView.text = viewItem.text.second
+            if (!_isHeader && _withItemFooters) {
+                _subTextLayout.visibility = View.VISIBLE
+                _subTextView.text = viewItem.titleText
                 _listItemLayout.apply {
                     setOnClickListener {
                         _onClick(viewItem.id)

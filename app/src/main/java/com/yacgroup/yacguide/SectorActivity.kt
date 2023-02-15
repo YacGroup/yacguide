@@ -22,14 +22,17 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
-import com.yacgroup.yacguide.list_adapters.SectorViewAdapter
+import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.ParserUtils
 
 class SectorActivity : TableActivityWithOptionsMenu() {
 
-    private lateinit var _viewAdapter: SectorViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<Sector>
     private lateinit var _updateHandler: UpdateHandler
+    private lateinit var _rockCounter: RockCounter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +43,16 @@ class SectorActivity : TableActivityWithOptionsMenu() {
             RockSearchable(this),
             AscentFilterable(this)
         )
+        _rockCounter = RockCounter(RockCounterConfig.generate(this, customSettings))
 
-        _viewAdapter = SectorViewAdapter(this, customSettings, db) { sectorId, sectorName -> _onSectorSelected(sectorId, sectorName) }
+        _viewAdapter = ListViewAdapter(ItemDiffCallback(
+            _areItemsTheSame = { sector1, sector2 -> sector1.id == sector2.id }
+        )) { sector -> ListItem(
+            backgroundColor = visualUtils.defaultBgColor,
+            mainText = _getSectorMainText(sector),
+            subText = ParserUtils.decodeObjectNames(sector.name).second,
+            onClick = { _onSectorSelected(sector) })
+        }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
@@ -61,11 +72,21 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         ) { displayContent() }
     }
 
-    private fun _onSectorSelected(sectorId: Int, sectorName: String) {
+    private fun _getSectorMainText(sector: Sector): Pair<String, String> {
+        val sectorName = ParserUtils.decodeObjectNames(sector.name)
+        val rockCount = if (_rockCounter.isApplicable()) {
+                val rockCount = _rockCounter.calculateRockCount(db.getRocksForSector(sector.id))
+                "(${rockCount.ascended} / ${rockCount.total})"
+            } else
+                ""
+        return Pair(sectorName.first, rockCount)
+    }
+
+    private fun _onSectorSelected(sector: Sector) {
         startActivity(Intent(this@SectorActivity, RockActivity::class.java).apply {
             putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eRock.value)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, sectorId)
-            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, sectorName)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, sector.id)
+            putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, sector.name)
         })
     }
 }

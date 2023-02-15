@@ -22,18 +22,16 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-
 import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
-import com.yacgroup.yacguide.list_adapters.BaseViewItem
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
 
 class TourbookAscendActivity : BaseNavigationActivity() {
 
     private lateinit var _listView: RecyclerView
-    private lateinit var _viewAdapter: BaseViewAdapter
+    private lateinit var _viewAdapter: ListViewAdapter<ListItem>
+    private lateinit var _visualUtils: VisualUtils
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascent: Ascend
 
@@ -44,7 +42,9 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         _db = DatabaseWrapper(this)
 
         _listView = findViewById(R.id.tableRecyclerView)
-        _viewAdapter = BaseViewAdapter(_withItemTitles = true)
+        _viewAdapter = ListViewAdapter(ItemDiffCallback()) { item -> item }
+
+        _visualUtils = VisualUtils(this)
 
         val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
         _ascent = _db.getAscend(ascentId)!!
@@ -112,57 +112,42 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         val rockName = ParserUtils.decodeObjectNames(rock.name)
         val routeName = ParserUtils.decodeObjectNames(route.name)
 
-        var itemId = 0
         _listView.adapter = _viewAdapter
         _viewAdapter.submitList(listOf(
-                BaseViewItem(
-                    id = itemId++,
-                    textLeft = "${_ascent.day}.${_ascent.month}.${_ascent.year}",
-                    textRight = region.name.orEmpty(),
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
-                    isHeader = true
-                ),
-                BaseViewItem(
-                    id = itemId++,
-                    titleLeft = getString(R.string.sector),
-                    textLeft = sectorName.first,
-                    textRight = sectorName.second,
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                ),
-                BaseViewItem(
-                    id = itemId++,
-                    titleLeft = getString(R.string.rock),
-                    textLeft = rockName.first,
-                    textRight = rockName.second,
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                ),
-                BaseViewItem(
-                    id = itemId++,
-                    titleLeft = getString(R.string.route),
-                    textLeft = routeName.first,
-                    textRight = routeName.second,
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                ),
-                BaseViewItem(
-                    id = itemId++,
-                    titleLeft = getString(R.string.grade),
-                    titleRight = getString(R.string.style),
-                    textLeft = route.grade.orEmpty(),
-                    textRight = AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty(),
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                ),
-                BaseViewItem(
-                    id = itemId,
-                    titleLeft = getString(R.string.partner),
-                    textLeft = partnerNames.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: " - ",
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                ),
-                BaseViewItem(
-                    id = itemId,
-                    titleLeft = getString(R.string.notes),
-                    textLeft = _ascent.notes?.takeUnless { it.isBlank() } ?: " - ",
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorOnPrimary)
-                )
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    mainText = Pair("${_ascent.day}.${_ascent.month}.${_ascent.year}", region.name.orEmpty()),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.sector), ""),
+                    mainText = Pair(sectorName.first, sectorName.second),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.rock), ""),
+                    mainText = Pair(rockName.first, rockName.second),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.route), ""),
+                    mainText = Pair(routeName.first, routeName.second),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.grade), getString(R.string.style)),
+                    mainText = Pair(route.grade.orEmpty(), AscendStyle.fromId(_ascent.styleId)?.styleName.orEmpty()),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.partner), ""),
+                    mainText = Pair(partnerNames.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: " - ", ""),
+                    subText = null),
+                ListItem(
+                    backgroundColor = _visualUtils.defaultBgColor,
+                    titleText = Pair(getString(R.string.notes), ""),
+                    mainText = Pair(_ascent.notes?.takeUnless { it.isBlank() } ?: " - ", ""),
+                    subText = null)
             )
         )
     }
