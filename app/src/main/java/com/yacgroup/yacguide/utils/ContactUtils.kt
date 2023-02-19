@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Christian Sommer
+ * Copyright (C) 2021, 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,21 +21,21 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider.getUriForFile
+import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.extensions.queryIntentActivitiesCompat
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-
-import com.yacgroup.yacguide.R
 
 class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
 
-    private val _sdkVersion: Int = android.os.Build.VERSION.SDK_INT
-    private val _androidRelease: String = android.os.Build.VERSION.RELEASE
+    private val _sdkVersion: Int = Build.VERSION.SDK_INT
+    private val _androidRelease: String = Build.VERSION.RELEASE
 
     /*
      * Send an email, if an tour book import error occurs.
@@ -92,13 +92,14 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
             data = Uri.parse("mailto:")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
-        val appList = activity.packageManager.queryIntentActivities(
-                possibleEmailIntents, PackageManager.MATCH_DEFAULT_ONLY)
+        val appList = activity.packageManager.queryIntentActivitiesCompat(
+                possibleEmailIntents, PackageManager.MATCH_DEFAULT_ONLY
+        )
         if (appList.isNotEmpty()) {
             // Create a list of all target intents
             // but initialize them with our email intent.
             val targetIntents = appList.map {
-                it?.let {
+                it.let {
                     val packageName = it.activityInfo.packageName
                     _getEmailIntent(subject, body, attachments).apply {
                         component = ComponentName(packageName, it.activityInfo.name)

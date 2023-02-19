@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Christian Sommer
+ * Copyright (C) 2021, 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.extensions.getPackageInfoCompat
 
 open class ActivityUtils(protected val activity: AppCompatActivity) {
 
@@ -33,7 +34,7 @@ open class ActivityUtils(protected val activity: AppCompatActivity) {
     private fun _getAppVersion(): String {
         try {
             val pkgManager = activity.packageManager
-            val pkgInfo = pkgManager.getPackageInfo(activity.packageName, 0)
+            val pkgInfo = pkgManager.getPackageInfoCompat(activity.packageName, 0)
             return pkgInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
