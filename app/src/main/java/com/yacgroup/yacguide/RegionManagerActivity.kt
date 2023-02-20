@@ -169,10 +169,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
             putInt(key, _defaultRegionId)
             apply()
         }
-        val position = _viewAdapter.currentList.indexOfFirst { item ->
-            item.elements.any { it.id == region.id }
-        }
-        _viewAdapter.notifyItemChanged(position)
+        // we need to update all sections since you may switch between different countries for default region
+        _viewAdapter.notifyDataSetChanged()
     }
 
     private inline fun _updateRegionListAndDB(
