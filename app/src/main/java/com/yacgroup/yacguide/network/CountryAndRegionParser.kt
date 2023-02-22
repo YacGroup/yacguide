@@ -91,6 +91,8 @@ class CountryAndRegionParser(private val _db: DatabaseWrapper) : JSONWebParser()
             _db.addCountries(_countries)
             _db.addRegions(_regions)
         }
+        _countries.clear()
+        _regions.clear()
         super.onFinalTaskResolved(exitCode)
     }
 }
