@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide.list_adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +26,14 @@ import androidx.recyclerview.widget.*
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.utils.VisualUtils
 
+data class SectionViewItem<T>(
+    val title: Pair<String, String>,
+    val elements: List<T>
+)
+
 class SectionViewAdapter<T: Any>(
-    private val _context: Context,
+    private val _visualUtils: VisualUtils,
+    private val _swipeController: ItemTouchHelper.Callback? = null,
     private val _createInnerAdapter: () -> ListViewAdapter<T>
 ) : ListAdapter<SectionViewItem<T>, RecyclerView.ViewHolder>(SectionDiffCallback()) {
 
@@ -40,11 +45,12 @@ class SectionViewAdapter<T: Any>(
         private val _listAdapter = _createInnerAdapter() // the inner adapter must be created here
                                                          // and not passed as parameter
         private val _viewPool = RecyclerView.RecycledViewPool() // for optimization
-        private val _visualUtils: VisualUtils
 
         init {
+            _swipeController?.let {
+                ItemTouchHelper(it).attachToRecyclerView(_listView)
+            }
             _listView.adapter = _listAdapter
-            _visualUtils = VisualUtils(_context)
         }
 
         fun bind(sectionViewItem: SectionViewItem<T>) {
@@ -68,6 +74,7 @@ class SectionViewAdapter<T: Any>(
         return SectionViewHolder(view)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         (viewHolder as SectionViewAdapter<T>.SectionViewHolder).bind(getItem(position) as SectionViewItem<T>)
     }

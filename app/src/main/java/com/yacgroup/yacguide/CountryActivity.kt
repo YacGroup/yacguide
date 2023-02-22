@@ -35,6 +35,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _pinnedCountries: Set<String>
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,16 +61,22 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         val swipeRightConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorEdit),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_push_pin_24)!!
-        ) { pos ->
-            _onPinningGesture(pos, R.string.country_already_pinned) { pinnedCountries, countryName ->
+        ) { viewHolder ->
+            _onPinningGesture(
+                viewHolder = viewHolder as ListViewAdapter<Country>.ItemViewHolder,
+                errorHintResource = R.string.country_already_pinned
+            ) { pinnedCountries, countryName ->
                 _pinCountry(pinnedCountries, countryName)
             }
         }
         val swipeLeftConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorDelete),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_stroked_pin_24)!!
-        ) { pos ->
-            _onPinningGesture(pos, R.string.country_not_yet_pinned) { pinnedCountries, countryName ->
+        ) { viewHolder ->
+            _onPinningGesture(
+                viewHolder = viewHolder as ListViewAdapter<Country>.ItemViewHolder,
+                errorHintResource = R.string.country_not_yet_pinned
+            ) { pinnedCountries, countryName ->
                 _unpinCountry(pinnedCountries, countryName)
             }
         }
@@ -109,12 +116,17 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         })
     }
 
-    private inline fun _onPinningGesture(position: Int, errorHintResource: Int, storePinning: (MutableSet<String>, String) -> Boolean) {
-        val countryName = _viewAdapter.getItemAt(position).name
+    private inline fun _onPinningGesture(
+        viewHolder: ListViewAdapter<Country>.ItemViewHolder,
+        errorHintResource: Int,
+        storePinning: (MutableSet<String>, String) -> Boolean
+    ) {
         val pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty().toMutableSet()
-        if (!storePinning(pinnedCountries, countryName)) {
-            Toast.makeText(this, errorHintResource, Toast.LENGTH_SHORT).show()
-            _viewAdapter.notifyItemChanged(position)
+        viewHolder.getItem()?.let { country ->
+            if (!storePinning(pinnedCountries, country.name)) {
+                Toast.makeText(this, errorHintResource, Toast.LENGTH_SHORT).show()
+                _viewAdapter.notifyItemChanged(viewHolder.adapterPosition)
+            }
         }
     }
 

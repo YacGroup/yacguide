@@ -49,4 +49,5 @@ class VisualUtils(
     val projectIcon = context.getString(R.string.project)
     val watchingIcon = context.getString(R.string.watching)
     val arrow = context.getString(R.string.right_arrow)
+    val startupArrow = context.getString(R.string.startup_arrow)
 }

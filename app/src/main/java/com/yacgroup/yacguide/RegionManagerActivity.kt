@@ -24,26 +24,26 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
-import com.yacgroup.yacguide.list_adapters.BaseViewAdapter
-import com.yacgroup.yacguide.list_adapters.BaseViewItem
-import com.yacgroup.yacguide.list_adapters.SwipeConfig
-import com.yacgroup.yacguide.list_adapters.SwipeController
+import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.network.SectorParser
+import com.yacgroup.yacguide.utils.VisualUtils
 
 class RegionManagerActivity : BaseNavigationActivity() {
 
-    private lateinit var _viewAdapter: BaseViewAdapter
+    private lateinit var _visualUtils: VisualUtils
+    private lateinit var _viewAdapter: SectionViewAdapter<Region>
     private lateinit var _db: DatabaseWrapper
     private lateinit var _countryAndRegionParser: CountryAndRegionParser
     private lateinit var _sectorParser: SectorParser
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _customSettings: SharedPreferences
+    private var _defaultRegionId: Int = 0
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,16 +52,17 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _sectorParser = SectorParser(_db)
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _defaultRegionId = _customSettings.getInt(
+            getString(R.string.default_region_key),
+            resources.getInteger(R.integer.default_region_id)
+        )
 
-        _viewAdapter = BaseViewAdapter(_withItemFooters = true) { regionId -> _selectDefaultRegion(regionId) }
-        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
-        listView.adapter = _viewAdapter
-
+        _visualUtils = VisualUtils(this)
         val swipeRightConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorSync),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_sync_24)!!
-        ) { pos ->
-            _updateRegionListAndDB(pos) { region ->
+        ) { viewHolder ->
+            _updateRegionListAndDB(viewHolder as ListViewAdapter<Region>.ItemViewHolder) { region ->
                 _updateHandler.setJsonParser(_sectorParser)
                 _updateHandler.update(ClimbingObjectUId(region.id, region.name.orEmpty()))
             }
@@ -69,16 +70,25 @@ class RegionManagerActivity : BaseNavigationActivity() {
         val swipeLeftConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorDelete),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
-        ) { pos ->
-            _updateRegionListAndDB(pos) { region ->
+        ) { viewHolder ->
+            _updateRegionListAndDB(viewHolder as ListViewAdapter<Region>.ItemViewHolder) { region ->
                 _updateHandler.delete {
                     _db.deleteSectorsRecursively(region.id)
                     _displayContent()
                 }
             }
         }
-        val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
-        ItemTouchHelper(swipeController).attachToRecyclerView(listView)
+        _viewAdapter = SectionViewAdapter(_visualUtils, SwipeController(swipeRightConfig, swipeLeftConfig)) {
+            ListViewAdapter(ItemDiffCallback(
+                _areItemsTheSame = { region1, region2 -> region1.id == region2.id },
+                _areContentsTheSame = { region1, region2 -> region1 == region2 }
+            )) { region -> ListItem(
+                backgroundColor = _getRegionBackground(region),
+                mainText = _getRegionMainText(region),
+                onClick = { _selectDefaultRegion(region) })
+            }
+        }
+        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
 
         _displayContent()
     }
@@ -97,36 +107,14 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
     private fun _displayContent() {
         this.setTitle(R.string.menu_region_manager)
-        val defaultRegionId = _customSettings.getInt(
-            getString(R.string.default_region_key),
-            resources.getInteger(R.integer.default_region_id)
-        )
-        var currentCountryName = ""
-        val regions = _db.getNonEmptyRegions() // already sorted by country name
-        val regionItemList = mutableListOf<BaseViewItem>()
 
-        regions.forEach { region ->
-            if (!region.country.equals(currentCountryName)) {
-                currentCountryName = region.country.orEmpty()
-                regionItemList.add(BaseViewItem(
-                    id = 0,
-                    text = Pair(currentCountryName, ""),
-                    backgroundColor = ContextCompat.getColor(this, R.color.colorSecondary),
-                    isHeader = true))
-            }
-            var regionName = region.name.orEmpty()
-            var backgroundResource = R.color.colorSecondaryLight
-            if (region.id == defaultRegionId) {
-                regionName = "${getString(R.string.startup_arrow)} $regionName"
-                backgroundResource = R.color.colorAccentLight
-            }
-            regionItemList.add(BaseViewItem(
-                id = region.id,
-                text = Pair(regionName, ""),
-                backgroundColor = ContextCompat.getColor(this, backgroundResource)))
+        val sectionViews = _db.getNonEmptyRegions().groupBy { it.country }.map {
+            SectionViewItem(
+                title = Pair(it.key.orEmpty(), ""),
+                elements = it.value
+            )
         }
-
-        _viewAdapter.submitList(regionItemList)
+        _viewAdapter.submitList(sectionViews)
     }
 
     private fun _updateAll() {
@@ -153,27 +141,45 @@ class RegionManagerActivity : BaseNavigationActivity() {
         }
     }
 
-    private fun _selectDefaultRegion(regionId: Int) {
+    private fun _getRegionBackground(region: Region): Int {
+        return if (region.id == _defaultRegionId)
+                _visualUtils.accentBgColor
+            else
+                _visualUtils.defaultBgColor
+    }
+
+    private fun _getRegionMainText(region: Region): Pair<String, String> {
+        return if (region.id == _defaultRegionId)
+                Pair("${_visualUtils.startupArrow} ${region.name}", "")
+            else
+                Pair(region.name.orEmpty(), "")
+    }
+
+    private fun _selectDefaultRegion(region: Region) {
         val key = getString(R.string.default_region_key)
         val invalidId = resources.getInteger(R.integer.default_region_id)
-        val defaultRegionId = _customSettings.getInt(key, invalidId)
-        val newDefaultRegionId = if (regionId == defaultRegionId) {
+        _defaultRegionId = if (region.id == _defaultRegionId) {
             Toast.makeText(this, R.string.default_region_reset, Toast.LENGTH_SHORT).show()
             invalidId
         } else {
             Toast.makeText(this, R.string.default_region_set, Toast.LENGTH_SHORT).show()
-            regionId
+            region.id
         }
         _customSettings.edit().apply {
-            putInt(key, newDefaultRegionId)
+            putInt(key, _defaultRegionId)
             apply()
         }
-        _displayContent()
+        // we need to update all sections since you may switch between different countries for default region
+        _viewAdapter.notifyDataSetChanged()
     }
 
-    private inline fun _updateRegionListAndDB(position: Int, dbAction: (region: Region) -> Unit) {
-        val item = _viewAdapter.getItemAt(position)
-        _db.getRegion(item.id)?.let { dbAction(it) }
-        _viewAdapter.notifyItemChanged(position)
+    private inline fun _updateRegionListAndDB(
+        viewHolder: ListViewAdapter<Region>.ItemViewHolder,
+        dbAction: (region: Region) -> Unit
+    ) {
+        viewHolder.getItem()?.let { region ->
+            _db.getRegion(region.id)?.let { dbAction(it) }
+        }
+        viewHolder.getParentAdapter().notifyItemChanged(viewHolder.adapterPosition)
     }
 }

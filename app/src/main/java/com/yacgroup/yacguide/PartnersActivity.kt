@@ -52,6 +52,7 @@ class PartnersActivity : AppCompatActivity() {
     private lateinit var _selectedPartnerIds: MutableList<Int>
     private var _partnerNamePart: String = ""
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_partners)
@@ -67,9 +68,7 @@ class PartnersActivity : AppCompatActivity() {
         }
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable) {
                 _partnerNamePart = searchEditText.text.toString()
                 _displayContent()
@@ -91,16 +90,16 @@ class PartnersActivity : AppCompatActivity() {
         val swipeRightConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorEdit),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24)!!
-        ) { pos ->
-            _updatePartnerListAndDB(pos) { partner ->
+        ) { viewHolder ->
+            _updatePartnerListAndDB(viewHolder as ListViewAdapter<Partner>.ItemViewHolder) { partner ->
                 _updatePartner(partner, R.string.dialog_text_change_partner)
             }
         }
         val swipeLeftConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorDelete),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_delete_24)!!
-        ) { pos ->
-            _updatePartnerListAndDB(pos) { partner ->
+        ) { viewHolder ->
+            _updatePartnerListAndDB(viewHolder as ListViewAdapter<Partner>.ItemViewHolder) { partner ->
                 _deletePartner(partner)
             }
         }
@@ -229,9 +228,10 @@ class PartnersActivity : AppCompatActivity() {
         _viewAdapter.notifyItemChanged(partnerPosition)
     }
 
-    private inline fun _updatePartnerListAndDB(position: Int, dbAction: (partner: Partner) -> Unit) {
-        val item = _viewAdapter.getItemAt(position)
-        _db.getPartner(item.id)?.let { dbAction(it) }
-        _viewAdapter.notifyItemChanged(position)
+    private inline fun _updatePartnerListAndDB(viewHolder: ListViewAdapter<Partner>.ItemViewHolder, dbAction: (partner: Partner) -> Unit) {
+        viewHolder.getItem()?.let { partner ->
+            _db.getPartner(partner.id)?.let { dbAction(it) }
+        }
+        _viewAdapter.notifyItemChanged(viewHolder.adapterPosition)
     }
 }
