@@ -91,10 +91,9 @@ class LaunchActivity : AppCompatActivity() {
             0
         }
         return if (curVerCode > savedVerCode) {
-            val sharedPrefsEditor = _customSettings.edit().apply {
+            _customSettings.edit().apply {
                 putInt(getString(R.string.preference_key_version_code), curVerCode)
-            }
-            sharedPrefsEditor.apply()
+            }.apply()
             true
         } else {
             false
