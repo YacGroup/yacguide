@@ -25,6 +25,8 @@ import android.os.CountDownTimer
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.extensions.getPackageInfoCompat
+import com.yacgroup.yacguide.extensions.versionCodeCompat
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
@@ -62,14 +64,39 @@ class LaunchActivity : AppCompatActivity() {
         val invalidId = resources.getInteger(R.integer.default_region_id)
         val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), invalidId)
         val intent = if (defaultRegionId == invalidId)
-            Intent(this, CountryActivity::class.java)
+            Intent(this, CountryActivity::class.java).apply {
+                putExtra(IntentConstants.SHOW_WHATS_NEW, _checkForVersionUpdate())
+            }
         else
             Intent(this, SectorActivity::class.java).apply {
                 putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
                 putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, defaultRegionId)
                 putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _db.getRegion(defaultRegionId)?.name.orEmpty())
+                putExtra(IntentConstants.SHOW_WHATS_NEW, _checkForVersionUpdate())
             }
         startActivity(intent)
         finish()
+    }
+
+    /**
+     * Check whether the "What's New" dialog needs to be shown or not. This is done by comparing
+     * the version stored in the settings with the current app version.
+     */
+    private fun _checkForVersionUpdate(): Boolean {
+        val savedVerCode = _customSettings.getInt(
+            getString(R.string.preference_key_version_code), 0)
+        val curVerCode = try {
+            packageManager.getPackageInfoCompat(packageName, 0).versionCodeCompat
+        } catch (e: Exception) {
+            0
+        }
+        return if (curVerCode > savedVerCode) {
+            _customSettings.edit().apply {
+                putInt(getString(R.string.preference_key_version_code), curVerCode)
+            }.apply()
+            true
+        } else {
+            false
+        }
     }
 }

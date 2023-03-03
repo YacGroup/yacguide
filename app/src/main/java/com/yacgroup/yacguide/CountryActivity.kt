@@ -83,10 +83,8 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         val swipeController = SwipeController(swipeRightConfig, swipeLeftConfig)
         ItemTouchHelper(swipeController).attachToRecyclerView(listView)
 
-        WhatsNewInfo(this).let {
-            if (it.checkForVersionUpdate()) {
-                it.showDialog()
-            }
+        if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
+            WhatsNewInfo(this).showDialog()
         }
     }
 

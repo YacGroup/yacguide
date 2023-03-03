@@ -24,7 +24,7 @@ import android.content.DialogInterface
 
 import com.yacgroup.yacguide.R
 
-/*
+/**
  * Use this class for each dialog in the app because it sets some reasonable defaults
  * and avoids repeating code.
  */

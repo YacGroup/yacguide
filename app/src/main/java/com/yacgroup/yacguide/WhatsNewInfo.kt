@@ -57,33 +57,7 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
         return _activity.getString(R.string.release_notes_url, _activityUtils.appVersion)
     }
 
-    /*
-     * Check whether the "What's New" dialog needs to be shown or not. This is decided by comparing
-     * the version stored in the settings with the current app version.
-     */
-    fun checkForVersionUpdate(): Boolean {
-        _activity.let {
-            val savedVerCode = _sharedPrefs.getInt(
-                    it.getString(R.string.preference_key_version_code), 0)
-            val curVerCode = try {
-                @Suppress("DEPRECATION")
-                it.packageManager.getPackageInfo(it.packageName, 0).versionCode
-            } catch (e: Exception) {
-                0
-            }
-            return if (curVerCode > savedVerCode) {
-                val sharedPrefsEditor = _sharedPrefs.edit().apply {
-                    putInt(it.getString(R.string.preference_key_version_code), curVerCode)
-                }
-                sharedPrefsEditor.apply()
-                true
-            } else {
-                false
-            }
-        }
-    }
-
-    /*
+    /**
      * Render Markdown code and show dialog.
      */
     @SuppressLint("InflateParams")
