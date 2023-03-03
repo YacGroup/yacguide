@@ -25,6 +25,8 @@ import android.os.CountDownTimer
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.extensions.getPackageInfoCompat
+import com.yacgroup.yacguide.extensions.versionCodeCompat
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
@@ -84,8 +86,7 @@ class LaunchActivity : AppCompatActivity() {
         val savedVerCode = _customSettings.getInt(
             getString(R.string.preference_key_version_code), 0)
         val curVerCode = try {
-            @Suppress("DEPRECATION")
-            packageManager.getPackageInfo(packageName, 0).versionCode
+            packageManager.getPackageInfoCompat(packageName, 0).versionCodeCompat
         } catch (e: Exception) {
             0
         }
