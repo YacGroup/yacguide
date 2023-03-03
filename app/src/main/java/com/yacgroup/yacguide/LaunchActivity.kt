@@ -62,12 +62,15 @@ class LaunchActivity : AppCompatActivity() {
         val invalidId = resources.getInteger(R.integer.default_region_id)
         val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), invalidId)
         val intent = if (defaultRegionId == invalidId)
-            Intent(this, CountryActivity::class.java)
+            Intent(this, CountryActivity::class.java).apply {
+                putExtra(IntentConstants.SHOW_WHATS_NEW, true)
+            }
         else
             Intent(this, SectorActivity::class.java).apply {
                 putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, ClimbingObjectLevel.eSector.value)
                 putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, defaultRegionId)
                 putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _db.getRegion(defaultRegionId)?.name.orEmpty())
+                putExtra(IntentConstants.SHOW_WHATS_NEW, true)
             }
         startActivity(intent)
         finish()

@@ -57,7 +57,7 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
         return _activity.getString(R.string.release_notes_url, _activityUtils.appVersion)
     }
 
-    /*
+    /**
      * Check whether the "What's New" dialog needs to be shown or not. This is decided by comparing
      * the version stored in the settings with the current app version.
      */
@@ -83,7 +83,7 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
         }
     }
 
-    /*
+    /**
      * Render Markdown code and show dialog.
      */
     @SuppressLint("InflateParams")

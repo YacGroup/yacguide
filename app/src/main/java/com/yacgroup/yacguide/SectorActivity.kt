@@ -54,6 +54,14 @@ class SectorActivity : TableActivityWithOptionsMenu() {
             onClick = { _onSectorSelected(sector) })
         }
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+
+        if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
+            WhatsNewInfo(this).let {
+                if (it.checkForVersionUpdate()) {
+                    it.showDialog()
+                }
+            }
+        }
     }
 
     override fun getLayoutId() = R.layout.activity_sector
