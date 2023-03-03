@@ -84,11 +84,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         ItemTouchHelper(swipeController).attachToRecyclerView(listView)
 
         if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
-            WhatsNewInfo(this).let {
-                if (it.checkForVersionUpdate()) {
-                    it.showDialog()
-                }
-            }
+            WhatsNewInfo(this).showDialog()
         }
     }
 

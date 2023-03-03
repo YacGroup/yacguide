@@ -56,11 +56,7 @@ class SectorActivity : TableActivityWithOptionsMenu() {
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
 
         if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
-            WhatsNewInfo(this).let {
-                if (it.checkForVersionUpdate()) {
-                    it.showDialog()
-                }
-            }
+            WhatsNewInfo(this).showDialog()
         }
     }
 
