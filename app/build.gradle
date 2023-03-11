@@ -176,6 +176,11 @@ dependencies {
      * https://github.com/mikepenz/AboutLibraries
      */
     implementation "com.mikepenz:aboutlibraries-core:${aboutlibrariesVersion}"
+
+    /*
+     * Used for custom tabs to show web content without leaving the app.
+     */
+    implementation "androidx.browser:browser:1.5.0"
 }
 repositories {
     mavenCentral()

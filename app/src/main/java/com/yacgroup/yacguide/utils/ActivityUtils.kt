@@ -17,13 +17,13 @@
 
 package com.yacgroup.yacguide.utils
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.webkit.URLUtil
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.graphics.drawable.toBitmap
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.extensions.getPackageInfoCompat
 
@@ -44,18 +44,10 @@ open class ActivityUtils(protected val activity: AppCompatActivity) {
 
     fun openUrl(url: String) {
         if (URLUtil.isValidUrl(url)) {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(url)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                activity.startActivity(intent)
-            } catch (e: ActivityNotFoundException) {
-                Toast.makeText(
-                    activity,
-                    R.string.no_webbrowser_available, Toast.LENGTH_SHORT
-                ).show()
-            }
+            CustomTabsIntent.Builder().apply {
+                AppCompatResources.getDrawable(activity, R.drawable.ic_baseline_arrow_back_24)
+                    ?.let { setCloseButtonIcon(it.toBitmap()) }
+            }.build().launchUrl(activity, Uri.parse(url))
         }
     }
 }
