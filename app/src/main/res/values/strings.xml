@@ -46,6 +46,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Submenus -->
+    <string name="statistics">Statistiken</string>
     <string name="import_tourbook">Import</string>
     <string name="export_tourbook">Export</string>
     <string name="download_all">Alle aktualisieren</string>
