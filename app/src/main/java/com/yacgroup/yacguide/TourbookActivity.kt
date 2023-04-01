@@ -90,7 +90,7 @@ class TourbookActivity : BaseNavigationActivity() {
                 val routeName = ParserUtils.decodeObjectNames(route.name)
                 val rockName = ParserUtils.decodeObjectNames(rock.name)
                 ListItem(
-                    backgroundColor = _getAscendBackground(route.ascendsBitMask),
+                    backgroundColor = _getAscendBackground(ascend.styleId),
                     mainText = Pair("${rockName.first} - ${routeName.first}", route.grade.orEmpty()),
                     subText = "${rockName.second} - ${routeName.second}",
                     onClick = { _onAscendSelected(ascend) })
@@ -310,9 +310,9 @@ class TourbookActivity : BaseNavigationActivity() {
         return if (_availableYears.isEmpty()) 0 else _availableYears.last()
     }
 
-    private fun _getAscendBackground(ascendsBitMask: Int): Int {
+    private fun _getAscendBackground(styleId: Int): Int {
         return AscendStyle.deriveAscentColor(
-            ascentBitMask = ascendsBitMask,
+            ascentBitMask = AscendStyle.bitMask(styleId),
             leadColor = _visualUtils.leadBgColor,
             followColor = _visualUtils.followBgColor,
             defaultColor = _visualUtils.defaultBgColor)
