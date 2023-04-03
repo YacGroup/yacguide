@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide.list_adapters
 
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,11 @@ class ListViewAdapter<T: Any>(
             _item = item
             val listItem = _generateListItem(item)
             _listItemLayout.apply {
-                setBackgroundColor(listItem.backgroundColor)
+                val bgGradient = background as GradientDrawable
+                background = bgGradient.apply {
+                    mutate()
+                    colors = intArrayOf(listItem.backgroundColor, bgGradient.colors?.get(1)?:0)
+                }
                 setOnClickListener { listItem.onClick() }
             }
             listItem.titleText?.let {
