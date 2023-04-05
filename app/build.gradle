@@ -179,6 +179,8 @@ dependencies {
 
     /*
      * Used for custom tabs to show web content without leaving the app.
+     *
+     * https://developer.chrome.com/docs/android/custom-tabs/
      */
     implementation "androidx.browser:browser:1.5.0"
 }
