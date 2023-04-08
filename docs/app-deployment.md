@@ -23,11 +23,10 @@ necessary:
 These files must **not** be committed and are provided by the CI for
 Google Play deployment.
 
-To build the app bundle inside the Docker environment, run the
-command
+To build all app bundles, run command
 
 ```shell
-scripts/make dists
+./gradlew bundleRelease
 ```
 
 which builds both, the `dev` and `stable` release which are than

@@ -2,7 +2,7 @@
 #
 # YacGuide Android Application
 #
-# Copyright (C) 2020 Christian Sommer
+# Copyright (C) 2020, 2023 Christian Sommer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@ import yacguide
 import yacguide.utils
 from yacguide.utils import error
 import yacguide.app
-import yacguide.docs
-import yacguide.docker
 
 
 def get_cli_parser():
@@ -48,57 +46,6 @@ def get_cli_parser():
                               default=False,
                               help=help_clean_distclean)
 
-    deploy_parser = sub_parsers.add_parser(
-        "deploy", help="Deploy app via container")
-    deploy_parser.set_defaults(func=deploy_callback)
-    help_deploy_type = "release type to deploy."
-    deploy_parser.add_argument("--type", required=True,
-                               choices=yacguide.app.RELEASE_TYPES,
-                               help=help_deploy_type)
-
-    dists_parser = sub_parsers.add_parser(
-        "dists", help="Build app inside the container")
-    dists_parser.set_defaults(func=dists_callback)
-    help_dists_type = """release type to build. By default all
-releases are built. Can be specified multiple times."""
-    dists_parser.add_argument("--type", action="append",
-                              choices=yacguide.app.RELEASE_TYPES,
-                              help=help_dists_type)
-
-    docker_parser = sub_parsers.add_parser(
-        "docker", help="Docker container handling")
-    docker_parser.set_defaults(func=docker_callback)
-    help_docker_start_new = "start new container"
-    docker_parser.add_argument("--start-new", action="store_true",
-                               default=False,
-                               help=help_docker_start_new)
-    help_docker_start_existing = "start existing container"
-    docker_parser.add_argument("--start-existing", action="store_true",
-                               default=False,
-                               help=help_docker_start_existing)
-    help_docker_stop = "stop container"
-    docker_parser.add_argument("--stop", action="store_true",
-                               default=False, help=help_docker_stop)
-    help_docker_rm = "remove Docker container"
-    docker_parser.add_argument("--rm", action="store_true",
-                               default=False, help=help_docker_rm)
-    help_docker_exec = "execute shell command inside the container"
-    docker_parser.add_argument("--exec", metavar="CMD",
-                               help=help_docker_exec)
-
-    docs_parser = sub_parsers.add_parser(
-        "docs", help="Build documentation inside the container")
-    docs_parser.set_defaults(func=docs_callback)
-    help_docs_setup_jekyll = "run Jekyll setup inside the container."
-    docs_parser.add_argument("--setup-jekyll", action="store_true",
-                             default=False,
-                             help=help_docs_setup_jekyll)
-    help_docs_jekyll_serve = """start Jekyll webserver.
-Automatically runs the required Jekyll setup before."""
-    docs_parser.add_argument("--jekyll-serve", action="store_true",
-                             default=False,
-                             help=help_docs_jekyll_serve)
-
     release_parser = sub_parsers.add_parser(
         "release", help="Create release using the container")
     release_parser.set_defaults(func=release_callback)
@@ -116,11 +63,6 @@ what you do."""
     release_parser.add_argument("--skip-checks", action="store_true",
                                 default=False,
                                 help=help_release_skip_checks)
-
-    tests_parser = sub_parsers.add_parser("tests",
-                                          help="Run app tests")
-    tests_parser.set_defaults(func=tests_callback)
-
     return parser
 
 
@@ -131,63 +73,6 @@ def clean_callback(args):
         args (argparse.Namespace): Parsed arguments
     """
     yacguide.utils.clean(distclean=args.distclean)
-
-
-def deploy_callback(args):
-    """Callback function for `deploy` sub-parser.
-
-    Args:
-        args (argparse.Namespace): Parsed arguments
-    """
-    app = yacguide.app.App()
-    app.deploy(args.type)
-
-
-def dists_callback(args):
-    """Callback function for `dists` sub-parser.
-
-    Args:
-        args (argparse.Namespace): Parsed arguments
-    """
-    app = yacguide.app.App()
-    if args.type:
-        releases = args.type
-    else:
-        releases = yacguide.app.RELEASE_TYPES
-    app.build_dists(releases)
-
-
-def docker_callback(args):
-    """Callback function for `docker` sub-parser.
-
-    Args:
-        args (argparse.Namespace): Parsed arguments
-    """
-    container = yacguide.docker.BuildContainer()
-    if args.start_new:
-        container.start(start_new=True)
-    if args.start_existing:
-        container.start(start_new=False)
-    if args.stop:
-        container.stop()
-    if args.rm:
-        container.remove()
-    if args.exec:
-        container.execute_user(args.exec)
-
-
-def docs_callback(args):
-    """Callback function for `docs` sub-parser.
-
-    Args:
-        args (argparse.Namespace): Parsed arguments
-    """
-    docs = yacguide.docs.Docs()
-    if args.jekyll_serve and not args.setup_jekyll \
-       or args.setup_jekyll:
-        docs.prepare_jekyll()
-    if args.jekyll_serve:
-        docs.jekyll_serve()
 
 
 def release_callback(args):
@@ -205,16 +90,6 @@ def release_callback(args):
             error("Option --version must be set for"
                   " release type 'stable'.")
         release.create_stable_release(args.version)
-
-
-def tests_callback(args):
-    """Callback function for `tests` sub-parser.
-
-    Args:
-        args (argparse.Namespace): Parsed arguments
-    """
-    app = yacguide.app.App()
-    app.run_tests()
 
 
 if __name__ == "__main__":

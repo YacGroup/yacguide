@@ -1,11 +1,18 @@
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+#
+# Used GitHub actions:
+#   * https://github.com/marketplace/actions/checkout
+#   * https://github.com/marketplace/actions/cache
+#   * https://github.com/marketplace/actions/setup-java-jdk
+#   * https://github.com/marketplace/actions/gradle-build-action
+#   * https://github.com/marketplace/actions/android-emulator-runner
 
 name: CI
 on:
   push:
     tags:
-      - v[0-9]+.[0-9]+.[0-9]+
-      - dev-[0-9]+
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'dev-[0-9]+'
     paths-ignore:
       - 'docs/**'
   pull_request:
@@ -13,19 +20,96 @@ on:
       - master
     paths-ignore:
       - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      test_deploy:
+        description: 'Build app release but skip actual deploy process'
+        type: boolean
+        default: false
+      skip_tests:
+        description: 'Skip actual test runs'
+        type: boolean
+        default: false
 jobs:
-  test-build-deploy:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out repository
-        uses: actions/checkout@v2
-      - name: Set up Python Environment
-        uses: actions/setup-python@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK environment
+        uses: actions/setup-java@v3
         with:
-          python-version: '3.10'
-      - name: Install Python Packages
-        run: pip install -r requirements.txt
-      - name: Prepare App Environment
+          distribution: temurin
+          java-version: 11
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Run tests
+        if: ${{ !inputs.skip_tests }}
+        run: ./gradlew test --stacktrace
+  instrumentation-tests:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - api-level: 26
+            arch: x86
+            target: default
+          - api-level: 33
+            arch: x86_64
+            target: google_apis
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+      - name: Run tests
+        if: ${{ !inputs.skip_tests }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: ${{ matrix.arch }}
+          target: ${{ matrix.target }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedCheck
+  build-deploy:
+    if: ${{ github.ref_type == 'tag' || inputs.test_deploy }}
+    runs-on: ubuntu-latest
+    needs: [unit-tests, instrumentation-tests]
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+      - name: Set up JDK environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+      - name: Prepare app environment
         run: |
           # Decode Google Service Account JSON file
           echo ${{ secrets.PLAY_SERVICES_FILE_BASE64 }} | base64 -d > ${{ secrets.PLAY_SERVICES_FILE }}
@@ -34,17 +118,15 @@ jobs:
           # Write keystore properties file
           printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\nplayServicesFile=%s\n' \
             ${{ secrets.PLAY_KEY_STORE }} ${{ secrets.PLAY_STORE_PASSWORD }} ${{ secrets.PLAY_KEY_ALIAS }} ${{ secrets.PLAY_KEY_PASSWORD }} ${{ secrets.PLAY_SERVICES_FILE }} > keystore.properties
-      - name: Start Docker Container
-        run: scripts/make docker --start-new
-      - name: Run Tests
-        run: scripts/make tests
-      - name: Build Distributions
-        run: scripts/make dists
-      - name: Deploy Development Release
-        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'dev-') }}
-        run: scripts/make deploy --type dev
-      - name: Deploy Stable Release
-        if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
-        run: scripts/make deploy --type stable
-      - name: Stop Docker Container
-        run: scripts/make docker --stop
+      - name: Build development release
+        if: ${{ startsWith(github.ref_name, 'dev-') || inputs.test_deploy }}
+        run: ./gradlew bundleDevRelease
+      - name: Deploy development release
+        if: ${{ startsWith(github.ref_name, 'dev-') && !inputs.test_deploy }}
+        run: ./gradlew publishDevReleaseBundle
+      - name: Build stable release
+        if: ${{ startsWith(github.ref_name, 'v') || inputs.test_deploy }}
+        run: ./gradlew bundleStableRelease
+      - name: Deploy stable release
+        if: ${{ startsWith(github.ref_name, 'v') && !inputs.test_deploy }}
+        run: ./gradlew publishStableReleaseBundle
