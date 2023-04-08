@@ -55,8 +55,7 @@ XML (layout) file:
 ## Development Script
 
 For automation of certain development steps, a Python based
-[script](../scripts/make) is available. The script uses the projects
-[Docker environment](#docker-environment).
+[script](../scripts/make) is available.
 
 :exclamation: **Always start the script from the project root like
 `scripts/make <cmd>`.**
@@ -70,65 +69,27 @@ script:
 
 * Python 3 and the pip packages listed in file
   [requirements.txt](../requirements.txt)
-* Docker client
-
-
-## Docker Environment
-
-The Docker environment makes sure that the process of making builds,
-releases, tests etc. are done in a defined environment and that the
-user only needs to install a minimum tool set on its machine.
-
-The general Docker image is available on [Docker Hub]. On top of this,
-the container needs some user-specific setup, which are done during
-the container preparation step. These steps are:
-
-* Creating a user with same name, `UID` and `GID` as on the host
-* Make minimal Git setup
-* Install required tools
-
-
-### Container Shell
-
-For debugging or interactive work inside the container, you can open a
-user shell inside a running container using the command:
-
-```shell
-docker exec \
-    --user $(id --user):$(id --group) \
-    --workdir /mnt/yacguide-build \
-    --interactive \
-    --tty \
-    yacguide-build \
-    /bin/bash
-```
 
 
 ## App Tests
 
-To run the tests inside the container, you need to execute
+To run the tests, you need to execute
 
 ```shell
-scripts/make tests
+# Run unit tests for all variants
+./gradlew test
+
+# Runs all instrumentation tests on currently connected devices
+./gradlew connectedCheck
 ```
 
 ## Building the App Bundle
 
-During the usual app development process, use Android Studio and
-the select the variant `devDebug` for building.
-
-If, e.g. a CI build fails and you cannot reproduce this fail with
-Android Studio, you can build the app bundle inside the Docker
-environment which is used by the CI. The command
-
-```shell
-scripts/make dists
-```
-
-builds both, the `dev` and `stable` release which are than available
-in the `app/build/outputs/bundle` directory. A special signing setup
-(see file `keystore.properties`) is used which is not used for the
-actual deployment in the different app stores.
+During the usual app development process, use Android Studio and the
+select the variant `<dev|stable>Debug` for building. The builds are
+than available in the `app/build/outputs/bundle` directory. A special
+signing setup (see file `keystore.properties`) is used which is not
+used for the actual deployment in the different app stores.
 
 
 ## Documentation
@@ -148,18 +109,33 @@ resulting page at <http://localhost:6419>.
 grip docs/developer-notes.md
 ```
 
-
 ## GitHub Page
 
-The GitHub is the projects HTML page which at the moment only exists
-for the privacy policy of the app. To render the GitHub page based on
-[jekyll] locally, do:
+GitHub serves the projects HTML page. To render the GitHub page based
+on [jekyll] locally, run the following commands:
 
-* Run `scripts/make docs --jekyll-serve`
+* Change to `docs` directory
+* Build Docker container
+
+  ```
+  docker build -t yacguide-docs .
+  ```
+* Build HTML page
+
+  ```
+  docker run \
+      --interactive \
+      --tty \
+      --rm \
+      --network host \
+      --publish 4000:4000 \
+      --name yacguide-docs \
+      yacguide-docs \
+      bundle exec jekyll serve
+  ```
 * Access rendered page with address shown by the script output
 
 
-[Docker Hub]: https://hub.docker.com/repository/docker/yacgroup/yacguide-build
 [gfm]: https://github.github.com/gfm
 [grip]: https://github.com/joeyespo/grip
 [jekyll]: https://jekyllrb.com/

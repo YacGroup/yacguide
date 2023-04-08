@@ -1,6 +1,6 @@
 # YacGuide Android Application
 #
-# Copyright (C) 2020 Christian Sommer
+# Copyright (C) 2020, 2023 Christian Sommer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,68 +20,15 @@
 import os
 import re
 from datetime import datetime
-import shlex
 # https://gitpython.readthedocs.io/en/stable/index.html
 import git
 import packaging.version
 
 from . import utils
-from . import docker
 
 
 RELEASE_TYPES = ["dev", "stable"]
 GRADLE_FILE = os.path.join(os.getcwd(), "app", "build.gradle")
-
-
-class App():
-    """App class"""
-
-    def __init__(self):
-        self.container = docker.BuildContainer()
-
-    def exec_gradle_cmd(self, args):
-        """Execute Gradle command with given arguments.
-
-        Args:
-            args (str, list(str)): Gradle command arguments
-        """
-        cmd = ["./gradlew"]
-        cmd += ["--gradle-user-home"]
-        cmd += [os.path.join("$(pwd)", ".gradle")]
-        if isinstance(args, list):
-            cmd += args
-        else:
-            cmd += [args]
-        cmd_str = shlex.join(cmd)
-        self.container.execute_user(cmd_str)
-
-    def run_tests(self):
-        """Run tests."""
-        self.exec_gradle_cmd("test")
-
-    def build_dists(self, releases=None):
-        """Build distributions.
-
-        Args:
-            releases (list(str), optional): Releases to build.
-                If not specified, all release are built.
-        """
-        targets = ["clean"]
-        if releases:
-            for release in releases:
-                target = "bundle" + release.capitalize() + "Release"
-                targets.append(target)
-        self.exec_gradle_cmd(targets)
-
-    def deploy(self, release=None):
-        """Deploy app to Google Play Store.
-
-        Args:
-            release (str, optional): Releases to deploy.
-        """
-        target = "publish{0}ReleaseBundle".\
-            format(release.capitalize())
-        self.exec_gradle_cmd(target)
 
 
 class Release():
@@ -157,9 +104,7 @@ class Release():
         if flavor == "stable":
             # Convert 'x.y.z' to 'XXXYYYZZZ'
             major, minor, bug = version.split(".")
-            code_str = "{0:0>3}{1:0>3}{2:0>3}".format(
-                major, minor, bug
-            )
+            code_str = f"{major:0>3}{minor:0>3}{bug:0>3}"
             # Get rid of leading zeros.
             code = int(code_str)
         else:
@@ -187,7 +132,7 @@ class Release():
         with open(GRADLE_FILE, "w") as fobj:
             fobj.write(build_gradle)
         self.repo.index.add([GRADLE_FILE])
-        self.repo.index.commit("Daily dev %s" % version)
+        self.repo.index.commit(f"Daily dev {version}")
 
     def create_dev_release(self, version=None):
         """Create a development release for given version.
@@ -197,11 +142,11 @@ class Release():
         """
         if not version:
             version = datetime.now().strftime("%Y%m%d")
-        tag_name = "dev-%s" % version
+        tag_name = f"dev-{version}"
         self.update_dev_version(version)
         self.repo.create_tag(
             path=tag_name,
-            message="Daily dev %s" % version)
+            message="Daily dev {version}")
         print("""\n
 Next step:
 ----------
@@ -225,7 +170,7 @@ Next step:
         with open(GRADLE_FILE, "w") as fobj:
             fobj.write(build_gradle)
         self.repo.index.add([GRADLE_FILE])
-        self.repo.index.commit("Release %s" % version)
+        self.repo.index.commit(f"Release {version}")
 
     def check_stable_release(self, version):
         """Check version string for stable release."""
@@ -244,7 +189,7 @@ Next step:
             # Tag does not exists.
             pass
         else:
-            utils.error("Version '%s' already exists." % version)
+            utils.error(f"Version '{version}' already exists.")
         # Version is increasing?
         pkg_ver_parse = packaging.version.parse
         re_tag_name = re.compile(r'v' + re_pat_ver)
@@ -265,10 +210,10 @@ Next step:
         if not self.skip_checks:
             self.check_stable_release(version=version)
         self.update_stable_version(version)
-        tag_name = "v%s" % version
+        tag_name = f"v{version}"
         self.repo.create_tag(
             path=tag_name,
-            message="Release %s" % version)
+            message=f"Release {version}")
         print("""\n
 Next step:
 ----------
