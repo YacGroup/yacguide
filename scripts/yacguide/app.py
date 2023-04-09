@@ -233,8 +233,9 @@ Next step:
         if not version:
             utils.error("Empty version.")
         # Format correct?
-        rexpr = re.compile(r'\d+\.\d+.\d+')
-        if not rexpr.match(version):
+        re_pat_ver = r'\d+\.\d+\.\d+'
+        re_ver = re.compile(re_pat_ver)
+        if not re_ver.match(version):
             utils.error("Invalid version format.")
         # Release tag already exists?
         try:
@@ -246,7 +247,11 @@ Next step:
             utils.error("Version '%s' already exists." % version)
         # Version is increasing?
         pkg_ver_parse = packaging.version.parse
+        re_tag_name = re.compile(r'v' + re_pat_ver)
         for tag in self.repo.tags:
+            if not re_tag_name.match(tag.name):
+                # Skip tags for non-stable versions
+                continue
             tag_version = tag.name[1:]
             if pkg_ver_parse(version) < pkg_ver_parse(tag_version):
                 utils.error("Version not increasing.")
