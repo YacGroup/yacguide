@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Fabian Kantereit
+ *               2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,32 +64,19 @@ abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNa
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         onStop()
         when (item.itemId) {
-            R.id.nav_database -> {
-                val intent = Intent(this, CountryActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_tourbook -> {
-                val intent = Intent(this, TourbookActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_region_manager -> {
-                val intent = Intent(this, RegionManagerActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_preferences -> {
-                val intent = Intent(this, PreferencesActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_about -> {
-                val intent = Intent(this, AboutActivity::class.java)
-                startActivity(intent)
-            }
+            R.id.nav_database -> Intent(this, CountryActivity::class.java)
+            R.id.nav_tourbook -> Intent(this, TourbookActivity::class.java)
+            R.id.nav_statistics -> Intent(this, StatisticsActivity::class.java)
+            R.id.nav_region_manager -> Intent(this, RegionManagerActivity::class.java)
+            R.id.nav_preferences -> Intent(this, PreferencesActivity::class.java)
+            R.id.nav_about -> Intent(this, AboutActivity::class.java)
+            else -> null
+        }?.let {
+            startActivity(it)
         }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
+        findViewById<DrawerLayout>(R.id.drawer_layout).closeDrawer(GravityCompat.START)
         finish()
         return true
     }
