@@ -108,7 +108,6 @@ class TourbookActivity : BaseNavigationActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_statistics -> _showStatistics()
             R.id.action_import -> _selectFileImport()
             R.id.action_export -> _selectExportFormat()
             else -> return super.onOptionsItemSelected(item)
@@ -156,10 +155,6 @@ class TourbookActivity : BaseNavigationActivity() {
     fun goToPrevious(v: View) {
         _currentYear = _availableYears[_availableYears.indexOf(_currentYear) - 1]
         _displayContent()
-    }
-
-    private fun _showStatistics() {
-        startActivity(Intent(this@TourbookActivity, StatisticsActivity::class.java))
     }
 
     private fun _import(uri: Uri) {

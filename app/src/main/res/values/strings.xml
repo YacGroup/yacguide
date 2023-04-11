@@ -37,6 +37,7 @@
     <string name="menu_database">Datenbank</string>
     <string name="action_settings">Einstellungen</string>
     <string name="menu_tourbook">Tourenbuch</string>
+    <string name="menu_statistics">Statistiken</string>
     <string name="menu_region_manager">Gebiete verwalten</string>
     <string name="menu_about">Über <xliff:g id="app_name">%1$s</xliff:g></string>
     <string name="nav_header_desc">@string/app_name_long</string>
@@ -46,7 +47,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Submenus -->
-    <string name="statistics">Statistiken</string>
     <string name="import_tourbook">Import</string>
     <string name="export_tourbook">Export</string>
     <string name="download_all">Alle aktualisieren</string>

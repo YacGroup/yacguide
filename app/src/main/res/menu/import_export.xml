@@ -18,9 +18,6 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/action_statistics"
-        android:title="@string/statistics"/>
-    <item
         android:id="@+id/action_import"
         android:title="@string/import_tourbook"/>
     <item

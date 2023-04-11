@@ -30,7 +30,7 @@ class StatisticsActivity : BaseNavigationActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTitle(R.string.statistics)
+        setTitle(R.string.menu_statistics)
 
         _db = DatabaseWrapper(this)
         _viewAdapter = StatisticsViewAdapter()

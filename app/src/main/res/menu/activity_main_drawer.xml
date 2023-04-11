@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright (C) 2019 Fabian Kantereit
+                2023 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +30,10 @@
             android:id="@+id/nav_tourbook"
             android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="@string/menu_tourbook"/>
+        <item
+            android:id="@+id/nav_statistics"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="@string/menu_statistics" />
         <item
             android:id="@+id/nav_region_manager"
             android:icon="@android:drawable/ic_menu_save"
