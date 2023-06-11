@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.textfield.TextInputLayout
 import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
@@ -52,8 +53,10 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             })
         }
 
-        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
+        searchBarLayout.findViewById<TextInputLayout>(R.id.searchTextInputLayout).apply {
             setHint(searchHintResource)
+        }
+        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
             onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
