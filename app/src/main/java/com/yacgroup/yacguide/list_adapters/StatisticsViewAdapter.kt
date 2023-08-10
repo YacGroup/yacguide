@@ -28,26 +28,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.DefaultValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.utils.AxisFormatter
+import com.yacgroup.yacguide.utils.IntValueFormatter
 
 data class Statistic(
     val name: String,
     val stackTitles: List<String>,
     val data: Map<String, BarEntry>
 )
-
-class AxisFormatter(private val _labels: List<String>) : ValueFormatter() {
-    // This class provides custom axis labels different from indices
-    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-        return _labels[value.toInt()]
-    }
-}
 
 class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statistic, RecyclerView.ViewHolder>(StatisticDiffCallback()) {
 
@@ -61,7 +53,7 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
             val dataSet = _generateDataSet(stat)
             with(_chart) {
                 data = BarData(dataSet).apply {
-                    setValueFormatter(DefaultValueFormatter(0)) // Display values as integers
+                    setValueFormatter(IntValueFormatter())
                 }
                 layoutParams.height = 100 * stat.data.size
                 description.isEnabled = false

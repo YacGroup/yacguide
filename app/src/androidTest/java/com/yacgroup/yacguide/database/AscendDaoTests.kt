@@ -182,6 +182,23 @@ class AscendDaoTests {
         }
         assertTrue(equal(years, _ascendDao.getYearsBelowStyleId(styleId).toList()))
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAscendCountsPerYear_invalidStyleIdRange_returnsYearCountsOfZero() = runTest {
+        _ascendDao.getAscendCountPerYear(5, 2).forEach { assertEquals(0, it.count) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAscendCountsPerYear_validStyleIdRange_returnsListWithAccordingStyleCountsPerYear() = runTest {
+        val leadAscends = ASCENDS.filter { ascend ->
+            ascend.styleId in (AscendStyle.eONSIGHT.id..AscendStyle.eHOCHGESCHLEUDERT.id)
+        }
+        _ascendDao.getAscendCountPerYear(AscendStyle.eONSIGHT.id, AscendStyle.eHOCHGESCHLEUDERT.id).forEach { leadCount ->
+            assertEquals(leadAscends.filter { it.year == leadCount.year }.size, leadCount.count)
+        }
+    }
 }
 
 

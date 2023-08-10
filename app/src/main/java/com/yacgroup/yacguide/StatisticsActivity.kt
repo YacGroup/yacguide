@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.BarEntry
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.list_adapters.Statistic
 import com.yacgroup.yacguide.list_adapters.StatisticsViewAdapter
+import com.yacgroup.yacguide.utils.AscendStyle
 
 class StatisticsActivity : BaseNavigationActivity() {
 
@@ -35,7 +36,6 @@ class StatisticsActivity : BaseNavigationActivity() {
         setTitle(R.string.menu_statistics)
 
         _db = DatabaseWrapper(this)
-
         _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
@@ -48,21 +48,34 @@ class StatisticsActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent() {
-        // Placeholders:
+        // The following counts contain all years, even if there was no ascent of the according style.
+        // This means that the list sizes are all equal.
+        val soloCounts = _db.getAscendCountPerYear(AscendStyle.eSOLO.id)
+        val leadCounts = _db.getAscendCountPerYear(AscendStyle.eONSIGHT.id, AscendStyle.eHOCHGESCHLEUDERT.id)
+        val followCounts = _db.getAscendCountPerYear(AscendStyle.eALTERNATINGLEADS.id, AscendStyle.eHINTERHERGEHAMPELT.id)
+        val unknownCounts = _db.getAscendCountPerYear(AscendStyle.eUNKNOWN.id)
+        val otherCounts = followCounts.map { followCount ->
+            AscendCount(followCount.year, followCount.count + unknownCounts.first {
+                it.year == followCount.year
+            }.count)
+        }
         val statistics = listOf(
-            Statistic("Statistik 1", listOf("Stat 1.1", "Stat 1.2"), mapOf(
-                "2002" to BarEntry(0f, floatArrayOf(10f, 3f)),
-                "2003" to BarEntry(1f, floatArrayOf(17f, 4f)),
-                "2020" to BarEntry(2f, floatArrayOf(22f, 5f))
-            )),
-            Statistic("Statistik 2", listOf(""), mapOf(
-                "2002" to BarEntry(0f, 10f),
-                "2003" to BarEntry(1f, 17f),
-                "2020" to BarEntry(2f, 22f),
-                "2021" to BarEntry(3f, 45f),
-                "2022" to BarEntry(4f, 17f),
-                "2023" to BarEntry(5f, 62f)
-            ))
+            Statistic(
+                getString(R.string.ascends_per_year),
+                listOf(
+                    getString(R.string.others),
+                    getString(R.string.lead),
+                    getString(R.string.solo)
+                ),
+                soloCounts.mapIndexed { idx, ascendCount ->
+                    val yearLabel = if (ascendCount.year == 0) "" else ascendCount.year.toString()
+                    yearLabel to BarEntry(idx.toFloat(), floatArrayOf(
+                        otherCounts[idx].count.toFloat(),
+                        leadCounts[idx].count.toFloat(),
+                        soloCounts[idx].count.toFloat()
+                    ))
+                }.toMap()
+            )
         )
         _viewAdapter.submitList(statistics)
     }

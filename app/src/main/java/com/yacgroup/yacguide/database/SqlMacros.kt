@@ -55,6 +55,9 @@ class SqlMacros {
         const val ORDERED_BY_ROCK = "ORDER BY Rock.nr"
         const val ORDERED_BY_ROUTE = "ORDER BY Route.nr"
         const val ORDERED_BY_DATE = "ORDER BY Ascend.year, Ascend.month, Ascend.day"
+        const val ORDERED_BY_YEAR = "ORDER BY Ascend.year"
+
+        const val GROUP_BY_YEAR = "GROUP BY Ascend.year"
 
         const val VIA_ROUTES_ASCENDS = "JOIN Ascend ON Ascend.routeId = Route.id"
         const val VIA_ROCKS_ROUTES = "JOIN Route ON Route.parentId = Rock.id"
