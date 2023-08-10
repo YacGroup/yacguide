@@ -123,13 +123,14 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            findViewById(R.id.searchBarLayout),
-            R.string.route_search,
-            getString(R.string.only_official_routes),
-            resources.getBoolean(R.bool.only_official_routes),
-            customSettings,
-            { onlyOfficialRoutes -> _onlyOfficialRoutes = onlyOfficialRoutes },
-            { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) })
+            searchBarLayout = findViewById(R.id.searchBarLayout),
+            searchHintResource = R.string.route_search,
+            checkBoxTitle = getString(R.string.only_official_routes),
+            checkBoxDefaultValue = resources.getBoolean(R.bool.only_official_routes),
+            _settings = customSettings,
+            initCallback = { onlyOfficialRoutes -> _onlyOfficialRoutes = onlyOfficialRoutes },
+            updateCallback = { routeNamePart, onlyOfficialRoutes -> _onSearchBarUpdate(routeNamePart, onlyOfficialRoutes) }
+        )
 
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
             _rock = db.getRock(activityLevel.parentUId.id)
@@ -354,4 +355,3 @@ class RouteGetter(
     val getProjects: () -> List<Route>,
     val getBotches: () -> List<Route>
 )
-

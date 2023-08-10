@@ -78,13 +78,14 @@ class RockActivity : TableActivityWithOptionsMenu() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            findViewById(R.id.searchBarLayout),
-            R.string.rock_search,
-            getString(R.string.only_official_summits),
-            resources.getBoolean(R.bool.only_official_summits),
-            customSettings,
-            { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
-            { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) })
+            searchBarLayout = findViewById(R.id.searchBarLayout),
+            searchHintResource = R.string.rock_search,
+            checkBoxTitle = getString(R.string.only_official_summits),
+            checkBoxDefaultValue = resources.getBoolean(R.bool.only_official_summits),
+            _settings = customSettings,
+            initCallback = { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
+            updateCallback = { rockNamePart, onlyOfficialSummits -> _onSearchBarUpdate(rockNamePart, onlyOfficialSummits) }
+        )
 
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
             _areItemsTheSame = { rock1, rock2 -> rock1.id == rock2.id },

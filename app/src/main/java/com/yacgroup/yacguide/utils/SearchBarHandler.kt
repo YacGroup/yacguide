@@ -23,7 +23,6 @@ import android.content.SharedPreferences
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
@@ -35,10 +34,10 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
                        checkBoxTitle: String = "",
                        checkBoxDefaultValue: Boolean = false,
+                       checkBoxVisibility: Int = View.VISIBLE,
                        private val _settings: SharedPreferences? = null,
-                       private val _initCallback: ((Boolean) -> Unit)? = null,
-                       private val _updateCallback: ((String, Boolean) -> Unit)? = null,
-                       checkBoxVisibility: Int = VISIBLE) {
+                       initCallback: (Boolean) -> Unit = {},
+                       updateCallback: (String, Boolean) -> Unit = { _, _ ->}) {
 
     private var _namePart: String = ""
     private var _checkBoxIsChecked: Boolean = false
@@ -54,7 +53,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             isChecked = _checkBoxIsChecked
             setOnClickListener {
                 _checkBoxIsChecked = isChecked
-                _updateCallback?.invoke(_namePart, _checkBoxIsChecked)
+                updateCallback(_namePart, _checkBoxIsChecked)
             }
         }
 
@@ -71,12 +70,12 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
                     _namePart = text.toString()
-                    _updateCallback?.invoke(_namePart, _checkBoxIsChecked)
+                    updateCallback(_namePart, _checkBoxIsChecked)
                 }
             })
         }
 
-        _initCallback?.invoke(_checkBoxIsChecked)
+        initCallback(_checkBoxIsChecked)
     }
 
     fun storeCustomSettings(key: String) {

@@ -29,7 +29,6 @@ import android.text.TextWatcher
 import android.util.SparseIntArray
 import android.view.MenuItem
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -81,7 +80,7 @@ class PartnersActivity : AppCompatActivity() {
 
         _searchBarHandler = SearchBarHandler(
             searchBarLayout = findViewById(R.id.searchBarLayout),
-            checkBoxVisibility = INVISIBLE,
+            checkBoxVisibility = View.INVISIBLE,
             searchHintResource = R.string.partner_search,
         )
 
