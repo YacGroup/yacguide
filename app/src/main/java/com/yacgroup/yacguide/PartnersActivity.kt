@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.SearchBarHandler
 import com.yacgroup.yacguide.utils.VisualUtils
 
 import java.util.ArrayList
@@ -46,6 +48,7 @@ import java.util.ArrayList
 class PartnersActivity : AppCompatActivity() {
 
     private val _ascendPartnerCount = SparseIntArray()
+    private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
     private lateinit var _visualUtils: VisualUtils
     private lateinit var _db: DatabaseWrapper
@@ -74,6 +77,12 @@ class PartnersActivity : AppCompatActivity() {
                 _displayContent()
             }
         })
+
+        _searchBarHandler = SearchBarHandler(
+            searchBarLayout = findViewById(R.id.searchBarLayout),
+            checkBoxVisibility = View.INVISIBLE,
+            searchHintResource = R.string.partner_search,
+        )
 
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
             _areItemsTheSame = { partner1, partner2 -> partner1.id == partner2.id },

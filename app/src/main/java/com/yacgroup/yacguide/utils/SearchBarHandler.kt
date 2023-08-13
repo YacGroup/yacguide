@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Axel Paetzold
+ * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,34 +27,40 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.textfield.TextInputLayout
 import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
-                       checkBoxTitle: String,
-                       checkBoxDefaultValue: Boolean,
-                       private val _settings: SharedPreferences,
-                       private val _initCallback: (Boolean) -> Unit,
-                       private val _updateCallback: (String, Boolean) -> Unit) {
+                       checkBoxTitle: String = "",
+                       checkBoxDefaultValue: Boolean = false,
+                       checkBoxVisibility: Int = View.VISIBLE,
+                       private val _settings: SharedPreferences? = null,
+                       initCallback: (Boolean) -> Unit = {},
+                       updateCallback: (String, Boolean) -> Unit = { _, _ ->}) {
 
     private var _namePart: String = ""
-    private var _onlyOfficialObjects: Boolean = false
+    private var _checkBoxIsChecked: Boolean = false
 
     init {
-        _onlyOfficialObjects = _settings.getBoolean(
+        _checkBoxIsChecked = _settings?.getBoolean(
             checkBoxTitle,
-            checkBoxDefaultValue)
+            checkBoxDefaultValue
+        ) ?: false
         searchBarLayout.findViewById<CheckBox>(R.id.onlyOfficialObjectsCheckbox).apply {
+            visibility = checkBoxVisibility
             text = checkBoxTitle
-            isChecked = _onlyOfficialObjects
-            setOnClickListener(View.OnClickListener {
-                _onlyOfficialObjects = isChecked
-                _updateCallback(_namePart, _onlyOfficialObjects)
-            })
+            isChecked = _checkBoxIsChecked
+            setOnClickListener {
+                _checkBoxIsChecked = isChecked
+                updateCallback(_namePart, _checkBoxIsChecked)
+            }
         }
 
-        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
+        searchBarLayout.findViewById<TextInputLayout>(R.id.searchTextInputLayout).apply {
             setHint(searchHintResource)
+        }
+        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
             onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -63,17 +70,17 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable) {
                     _namePart = text.toString()
-                    _updateCallback(_namePart, _onlyOfficialObjects)
+                    updateCallback(_namePart, _checkBoxIsChecked)
                 }
             })
         }
 
-        _initCallback(_onlyOfficialObjects)
+        initCallback(_checkBoxIsChecked)
     }
 
     fun storeCustomSettings(key: String) {
-        _settings.edit().apply {
-            putBoolean(key, _onlyOfficialObjects)
+        _settings?.edit()?.apply {
+            putBoolean(key, _checkBoxIsChecked)
             apply()
         }
     }
