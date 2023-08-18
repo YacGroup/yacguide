@@ -22,14 +22,12 @@ import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.SparseIntArray
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -48,12 +46,14 @@ import java.util.ArrayList
 class PartnersActivity : AppCompatActivity() {
 
     private val _ascendPartnerCount = SparseIntArray()
+    private lateinit var _customSettings: SharedPreferences
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
     private lateinit var _visualUtils: VisualUtils
     private lateinit var _db: DatabaseWrapper
     private lateinit var _selectedPartnerIds: MutableList<Int>
     private var _partnerNamePart: String = ""
+    private var _sortAlphabetically: Boolean = false
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,27 +61,18 @@ class PartnersActivity : AppCompatActivity() {
         setContentView(R.layout.activity_partners)
 
         _db = DatabaseWrapper(this)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                 .orEmpty().toMutableList()
 
-        val searchEditText = findViewById<EditText>(R.id.searchEditText)
-        searchEditText.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable) {
-                _partnerNamePart = searchEditText.text.toString()
-                _displayContent()
-            }
-        })
-
         _searchBarHandler = SearchBarHandler(
             searchBarLayout = findViewById(R.id.searchBarLayout),
-            checkBoxVisibility = View.INVISIBLE,
             searchHintResource = R.string.partner_search,
+            _checkBoxTitle = getString(R.string.sort_alphabetically),
+            checkBoxDefaultValue = resources.getBoolean(R.bool.sort_alphabetically),
+            _settings = _customSettings,
+            initCallback = { sortAlphabetically -> _sortAlphabetically = sortAlphabetically },
+            updateCallback = { partnerNamePart, sortAlphabetically -> _onSearchBarUpdate(partnerNamePart, sortAlphabetically) }
         )
 
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
@@ -128,6 +119,11 @@ class PartnersActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStop() {
+        _searchBarHandler.storeCustomSettings()
+        super.onStop()
+    }
+
     @Suppress("UNUSED_PARAMETER")
     fun addPartner(v: View) {
         _updatePartner(null, R.string.dialog_text_add_partner)
@@ -143,7 +139,7 @@ class PartnersActivity : AppCompatActivity() {
     }
 
     private fun _displayContent() {
-        setTitle(R.string.title_climbing_partner)
+        setTitle(R.string.partner)
 
         // We need to sort the partners according to the number of ascends you have done with them
         _ascendPartnerCount.clear()
@@ -154,11 +150,16 @@ class PartnersActivity : AppCompatActivity() {
             }
         }
 
-        val sortedPartners = _db.getPartners().sortedByDescending {
-            _ascendPartnerCount.get(it.id, 0)
-        }.filter {
-            it.name.orEmpty().lowercase().contains(_partnerNamePart.lowercase())
-        }
+        val filteredPartners =
+            if (_partnerNamePart.isNotEmpty())
+                _db.getPartners().filter { it.name.orEmpty().lowercase().contains(_partnerNamePart.lowercase()) }
+            else
+                _db.getPartners()
+        val sortedPartners =
+            if (_sortAlphabetically)
+                filteredPartners.sortedBy { it.name.orEmpty().lowercase() }
+            else
+                filteredPartners.sortedByDescending { _ascendPartnerCount.get(it.id, 0) }
         _viewAdapter.submitList(sortedPartners)
     }
 
@@ -242,5 +243,11 @@ class PartnersActivity : AppCompatActivity() {
             _db.getPartner(partner.id)?.let { dbAction(it) }
         }
         _viewAdapter.notifyItemChanged(viewHolder.adapterPosition)
+    }
+
+    private fun _onSearchBarUpdate(partnerNamePart: String, sortAlphabetically: Boolean) {
+        _partnerNamePart = partnerNamePart
+        _sortAlphabetically = sortAlphabetically
+        _displayContent()
     }
 }

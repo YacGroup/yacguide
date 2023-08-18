@@ -28,7 +28,7 @@
     android:focusableInTouchMode="true">
 
     <CheckBox
-        android:id="@+id/onlyOfficialObjectsCheckbox"
+        android:id="@+id/filterCheckbox"
         android:layout_width="0dp"
         android:layout_height="48dp"
         app:layout_constraintBottom_toBottomOf="parent"

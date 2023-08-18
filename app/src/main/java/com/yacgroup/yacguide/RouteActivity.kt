@@ -125,7 +125,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         _searchBarHandler = SearchBarHandler(
             searchBarLayout = findViewById(R.id.searchBarLayout),
             searchHintResource = R.string.route_search,
-            checkBoxTitle = getString(R.string.only_official_routes),
+            _checkBoxTitle = getString(R.string.only_official_routes),
             checkBoxDefaultValue = resources.getBoolean(R.bool.only_official_routes),
             _settings = customSettings,
             initCallback = { onlyOfficialRoutes -> _onlyOfficialRoutes = onlyOfficialRoutes },
@@ -193,7 +193,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     }
 
     override fun onStop() {
-        _searchBarHandler.storeCustomSettings(getString(R.string.only_official_routes))
+        _searchBarHandler.storeCustomSettings()
         super.onStop()
     }
 

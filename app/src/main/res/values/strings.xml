@@ -53,9 +53,6 @@
     <string name="delete">Löschen</string>
     <string name="edit">Bearbeiten</string>
 
-    <!-- Activity names -->
-    <string name="title_climbing_partner">Kletterpartner</string>
-
     <!-- About view -->
     <string name="source_code_and_support">Sourcecode und Support</string>
     <string name="data_src">Datenbezugsquelle</string>
@@ -119,7 +116,7 @@
     <string name="rock">Felsen</string>
     <string name="route">Weg</string>
     <string name="style">Stil</string>
-    <string name="partner">Seilpartner</string>
+    <string name="partner">Kletterpartner</string>
     <string name="notes">Bemerkungen</string>
     <string name="first_ascend_unknown">Erstbegeher unbekannt</string>
     <string name="date_unknown">Datum unbekannt</string>
@@ -147,7 +144,7 @@
 
     <!-- Ascend edit -->
     <string name="ascend_edit_note">Bemerkung:</string>
-    <string name="ascend_edit_partner">Seilpartner:</string>
+    <string name="ascend_edit_partner">Kletterpartner:</string>
     <string name="ascend_edit_date">Datum:</string>
     <string name="ascend_edit_style">Stil:</string>
     <string name="ascend_edit_title">Begehung bearbeiten</string>
@@ -178,6 +175,7 @@
 
     <string name="only_official_summits">Nur offizielle Gipfel</string>
     <string name="only_official_routes">Nur offizielle Wege</string>
+    <string name="sort_alphabetically">Alphabetisch\nsortieren</string>
 
     <!-- Ascend styles -->
     <string name="my_ascends">Meine Begehungen</string>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Axel Paetzold
+ * Copyright (C) 2021, 2023 Axel Paetzold
  * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,9 +32,8 @@ import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
-                       checkBoxTitle: String = "",
+                       private val _checkBoxTitle: String = "",
                        checkBoxDefaultValue: Boolean = false,
-                       checkBoxVisibility: Int = View.VISIBLE,
                        private val _settings: SharedPreferences? = null,
                        initCallback: (Boolean) -> Unit = {},
                        updateCallback: (String, Boolean) -> Unit = { _, _ ->}) {
@@ -44,12 +43,11 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
 
     init {
         _checkBoxIsChecked = _settings?.getBoolean(
-            checkBoxTitle,
+            _checkBoxTitle,
             checkBoxDefaultValue
         ) ?: false
-        searchBarLayout.findViewById<CheckBox>(R.id.onlyOfficialObjectsCheckbox).apply {
-            visibility = checkBoxVisibility
-            text = checkBoxTitle
+        searchBarLayout.findViewById<CheckBox>(R.id.filterCheckbox).apply {
+            text = _checkBoxTitle
             isChecked = _checkBoxIsChecked
             setOnClickListener {
                 _checkBoxIsChecked = isChecked
@@ -78,9 +76,9 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
         initCallback(_checkBoxIsChecked)
     }
 
-    fun storeCustomSettings(key: String) {
+    fun storeCustomSettings() {
         _settings?.edit()?.apply {
-            putBoolean(key, _checkBoxIsChecked)
+            putBoolean(_checkBoxTitle, _checkBoxIsChecked)
             apply()
         }
     }
