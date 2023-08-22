@@ -80,7 +80,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
         _searchBarHandler = SearchBarHandler(
             searchBarLayout = findViewById(R.id.searchBarLayout),
             searchHintResource = R.string.rock_search,
-            checkBoxTitle = getString(R.string.only_official_summits),
+            _checkBoxTitle = getString(R.string.only_official_summits),
             checkBoxDefaultValue = resources.getBoolean(R.bool.only_official_summits),
             _settings = customSettings,
             initCallback = { onlyOfficialSummits -> _onlyOfficialSummits = onlyOfficialSummits },
@@ -127,7 +127,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
     }
 
     override fun onStop() {
-        _searchBarHandler.storeCustomSettings(getString(R.string.only_official_summits))
+        _searchBarHandler.storeCustomSettings()
         super.onStop()
     }
 
@@ -148,8 +148,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
         }
     }
 
-    private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean)
-    {
+    private fun _onSearchBarUpdate(rockNamePart: String, onlyOfficialSummits: Boolean) {
         _rockNamePart = rockNamePart
         _onlyOfficialSummits = onlyOfficialSummits
         displayContent()
