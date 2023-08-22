@@ -67,7 +67,7 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
             routeFirstName = it.first
             routeSecondName = it.second
         }
-        routeGrade = route?.grade.toString()
+        routeGrade = route?.grade.orEmpty()
         notes = ascend.notes.orEmpty()
         date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
         style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
