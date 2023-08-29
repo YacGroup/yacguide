@@ -49,7 +49,7 @@ class AxisFormatter(private val _labels: List<String>) : ValueFormatter() {
     }
 }
 
-class StatisticsViewAdapter : ListAdapter<Statistic, RecyclerView.ViewHolder>(StatisticDiffCallback()) {
+class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statistic, RecyclerView.ViewHolder>(StatisticDiffCallback()) {
 
     inner class StatisticViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val _statisticNameLayout = view.findViewById<LinearLayout>(R.id.titleLayout)
@@ -103,12 +103,12 @@ class StatisticsViewAdapter : ListAdapter<Statistic, RecyclerView.ViewHolder>(St
     }
 
     private fun _generateDataSet(stat: Statistic): BarDataSet {
-        val colorOffset = 155 / stat.stackTitles.size
+        val colorOffset = 255f / stat.stackTitles.size
         return BarDataSet(stat.data.values.toList(), stat.name).apply {
             label = ""
             stackLabels = stat.stackTitles.toTypedArray()
             colors = List(stat.stackTitles.size) { idx ->
-                Color.rgb(100, 255 - idx * colorOffset, 100)
+                Color.rgb(_baseColor.red(), _baseColor.green(), 255f - idx * colorOffset)
             }
         }
     }

@@ -18,6 +18,7 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
+import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.data.BarEntry
 import com.yacgroup.yacguide.database.*
@@ -34,7 +35,8 @@ class StatisticsActivity : BaseNavigationActivity() {
         setTitle(R.string.menu_statistics)
 
         _db = DatabaseWrapper(this)
-        _viewAdapter = StatisticsViewAdapter()
+
+        _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
