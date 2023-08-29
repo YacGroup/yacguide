@@ -136,6 +136,7 @@ dependencies {
 
     implementation "net.sf.kxml:kxml2:2.3.0"
     implementation "com.caverock:androidsvg:1.4"
+    implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 

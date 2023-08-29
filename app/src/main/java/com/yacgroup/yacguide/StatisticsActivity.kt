@@ -18,7 +18,9 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
+import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.data.BarEntry
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.list_adapters.Statistic
 import com.yacgroup.yacguide.list_adapters.StatisticsViewAdapter
@@ -33,7 +35,8 @@ class StatisticsActivity : BaseNavigationActivity() {
         setTitle(R.string.menu_statistics)
 
         _db = DatabaseWrapper(this)
-        _viewAdapter = StatisticsViewAdapter()
+
+        _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
 
@@ -45,9 +48,21 @@ class StatisticsActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent() {
+        // Placeholders:
         val statistics = listOf(
-            Statistic("Statistik 1"),
-            Statistic("Statistik 2")
+            Statistic("Statistik 1", listOf("Stat 1.1", "Stat 1.2"), mapOf(
+                "2002" to BarEntry(0f, floatArrayOf(10f, 3f)),
+                "2003" to BarEntry(1f, floatArrayOf(17f, 4f)),
+                "2020" to BarEntry(2f, floatArrayOf(22f, 5f))
+            )),
+            Statistic("Statistik 2", listOf(""), mapOf(
+                "2002" to BarEntry(0f, 10f),
+                "2003" to BarEntry(1f, 17f),
+                "2020" to BarEntry(2f, 22f),
+                "2021" to BarEntry(3f, 45f),
+                "2022" to BarEntry(4f, 17f),
+                "2023" to BarEntry(5f, 62f)
+            ))
         )
         _viewAdapter.submitList(statistics)
     }
