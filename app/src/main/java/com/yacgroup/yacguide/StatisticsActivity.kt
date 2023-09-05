@@ -63,20 +63,27 @@ class StatisticsActivity : BaseNavigationActivity() {
             Statistic(
                 getString(R.string.ascends_per_year),
                 listOf(
-                    getString(R.string.others),
+                    getString(R.string.follow) + "/" + getString(R.string.others),
                     getString(R.string.lead),
                     getString(R.string.solo)
                 ),
-                soloCounts.mapIndexed { idx, ascendCount ->
+                otherCounts.mapIndexed { idx, ascendCount ->
                     val yearLabel = if (ascendCount.year == 0) "" else ascendCount.year.toString()
-                    yearLabel to BarEntry(idx.toFloat(), floatArrayOf(
-                        otherCounts[idx].count.toFloat(),
-                        leadCounts[idx].count.toFloat(),
-                        soloCounts[idx].count.toFloat()
-                    ))
+                    try {
+                        yearLabel to BarEntry(idx.toFloat(), floatArrayOf(
+                            otherCounts[idx].count.toFloat(),
+                            leadCounts[idx].count.toFloat(),
+                            soloCounts[idx].count.toFloat()
+                        ))
+                    } catch (e: IndexOutOfBoundsException) {
+                        // According to the SQL query in getAscendCountPerYear() Dao-API,
+                        // this should never happen.
+                        yearLabel to BarEntry(idx.toFloat(), floatArrayOf(0f, 0f, 0f))
+                    }
                 }.toMap()
             )
         )
         _viewAdapter.submitList(statistics)
     }
+
 }

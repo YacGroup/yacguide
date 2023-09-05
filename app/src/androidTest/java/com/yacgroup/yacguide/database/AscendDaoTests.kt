@@ -199,6 +199,18 @@ class AscendDaoTests {
             assertEquals(leadAscends.filter { it.year == leadCount.year }.size, leadCount.count)
         }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAscendCountsPerYear_callMultipleTimes_returnsListsOfEqualLengthAndYearOrder() = runTest {
+        val followCounts = _ascendDao.getAscendCountPerYear(AscendStyle.eALTERNATINGLEADS.id, AscendStyle.eHINTERHERGEHAMPELT.id)
+        val soloCounts = _ascendDao.getAscendCountPerYear(AscendStyle.eSOLO.id, AscendStyle.eSOLO.id)
+
+        assertEquals(followCounts.size, soloCounts.size)
+        followCounts.forEachIndexed { idx, followCount ->
+            assertEquals(followCount.year, soloCounts[idx].year)
+        }
+    }
 }
 
 
