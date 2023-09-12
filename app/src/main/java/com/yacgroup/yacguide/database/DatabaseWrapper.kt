@@ -45,8 +45,6 @@ class DatabaseWrapper(context: Context) {
 
     fun getCountries() = _db.countryDao().all
 
-    fun getNonEmptyCountries() = _db.countryDao().getAllNonEmpty()
-
     fun getRegions(countryName: String) = _db.regionDao().getAllInCountry(countryName)
 
     fun getNonEmptyRegions() = _db.regionDao().getAllNonEmpty()
@@ -192,6 +190,8 @@ class DatabaseWrapper(context: Context) {
     fun getYearsOfStyle(styleId: Int) = _db.ascendDao().getYears(styleId)
 
     fun getYearsBelowStyleId(styleId: Int) = _db.ascendDao().getYearsBelowStyleId(styleId)
+
+    fun getAscendCountPerYear(startStyleId: Int, endStyleId: Int = startStyleId) = _db.ascendDao().getAscendCountPerYear(startStyleId, endStyleId)
 
     fun getPartners() = _db.partnerDao().all
 

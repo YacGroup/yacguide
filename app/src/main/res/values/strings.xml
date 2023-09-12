@@ -134,6 +134,9 @@
     <string name="rock_collapsed">Achtung: Der Felsen existiert nicht mehr.</string>
     <string name="route_restricted">Achtung: Der Weg ist</string>
 
+    <!-- Statistics -->
+    <string name="ascends_per_year">Begehungen pro Jahr</string>
+
     <!-- Tourbook -->
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
@@ -166,6 +169,8 @@
     <string name="color_ascends">Markierung für bestiegene Felsen/Wege</string>
     <string name="lead">Vorstieg</string>
     <string name="follow">Nachstieg</string>
+    <string name="solo">Solo</string>
+    <string name="others">Sonstige</string>
     <string name="colorize_tourbook_entries">Tourenbucheinträge färben</string>
 
     <string name="reset_database">Auf Werkseinstellungen zurücksetzen</string>

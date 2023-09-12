@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Axel Paetzold
+ * Copyright (C) 2019, 2023 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,17 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.*
 import com.yacgroup.yacguide.database.SqlMacros.Companion.DELETE_ASCENDS
+import com.yacgroup.yacguide.database.SqlMacros.Companion.GROUP_BY_YEAR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_DATE
+import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_YEAR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS_YEARS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ASCENDS_ROUTE
+
+data class AscendCount(
+    val year: Int,
+    val count: Int
+)
 
 @Dao
 interface AscendDao {
@@ -49,6 +56,9 @@ interface AscendDao {
 
     @Query("$SELECT_ASCENDS_YEARS WHERE Ascend.styleId < :styleIdLimit")
     fun getYearsBelowStyleId(styleIdLimit: Int): IntArray
+
+    @Query("SELECT Ascend.year AS year, SUM(CASE WHEN Ascend.styleId BETWEEN :startStyleId AND :endStyleId THEN 1 ELSE 0 END) AS count FROM Ascend $GROUP_BY_YEAR $ORDERED_BY_YEAR")
+    fun getAscendCountPerYear(startStyleId: Int, endStyleId: Int): List<AscendCount>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(ascend: Ascend)
