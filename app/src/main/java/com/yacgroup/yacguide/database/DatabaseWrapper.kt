@@ -183,9 +183,11 @@ class DatabaseWrapper(context: Context) {
 
     fun getRockAscends(rockId: Int) = _db.ascendDao().getAscendsForRock(rockId)
 
-    fun getAscendsOfStyle(year: Int, styleId: Int) = _db.ascendDao().getAll(year, styleId)
+    fun getAscendsBelowStyleId(styleId: Int) = _db.ascendDao().getAscendsBelowStyleId(styleId)
 
-    fun getAscendsBelowStyleId(year: Int, styleId: Int) = _db.ascendDao().getAllBelowStyleId(year, styleId)
+    fun getAscendsOfYearAndStyle(year: Int, styleId: Int) = _db.ascendDao().getAscendsForYearAndStyle(year, styleId)
+
+    fun getAscendsOfYearBelowStyleId(year: Int, styleId: Int) = _db.ascendDao().getAscendsForYearBelowStyleId(year, styleId)
 
     fun getYearsOfStyle(styleId: Int) = _db.ascendDao().getYears(styleId)
 

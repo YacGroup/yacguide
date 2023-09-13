@@ -261,8 +261,8 @@ class TourbookActivity : BaseNavigationActivity() {
 
     private fun _getAscends(): List<Ascend> {
         return when (_tourbookType) {
-            TourbookType.eAscends -> _db.getAscendsBelowStyleId(_currentYear, AscendStyle.eBOTCHED.id)
-            TourbookType.eBotches -> _db.getAscendsOfStyle(_currentYear, AscendStyle.eBOTCHED.id)
+            TourbookType.eAscends -> _db.getAscendsOfYearBelowStyleId(_currentYear, AscendStyle.eBOTCHED.id)
+            TourbookType.eBotches -> _db.getAscendsOfYearAndStyle(_currentYear, AscendStyle.eBOTCHED.id)
         }
     }
 

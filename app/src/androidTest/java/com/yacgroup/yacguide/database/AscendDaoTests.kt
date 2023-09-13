@@ -56,40 +56,48 @@ class AscendDaoTests {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_invalidYear_returnsEmptyList() = runTest {
-        assertTrue(_ascendDao.getAll(INVALID_ID, ASCENDS.first().styleId).isEmpty())
+    fun getAscendsBelowStyleId_returnsCorrespondingAscendsOrderedByDate() = runTest {
+        val refAscend = ASCENDS.last()
+        val ascends = ASCENDS.filter { it.styleId < refAscend.styleId }
+        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsBelowStyleId(refAscend.styleId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_invalidStyleId_returnsEmptyList() = runTest {
-        assertTrue(_ascendDao.getAll(ASCENDS.first().year, INVALID_ID).isEmpty())
+    fun getAscendsForYearAndStyle_invalidYear_returnsEmptyList() = runTest {
+        assertTrue(_ascendDao.getAscendsForYearAndStyle(INVALID_ID, ASCENDS.first().styleId).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAll_yearAndStyleIdAvailable_returnsCorrespondingAscends() = runTest {
+    fun getAscendsForYearAndStyle_invalidStyleId_returnsEmptyList() = runTest {
+        assertTrue(_ascendDao.getAscendsForYearAndStyle(ASCENDS.first().year, INVALID_ID).isEmpty())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun getAscendsForYearAndStyle_yearAndStyleIdAvailable_returnsCorrespondingAscends() = runTest {
         val refAscend = ASCENDS.last()
         val ascends = ASCENDS.filter {
             it.year == refAscend.year && it.styleId == refAscend.styleId
         }
-        assertTrue(equal(ascends, _ascendDao.getAll(refAscend.year, refAscend.styleId)))
+        assertTrue(equal(ascends, _ascendDao.getAscendsForYearAndStyle(refAscend.year, refAscend.styleId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllBelowStyleId_invalidYear_returnsEmptyList() = runTest {
-        assertTrue(_ascendDao.getAllBelowStyleId(INVALID_ID, AscendStyle.ePROJECT.id).isEmpty())
+    fun getAscendsForYearBelowStyleId_invalidYear_returnsEmptyList() = runTest {
+        assertTrue(_ascendDao.getAscendsForYearBelowStyleId(INVALID_ID, AscendStyle.ePROJECT.id).isEmpty())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun getAllBelowStyleId_yearAvailable_returnsCorrespondingAscendsOrderedByDate() = runTest {
+    fun getAscendsForYearBelowStyleId_yearAvailable_returnsCorrespondingAscendsOrderedByDate() = runTest {
         val refAscend = ASCENDS.last()
         val ascends = ASCENDS.filter {
             it.year == refAscend.year && it.styleId < refAscend.styleId
         }
-        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAllBelowStyleId(refAscend.year, refAscend.styleId)))
+        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsForYearBelowStyleId(refAscend.year, refAscend.styleId)))
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

@@ -36,11 +36,14 @@ interface AscendDao {
     @get:Query(SELECT_ASCENDS)
     val all: List<Ascend>
 
+    @Query("$SELECT_ASCENDS WHERE Ascend.styleId < :styleIdLimit $ORDERED_BY_DATE")
+    fun getAscendsBelowStyleId(styleIdLimit: Int): List<Ascend>
+
     @Query("$SELECT_ASCENDS WHERE Ascend.year = :year AND Ascend.styleId = :styleId $ORDERED_BY_DATE")
-    fun getAll(year: Int, styleId: Int): List<Ascend>
+    fun getAscendsForYearAndStyle(year: Int, styleId: Int): List<Ascend>
 
     @Query("$SELECT_ASCENDS WHERE Ascend.year = :year AND Ascend.styleId < :styleIdLimit $ORDERED_BY_DATE")
-    fun getAllBelowStyleId(year: Int, styleIdLimit: Int): List<Ascend>
+    fun getAscendsForYearBelowStyleId(year: Int, styleIdLimit: Int): List<Ascend>
 
     @Query("$SELECT_ASCENDS WHERE Ascend.routeId = :routeId $ORDERED_BY_DATE")
     fun getAscendsForRoute(routeId: Int): List<Ascend>
