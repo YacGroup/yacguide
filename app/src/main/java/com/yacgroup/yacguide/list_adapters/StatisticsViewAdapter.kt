@@ -32,14 +32,9 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.statistics.Statistic
 import com.yacgroup.yacguide.utils.AxisFormatter
 import com.yacgroup.yacguide.utils.IntValueFormatter
-
-data class Statistic(
-    val name: String,
-    val stackTitles: List<String>,
-    val data: Map<String, BarEntry>
-)
 
 class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statistic, RecyclerView.ViewHolder>(StatisticDiffCallback()) {
 
@@ -96,12 +91,15 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
 
     private fun _generateDataSet(stat: Statistic): BarDataSet {
         val colorOffset = 255f / stat.stackTitles.size
-        return BarDataSet(stat.data.values.toList(), stat.name).apply {
-            label = ""
-            stackLabels = stat.stackTitles.toTypedArray()
-            colors = List(stat.stackTitles.size) { idx ->
-                Color.rgb(_baseColor.red(), _baseColor.green(), 255f - idx * colorOffset)
-            }
+        return BarDataSet(
+            stat.data.values.mapIndexed { idx, value ->
+                BarEntry(idx.toFloat(), value.map { it.toFloat() }.toFloatArray())
+            }, stat.name).apply {
+                label = ""
+                stackLabels = stat.stackTitles.toTypedArray()
+                colors = List(stat.stackTitles.size) { idx ->
+                    Color.rgb(_baseColor.red(), _baseColor.green(), 255f - idx * colorOffset)
+                }
         }
     }
 }
