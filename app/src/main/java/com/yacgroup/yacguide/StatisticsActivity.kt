@@ -20,22 +20,19 @@ package com.yacgroup.yacguide
 import android.os.Bundle
 import androidx.core.graphics.toColor
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.data.BarEntry
-import com.yacgroup.yacguide.database.*
-import com.yacgroup.yacguide.list_adapters.Statistic
 import com.yacgroup.yacguide.list_adapters.StatisticsViewAdapter
-import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.statistics.StatisticGenerator
 
 class StatisticsActivity : BaseNavigationActivity() {
 
-    private lateinit var _db: DatabaseWrapper
+    private lateinit var _statsGenerator: StatisticGenerator
     private lateinit var _viewAdapter: StatisticsViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.menu_statistics)
 
-        _db = DatabaseWrapper(this)
+        _statsGenerator = StatisticGenerator(this)
         _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
         findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
     }
@@ -48,42 +45,9 @@ class StatisticsActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent() {
-        // The following counts contain all years, even if there was no ascent of the according style.
-        // This means that the list sizes are all equal.
-        val soloCounts = _db.getAscendCountPerYear(AscendStyle.eSOLO.id)
-        val leadCounts = _db.getAscendCountPerYear(AscendStyle.eONSIGHT.id, AscendStyle.eHOCHGESCHLEUDERT.id)
-        val followCounts = _db.getAscendCountPerYear(AscendStyle.eALTERNATINGLEADS.id, AscendStyle.eHINTERHERGEHAMPELT.id)
-        val unknownCounts = _db.getAscendCountPerYear(AscendStyle.eUNKNOWN.id)
-        val otherCounts = followCounts.map { followCount ->
-            AscendCount(followCount.year, followCount.count + unknownCounts.first {
-                it.year == followCount.year
-            }.count)
-        }
         val statistics = listOf(
-            Statistic(
-                getString(R.string.ascends_per_year),
-                listOf(
-                    getString(R.string.follow) + "/" + getString(R.string.others),
-                    getString(R.string.lead),
-                    getString(R.string.solo)
-                ),
-                otherCounts.mapIndexed { idx, ascendCount ->
-                    val yearLabel = if (ascendCount.year == 0) "" else ascendCount.year.toString()
-                    try {
-                        yearLabel to BarEntry(idx.toFloat(), floatArrayOf(
-                            otherCounts[idx].count.toFloat(),
-                            leadCounts[idx].count.toFloat(),
-                            soloCounts[idx].count.toFloat()
-                        ))
-                    } catch (e: IndexOutOfBoundsException) {
-                        // According to the SQL query in getAscendCountPerYear() Dao-API,
-                        // this should never happen.
-                        yearLabel to BarEntry(idx.toFloat(), floatArrayOf(0f, 0f, 0f))
-                    }
-                }.toMap()
-            )
+            _statsGenerator.generateAscendCountsStatistic()
         )
         _viewAdapter.submitList(statistics)
     }
-
 }
