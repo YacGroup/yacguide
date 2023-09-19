@@ -36,10 +36,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.*
-import com.yacgroup.yacguide.utils.DialogWidgetBuilder
-import com.yacgroup.yacguide.utils.IntentConstants
-import com.yacgroup.yacguide.utils.SearchBarHandler
-import com.yacgroup.yacguide.utils.VisualUtils
+import com.yacgroup.yacguide.utils.*
 
 import java.util.ArrayList
 
@@ -143,7 +140,7 @@ class PartnersActivity : AppCompatActivity() {
 
         // We need to sort the partners according to the number of ascends you have done with them
         _ascendPartnerCount.clear()
-        _db.getAscends().forEach { ascend ->
+        _db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id).forEach { ascend ->
             ascend.partnerIds?.forEach { id ->
                 val prevValue = _ascendPartnerCount.get(id, 0)
                 _ascendPartnerCount.put(id, prevValue + 1)
