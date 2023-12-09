@@ -46,7 +46,8 @@ class StatisticsActivity : BaseNavigationActivity() {
 
     private fun _displayContent() {
         val statistics = listOf(
-            _statsGenerator.generateAscendCountsStatistic()
+            _statsGenerator.generateAscendCountsStatistic(),
+            _statsGenerator.generateMostFrequentPartnersStatistic()
         )
         _viewAdapter.submitList(statistics)
     }
