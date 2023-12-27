@@ -1,25 +1,25 @@
 plugins {
-    id "com.github.triplet.play" version "3.6.0"
-    id "com.mikepenz.aboutlibraries.plugin"
+    id 'com.github.triplet.play' version '3.6.0'
+    id 'com.mikepenz.aboutlibraries.plugin'
 }
-apply plugin: "com.android.application"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-kapt"
-apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'de.mannodermaus.android-junit5'
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
-def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystorePropertiesFile = rootProject.file('keystore.properties')
 // Create this file with some default values because otherwise the Gradle build fails.
 if (!keystorePropertiesFile.exists()) {
-    keystorePropertiesFile.text = """\
+    keystorePropertiesFile.text = '''\
 // These are just some default values.
 storePassword=yacguide
 keyPassword=yacguide_key
 keyAlias=key0
 storeFile=keystore.jks
 playServicesFile=google-services.json
-"""
+'''
 }
 // Initialize a new Properties() object called keystoreProperties.
 def keystoreProperties = new Properties()
@@ -27,77 +27,77 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 play {
-    serviceAccountCredentials.set(rootProject.file(keystoreProperties["playServicesFile"]))
+    serviceAccountCredentials.set(rootProject.file(keystoreProperties['playServicesFile']))
     // This disables GPP by default.
     enabled.set(false)
 }
 
 android {
-    namespace "com.yacgroup.yacguide"
+    namespace 'com.yacgroup.yacguide'
     defaultConfig {
-        applicationId "com.yacgroup.yacguide"
+        applicationId 'com.yacgroup.yacguide'
         compileSdk 34
         minSdkVersion 26
         targetSdkVersion 34
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments runnerBuilder: "de.mannodermaus.junit5.AndroidJUnit5Builder"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         vectorDrawables.useSupportLibrary = true
-        archivesBaseName = "yacguide"
+        archivesBaseName = 'yacguide'
         kapt {
             arguments {
                 // https://developer.android.com/reference/android/arch/persistence/room/Database#exportschema
-                arg("room.schemaLocation", "$projectDir/schemas")
+                arg('room.schemaLocation', "$projectDir/schemas")
             }
         }
     }
     signingConfigs {
         gplay {
-            keyAlias keystoreProperties["keyAlias"]
-            keyPassword keystoreProperties["keyPassword"]
-            storeFile rootProject.file(keystoreProperties["storeFile"])
-            storePassword keystoreProperties["storePassword"]
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile rootProject.file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.gplay
         }
         debug {
             // This ensures that the app can be installed on the phone in parallel to any
             // already installed version.
-            applicationIdSuffix ".debug"
+            applicationIdSuffix '.debug'
             debuggable true
             signingConfig signingConfigs.debug
         }
     }
-    flavorDimensions "default"
+    flavorDimensions += 'default'
     productFlavors {
         stable {
-            dimension "default"
+            dimension 'default'
             versionCode 7001
-            versionName "0.7.1"
+            versionName '0.7.1'
         }
         dev {
-            dimension "default"
-            applicationIdSuffix ".dev"
+            dimension 'default'
+            applicationIdSuffix '.dev'
             versionCode 20230409
-            versionName "20230409"
+            versionName '20230409'
         }
     }
     playConfigs {
         stable {
-            track.set("production")
+            track.set('production')
             enabled.set(true)
         }
         dev {
-            track.set("beta")
+            track.set('beta')
             enabled.set(true)
         }
     }
     packagingOptions {
-        resources.excludes.add("META-INF/*")
+        resources.excludes.add('META-INF/*')
     }
     compileOptions {
         // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
@@ -109,18 +109,18 @@ android {
 // https://github.com/mikepenz/AboutLibraries/blob/develop/plugin-build/plugin/src/main/kotlin/com/mikepenz/aboutlibraries/plugin/AboutLibrariesExtension.kt
 aboutLibraries {
     prettyPrint = true
-    configPath = "config/aboutLibraries"
+    configPath = 'config/aboutLibraries'
 }
 
 dependencies {
     // Room
-    implementation fileTree(include: ["*.jar"], dir: "libs")
-    implementation "com.google.android.material:material:1.8.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
-    implementation "androidx.test:core-ktx:1.5.0"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.test:core-ktx:1.5.0'
 
-    def roomVersion = "2.5.0"
+    def roomVersion = '2.6.1'
 
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
@@ -134,30 +134,30 @@ dependencies {
     // optional - Guava support for Room, including Optional and ListenableFuture
     implementation "androidx.room:room-guava:$roomVersion"
 
-    implementation "net.sf.kxml:kxml2:2.3.0"
-    implementation "com.caverock:androidsvg:1.4"
-    implementation "com.github.PhilJay:MPAndroidChart:v3.1.0"
+    implementation 'net.sf.kxml:kxml2:2.3.0'
+    implementation 'com.caverock:androidsvg:1.4'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     // Tests
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.2"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'
 
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
-    androidTestImplementation "androidx.test:runner:1.5.2"
-    androidTestImplementation "org.junit.jupiter:junit-jupiter"
-    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.9.2"
-    androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.3.0"
-    androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.3.0"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter'
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    androidTestImplementation 'de.mannodermaus.junit5:android-test-core:1.4.0'
+    androidTestRuntimeOnly 'de.mannodermaus.junit5:android-test-runner:1.4.0'
 
     /*
      * Markwon for rendering Markdown
      *
      * https://github.com/noties/Markwon
      */
-    def markwonVersion = "4.6.2"
+    def markwonVersion = '4.6.2'
     implementation "io.noties.markwon:core:$markwonVersion"
     implementation "io.noties.markwon:linkify:$markwonVersion"
 
@@ -166,24 +166,24 @@ dependencies {
      *
      * https://commons.apache.org/proper/commons-csv/
      */
-    implementation "org.apache.commons:commons-csv:1.10.0"
+    implementation 'org.apache.commons:commons-csv:1.10.0'
 
     // For introspection
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.0"
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.9.22'
 
     /*
      * Listing all used libraries
      *
      * https://github.com/mikepenz/AboutLibraries
      */
-    implementation "com.mikepenz:aboutlibraries-core:${aboutlibrariesVersion}"
+    implementation "com.mikepenz:aboutlibraries-core:$aboutlibrariesVersion"
 
     /*
      * Used for custom tabs to show web content without leaving the app.
      *
      * https://developer.chrome.com/docs/android/custom-tabs/
      */
-    implementation "androidx.browser:browser:1.5.0"
+    implementation 'androidx.browser:browser:1.7.0'
 }
 repositories {
     mavenCentral()
