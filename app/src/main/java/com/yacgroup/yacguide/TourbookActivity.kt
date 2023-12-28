@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -269,7 +270,12 @@ class TourbookActivity : BaseNavigationActivity() {
     private fun _selectFileImport() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
-            type = TourbookExportFormat.eJSON.mimeType
+            /*
+             * NOTE:
+             * The reason is unclear, why the MIME type filter makes the import for other locations
+             * than the "Downloads" folder impossible for API version <= 28.
+             */
+            type = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) "*/*" else TourbookExportFormat.eJSON.mimeType
         }
         _importResultLauncher.launch(intent)
     }
