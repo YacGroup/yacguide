@@ -23,7 +23,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_vertical"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    android:background="@drawable/list_item_gradient">
 
     <View style="@style/ThinDivider"/>
 
