@@ -25,6 +25,7 @@ import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.database.comment.SectorComment
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
+import com.yacgroup.yacguide.utils.DateUtils
 import org.json.JSONArray
 import org.json.JSONException
 import java.lang.RuntimeException
@@ -136,10 +137,11 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
             val user = jsonComment.getString("username")
+            val date = _parseCommentDate(jsonComment.getString("datum"))
             val comment = RegionComment(
                 id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
                 qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
-                text = jsonComment.getString("kommentar") + "   [$user]",
+                text = jsonComment.getString("kommentar") + "   [$user, $date]",
                 regionId = _regionId
             )
             _regionComments.add(comment)
@@ -234,6 +236,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
             val rockId = ParserUtils.jsonField2Int(jsonComment, "gipfelid")
             val sectorId = ParserUtils.jsonField2Int(jsonComment, "sektorid")
             val user = jsonComment.getString("username")
+            val date = _parseCommentDate(jsonComment.getString("datum"))
             when {
                 routeId != 0 -> {
                     val comment = RouteComment(
@@ -242,7 +245,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
                         gradeId = ParserUtils.jsonField2Int(jsonComment, "schwer"),
                         securityId = ParserUtils.jsonField2Int(jsonComment, "sicher"),
                         wetnessId = ParserUtils.jsonField2Int(jsonComment, "nass"),
-                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        text = jsonComment.getString("kommentar") + "   [$user, $date]",
                         routeId = routeId
                     )
                     _routeComments.add(comment)
@@ -251,7 +254,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
                     val comment = RockComment(
                         id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
                         qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
-                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        text = jsonComment.getString("kommentar") + "   [$user, $date]",
                         rockId = rockId
                     )
                     _rockComments.add(comment)
@@ -260,7 +263,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
                     val comment = SectorComment(
                         id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
                         qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
-                        text = jsonComment.getString("kommentar") + "   [$user]",
+                        text = jsonComment.getString("kommentar") + "   [$user, $date]",
                         sectorId = sectorId
                     )
                     _sectorComments.add(comment)
@@ -280,4 +283,10 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         }
         _db.updateRocks(updatedRocks)
     }
+
+    /**
+     * Parse comment date-times in the format yyyy-MM-dd HH:mm:ss
+     * and return only the date in the format yyyy-MM-dd.
+     */
+    private fun _parseCommentDate(date: String): String = DateUtils.formatDate(date.split(" ")[0])
 }
