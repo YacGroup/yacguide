@@ -320,7 +320,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
                 }
                 val rockNames = ParserUtils.decodeObjectNames(rock.name)
                 val altName = if (rockNames.second.isNotEmpty()) " / ${rockNames.second}" else ""
-                sectorInfo += "${rockNames.first} $altName"
+                sectorInfo += "${rock.nr} ${rockNames.first} $altName"
             }
         }
         return if (sectorInfo.isNotEmpty())
