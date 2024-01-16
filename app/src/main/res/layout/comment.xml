@@ -37,6 +37,8 @@
         android:id="@+id/commentTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:autoLink="web|email|map"
+        android:textIsSelectable="true"/>
 
 </LinearLayout>
