@@ -28,6 +28,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 import com.yacgroup.yacguide.utils.DateUtils
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 import java.lang.RuntimeException
 import java.util.*
 import kotlin.jvm.Throws
@@ -137,7 +138,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
         for (i in 0 until jsonComments.length()) {
             val jsonComment = jsonComments.getJSONObject(i)
             val user = jsonComment.getString("username")
-            val date = _parseCommentDate(jsonComment.getString("datum"))
+            val date = _getCommentDate(jsonComment)
             val comment = RegionComment(
                 id = ParserUtils.jsonField2Int(jsonComment, "komment_ID"),
                 qualityId = ParserUtils.jsonField2Int(jsonComment, "qual"),
@@ -236,7 +237,7 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
             val rockId = ParserUtils.jsonField2Int(jsonComment, "gipfelid")
             val sectorId = ParserUtils.jsonField2Int(jsonComment, "sektorid")
             val user = jsonComment.getString("username")
-            val date = _parseCommentDate(jsonComment.getString("datum"))
+            val date = _getCommentDate(jsonComment)
             when {
                 routeId != 0 -> {
                     val comment = RouteComment(
@@ -285,8 +286,24 @@ class SectorParser(private val _db: DatabaseWrapper) : JSONWebParser() {
     }
 
     /**
-     * Parse comment date-times in the format yyyy-MM-dd HH:mm:ss
-     * and return only the date in the format yyyy-MM-dd.
+     * Return the change date from the given JSON object.
+     *
+     * If the change date is empty, try the creation date.
      */
-    private fun _parseCommentDate(date: String): String = DateUtils.formatDate(date.split(" ")[0])
+    private fun _getCommentDate(jsonObject: JSONObject): String {
+        val changeDate = jsonObject.getString("adatum")
+        val creationDate = jsonObject.getString("datum")
+        val date = if (changeDate.isNotBlank()) {
+            changeDate
+        } else if (creationDate.isNotBlank()) {
+            creationDate
+        } else {
+            ""
+        }
+        // The date is expected in the format yyyy-MM-dd HH:mm:ss.
+        // Return only the date in the format yyyy-MM-dd.
+        date.split(" ").let {
+            return if (it.isNotEmpty()) DateUtils.formatDate(it[0]) else ""
+        }
+    }
 }
