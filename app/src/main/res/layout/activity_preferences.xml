@@ -32,7 +32,10 @@
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/content_preferences"/>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/preference_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
