@@ -35,6 +35,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        private val _checkBoxTitle: String = "",
                        checkBoxDefaultValue: Boolean = false,
                        private val _settings: SharedPreferences? = null,
+                       private val _settingsKey: String,
                        initCallback: (Boolean) -> Unit = {},
                        updateCallback: (String, Boolean) -> Unit = { _, _ ->}) {
 
@@ -43,7 +44,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
 
     init {
         _checkBoxIsChecked = _settings?.getBoolean(
-            _checkBoxTitle,
+            _settingsKey,
             checkBoxDefaultValue
         ) ?: false
         searchBarLayout.findViewById<CheckBox>(R.id.filterCheckbox).apply {
@@ -78,7 +79,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
 
     fun storeCustomSettings() {
         _settings?.edit()?.apply {
-            putBoolean(_checkBoxTitle, _checkBoxIsChecked)
+            putBoolean(_settingsKey, _checkBoxIsChecked)
             apply()
         }
     }

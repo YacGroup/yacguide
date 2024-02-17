@@ -79,8 +79,8 @@ class TourbookActivity : BaseNavigationActivity() {
             context = this,
             customSettings = _customSettings,
             colorizeLeadsAndFollows = _customSettings.getBoolean(
-                getString(R.string.colorize_tourbook_entries),
-                resources.getBoolean(R.bool.colorize_tourbook_entries)))
+                getString(R.string.pref_key_colorize_tourbook_entries),
+                resources.getBoolean(R.bool.pref_default_colorize_tourbook_entries)))
         _viewAdapter = SectionViewAdapter(_visualUtils) {
             ListViewAdapter(ItemDiffCallback(
                 _areItemsTheSame = { ascend1, ascend2 -> ascend1.id == ascend2.id },
@@ -237,7 +237,10 @@ class TourbookActivity : BaseNavigationActivity() {
         (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
 
         val ascends = _getAscends().toMutableList()
-        if (!_customSettings.getBoolean(getString(R.string.order_tourbook_chronologically), resources.getBoolean(R.bool.order_tourbook_chronologically))) {
+        if (!_customSettings.getBoolean(
+                getString(R.string.pref_key_order_tourbook_chronologically),
+                resources.getBoolean(R.bool.pref_default_order_tourbook_chronologically))
+            ) {
             ascends.reverse()
         }
         val sectionViews = ascends.groupBy {

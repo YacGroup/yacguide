@@ -28,7 +28,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.sharedPreferencesName = getString(R.string.preferences_filename)
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        for (stringResource in listOf(R.string.lead, R.string.follow)) {
+        for (stringResource in listOf(R.string.pref_key_color_lead, R.string.pref_key_color_follow)) {
             findPreference<ColorPickerPreference>(getString(stringResource))?.getColorPickerView()?.let { view ->
                 context?.let { context ->
                     view.getSharedPreferenceManager().setSharedPreferences(

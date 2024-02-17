@@ -60,10 +60,10 @@ class PreferencesActivity : BaseNavigationActivity() {
         _customSettings.edit().apply {
             clear().apply()
             putInt(
-                getString(R.string.default_region_key),
-                resources.getInteger(R.integer.default_region_id))
+                getString(R.string.pref_key_default_region),
+                resources.getInteger(R.integer.pref_default_region_id))
             putStringSet(
-                getString(R.string.pinned_countries),
+                getString(R.string.pref_key_pinned_countries),
                 emptySet<String>())
         }.apply()
 

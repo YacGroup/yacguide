@@ -53,8 +53,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _updateHandler = UpdateHandler(this, _sectorParser)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
         _defaultRegionId = _customSettings.getInt(
-            getString(R.string.default_region_key),
-            resources.getInteger(R.integer.default_region_id)
+            getString(R.string.pref_key_default_region),
+            resources.getInteger(R.integer.pref_default_region_id)
         )
 
         _visualUtils = VisualUtils(this)
@@ -156,8 +156,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
     }
 
     private fun _selectDefaultRegion(region: Region) {
-        val key = getString(R.string.default_region_key)
-        val invalidId = resources.getInteger(R.integer.default_region_id)
+        val key = getString(R.string.pref_key_default_region)
+        val invalidId = resources.getInteger(R.integer.pref_default_region_id)
         _defaultRegionId = if (region.id == _defaultRegionId) {
             Toast.makeText(this, R.string.default_region_reset, Toast.LENGTH_SHORT).show()
             invalidId
