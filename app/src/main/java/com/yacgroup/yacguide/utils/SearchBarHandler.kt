@@ -32,7 +32,7 @@ import com.yacgroup.yacguide.R
 
 class SearchBarHandler(searchBarLayout: ConstraintLayout,
                        searchHintResource: Int,
-                       private val _checkBoxTitle: String = "",
+                       checkBoxTitle: String = "",
                        checkBoxDefaultValue: Boolean = false,
                        private val _settings: SharedPreferences? = null,
                        private val _settingsKey: String,
@@ -48,7 +48,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             checkBoxDefaultValue
         ) ?: false
         searchBarLayout.findViewById<CheckBox>(R.id.filterCheckbox).apply {
-            text = _checkBoxTitle
+            text = checkBoxTitle
             isChecked = _checkBoxIsChecked
             setOnClickListener {
                 _checkBoxIsChecked = isChecked

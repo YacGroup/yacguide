@@ -65,7 +65,7 @@ class PartnersActivity : AppCompatActivity() {
         _searchBarHandler = SearchBarHandler(
             searchBarLayout = findViewById(R.id.searchBarLayout),
             searchHintResource = R.string.partner_search,
-            _checkBoxTitle = getString(R.string.sort_alphabetically),
+            checkBoxTitle = getString(R.string.sort_alphabetically),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_sort_alphabetically),
             _settings = _customSettings,
             _settingsKey = getString(R.string.pref_key_sort_alphabetically),
