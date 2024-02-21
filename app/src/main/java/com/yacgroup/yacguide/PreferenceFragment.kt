@@ -32,7 +32,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             findPreference<ColorPickerPreference>(getString(stringResource))?.getColorPickerView()?.let { view ->
                 context?.let { context ->
                     view.getSharedPreferenceManager().setSharedPreferences(
-                        context.getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+                        context.getSharedPreferences(preferenceManager.sharedPreferencesName, Context.MODE_PRIVATE)
                     )
                 }
             }

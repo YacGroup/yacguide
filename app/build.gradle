@@ -185,6 +185,12 @@ dependencies {
      */
     implementation 'androidx.browser:browser:1.7.0'
 
+    /*
+     * Used for building the app settings activity.
+     *
+     * https://developer.android.com/jetpack/androidx/releases/preference
+     * https://developer.android.com/develop/ui/views/components/settings
+     */
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "com.github.skydoves:colorpickerpreference:2.0.6"
 }
