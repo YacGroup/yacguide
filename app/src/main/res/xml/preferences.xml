@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (C) 2024 Christian Sommer
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="tourbook_category"
+        app:title="@string/menu_tourbook"
+        app:iconSpaceReserved="false">
+
+        <CheckBoxPreference
+            app:key="@string/order_tourbook_chronologically"
+            app:title="@string/order_tourbook_chronologically"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/order_tourbook_chronologically"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="rock_collection_category"
+        app:title="@string/collect_rocks"
+        app:iconSpaceReserved="false">
+
+        <CheckBoxPreference
+            app:key="@string/count_summits"
+            app:title="@string/count_summits"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_summits"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_massifs"
+            app:title="@string/count_massifs"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_massifs"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_boulders"
+            app:title="@string/count_boulders"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_boulders"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_caves"
+            app:title="@string/count_caves"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@string/count_caves"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_unofficial_rocks"
+            app:title="@string/count_unofficial_rocks"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_unofficial_rocks"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_prohibited_rocks"
+            app:title="@string/count_prohibited_rocks"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_prohibited_rocks"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_collapsed_rocks"
+            app:title="@string/count_collapsed_rocks"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_collapsed_rocks"/>
+
+        <CheckBoxPreference
+            app:key="@string/count_only_leads"
+            app:title="@string/count_only_leads"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/count_only_leads"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="color_ascends_category"
+        app:title="@string/color_ascends"
+        app:iconSpaceReserved="false">
+
+        <com.skydoves.colorpickerpreference.ColorPickerPreference
+            app:key="@string/lead"
+            app:title="@string/lead"
+            app:iconSpaceReserved="false"
+            app:default_color="@color/color_lead"
+            app:preference_dialog_title="@string/lead"
+            app:preference_dialog_negative="@string/cancel"
+            app:preference_dialog_positive="@string/ok"/>
+
+        <com.skydoves.colorpickerpreference.ColorPickerPreference
+            android:key="@string/follow"
+            android:title="@string/follow"
+            app:iconSpaceReserved="false"
+            app:default_color="@color/color_follow"
+            app:preference_dialog_title="@string/follow"
+            app:preference_dialog_negative="@string/cancel"
+            app:preference_dialog_positive="@string/ok"/>
+
+        <CheckBoxPreference
+            app:key="@string/colorize_tourbook_entries"
+            app:title="@string/colorize_tourbook_entries"
+            app:iconSpaceReserved="false"
+            app:defaultValue="@bool/colorize_tourbook_entries"/>
+
+    </PreferenceCategory>
+
+    <Preference
+        app:key="reset_database"
+        app:title="@string/reset_database"
+        app:allowDividerAbove="true"
+        app:icon="@drawable/ic_baseline_delete_24"
+        app:persistent="false"/>
+
+</PreferenceScreen>
