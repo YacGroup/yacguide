@@ -20,6 +20,7 @@ package com.yacgroup.yacguide.migration
 import android.content.Context
 import android.content.SharedPreferences
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.preferences.PreferencesFormatV2
 
 /**
  * Class for migrating preferences.
@@ -32,51 +33,24 @@ class PreferencesMigration(
      * Migrate settings, if necessary, to fix issue https://github.com/YacGroup/yacguide/issues/453.
      */
     fun migrateFromVersion1To2() {
-        val settingsResourceMap = mapOf(
-            R.string.order_tourbook_chronologically to
-                    Pair(R.string.pref_key_order_tourbook_chronologically, R.bool.pref_default_order_tourbook_chronologically),
-            R.string.only_official_summits to
-                    Pair(R.string.pref_key_only_official_summits, R.bool.pref_default_only_official_summits),
-            R.string.only_official_routes to
-                    Pair(R.string.pref_key_only_official_routes, R.bool.pref_default_only_official_routes),
-            R.string.count_summits to
-                    Pair(R.string.pref_key_count_summits, R.bool.pref_default_count_summits),
-            R.string.count_massifs to
-                    Pair(R.string.pref_key_count_massifs, R.bool.pref_default_count_massifs),
-            R.string.count_boulders to
-                    Pair(R.string.pref_key_count_boulders, R.bool.pref_default_count_boulders),
-            R.string.count_caves to
-                    Pair(R.string.pref_key_count_caves, R.bool.pref_default_count_caves),
-            R.string.count_unofficial_rocks to
-                    Pair(R.string.pref_key_count_unofficial_rocks, R.bool.pref_default_count_unofficial_rocks),
-            R.string.count_prohibited_rocks to
-                    Pair(R.string.pref_key_count_prohibited_rocks, R.bool.pref_default_count_prohibited_rocks),
-            R.string.count_collapsed_rocks to
-                    Pair(R.string.pref_key_count_collapsed_rocks, R.bool.pref_default_count_collapsed_rocks),
-            R.string.count_only_leads to
-                    Pair(R.string.pref_key_count_only_leads, R.bool.pref_default_count_only_leads),
-            R.string.colorize_tourbook_entries to
-                    Pair(R.string.pref_key_colorize_tourbook_entries, R.bool.pref_default_colorize_tourbook_entries),
-            R.string.lead to
-                    Pair(R.string.pref_key_color_lead, R.color.pref_default_color_lead),
-            R.string.follow to
-                    Pair(R.string.pref_key_color_follow, R.color.pref_default_color_follow)
-        )
         customSettings.let {
             it.edit().apply {
-                for ((oldResource, newResourcePair) in settingsResourceMap) {
-                    val oldKey = context.resources.getString(oldResource)
-                    val newKey = context.resources.getString(newResourcePair.first)
+                PreferencesFormatV2.entries.forEach {formatEntry ->
+                    val oldKey = context.resources.getString(formatEntry.resIdKeyV1)
+                    val newKey = context.resources.getString(formatEntry.resIdKey)
                     if (it.contains(oldKey)) {
-                        if (oldResource == R.string.lead || oldResource == R.string.follow) {
+                        if (formatEntry.resIdKeyV1 == R.string.lead || formatEntry.resIdKeyV1 == R.string.follow) {
                             this.putInt(
                                 newKey,
-                                it.getInt(oldKey, context.getColor(newResourcePair.second))
+                                it.getInt(oldKey, context.getColor(formatEntry.resIdDefaultValue))
                             )
                         } else {
                             this.putBoolean(
                                 newKey,
-                                it.getBoolean(oldKey, context.resources.getBoolean(newResourcePair.second))
+                                it.getBoolean(
+                                    oldKey,
+                                    context.resources.getBoolean(formatEntry.resIdDefaultValue)
+                                )
                             )
                         }
                         this.remove(oldKey)
