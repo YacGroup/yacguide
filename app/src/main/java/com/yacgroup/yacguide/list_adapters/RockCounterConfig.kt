@@ -34,22 +34,22 @@ class RockCounterConfig(
     companion object {
         fun generate(context: Context, customSettings: SharedPreferences): RockCounterConfig {
             return RockCounterConfig(
-                countSummits = customSettings.getBoolean(context.getString(R.string.count_summits),
-                    context.resources.getBoolean(R.bool.count_summits)),
-                countMassifs = customSettings.getBoolean(context.getString(R.string.count_massifs),
-                    context.resources.getBoolean(R.bool.count_massifs)),
-                countBoulders = customSettings.getBoolean(context.getString(R.string.count_boulders),
-                    context.resources.getBoolean(R.bool.count_boulders)),
-                countCaves = customSettings.getBoolean(context.getString(R.string.count_caves),
-                    context.resources.getBoolean(R.bool.count_caves)),
-                countUnofficialRocks = customSettings.getBoolean(context.getString(R.string.count_unofficial_rocks),
-                    context.resources.getBoolean(R.bool.count_unofficial_rocks)),
-                countProhibitedRocks = customSettings.getBoolean(context.getString(R.string.count_prohibited_rocks),
-                    context.resources.getBoolean(R.bool.count_prohibited_rocks)),
-                countCollapsedRocks = customSettings.getBoolean(context.getString(R.string.count_collapsed_rocks),
-                    context.resources.getBoolean(R.bool.count_collapsed_rocks)),
-                countOnlyLeads = customSettings.getBoolean(context.getString(R.string.count_only_leads),
-                    context.resources.getBoolean(R.bool.count_only_leads))
+                countSummits = customSettings.getBoolean(context.getString(R.string.pref_key_count_summits),
+                    context.resources.getBoolean(R.bool.pref_default_count_summits)),
+                countMassifs = customSettings.getBoolean(context.getString(R.string.pref_key_count_massifs),
+                    context.resources.getBoolean(R.bool.pref_default_count_massifs)),
+                countBoulders = customSettings.getBoolean(context.getString(R.string.pref_key_count_boulders),
+                    context.resources.getBoolean(R.bool.pref_default_count_boulders)),
+                countCaves = customSettings.getBoolean(context.getString(R.string.pref_key_count_caves),
+                    context.resources.getBoolean(R.bool.pref_default_count_caves)),
+                countUnofficialRocks = customSettings.getBoolean(context.getString(R.string.pref_key_count_unofficial_rocks),
+                    context.resources.getBoolean(R.bool.pref_default_count_unofficial_rocks)),
+                countProhibitedRocks = customSettings.getBoolean(context.getString(R.string.pref_key_count_prohibited_rocks),
+                    context.resources.getBoolean(R.bool.pref_default_count_prohibited_rocks)),
+                countCollapsedRocks = customSettings.getBoolean(context.getString(R.string.pref_key_count_collapsed_rocks),
+                    context.resources.getBoolean(R.bool.pref_default_count_collapsed_rocks)),
+                countOnlyLeads = customSettings.getBoolean(context.getString(R.string.pref_key_count_only_leads),
+                    context.resources.getBoolean(R.bool.pref_default_count_only_leads))
             )
         }
     }

@@ -33,14 +33,14 @@ class VisualUtils(
     val prohibitedBgColor = ContextCompat.getColor(context, R.color.colorSecondary)
     val leadBgColor = if (colorizeLeadsAndFollows)
             customSettings?.getInt(
-                context.getString(R.string.lead),
-                ContextCompat.getColor(context, R.color.color_lead)) ?: defaultBgColor
+                context.getString(R.string.pref_key_color_lead),
+                ContextCompat.getColor(context, R.color.pref_default_color_lead)) ?: defaultBgColor
         else
             defaultBgColor
     val followBgColor = if (colorizeLeadsAndFollows)
             customSettings?.getInt(
-                context.getString(R.string.follow),
-                ContextCompat.getColor(context, R.color.color_follow)) ?: defaultBgColor
+                context.getString(R.string.pref_key_color_follow),
+                ContextCompat.getColor(context, R.color.pref_default_color_follow)) ?: defaultBgColor
         else
             defaultBgColor
     val emptyBoxIcon = context.getString(R.string.empty_box)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2020 Christian Sommer,
+  Copyright (C) 2020, 2023 Christian Sommer,
                 2022, 2023 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
@@ -33,11 +33,6 @@
     <string name="preferences_filename">yacguide_settings</string>
     <string name="default_export_tourbook_name">Tourenbuch</string>
 
-    <!-- Preference keys -->
-    <string name="preference_key_version_code">version_code</string>
-    <string name="pinned_countries">pinned_countries</string>
-    <string name="default_region_key">default_region</string>
-
     <!-- Colors -->
     <color name="greenblue">#00cc99</color>
     <color name="green">#66ff33</color>
@@ -47,25 +42,46 @@
     <color name="blue">#33ccff</color>
     <color name="white">#ffffff</color>
 
-    <!-- Default settings -->
-    <bool name="order_tourbook_chronologically">false</bool>
-    <bool name="only_official_summits">false</bool>
-    <bool name="only_official_routes">false</bool>
-    <bool name="sort_alphabetically">false</bool>
+    <!-- Preference keys -->
+    <string name="pref_key_pref_version">preference_version</string>
+    <integer name="pref_version">2</integer>
 
-    <bool name="count_summits">true</bool>
-    <bool name="count_massifs">false</bool>
-    <bool name="count_boulders">false</bool>
-    <bool name="count_caves">false</bool>
-    <bool name="count_unofficial_rocks">false</bool>
-    <bool name="count_prohibited_rocks">false</bool>
-    <bool name="count_collapsed_rocks">false</bool>
-    <bool name="count_only_leads">false</bool>
+    <string name="pref_key_order_tourbook_chronologically">order_tourbook_chronologically</string>
+    <bool name="pref_default_order_tourbook_chronologically">false</bool>
+    <string name="pref_key_only_official_summits">only_official_summits</string>
+    <bool name="pref_default_only_official_summits">false</bool>
+    <string name="pref_key_only_official_routes">only_official_routes</string>
+    <bool name="pref_default_only_official_routes">false</bool>
+    <string name="pref_key_sort_alphabetically">sort_alphabetically</string>
+    <bool name="pref_default_sort_alphabetically">false</bool>
 
-    <color name="color_lead">@color/greenblue</color>
-    <color name="color_follow">@color/greenblue</color>
-    <bool name="colorize_tourbook_entries">false</bool>
+    <string name="pref_key_count_summits">count_summits</string>
+    <bool name="pref_default_count_summits">true</bool>
+    <string name="pref_key_count_massifs">count_massifs</string>
+    <bool name="pref_default_count_massifs">false</bool>
+    <string name="pref_key_count_boulders">count_boulders</string>
+    <bool name="pref_default_count_boulders">false</bool>
+    <string name="pref_key_count_caves">count_caves</string>
+    <bool name="pref_default_count_caves">false</bool>
+    <string name="pref_key_count_unofficial_rocks">count_unofficial_rocks</string>
+    <bool name="pref_default_count_unofficial_rocks">false</bool>
+    <string name="pref_key_count_prohibited_rocks">count_prohibited_rocks</string>
+    <bool name="pref_default_count_prohibited_rocks">false</bool>
+    <string name="pref_key_count_collapsed_rocks">count_collapsed_rocks</string>
+    <bool name="pref_default_count_collapsed_rocks">false</bool>
+    <string name="pref_key_count_only_leads">count_only_leads</string>
+    <bool name="pref_default_count_only_leads">false</bool>
 
-    <integer name="default_region_id">-1</integer>
+    <string name="pref_key_color_lead">color_lead</string>
+    <color name="pref_default_color_lead">@color/greenblue</color>
+    <string name="pref_key_color_follow">color_follow</string>
+    <color name="pref_default_color_follow">@color/greenblue</color>
+    <string name="pref_key_colorize_tourbook_entries">colorize_tourbook_entries</string>
+    <bool name="pref_default_colorize_tourbook_entries">false</bool>
+
+    <string name="pref_key_default_region">default_region</string>
+    <integer name="pref_default_region_id">-1</integer>
+    <string name="pref_key_version_code">version_code</string>
+    <string name="pref_key_pinned_countries">pinned_countries</string>
 
 </resources>

@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.extensions.getPackageInfoCompat
 import com.yacgroup.yacguide.extensions.versionCodeCompat
+import com.yacgroup.yacguide.migration.PreferencesMigration
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
@@ -52,17 +53,19 @@ class LaunchActivity : AppCompatActivity() {
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _checkForPreferencesMigration()
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
         _updateHandler.update(
             onUpdateFinished = { findViewById<ImageView>(R.id.iconImageView).setImageResource(R.drawable.ic_start_done) },
-            isSilent = true)
+            isSilent = true
+        )
         Timer().start()
     }
 
     private fun _switchToDatabase() {
-        val invalidId = resources.getInteger(R.integer.default_region_id)
-        val defaultRegionId = _customSettings.getInt(getString(R.string.default_region_key), invalidId)
+        val invalidId = resources.getInteger(R.integer.pref_default_region_id)
+        val defaultRegionId = _customSettings.getInt(getString(R.string.pref_key_default_region), invalidId)
         val intent = if (defaultRegionId == invalidId || _db.getRegion(defaultRegionId) == null)
             Intent(this, CountryActivity::class.java).apply {
                 putExtra(IntentConstants.SHOW_WHATS_NEW, _checkForVersionUpdate())
@@ -84,7 +87,8 @@ class LaunchActivity : AppCompatActivity() {
      */
     private fun _checkForVersionUpdate(): Boolean {
         val savedVerCode = _customSettings.getInt(
-            getString(R.string.preference_key_version_code), 0)
+            getString(R.string.pref_key_version_code), 0
+        )
         val curVerCode = try {
             packageManager.getPackageInfoCompat(packageName, 0).versionCodeCompat
         } catch (e: Exception) {
@@ -92,11 +96,24 @@ class LaunchActivity : AppCompatActivity() {
         }
         return if (curVerCode > savedVerCode) {
             _customSettings.edit().apply {
-                putInt(getString(R.string.preference_key_version_code), curVerCode)
+                putInt(getString(R.string.pref_key_version_code), curVerCode)
             }.apply()
             true
         } else {
             false
+        }
+    }
+
+    /**
+     * Check whether the preferences need to be migrated or not.
+     */
+    private fun _checkForPreferencesMigration() {
+        val preferencesMigration = PreferencesMigration(
+            context = this,
+            customSettings = _customSettings
+        )
+        if (_customSettings.getInt(getString(R.string.pref_key_pref_version), 1) == 1) {
+            preferencesMigration.migrateFromVersion1To2()
         }
     }
 }

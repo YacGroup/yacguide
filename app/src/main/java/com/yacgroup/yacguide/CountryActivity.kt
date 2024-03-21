@@ -45,7 +45,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
             RockSearchable(this),
             AscentFilterable(this)
         )
-        _pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty()
+        _pinnedCountries = customSettings.getStringSet(getString(R.string.pref_key_pinned_countries), emptySet()).orEmpty()
 
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
@@ -119,7 +119,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         errorHintResource: Int,
         storePinning: (MutableSet<String>, String) -> Boolean
     ) {
-        val pinnedCountries = customSettings.getStringSet(getString(R.string.pinned_countries), emptySet()).orEmpty().toMutableSet()
+        val pinnedCountries = customSettings.getStringSet(getString(R.string.pref_key_pinned_countries), emptySet()).orEmpty().toMutableSet()
         viewHolder.getItem()?.let { country ->
             if (!storePinning(pinnedCountries, country.name)) {
                 Toast.makeText(this, errorHintResource, Toast.LENGTH_SHORT).show()
@@ -148,7 +148,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
 
     private fun _storePinnedCountriesAndUpdateCountryList(pinnedCountries: MutableSet<String>, successHintResource: Int) {
         val editor = customSettings.edit()
-        editor.putStringSet(getString(R.string.pinned_countries), pinnedCountries)
+        editor.putStringSet(getString(R.string.pref_key_pinned_countries), pinnedCountries)
         editor.apply()
         _viewAdapter.submitList(
             db.getCountries().sortedBy { !pinnedCountries.contains(it.name) }) {
