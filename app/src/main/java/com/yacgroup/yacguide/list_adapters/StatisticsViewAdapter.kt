@@ -66,6 +66,7 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
                     xAxis.setDrawGridLines(false)
                     xAxis.labelCount = stat.data.size // Do not display more than the number of x values as labels
                 }
+                legend.isEnabled = stat.stackTitles.size > 1
             }
             _statisticNameLayout.setOnClickListener {
                 _statisticChartLayout.visibility =

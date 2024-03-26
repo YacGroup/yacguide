@@ -36,19 +36,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.*
+import com.yacgroup.yacguide.statistics.StatisticUtils
 import com.yacgroup.yacguide.utils.*
 
 import java.util.ArrayList
 
 class PartnersActivity : AppCompatActivity() {
 
-    private val _ascendPartnerCount = SparseIntArray()
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
     private lateinit var _visualUtils: VisualUtils
     private lateinit var _db: DatabaseWrapper
     private lateinit var _selectedPartnerIds: MutableList<Int>
+    private var _ascendCountsPerPartner = SparseIntArray()
     private var _partnerNamePart: String = ""
     private var _sortAlphabetically: Boolean = false
 
@@ -79,7 +80,7 @@ class PartnersActivity : AppCompatActivity() {
         )) { partner -> ListItem(
             backgroundColor = _getPartnerBackground(partner),
             mainText = _getPartnerMainText(partner),
-            subText = "(${_ascendPartnerCount.get(partner.id)})",
+            subText = "(${_ascendCountsPerPartner.get(partner.id)})",
             onClick = { _onPartnerSelected(partner) })
         }
         val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
@@ -139,14 +140,7 @@ class PartnersActivity : AppCompatActivity() {
     private fun _displayContent() {
         setTitle(R.string.partner)
 
-        // We need to sort the partners according to the number of ascends you have done with them
-        _ascendPartnerCount.clear()
-        _db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id).forEach { ascend ->
-            ascend.partnerIds?.forEach { id ->
-                val prevValue = _ascendPartnerCount.get(id, 0)
-                _ascendPartnerCount.put(id, prevValue + 1)
-            }
-        }
+        _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id));
 
         val filteredPartners =
             if (_partnerNamePart.isNotEmpty())
@@ -157,7 +151,7 @@ class PartnersActivity : AppCompatActivity() {
             if (_sortAlphabetically)
                 filteredPartners.sortedBy { it.name.orEmpty().lowercase() }
             else
-                filteredPartners.sortedByDescending { _ascendPartnerCount.get(it.id, 0) }
+                filteredPartners.sortedByDescending { _ascendCountsPerPartner.get(it.id, 0) }
         _viewAdapter.submitList(sortedPartners)
     }
 
