@@ -65,7 +65,9 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
                     valueFormatter = AxisFormatter(stat.data.keys.toList())
                     xAxis.setDrawGridLines(false)
                     xAxis.labelCount = stat.data.size // Do not display more than the number of x values as labels
+                    xAxis.granularity = 1f // Do not duplicate labels on zooming to match labelCount
                 }
+                legend.isEnabled = stat.stackTitles.size > 1
             }
             _statisticNameLayout.setOnClickListener {
                 _statisticChartLayout.visibility =
