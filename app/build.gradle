@@ -101,8 +101,12 @@ android {
     }
     compileOptions {
         // See https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+    kotlinOptions {
+        // https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target
+        jvmTarget = '21'
     }
 }
 
