@@ -1,10 +1,10 @@
 plugins {
     id 'com.github.triplet.play' version '3.6.0'
     id 'com.mikepenz.aboutlibraries.plugin'
+    id 'com.google.devtools.ksp'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'de.mannodermaus.android-junit5'
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
@@ -43,11 +43,9 @@ android {
         testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = 'yacguide'
-        kapt {
-            arguments {
-                // https://developer.android.com/reference/android/arch/persistence/room/Database#exportschema
-                arg('room.schemaLocation', "$projectDir/schemas")
-            }
+        ksp {
+            // https://developer.android.com/reference/androidx/room/Database#getExportSchema()
+            arg('room.schemaLocation', "$projectDir/schemas")
         }
     }
     signingConfigs {
@@ -133,7 +131,7 @@ dependencies {
     def roomVersion = '2.6.1'
 
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$roomVersion"
