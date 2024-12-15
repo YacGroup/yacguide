@@ -108,6 +108,12 @@ android {
         // https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target
         jvmTarget = '21'
     }
+    testOptions {
+        unitTests.all {
+            // https://github.com/junit-team/junit5-samples/blob/r5.11.3/junit5-jupiter-starter-gradle/build.gradle
+            useJUnitPlatform()
+        }
+    }
 }
 
 // https://github.com/mikepenz/AboutLibraries/blob/develop/plugin-build/plugin/src/main/kotlin/com/mikepenz/aboutlibraries/plugin/AboutLibrariesExtension.kt
@@ -144,14 +150,16 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0'
 
-    // Tests
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.11.3'
+    // Unit Tests
+    // https://github.com/junit-team/junit5-samples/blob/r5.11.3/junit5-jupiter-starter-gradle/build.gradle
+    testImplementation(platform('org.junit:junit-bom:5.11.3'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 
+    // Intstrumentation Tests
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
     androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'org.junit.jupiter:junit-jupiter'
+    androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
     androidTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
     androidTestImplementation 'de.mannodermaus.junit5:android-test-core:1.6.0'
     androidTestRuntimeOnly 'de.mannodermaus.junit5:android-test-runner:1.6.0'
@@ -197,7 +205,4 @@ dependencies {
      */
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "com.github.skydoves:colorpickerpreference:2.0.6"
-}
-repositories {
-    mavenCentral()
 }
