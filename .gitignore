@@ -95,7 +95,9 @@ obj/
 .idea/navEditor.xml
 .idea/jarRepositories.xml
 .idea/gradle.xml
-.idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetSelector.xml
+.idea/androidTestResultsUserPreferences.xml
+.idea/runConfigurations.xml
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
