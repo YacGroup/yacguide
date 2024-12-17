@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Run tests
@@ -70,7 +70,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: AVD cache
@@ -114,7 +114,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: Prepare app environment
         run: |
           # Decode Google Service Account JSON file
