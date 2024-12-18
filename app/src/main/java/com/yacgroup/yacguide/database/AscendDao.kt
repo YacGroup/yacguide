@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2023 Axel Paetzold
+ * Copyright (C) 2019, 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@ import com.yacgroup.yacguide.database.SqlMacros.Companion.ORDERED_BY_YEAR
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.SELECT_ASCENDS_YEARS
 import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ASCENDS_ROUTE
+import com.yacgroup.yacguide.database.SqlMacros.Companion.VIA_ROUTES_ROCK
 
-data class AscendCount(
+data class ObjectCount(
     val year: Int,
     val count: Int
 )
@@ -61,7 +62,10 @@ interface AscendDao {
     fun getYearsBelowStyleId(styleIdLimit: Int): IntArray
 
     @Query("SELECT Ascend.year AS year, SUM(CASE WHEN Ascend.styleId BETWEEN :startStyleId AND :endStyleId THEN 1 ELSE 0 END) AS count FROM Ascend $GROUP_BY_YEAR $ORDERED_BY_YEAR")
-    fun getAscendCountPerYear(startStyleId: Int, endStyleId: Int): List<AscendCount>
+    fun getAscendCountPerYear(startStyleId: Int, endStyleId: Int): List<ObjectCount>
+
+    @Query("SELECT year, COUNT(*) AS count FROM (SELECT MIN(Ascend.year) AS year FROM Ascend $VIA_ASCENDS_ROUTE $VIA_ROUTES_ROCK WHERE Ascend.styleId BETWEEN :startStyleId AND :endStyleId AND Rock.type IN (:rockTypes) AND Rock.status NOT IN (:excludedRockStates) GROUP BY Rock.id) GROUP BY year")
+    fun getNewlyAscendedRockCountsPerYear(startStyleId: Int, endStyleId: Int, rockTypes: List<Char>, excludedRockStates: List<Char>): List<ObjectCount>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(ascend: Ascend)

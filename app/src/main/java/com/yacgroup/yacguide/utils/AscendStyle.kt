@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,55 +55,26 @@ enum class AscendStyle (val id: Int, val styleName: String) {
                                        or _bitMask(eVISITED)
                                        or _bitMask(eHEARD))
         private val _PROJECT_BIT_MASK = _bitMask(ePROJECT)
+
         private val _BY_ID = HashMap<Int, AscendStyle>()
         private val _BY_NAME = HashMap<String, AscendStyle>()
 
         init {
-            for (style in values()) {
+            for (style in entries) {
                 _BY_ID[style.id] = style
                 _BY_NAME[style.styleName] = style
             }
         }
 
-        fun fromName(name: String): AscendStyle? {
-            return _BY_NAME[name]
-        }
+        fun fromName(name: String) = _BY_NAME[name]
+        fun fromId(id: Int) = _BY_ID[id]
 
-        fun fromId(id: Int): AscendStyle? {
-            return _BY_ID[id]
-        }
-
-        private fun _bitMask(style: AscendStyle): Int {
-            return bitMask(style.id)
-        }
-
-        fun bitMask(styleId: Int): Int {
-            return 0b1 shl (styleId - 1)
-        }
-
-        fun hasAscendBit(mask: Int): Boolean {
-            return mask != 0
-        }
-
-        fun isLead(mask: Int): Boolean {
-            return hasAscendBit(mask and _LEAD_BIT_MASK)
-        }
-
-        fun isFollow(mask: Int): Boolean {
-            return hasAscendBit(mask and _FOLLOW_BIT_MASK)
-        }
-
-        fun isBotch(mask: Int): Boolean {
-            return hasAscendBit(mask and _BOTCH_BIT_MASK)
-        }
-
-        fun isWatching(mask: Int): Boolean {
-            return hasAscendBit(mask and _WATCHING_BIT_MASK)
-        }
-
-        fun isProject(mask: Int): Boolean {
-            return hasAscendBit(mask and _PROJECT_BIT_MASK)
-        }
+        fun bitMask(styleId: Int) = 0b1 shl (styleId - 1)
+        fun isLead(mask: Int) = _hasAscendBit(mask and _LEAD_BIT_MASK)
+        fun isFollow(mask: Int) = _hasAscendBit(mask and _FOLLOW_BIT_MASK)
+        fun isBotch(mask: Int) = _hasAscendBit(mask and _BOTCH_BIT_MASK)
+        fun isWatching(mask: Int) = _hasAscendBit(mask and _WATCHING_BIT_MASK)
+        fun isProject(mask: Int) = _hasAscendBit(mask and _PROJECT_BIT_MASK)
 
         fun deriveAscentColor(ascentBitMask: Int, leadColor: Int, followColor: Int, defaultColor: Int) = when {
             isLead(ascentBitMask) -> leadColor
@@ -117,6 +88,10 @@ enum class AscendStyle (val id: Int, val styleName: String) {
             val watchingAdd = if (isWatching(ascendsBitMask)) watchingIcon else ""
             return "$botchAdd$projectAdd$watchingAdd"
         }
+
+        private fun _bitMask(style: AscendStyle) = bitMask(style.id)
+
+        private fun _hasAscendBit(mask: Int) = mask != 0
 
         // We need to preserve order given by IDs
         val names: Array<String>
