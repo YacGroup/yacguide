@@ -140,6 +140,7 @@ class PartnersActivity : AppCompatActivity() {
 
     private fun _displayContent() {
         setTitle(R.string.partner)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_save_24)
 
         _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
 
