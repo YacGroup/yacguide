@@ -18,6 +18,7 @@
 
 package com.yacgroup.yacguide
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
@@ -140,7 +141,7 @@ class PartnersActivity : AppCompatActivity() {
     private fun _displayContent() {
         setTitle(R.string.partner)
 
-        _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id));
+        _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
 
         val filteredPartners =
             if (_partnerNamePart.isNotEmpty())
@@ -167,6 +168,7 @@ class PartnersActivity : AppCompatActivity() {
         }.show()
     }
 
+    @SuppressLint("InflateParams")
     private fun _updatePartner(partner: Partner?, dialogTitleResource: Int) {
         val view = layoutInflater.inflate(R.layout.add_partner_dialog, null).let { view ->
             partner?.let {
