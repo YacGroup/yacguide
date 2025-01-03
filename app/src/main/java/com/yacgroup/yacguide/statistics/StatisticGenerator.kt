@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,15 @@
 package com.yacgroup.yacguide.statistics
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.yacgroup.yacguide.R
-import com.yacgroup.yacguide.database.AscendCount
+import com.yacgroup.yacguide.database.ObjectCount
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.list_adapters.RockCounter
+import com.yacgroup.yacguide.list_adapters.RockCounterConfig
 import com.yacgroup.yacguide.utils.AscendStyle
 
-class StatisticGenerator(private val _ctx: Context) {
+class StatisticGenerator(private val _ctx: Context, private val _customSettings: SharedPreferences) {
 
     private val _db = DatabaseWrapper(_ctx)
 
@@ -35,7 +38,7 @@ class StatisticGenerator(private val _ctx: Context) {
         val followCounts = _db.getAscendCountPerYear(AscendStyle.eALTERNATINGLEADS.id, AscendStyle.eHINTERHERGEHAMPELT.id)
         val unknownCounts = _db.getAscendCountPerYear(AscendStyle.eUNKNOWN.id)
         val otherCounts = followCounts.map { followCount ->
-            AscendCount(followCount.year, followCount.count + unknownCounts.first {
+            ObjectCount(followCount.year, followCount.count + unknownCounts.first {
                 it.year == followCount.year
             }.count)
         }
@@ -64,13 +67,36 @@ class StatisticGenerator(private val _ctx: Context) {
     }
 
     fun generateMostFrequentPartnersStatistic(): Statistic {
+        val statsTitle = _ctx.getString(R.string.ascends_per_partner)
         val ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
-
         return Statistic(
-            _ctx.getString(R.string.ascends_per_partner),
-            listOf(_ctx.getString(R.string.ascends_per_partner)), // not used because only single-stack
+            statsTitle,
+            listOf(statsTitle), // not used because only single-stack
             _db.getPartners().sortedBy { ascendCountsPerPartner.get(it.id, 0) }.associate { partner ->
                 partner.name.orEmpty() to listOf(ascendCountsPerPartner.get(partner.id))
+            }
+        )
+    }
+
+    fun generateNewlyCollectedRockCountsStatistic(): Statistic {
+        val considerOnlyLeads = _customSettings.getBoolean(_ctx.getString(R.string.pref_key_count_only_leads),
+            _ctx.resources.getBoolean(R.bool.pref_default_count_only_leads))
+        val startStyleId = if (considerOnlyLeads)
+                AscendStyle.eSOLO.id
+            else
+                AscendStyle.eUNKNOWN.id
+        val endStyleId = if (considerOnlyLeads)
+                AscendStyle.eHOCHGESCHLEUDERT.id
+            else
+                AscendStyle.eHINTERHERGEHAMPELT.id
+        val rockCounter = RockCounter(RockCounterConfig.generate(_ctx, _customSettings))
+        val statsTitle = _ctx.getString(R.string.newly_collected_rocks_per_year)
+        return Statistic(
+            statsTitle,
+            listOf(statsTitle),
+            _db.getNewlyAscendedRockCountsPerYear(startStyleId, endStyleId, rockCounter.getConsideredRockTypes(), rockCounter.getExcludedRockStates()).associate { rockCount ->
+                val yearLabel = if (rockCount.year == 0) "" else rockCount.year.toString()
+                yearLabel to listOf(rockCount.count)
             }
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Axel Paetzold
+ * Copyright (C) 2022, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,9 @@ class RockCounter(private val _config: RockCounterConfig) {
                        || _config.countCaves)
 
     fun calculateRockCount(rocks: List<Rock>): RockCount {
-        val consideredRocks = _filterConsideredRocks(rocks)
+        val consideredRockTypes = getConsideredRockTypes()
+        val excludedRockStates = getExcludedRockStates()
+        val consideredRocks = rocks.filter { consideredRockTypes.contains(it.type) && !excludedRockStates.contains(it.status) }
 
         val ascendedRocks = if (_config.countOnlyLeads) {
             consideredRocks.filter { AscendStyle.isLead(it.ascendsBitMask) }
@@ -46,32 +48,39 @@ class RockCounter(private val _config: RockCounterConfig) {
                          total = consideredRocks.size)
     }
 
-    fun _filterConsideredRocks(rocks: List<Rock>): List<Rock> {
-        var filteredRocks = rocks
-        if (!_config.countSummits) {
-            filteredRocks = filteredRocks.filter{ it.type != Rock.typeSummit && it.type != Rock.typeAlpine }
+    fun getConsideredRockTypes(): List<Char> {
+        val consideredRockTypes = emptyList<Char>().toMutableList()
+        if (_config.countSummits) {
+            consideredRockTypes.add(Rock.typeSummit)
+            consideredRockTypes.add(Rock.typeAlpine)
         }
-        if (!_config.countMassifs) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeMassif && it.type != Rock.typeStonePit }
+        if (_config.countMassifs) {
+            consideredRockTypes.add(Rock.typeMassif)
+            consideredRockTypes.add(Rock.typeStonePit)
         }
-        if (!_config.countBoulders) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeBoulder }
+        if (_config.countBoulders) {
+            consideredRockTypes.add(Rock.typeBoulder)
         }
-        if (!_config.countCaves) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeCave }
+        if (_config.countCaves) {
+            consideredRockTypes.add(Rock.typeCave)
+        }
+        if (_config.countUnofficialRocks) {
+            consideredRockTypes.add(Rock.typeUnofficial)
         }
 
-        if (!_config.countUnofficialRocks) {
-            filteredRocks = filteredRocks.filter { it.type != Rock.typeUnofficial }
-        }
+        return consideredRockTypes
+    }
+
+    fun getExcludedRockStates(): List<Char> {
+        val excludedRockStates = emptyList<Char>().toMutableList()
         if (!_config.countProhibitedRocks) {
-            filteredRocks = filteredRocks.filter { it.status != Rock.statusProhibited }
+            excludedRockStates.add(Rock.statusProhibited)
         }
         if (!_config.countCollapsedRocks) {
-            filteredRocks = filteredRocks.filter { it.status != Rock.statusCollapsed }
+            excludedRockStates.add(Rock.statusCollapsed)
         }
 
-        return filteredRocks
+        return excludedRockStates
     }
 
 }
