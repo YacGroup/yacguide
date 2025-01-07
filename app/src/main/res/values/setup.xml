@@ -84,4 +84,7 @@
     <string name="pref_key_version_code">version_code</string>
     <string name="pref_key_pinned_countries">pinned_countries</string>
 
+    <!-- Timing constants in milliseconds -->
+    <integer name="popup_duration">5000</integer>
+
 </resources>

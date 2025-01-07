@@ -86,7 +86,7 @@
     <string name="route_protection_filter">Absicherung: mindestens</string>
     <string name="route_drying_filter">Abtrocknung: mindestens</string>
 
-    <!-- Toasts -->
+    <!-- Pop-ups -->
     <string name="refresh_successful">Aktualisierung erfolgreich</string>
     <string name="region_deleted">Gebiet gelöscht</string>
     <string name="refresh_failed">Aktualisierung fehlgeschlagen</string>
@@ -109,6 +109,8 @@
     <string name="country_already_pinned">Land bereits gepinnt</string>
     <string name="country_unpinned">Land abgepinnt</string>
     <string name="country_not_yet_pinned">Land nicht gepinnt</string>
+    <string name="region_manager_usage">Aktualisieren oder Löschen eines Gebiets durch Rechts- bzw. Links-Wischen</string>
+    <string name="partners_activity_usage">Bearbeiten oder Löschen eines Kletterpartners durch Rechts- bzw. Links-Wischen</string>
 
     <!-- Data -->
     <string name="countries_and_regions">Länder und Gebiete</string>

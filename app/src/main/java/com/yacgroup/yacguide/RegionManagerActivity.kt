@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 - 2023 Axel Paetzold
+ * Copyright (C) 2021 - 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.list_adapters.*
@@ -88,9 +89,18 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 onClick = { _selectDefaultRegion(region) })
             }
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
+        listView.adapter = _viewAdapter
 
         _displayContent()
+
+        Snackbar.make(
+                listView,
+                R.string.region_manager_usage,
+                Snackbar.LENGTH_LONG)
+            .setDuration(resources.getInteger(R.integer.popup_duration))
+            .setAction(R.string.ok) {}
+            .show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
