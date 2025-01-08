@@ -89,7 +89,7 @@
     <!-- Toasts -->
     <string name="refresh_successful">Aktualisierung erfolgreich</string>
     <string name="region_deleted">Gebiet gelöscht</string>
-    <string name="refresh_failed">Aktualisierung fehlgeschlagen</string>
+    <string name="refresh_failed">Aktualisierung fehlgeschlagen\nBitte nochmal versuchen…</string>
     <string name="refresh_aborted">Aktualisierung abgebrochen</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
