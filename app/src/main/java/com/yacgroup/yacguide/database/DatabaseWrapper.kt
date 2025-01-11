@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2020, 2022, 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 package com.yacgroup.yacguide.database
 
 import android.content.Context
-import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.database.comment.RegionComment
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.database.comment.RouteComment
@@ -194,6 +193,8 @@ class DatabaseWrapper(context: Context) {
     fun getYearsBelowStyleId(styleId: Int) = _db.ascendDao().getYearsBelowStyleId(styleId)
 
     fun getAscendCountPerYear(startStyleId: Int, endStyleId: Int = startStyleId) = _db.ascendDao().getAscendCountPerYear(startStyleId, endStyleId)
+
+    fun getNewlyAscendedRockCountsPerYear(startStyleId: Int, endStyleId: Int, rockTypes: List<Char>, excludedRockStates: List<Char>) = _db.ascendDao().getNewlyAscendedRockCountsPerYear(startStyleId, endStyleId, rockTypes, excludedRockStates)
 
     fun getPartners() = _db.partnerDao().all
 

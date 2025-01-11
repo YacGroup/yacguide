@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 - 2023 Axel Paetzold
+  Copyright (C) 2018 - 2025 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -137,6 +137,7 @@
     <!-- Statistics -->
     <string name="ascends_per_year">Begehungen pro Jahr</string>
     <string name="ascends_per_partner">Begehungen pro Kletterpartner</string>
+    <string name="newly_collected_rocks_per_year">Neu gesammelte Felsen pro Jahr</string>
 
     <!-- Tourbook -->
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>

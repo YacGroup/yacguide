@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, 2023 Axel Paetzold
+ * Copyright (C) 2022, 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,15 @@ import org.junit.jupiter.api.Assertions.assertTrue
  *              - Rock2
  *                  - RockComment3
  *                  - Route3
+ *                      - Ascend 4
+ *              - Rock 3
+ *                  - Route 4
+ *                      - Ascend 5
+ *              - Rock 4
+ *                  - Route 5
+ *                      - Ascend 6
+ *                  - Route 6
+ *              - Rock 5
  *          - Sector2
  *              - SectorComment3
  *              - Rock3
@@ -92,9 +101,11 @@ class TestDB {
         )
 
         val ROCKS = listOf(
-            Rock(1, 1f, 'G', ' ', "Rock1", 0f, 0f, 0, SECTORS[0].id),
-            Rock(2, 2f, 'G', ' ', "Rock2", 0f, 0f, 0, SECTORS[0].id),
-            Rock(3, 3f, 'G', ' ', "Rock3", 0f, 0f, 0, SECTORS[1].id)
+            Rock(1, 1f, 'G', ' ', "Rock1", 0f, 0f, AscendStyle.bitMask(AscendStyle.eONSIGHT.id) or AscendStyle.bitMask(AscendStyle.eFOLLOWED.id), SECTORS[0].id),
+            Rock(2, 2f, 'M', 'X', "Rock2", 0f, 0f, AscendStyle.bitMask(AscendStyle.eFOLLOWED.id), SECTORS[0].id),
+            Rock(3, 3f, 'B', ' ', "Rock3", 0f, 0f, AscendStyle.bitMask(AscendStyle.eALTERNATINGLEADS.id), SECTORS[1].id),
+            Rock(4, 4f, 'G', ' ', "Rock4", 0f, 0f, 0, SECTORS[1].id),
+            Rock(5, 5f, 'G', ' ', "Rock5", 0f, 0f, 0, SECTORS[1].id),
         )
 
         val ROCK_COMMENTS = listOf(
@@ -104,9 +115,12 @@ class TestDB {
         )
 
         val ROUTES = listOf(
-            Route(1, 1f, 0, "Route1", "Grade1", "Leader1", "Follower1", "Date1", "ClimbingType1", "Description1", 0, ROCKS[0].id),
-            Route(2, 2f, 0, "Route2", "Grade2", "Leader2", "Follower2", "Date2", "ClimbingType2", "Description2", 0, ROCKS[0].id),
-            Route(3, 3f, 0, "Route3", "Grade3", "Leader3", "Follower3", "Date3", "ClimbingType3", "Description3", 0, ROCKS[1].id)
+            Route(1, 1f, 0, "Route1", "Grade1", "Leader1", "Follower1", "Date1", "ClimbingType1", "Description1", AscendStyle.bitMask(AscendStyle.eONSIGHT.id) or AscendStyle.eFOLLOWED.id, ROCKS[0].id),
+            Route(2, 2f, 0, "Route2", "Grade2", "Leader2", "Follower2", "Date2", "ClimbingType2", "Description2", AscendStyle.bitMask(AscendStyle.eFOLLOWED.id), ROCKS[0].id),
+            Route(3, 3f, 0, "Route3", "Grade3", "Leader3", "Follower3", "Date3", "ClimbingType3", "Description3", ROCKS[1].ascendsBitMask, ROCKS[1].id),
+            Route(4, 4f, 0, "Route4", "Grade4", "Leader4", "Follower4", "Date4", "ClimbingType4", "Description4", ROCKS[2].ascendsBitMask, ROCKS[2].id),
+            Route(5, 5f, 0, "Route5", "Grade5", "Leader5", "Follower5", "Date5", "ClimbingType5", "Description5", AscendStyle.bitMask(AscendStyle.ePROJECT.id), ROCKS[3].id),
+            Route(6, 6f, 0, "Route6", "Grade6", "Leader6", "Follower6", "Date6", "ClimbingType6", "Description6", 0, ROCKS[3].id)
         )
 
         val ROUTE_COMMENTS = listOf(
@@ -118,7 +132,10 @@ class TestDB {
         val ASCENDS = listOf(
             Ascend(1, ROUTES[0].id, AscendStyle.eONSIGHT.id, 2000, 10, 10, ArrayList(), ""),
             Ascend(2, ROUTES[0].id, AscendStyle.eFOLLOWED.id, 0, 0, 0, ArrayList(), ""),
-            Ascend(3, ROUTES[1].id, AscendStyle.ePROJECT.id, 2000, 3, 3, ArrayList(), "")
+            Ascend(3, ROUTES[1].id, AscendStyle.eFOLLOWED.id, 1990, 3, 5, ArrayList(), ""),
+            Ascend(4, ROUTES[2].id, AscendStyle.eFOLLOWED.id, 1996, 3, 3, ArrayList(), ""),
+            Ascend(5, ROUTES[3].id, AscendStyle.eALTERNATINGLEADS.id, 1996, 12, 12, ArrayList(), ""),
+            Ascend(6, ROUTES[4].id, AscendStyle.ePROJECT.id, 2000, 12, 12, ArrayList(), "")
         )
 
         val PARTNERS = listOf(

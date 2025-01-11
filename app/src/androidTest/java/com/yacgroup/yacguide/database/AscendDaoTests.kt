@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import com.yacgroup.yacguide.database.TestDB.Companion.ROCKS
 import com.yacgroup.yacguide.database.TestDB.Companion.ROUTES
 import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -45,6 +44,7 @@ class AscendDaoTests {
             .build()
         _ascendDao = _db.ascendDao()
 
+        TestDB.initRocks(_db.rockDao())
         TestDB.initRoutes(_db.routeDao())
         TestDB.initAscends(_ascendDao)
     }
@@ -54,27 +54,27 @@ class AscendDaoTests {
         _db.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsBelowStyleId_returnsCorrespondingAscendsOrderedByDate() = runTest {
         val refAscend = ASCENDS.last()
-        val ascends = ASCENDS.filter { it.styleId < refAscend.styleId }
-        assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsBelowStyleId(refAscend.styleId)))
+        val ascends = ASCENDS.filter {
+            it.styleId < refAscend.styleId
+        }.sortedWith(
+            compareBy<Ascend> { it.year }.thenBy { it.month }.thenBy { it.day }
+        )
+        assertTrue(equal(ascends, _ascendDao.getAscendsBelowStyleId(refAscend.styleId)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForYearAndStyle_invalidYear_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForYearAndStyle(INVALID_ID, ASCENDS.first().styleId).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForYearAndStyle_invalidStyleId_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForYearAndStyle(ASCENDS.first().year, INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForYearAndStyle_yearAndStyleIdAvailable_returnsCorrespondingAscends() = runTest {
         val refAscend = ASCENDS.last()
@@ -84,13 +84,11 @@ class AscendDaoTests {
         assertTrue(equal(ascends, _ascendDao.getAscendsForYearAndStyle(refAscend.year, refAscend.styleId)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForYearBelowStyleId_invalidYear_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForYearBelowStyleId(INVALID_ID, AscendStyle.ePROJECT.id).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForYearBelowStyleId_yearAvailable_returnsCorrespondingAscendsOrderedByDate() = runTest {
         val refAscend = ASCENDS.last()
@@ -100,19 +98,16 @@ class AscendDaoTests {
         assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsForYearBelowStyleId(refAscend.year, refAscend.styleId)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRoute_invalidRouteId_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForRoute(INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRoute_noAscendsAvailable_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForRoute(ROUTES.last().id).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRoute_ascendsAvailable_returnsCorrespondingAscendsOrderedByDate() = runTest {
         val route = ROUTES.first()
@@ -122,19 +117,16 @@ class AscendDaoTests {
         assertTrue(equal(ascends.sortedBy { "${it.year}-${it.month}-${it.day}" }, _ascendDao.getAscendsForRoute(route.id)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRock_invalidRockId_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForRock(INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRock_noAscendsAvailable_returnsEmptyList() = runTest {
         assertTrue(_ascendDao.getAscendsForRock(ROCKS.last().id).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendsForRock_ascendsAvailable_returnsCorrespondingAscends() = runTest {
         val rock = ROCKS.first()
@@ -148,26 +140,22 @@ class AscendDaoTests {
         assertTrue(equal(ascends, _ascendDao.getAscendsForRock(rock.id)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscend_invalidAscendId_returnsNull() = runTest {
         assertNull(_ascendDao.getAscend(INVALID_ID))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscend_ascendAvailable_returnsAscend() = runTest {
         val ascend = ASCENDS.first()
         assertEquals(ascend, _ascendDao.getAscend(ascend.id))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getYears_invalidStyleId_returnsEmptyArray() = runTest {
         assertTrue(_ascendDao.getYears(INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getYears_yearsAvailable_returnsCorrespondingYears() = runTest {
         val styleId = ASCENDS.last().styleId
@@ -179,7 +167,6 @@ class AscendDaoTests {
         assertTrue(equal(years, _ascendDao.getYears(styleId).toList()))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getYearsBelowStyleId_yearsAvailable_returnsCorrespondingYears() = runTest {
         val styleId = ASCENDS.last().styleId
@@ -187,17 +174,15 @@ class AscendDaoTests {
             it.styleId < styleId
         }.map {
             it.year
-        }
-        assertTrue(equal(years, _ascendDao.getYearsBelowStyleId(styleId).toList()))
+        }.toSet()
+        assertTrue(equal(years.toList(), _ascendDao.getYearsBelowStyleId(styleId).toList()))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendCountsPerYear_invalidStyleIdRange_returnsYearCountsOfZero() = runTest {
         _ascendDao.getAscendCountPerYear(5, 2).forEach { assertEquals(0, it.count) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendCountsPerYear_validStyleIdRange_returnsListWithAccordingStyleCountsPerYear() = runTest {
         val leadAscends = ASCENDS.filter { ascend ->
@@ -208,7 +193,6 @@ class AscendDaoTests {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAscendCountsPerYear_callMultipleTimes_returnsListsOfEqualLengthAndYearOrder() = runTest {
         val followCounts = _ascendDao.getAscendCountPerYear(AscendStyle.eALTERNATINGLEADS.id, AscendStyle.eHINTERHERGEHAMPELT.id)
@@ -218,6 +202,63 @@ class AscendDaoTests {
         followCounts.forEachIndexed { idx, followCount ->
             assertEquals(followCount.year, soloCounts[idx].year)
         }
+    }
+
+    @Test
+    fun getNewlyAscendedRockCountsPerYear_countAllTypesAndStates_returnsProperMapOfNewlyCollectedRocksPerYear() = runTest {
+        val rockCountsPerYear = _ascendDao.getNewlyAscendedRockCountsPerYear(
+            startStyleId = AscendStyle.eUNKNOWN.id,
+            endStyleId = AscendStyle.eHINTERHERGEHAMPELT.id,
+            rockTypes = listOf('G', 'M', 'B'),
+            excludedRockStates = emptyList())
+
+        assertEquals(2, rockCountsPerYear.size)
+        // Rock[0] has been ascended in year 0, 1990 & 2000, so only count it once for earliest year
+        assertEquals(1, rockCountsPerYear.first { it.year == 0 }.count)
+        // Rock[1] & Rock[2] have been ascended both in year 1996 for the first time, so count both
+        assertEquals(2, rockCountsPerYear.first { it.year == 1996 }.count)
+    }
+
+    @Test
+    fun getNewlyAscendedRockCountsPerYear_countAllTypesAndStatesButOnlyLead_returnsProperMapOfNewlyCollectedRocksPerYear() = runTest {
+        val rockCountsPerYear = _ascendDao.getNewlyAscendedRockCountsPerYear(
+            startStyleId = AscendStyle.eSOLO.id,
+            endStyleId = AscendStyle.eHOCHGESCHLEUDERT.id,
+            rockTypes = listOf('G', 'M', 'B'),
+            excludedRockStates = emptyList())
+
+        assertEquals(1, rockCountsPerYear.size)
+        // Rock[0] has been ascended in year 0, 1990 & 2000 but not led until year 2000
+        assertEquals(1, rockCountsPerYear.first { it.year == 2000 }.count)
+    }
+
+    @Test
+    fun getNewlyAscendedRockCountsPerYear_countAllStylesButExcludeStates_returnsProperMapOfNewlyCollectedRocksPerYear() = runTest {
+        val rockCountsPerYear = _ascendDao.getNewlyAscendedRockCountsPerYear(
+            startStyleId = AscendStyle.eUNKNOWN.id,
+            endStyleId = AscendStyle.eHINTERHERGEHAMPELT.id,
+            rockTypes = listOf('G', 'M', 'B'),
+            excludedRockStates = listOf('X'))
+
+        assertEquals(2, rockCountsPerYear.size)
+        // Rock[0] has been ascended in year 0, 1990 & 2000, so only count it once for earliest year
+        assertEquals(1, rockCountsPerYear.first { it.year == 0 }.count)
+        // Rock[1] & Rock[2] have been ascended both in year 1996 for the first time, but Rock[1] is prohibited
+        assertEquals(1, rockCountsPerYear.first { it.year == 1996 }.count)
+    }
+
+    @Test
+    fun getNewlyAscendedRockCountsPerYear_countAllStatesButExcludeTypes_returnsProperMapOfNewlyCollectedRocksPerYear() = runTest {
+        val rockCountsPerYear = _ascendDao.getNewlyAscendedRockCountsPerYear(
+            startStyleId = AscendStyle.eUNKNOWN.id,
+            endStyleId = AscendStyle.eHINTERHERGEHAMPELT.id,
+            rockTypes = listOf('G'),
+            excludedRockStates = emptyList())
+
+        assertEquals(1, rockCountsPerYear.size)
+        // Rock[0] is the ascended only summit and has been ascended in year 0, 1990 & 2000,
+        // so only count it once for earliest year
+        assertEquals(1, rockCountsPerYear.first { it.year == 0 }.count)
     }
 }
 
@@ -244,7 +285,6 @@ class AscendDaoDeletionTests {
         _db.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_routeTableBecomesEmpty() = runTest {
         _ascendDao.deleteAll()
