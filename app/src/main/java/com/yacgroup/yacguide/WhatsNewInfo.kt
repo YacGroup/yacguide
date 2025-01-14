@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.yacgroup.yacguide.databinding.WhatsNewBinding
 import com.yacgroup.yacguide.utils.ActivityUtils
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import io.noties.markwon.Markwon
@@ -63,15 +64,13 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     @SuppressLint("InflateParams")
     fun showDialog() {
         _activity.let {
-            val inflater = it.layoutInflater
-            // Pass null as the parent view because its going in the dialog layout.
-            _view = inflater.inflate(R.layout.whats_new, null)
+            val viewBinding= WhatsNewBinding.inflate(it.layoutInflater)
             _markwonBuilder.setMarkdown(
-                _view.findViewById(R.id.whatsNewTextView),
+                viewBinding.whatsNewTextView,
                 _getReleaseNotes(_activityUtils.appVersion)
             )
             DialogWidgetBuilder(it, it.getString(R.string.show_whats_new)).apply {
-                setView(_view)
+                setView(viewBinding.root)
                 setPositiveButton(R.string.yes) { _, _ ->
                     _activityUtils.openUrl(getReleaseNotesUrl())
                 }

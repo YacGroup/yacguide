@@ -19,12 +19,12 @@ package com.yacgroup.yacguide
 
 import android.app.Dialog
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.yacgroup.yacguide.databinding.CommentDialogBinding
+import com.yacgroup.yacguide.databinding.InfoDialogBinding
 import com.yacgroup.yacguide.network.ExitCode
 import com.yacgroup.yacguide.network.JSONWebParser
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
@@ -35,6 +35,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
 
     private val _failedRegionsNames: MutableSet<String> = emptySet<String>().toMutableSet()
     private var _updateDialog: Dialog
+    private var _updateDialogBinding: InfoDialogBinding
     private var _isRecurringUpdate: Boolean = false
     private var _isSilentUpdate: Boolean = false
     private var _climbingObjectUId: ClimbingObjectUId = ClimbingObjectUId(0, "")
@@ -45,19 +46,20 @@ class UpdateHandler(private val _activity: AppCompatActivity,
         _jsonParser.listener = this
 
         _updateDialog = Dialog(_activity).apply {
-            setContentView(R.layout.info_dialog)
             setCancelable(false)
             setCanceledOnTouchOutside(false)
-        }
-        _updateDialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
-            abort()
+        }.also { dialog ->
+            _updateDialogBinding = InfoDialogBinding.inflate(dialog.layoutInflater).also { binding ->
+                binding.cancelButton.setOnClickListener { abort()  }
+                dialog.setContentView(binding.root)
+            }
         }
     }
 
     override fun onUpdateStatus(statusMessage: String) {
         if (!_isSilentUpdate) {
             _activity.runOnUiThread {
-                _updateDialog.findViewById<TextView>(R.id.dialogText).text = "${_climbingObjectUId.name} $statusMessage"
+                _updateDialogBinding.dialogText.text = "${_climbingObjectUId.name} $statusMessage"
             }
         }
     }
@@ -139,7 +141,7 @@ class UpdateHandler(private val _activity: AppCompatActivity,
             }
             Toast.makeText(_activity, finishMsgResource, Toast.LENGTH_SHORT).show()
 
-            _updateDialog.findViewById<TextView>(R.id.dialogText).setText(R.string.dialog_loading)
+            _updateDialogBinding.dialogText.setText(R.string.dialog_loading)
         }
 
         _exitCode = ExitCode.SUCCESS
@@ -161,16 +163,15 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     }
 
     private fun _showErrorDialog() {
-        val view = _activity.layoutInflater.inflate(R.layout.comment_dialog, null)
+        val viewBinding = CommentDialogBinding.inflate(_activity.layoutInflater)
         val dialog = DialogWidgetBuilder(_activity, R.string.dialog_text_failed_regions).apply {
-            setView(view)
+            setView(viewBinding.root)
             setPositiveButton{ _, _ -> }
         }.create()
-        val commentLayout = view.findViewById<LinearLayout>(R.id.commentLayout)
         _failedRegionsNames.forEach { regionName ->
-            dialog.layoutInflater.inflate(R.layout.textview_info, commentLayout, false).let {
+            dialog.layoutInflater.inflate(R.layout.textview_info, viewBinding.commentLayout, false).let {
                 it.findViewById<TextView>(R.id.infoTextView).text = regionName
-                commentLayout.addView(it)
+                viewBinding.commentLayout.addView(it)
             }
         }
         dialog.show()

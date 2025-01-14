@@ -21,15 +21,17 @@ import android.content.Intent
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatDialog
+import androidx.viewbinding.ViewBinding
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.RouteActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.database.comment.RouteComment
+import com.yacgroup.yacguide.databinding.RouteSearchDialogBinding
 import com.yacgroup.yacguide.utils.FilterSpinner
 import com.yacgroup.yacguide.utils.FilterSpinnerListener
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : ActivityProperty, FilterSpinnerListener {
+class RouteSearchable<ViewBindingType: ViewBinding>(private val _activity: TableActivityWithOptionsMenu<ViewBindingType>) : ActivityProperty, FilterSpinnerListener {
 
     private var _minGradeId: Int = RouteComment.NO_INFO_ID
     private var _maxGradeId: Int = RouteComment.NO_INFO_ID
@@ -40,9 +42,14 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
     override fun getMenuGroupId() = R.id.group_route_search
 
     override fun onMenuAction(menuItemId: Int) {
-        val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog)
-        searchDialog.setContentView(R.layout.route_search_dialog)
-        searchDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog).apply {
+            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setCancelable(false)
+            setCanceledOnTouchOutside(false)
+        }
+        val searchDialogBinding = RouteSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
+            searchDialog.setContentView(it.root)
+        }
 
         FilterSpinner(searchDialog, R.id.routeGradeFromSpinner, RouteComment.GRADE_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeGradeToSpinner, RouteComment.GRADE_MAP, this).create()
@@ -50,20 +57,34 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
         FilterSpinner(searchDialog, R.id.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
         FilterSpinner(searchDialog, R.id.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
 
-        searchDialog.findViewById<Button>(R.id.searchButton)?.setOnClickListener {
-            val routeName = searchDialog.findViewById<EditText>(R.id.dialogEditText)?.text.toString().trim { it <= ' ' }
+        searchDialogBinding.searchButton.setOnClickListener {
+            val routeName = searchDialogBinding.dialogEditText.text.toString().trim { it <= ' ' }
             if (routeName.isEmpty()
                 && _minGradeId == RouteComment.NO_INFO_ID
                 && _maxGradeId == RouteComment.NO_INFO_ID
                 && _maxQualityId == RouteComment.NO_INFO_ID
                 && _maxProtectionId == RouteComment.NO_INFO_ID
-                && _maxDryingId == RouteComment.NO_INFO_ID) {
-                    Toast.makeText(searchDialog.context, R.string.no_filter_selected, Toast.LENGTH_SHORT).show()
+                && _maxDryingId == RouteComment.NO_INFO_ID
+            ) {
+                Toast.makeText(
+                    searchDialog.context,
+                    R.string.no_filter_selected,
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
-                    putExtra(IntentConstants.CLIMBING_OBJECT_LEVEL, _activity.activityLevel.level.value)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, _activity.activityLevel.parentUId.id)
-                    putExtra(IntentConstants.CLIMBING_OBJECT_PARENT_NAME, _activity.activityLevel.parentUId.name)
+                    putExtra(
+                        IntentConstants.CLIMBING_OBJECT_LEVEL,
+                        _activity.activityLevel.level.value
+                    )
+                    putExtra(
+                        IntentConstants.CLIMBING_OBJECT_PARENT_ID,
+                        _activity.activityLevel.parentUId.id
+                    )
+                    putExtra(
+                        IntentConstants.CLIMBING_OBJECT_PARENT_NAME,
+                        _activity.activityLevel.parentUId.name
+                    )
                     putExtra(IntentConstants.FILTER_NAME, routeName)
                     putExtra(IntentConstants.FILTER_GRADE_FROM, _minGradeId)
                     putExtra(IntentConstants.FILTER_GRADE_TO, _maxGradeId)
@@ -74,9 +95,8 @@ class RouteSearchable(private val _activity: TableActivityWithOptionsMenu) : Act
                 searchDialog.dismiss()
             }
         }
-        searchDialog.findViewById<Button>(R.id.cancelButton)?.setOnClickListener { searchDialog.dismiss() }
-        searchDialog.setCancelable(false)
-        searchDialog.setCanceledOnTouchOutside(false)
+        searchDialogBinding.cancelButton.setOnClickListener { searchDialog.dismiss() }
+
         searchDialog.show()
     }
 

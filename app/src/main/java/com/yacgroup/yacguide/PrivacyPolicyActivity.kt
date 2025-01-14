@@ -21,16 +21,19 @@ package com.yacgroup.yacguide
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
-import android.widget.TextView
+import com.yacgroup.yacguide.databinding.ActivityPrivacyPolicyBinding
 import com.yacgroup.yacguide.markwon.PrivacyPolicyMarkwonPlugin
 import io.noties.markwon.Markwon
 
 class PrivacyPolicyActivity : AppCompatActivity() {
 
+    private lateinit var _binding: ActivityPrivacyPolicyBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.privacy_policy)
-        setContentView(R.layout.activity_privacy_policy)
+        _binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
         _displayContent()
     }
 
@@ -48,7 +51,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
                 .build()
         val rawResource = resources.openRawResource(R.raw.privacy_policy)
         val privacyStr = rawResource.bufferedReader().use  { it.readText() }
-        val privacyTextView = findViewById<TextView>(R.id.privacyPolicyTextView)
+        val privacyTextView = _binding.privacyPolicyTextView
         markwon.setMarkdown(privacyTextView, privacyStr)
     }
 }
