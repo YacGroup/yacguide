@@ -28,21 +28,25 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.navigation.NavigationView
 
-abstract class BaseNavigationActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+abstract class BaseNavigationActivity<ViewBindingType: ViewBinding> : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    abstract fun getLayoutId(): Int
+    protected lateinit var binding: ViewBindingType
+
+    abstract fun getViewBinding(): ViewBindingType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutId())
+        binding = getViewBinding()
+        setContentView(binding.root)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
-        val navMenu: Menu = navView.getMenu()
+        val navMenu: Menu = navView.menu
         navMenu.findItem(R.id.nav_about).title = getString(R.string.menu_about, getString(R.string.app_name))
         val toggle = ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close

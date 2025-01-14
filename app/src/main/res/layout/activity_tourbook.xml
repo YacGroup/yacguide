@@ -34,9 +34,13 @@
 
         <include layout="@layout/choose_tourbook"/>
 
-        <include layout="@layout/nav_tourbook"/>
+        <include
+            android:id="@+id/layout_nav_tourbook"
+            layout="@layout/nav_tourbook"/>
 
-        <include layout="@layout/list_view_content"/>
+        <include
+            android:id="@+id/layout_list_view_content"
+            layout="@layout/list_view_content"/>
 
     </LinearLayout>
 

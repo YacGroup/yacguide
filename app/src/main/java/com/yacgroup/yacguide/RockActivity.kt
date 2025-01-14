@@ -21,18 +21,18 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RockSearchable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.comment.RockComment
+import com.yacgroup.yacguide.databinding.ActivityRockBinding
 import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
 import com.yacgroup.yacguide.list_adapters.ListItem
 import com.yacgroup.yacguide.list_adapters.ListViewAdapter
 import com.yacgroup.yacguide.utils.*
 
-class RockActivity : TableActivityWithOptionsMenu() {
+class RockActivity : TableActivityWithOptionsMenu<ActivityRockBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Rock>
     private lateinit var _searchBarHandler: SearchBarHandler
@@ -41,6 +41,8 @@ class RockActivity : TableActivityWithOptionsMenu() {
     private var _rockNamePart: String = ""
     private var _filterName: String = ""
     private var _filterMaxRelevanceId: Int = RockComment.NO_INFO_ID
+
+    override fun getViewBinding() = ActivityRockBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +80,7 @@ class RockActivity : TableActivityWithOptionsMenu() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            searchBarLayout = findViewById(R.id.searchBarLayout),
+            searchBarBinding = binding.layoutSearchBar,
             searchHintResource = R.string.rock_search,
             checkBoxTitle = getString(R.string.only_official_summits),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_only_official_summits),
@@ -99,10 +101,8 @@ class RockActivity : TableActivityWithOptionsMenu() {
             subText = ParserUtils.decodeObjectNames(rock.name).second,
             onClick = { _onRockSelected(rock) })
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_rock
 
     override fun showComments(v: View) {
         when (activityLevel.level) {

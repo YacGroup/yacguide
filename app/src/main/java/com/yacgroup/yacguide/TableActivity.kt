@@ -17,21 +17,22 @@
 
 package com.yacgroup.yacguide
 
-import androidx.appcompat.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.viewbinding.ViewBinding
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.comment.*
+import com.yacgroup.yacguide.databinding.CommentBinding
+import com.yacgroup.yacguide.databinding.CommentDialogBinding
+import com.yacgroup.yacguide.databinding.CommentPropertyBinding
 import com.yacgroup.yacguide.utils.*
 
-abstract class TableActivity : BaseNavigationActivity() {
+abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActivity<ViewBindingType>() {
 
     lateinit var activityLevel: ClimbingObject
     protected lateinit var db: DatabaseWrapper
@@ -114,41 +115,36 @@ abstract class TableActivity : BaseNavigationActivity() {
 
     private fun _showComments(comments: List<Comment>) {
         if (comments.isNotEmpty()) {
-            val dialog = _prepareCommentDialog()
-            val layout = dialog.findViewById<LinearLayout>(R.id.commentLayout)
+            val dialog = DialogWidgetBuilder(this, R.string.comments).apply {
+                setPositiveButton { dialog, _ -> dialog.dismiss() }
+            }.create()
+            val commentDialogBinding = CommentDialogBinding.inflate(dialog.layoutInflater)
+            dialog.setView(commentDialogBinding.root)
+
             val dividerResource = TypedValue()
             theme.resolveAttribute(android.R.attr.listDivider, dividerResource, true)
             comments.forEach { comment ->
-                dialog.layoutInflater.inflate(R.layout.comment, layout, false).let { view ->
-                    val commentLayout = view.findViewById<LinearLayout>(R.id.singleCommentLayout)
-                    commentLayout.findViewById<View>(R.id.commentDivider).setBackgroundResource(dividerResource.resourceId)
+                CommentBinding.inflate(dialog.layoutInflater, commentDialogBinding.commentLayout, false).let { view ->
+                    view.commentDivider.setBackgroundResource(dividerResource.resourceId)
                     comment.properties.forEach { prop ->
                         _property2String(prop.qualityMap, prop.qualityId)?.let {
-                            val propertyLayout = commentLayout.findViewById<ConstraintLayout>(prop.layoutResource)
-                            propertyLayout.findViewById<TextView>(R.id.propertyNameTextView).setText(prop.nameResource)
-                            propertyLayout.findViewById<TextView>(R.id.propertyValueTextView).text = it
-                            propertyLayout.visibility = View.VISIBLE
+                            view.root.findViewById<ConstraintLayout>(prop.layoutResource).apply {
+                                CommentPropertyBinding.inflate(dialog.layoutInflater).apply {
+                                    propertyNameTextView.setText(prop.nameResource)
+                                    propertyValueTextView.text = it
+                                }
+                                visibility = View.VISIBLE
+                            }
                         }
                     }
-                    commentLayout.findViewById<TextView>(R.id.commentTextView).text = comment.text
-                    layout?.addView(commentLayout)
+                    view.commentTextView.text = comment.text
+                    commentDialogBinding.commentLayout.addView(view.singleCommentLayout)
                 }
             }
+            dialog.show()
         } else {
             showNoCommentToast()
         }
-    }
-
-    private fun _prepareCommentDialog(): AlertDialog {
-        val dialog = DialogWidgetBuilder(this, R.string.comments).apply {
-            setPositiveButton { dialog, _ ->
-                dialog.dismiss()
-            }
-            setView(R.layout.comment_dialog)
-        }.create()
-        // we need to call show() before findViewById can be used.
-        dialog.show()
-        return dialog
     }
 
     private fun _property2String(propertyMap: Map<Int, String>, propertyKey: Int): String? {

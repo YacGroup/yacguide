@@ -30,13 +30,21 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/appbar_info_and_map"/>
+        <include
+            android:id="@+id/layout_appbar_info_and_map"
+            layout="@layout/appbar_info_and_map"/>
 
-        <include layout="@layout/searchbar"/>
+        <include
+            android:id="@+id/layout_search_bar"
+            layout="@layout/searchbar"/>
 
-        <include layout="@layout/textview_info"/>
+        <include
+            android:id="@+id/layout_text_view_info"
+            layout="@layout/textview_info"/>
 
-        <include layout="@layout/list_view_content"/>
+        <include
+            android:id="@+id/layout_list_view_content"
+            layout="@layout/list_view_content"/>
 
     </LinearLayout>
 

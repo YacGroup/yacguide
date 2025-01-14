@@ -56,6 +56,9 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false

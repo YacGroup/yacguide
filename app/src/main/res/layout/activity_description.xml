@@ -39,7 +39,9 @@
 
             <include layout="@layout/appbar_info"/>
 
-            <include layout="@layout/textview_info"/>
+            <include
+                android:id="@+id/layout_text_view_info"
+                layout="@layout/textview_info"/>
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -47,7 +49,9 @@
                 android:descendantFocusability="beforeDescendants"
                 android:focusableInTouchMode="true">
 
-                <include layout="@layout/route_description"/>
+                <include
+                    android:id="@+id/layout_route_description"
+                    layout="@layout/route_description"/>
 
             </ScrollView>
 
