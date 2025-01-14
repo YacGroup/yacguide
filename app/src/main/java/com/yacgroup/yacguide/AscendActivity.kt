@@ -36,6 +36,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.databinding.ActivityAscendBinding
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
@@ -45,6 +46,7 @@ import java.util.Calendar
 
 class AscendActivity : AppCompatActivity() {
 
+    private lateinit var _binding: ActivityAscendBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
@@ -53,7 +55,8 @@ class AscendActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ascend)
+        _binding = ActivityAscendBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
 
         _db = DatabaseWrapper(this)
 
@@ -83,7 +86,7 @@ class AscendActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<EditText>(R.id.notesEditText).let {
+        _binding.notesEditText.let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -127,15 +130,14 @@ class AscendActivity : AppCompatActivity() {
             _ascend.year = year
             _ascend.month = monthOfYear + 1
             _ascend.day = dayOfMonth
-            (findViewById<View>(R.id.dateEditText) as EditText).setText(
-                    "${_ascend.day}.${_ascend.month}.${_ascend.year}")
+            _binding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }, yy, mm, dd)
         datePicker.show()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun selectPartners(v: View) {
-        val partnerNames = findViewById<EditText>(R.id.partnersEditText).text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val partnerNames = _binding.partnersEditText.text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val partnerIds = _db.getPartnerIds(partnerNames.toList()).filter { it > 0 } as ArrayList<Int>
         _partnerResultLauncher.launch(Intent(this@AscendActivity, PartnersActivity::class.java).apply {
             putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
@@ -147,29 +149,37 @@ class AscendActivity : AppCompatActivity() {
         val routeName = ParserUtils.decodeObjectNames(_route?.name)
         this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second} ${_route?.grade.orEmpty()}"
 
-        val spinner = findViewById<Spinner>(R.id.styleSpinner)
-        val adapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                _ascend.styleId = AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id ?: AscendStyle.eUNKNOWN.id
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                _ascend.styleId = AscendStyle.eUNKNOWN.id
-            }
+        val spinnerAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        spinner.setSelection(adapter.getPosition(AscendStyle.fromId(_ascend.styleId)?.styleName))
+        _binding.styleSpinner.apply {
+            adapter = spinnerAdapter
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    _ascend.styleId =
+                        AscendStyle.fromName(parent.getItemAtPosition(position).toString())?.id
+                            ?: AscendStyle.eUNKNOWN.id
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    _ascend.styleId = AscendStyle.eUNKNOWN.id
+                }
+            }
+            setSelection(spinnerAdapter.getPosition(AscendStyle.fromId(_ascend.styleId)?.styleName))
+        }
 
         if (_ascend.day != 0 && _ascend.month != 0 && _ascend.year != 0) {
-            findViewById<EditText>(R.id.dateEditText).setText(
-                    "${_ascend.day}.${_ascend.month}.${_ascend.year}")
+            _binding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }
 
-        findViewById<EditText>(R.id.notesEditText).setText(_ascend.notes)
+        _binding.notesEditText.setText(_ascend.notes)
 
         val partnerNames = _db.getPartnerNames(_ascend.partnerIds.orEmpty().toList())
-        findViewById<EditText>(R.id.partnersEditText).setText(TextUtils.join(", ", partnerNames))
+        _binding.partnersEditText.setText(TextUtils.join(", ", partnerNames))
     }
 }

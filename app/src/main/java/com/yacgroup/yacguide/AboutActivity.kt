@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Axel Paetzold
- *               2020 Christian Sommer
+ *               2020,2025 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,17 @@ package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
+import com.yacgroup.yacguide.databinding.AboutEntryBinding
+import com.yacgroup.yacguide.databinding.ActivityAboutBinding
 import com.yacgroup.yacguide.utils.ActivityUtils
 import com.yacgroup.yacguide.utils.ContactUtils
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
-class AboutActivity : BaseNavigationActivity() {
+class AboutActivity : BaseNavigationActivity<ActivityAboutBinding>() {
 
     private lateinit var _activityUtils: ActivityUtils
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_about
-    }
+    override fun getViewBinding() = ActivityAboutBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +58,13 @@ class AboutActivity : BaseNavigationActivity() {
             title: String,
             description: String = "",
             callback: (() -> Unit)? = null) {
-        layoutInflater.inflate(R.layout.about_entry, null).let {
-            it.setOnClickListener { callback?.invoke() ?: _activityUtils.openUrl(description) }
-            it.findViewById<TextView>(R.id.aboutEntryTitle).text = title
-            it.findViewById<TextView>(R.id.aboutEntryDescription).text = description
-            findViewById<LinearLayout>(R.id.aboutContent).addView(it)
-        }
+        binding.aboutContent.addView(
+            AboutEntryBinding.inflate(layoutInflater).apply {
+                root.setOnClickListener { callback?.invoke() ?: _activityUtils.openUrl(description) }
+                aboutEntryTitle.text = title
+                aboutEntryDescription.text = description
+            }.root
+        )
     }
 
     private fun _showPrivacyPolicy() {

@@ -22,9 +22,10 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.core.view.MenuCompat
+import androidx.viewbinding.ViewBinding
 import com.yacgroup.yacguide.activity_properties.ActivityProperty
 
-abstract class TableActivityWithOptionsMenu : TableActivity() {
+abstract class TableActivityWithOptionsMenu<ViewBindingType: ViewBinding> : TableActivity<ViewBindingType>() {
 
     protected lateinit var properties: ArrayList<ActivityProperty>
 

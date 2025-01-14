@@ -32,9 +32,13 @@
 
         <include layout="@layout/appbar_info"/>
 
-        <include layout="@layout/searchbar"/>
+        <include
+            android:id="@+id/layout_search_bar"
+            layout="@layout/searchbar"/>
 
-        <include layout="@layout/list_view_content" />
+        <include
+            android:id="@+id/layout_list_view_content"
+            layout="@layout/list_view_content" />
 
     </LinearLayout>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2025 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +26,24 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
+import com.yacgroup.yacguide.databinding.AboutLibrariesEntryBinding
+import com.yacgroup.yacguide.databinding.ActivityAboutLibrariesBinding
 import com.yacgroup.yacguide.utils.ActivityUtils
 
 class AboutLibrariesActivity : AppCompatActivity() {
 
+    private lateinit var _binding: ActivityAboutLibrariesBinding
     private lateinit var _activityUtils: ActivityUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _activityUtils = ActivityUtils(this)
         setTitle(R.string.software_and_licenses)
-        setContentView(R.layout.activity_about_libraries)
+        _binding = ActivityAboutLibrariesBinding.inflate(layoutInflater)
+        setContentView(_binding.root)
         _displayContent()
     }
 
@@ -59,16 +61,17 @@ class AboutLibrariesActivity : AppCompatActivity() {
     }
 
     private fun _createEntry(lib: Library) {
-        layoutInflater.inflate(R.layout.about_libraries_entry, null).let {
-            it.setOnClickListener { _activityUtils.openUrl(lib.website.orEmpty()) }
-            it.findViewById<TextView>(R.id.aboutLibrariesName).text = lib.uniqueId
-            it.findViewById<TextView>(R.id.aboutLibrariesVersion).text = lib.artifactVersion
-            val licenses = lib.licenses.joinToString(
-                separator = ", ",
-                transform = { license -> license.name }
-            )
-            it.findViewById<TextView>(R.id.aboutLibrariesLicenses).text = licenses
-            findViewById<LinearLayout>(R.id.aboutLibrariesContent).addView(it)
-        }
+        _binding.aboutLibrariesContent.addView(
+            AboutLibrariesEntryBinding.inflate(layoutInflater).apply {
+                root.setOnClickListener { _activityUtils.openUrl(lib.website.orEmpty()) }
+                aboutLibrariesName.text = lib.uniqueId
+                aboutLibrariesVersion.text = lib.artifactVersion
+                val licenses = lib.licenses.joinToString(
+                    separator = ", ",
+                    transform = { license -> license.name }
+                )
+                aboutLibrariesLicenses.text = licenses
+            }.root
+        )
     }
 }
