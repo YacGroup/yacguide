@@ -85,6 +85,7 @@
     <string name="route_quality_filter">Qualität: mindestens</string>
     <string name="route_protection_filter">Absicherung: mindestens</string>
     <string name="route_drying_filter">Abtrocknung: mindestens</string>
+    <string name="do_not_show_anymore">Nicht mehr anzeigen</string>
 
     <!-- Pop-ups -->
     <string name="refresh_successful">Aktualisierung erfolgreich</string>

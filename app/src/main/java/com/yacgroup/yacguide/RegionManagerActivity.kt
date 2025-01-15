@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 - 2023, 2025 Axel Paetzold
+ * Copyright (C) 2021 - 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,13 +94,19 @@ class RegionManagerActivity : BaseNavigationActivity() {
 
         _displayContent()
 
-        Snackbar.make(
-                listView,
-                R.string.region_manager_usage,
-                Snackbar.LENGTH_LONG)
-            .setDuration(resources.getInteger(R.integer.popup_duration))
-            .setAction(R.string.ok) {}
-            .show()
+        val settingsKeyShowUsageHint = getString(R.string.pref_key_show_region_manager_usage)
+        if (_customSettings.getBoolean(settingsKeyShowUsageHint, true)) {
+            Snackbar.make(listView,
+                          R.string.region_manager_usage,
+                          Snackbar.LENGTH_LONG)
+                .setDuration(resources.getInteger(R.integer.popup_duration))
+                .setAction(R.string.do_not_show_anymore) {
+                    _customSettings.edit().apply {
+                        putBoolean(settingsKeyShowUsageHint, false)
+                    }.apply()
+                }
+                .show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

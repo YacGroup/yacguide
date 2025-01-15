@@ -111,13 +111,19 @@ class PartnersActivity : AppCompatActivity() {
 
         _displayContent()
 
-        Snackbar.make(
-                listView,
-                R.string.partners_activity_usage,
-                Snackbar.LENGTH_LONG)
-            .setDuration(resources.getInteger(R.integer.popup_duration))
-            .setAction(R.string.ok) {}
-            .show()
+        val settingsKeyShowUsageHint = getString(R.string.pref_key_show_partner_manager_usage)
+        if (_customSettings.getBoolean(settingsKeyShowUsageHint, true)) {
+            Snackbar.make(listView,
+                          R.string.partners_activity_usage,
+                          Snackbar.LENGTH_LONG)
+                .setDuration(resources.getInteger(R.integer.popup_duration))
+                .setAction(R.string.do_not_show_anymore) {
+                    _customSettings.edit().apply {
+                        putBoolean(settingsKeyShowUsageHint, false)
+                    }.apply()
+                }
+                .show()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
