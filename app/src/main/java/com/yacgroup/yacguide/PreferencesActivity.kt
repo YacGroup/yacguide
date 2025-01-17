@@ -50,6 +50,7 @@ class PreferencesActivity : BaseNavigationActivity() {
             setPositiveButton(R.string.ok) {_, _ ->
                 _db.deleteCountriesRecursively()
                 _db.deleteAscends()
+                _db.deletePartners()
                 _resetCustomSettings()
                 Toast.makeText(this.context, R.string.reset_database_done, Toast.LENGTH_SHORT).show()
             }
