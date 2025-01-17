@@ -272,10 +272,6 @@ class DatabaseWrapper(context: Context) {
         _db.regionDao().deleteAll()
     }
 
-    fun deleteRegions(countryName: String) = _dbTransaction {
-        _db.regionDao().deleteAll(countryName)
-    }
-
     fun deleteCountriesRecursively() = _dbTransaction {
         _db.routeCommentDao().deleteAll()
         _db.routeDao().deleteAll()

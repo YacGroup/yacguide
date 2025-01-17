@@ -48,7 +48,4 @@ interface RegionDao {
 
     @Query(DELETE_REGIONS)
     fun deleteAll()
-
-    @Query("$DELETE_REGIONS WHERE Region.country = :countryName")
-    fun deleteAll(countryName: String)
 }
