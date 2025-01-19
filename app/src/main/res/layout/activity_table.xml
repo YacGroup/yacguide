@@ -33,7 +33,9 @@
 
         <include layout="@layout/appbar_empty"/>
 
-        <include layout="@layout/list_view_content"/>
+        <include
+            android:id="@+id/layout_list_view_content"
+            layout="@layout/list_view_content"/>
 
         <include layout="@layout/button_download"/>
 

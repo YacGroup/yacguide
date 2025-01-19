@@ -21,13 +21,10 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.databinding.ListDataItemBinding
 
 data class ListItem(
     val backgroundColor: Int = 0,
@@ -43,15 +40,15 @@ class ListViewAdapter<T: Any>(
     private val _generateListItem: (item: T) -> ListItem)
     : ListAdapter<T, RecyclerView.ViewHolder>(itemDiffCallback) {
 
-    inner class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val _listItemLayout = view.findViewById<LinearLayout>(R.id.listItemLayout)
-        private val _infoTextLayout = view.findViewById<ConstraintLayout>(R.id.infoTextLayout)
-        private val _infoLeftTextView = view.findViewById<TextView>(R.id.infoLeftTextView)
-        private val _infoRightTextView = view.findViewById<TextView>(R.id.infoRightTextView)
-        private val _mainLeftTextView = view.findViewById<TextView>(R.id.mainLeftTextView)
-        private val _mainRightTextView = view.findViewById<TextView>(R.id.mainRightTextView)
-        private val _subTextLayout = view.findViewById<ConstraintLayout>(R.id.subTextLayout)
-        private val _subTextView = view.findViewById<TextView>(R.id.subTextView)
+    inner class ItemViewHolder(binding: ListDataItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val _listItemLayout = binding.listItemLayout
+        private val _infoTextLayout = binding.infoTextLayout
+        private val _infoLeftTextView = binding.infoLeftTextView
+        private val _infoRightTextView = binding.infoRightTextView
+        private val _mainLeftTextView = binding.mainLeftTextView
+        private val _mainRightTextView = binding.mainRightTextView
+        private val _subTextLayout = binding.subTextLayout
+        private val _subTextView = binding.subTextView
         private var _item: T? = null
 
         fun bind(item: T) {
@@ -85,9 +82,10 @@ class ListViewAdapter<T: Any>(
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(viewGroup.context)
-        val view = inflater.inflate(R.layout.list_data_item, viewGroup, false)
-        return ItemViewHolder(view)
+        val binding = ListDataItemBinding.inflate(
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
+        return ItemViewHolder(binding)
     }
 
     @Suppress("UNCHECKED_CAST")

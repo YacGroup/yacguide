@@ -24,18 +24,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.*
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.AscentFilterable
 import com.yacgroup.yacguide.activity_properties.RouteSearchable
 import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.database.comment.RouteComment
+import com.yacgroup.yacguide.databinding.ActivityRouteBinding
+import com.yacgroup.yacguide.databinding.SearchbarBinding
 import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
 import com.yacgroup.yacguide.list_adapters.ListItem
 import com.yacgroup.yacguide.list_adapters.ListViewAdapter
 import com.yacgroup.yacguide.utils.*
 
-class RouteActivity : TableActivityWithOptionsMenu() {
+class RouteActivity : TableActivityWithOptionsMenu<ActivityRouteBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Route>
     private lateinit var _searchBarHandler: SearchBarHandler
@@ -51,6 +52,8 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     private var _filterProjects: Boolean = false
     private var _filterBotches: Boolean = false
     private var _rock: Rock? = null
+
+    override fun getViewBinding() = ActivityRouteBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +126,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            searchBarLayout = findViewById(R.id.searchBarLayout),
+            searchBarBinding = binding.layoutSearchBar,
             searchHintResource = R.string.route_search,
             checkBoxTitle = getString(R.string.only_official_routes),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_only_official_routes),
@@ -136,7 +139,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
             _rock = db.getRock(activityLevel.parentUId.id)
         } else {
-            findViewById<ImageButton>(R.id.mapButton).visibility = View.INVISIBLE
+            binding.layoutAppbarInfoAndMap.mapButton.visibility = View.INVISIBLE
         }
 
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
@@ -150,10 +153,8 @@ class RouteActivity : TableActivityWithOptionsMenu() {
             subText = ParserUtils.decodeObjectNames(route.name).second,
             onClick = { _onRouteSelected(route) })
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_route
 
     @Suppress("UNUSED_PARAMETER")
     fun showMap(v: View) {
@@ -179,7 +180,7 @@ class RouteActivity : TableActivityWithOptionsMenu() {
     override fun displayContent() {
         val levelName = ParserUtils.decodeObjectNames(activityLevel.parentUId.name)
         this.title = levelName.first.ifEmpty { levelName.second }
-        _displayRockInfo(findViewById(R.id.infoTextView))
+        _displayRockInfo(binding.layoutTextViewInfo.infoTextView)
 
         var routes = _getAndFilterRoutes()
         // additional searchbar filters:

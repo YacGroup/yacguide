@@ -20,19 +20,21 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.database.Sector
+import com.yacgroup.yacguide.databinding.ActivitySectorBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 
-class SectorActivity : TableActivityWithOptionsMenu() {
+class SectorActivity : TableActivityWithOptionsMenu<ActivitySectorBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Sector>
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _rockCounter: RockCounter
+
+    override fun getViewBinding() = ActivitySectorBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +55,12 @@ class SectorActivity : TableActivityWithOptionsMenu() {
             subText = ParserUtils.decodeObjectNames(sector.name).second,
             onClick = { _onSectorSelected(sector) })
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
 
         if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
             WhatsNewInfo(this).showDialog()
         }
     }
-
-    override fun getLayoutId() = R.layout.activity_sector
 
     override fun showComments(v: View) {
         showRegionComments(activityLevel.parentUId.id)

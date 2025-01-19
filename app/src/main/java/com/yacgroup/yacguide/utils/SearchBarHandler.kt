@@ -29,8 +29,9 @@ import android.widget.EditText
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.textfield.TextInputLayout
 import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.databinding.SearchbarBinding
 
-class SearchBarHandler(searchBarLayout: ConstraintLayout,
+class SearchBarHandler(searchBarBinding: SearchbarBinding,
                        searchHintResource: Int,
                        checkBoxTitle: String = "",
                        checkBoxDefaultValue: Boolean = false,
@@ -47,7 +48,7 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             _settingsKey,
             checkBoxDefaultValue
         ) ?: false
-        searchBarLayout.findViewById<CheckBox>(R.id.filterCheckbox).apply {
+        searchBarBinding.filterCheckbox.apply {
             text = checkBoxTitle
             isChecked = _checkBoxIsChecked
             setOnClickListener {
@@ -56,10 +57,10 @@ class SearchBarHandler(searchBarLayout: ConstraintLayout,
             }
         }
 
-        searchBarLayout.findViewById<TextInputLayout>(R.id.searchTextInputLayout).apply {
+        searchBarBinding.searchTextInputLayout.apply {
             setHint(searchHintResource)
         }
-        searchBarLayout.findViewById<EditText>(R.id.searchEditText).apply {
+        searchBarBinding.searchEditText.apply {
             onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
