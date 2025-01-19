@@ -45,13 +45,10 @@ class UpdateHandler(private val _activity: AppCompatActivity,
     init {
         _jsonParser.listener = this
 
-        _updateDialog = Dialog(_activity).apply {
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-        }.also { dialog ->
+        _updateDialog = DialogWidgetBuilder(_activity).create().also { dialog ->
             _updateDialogBinding = InfoDialogBinding.inflate(dialog.layoutInflater).also { binding ->
                 binding.cancelButton.setOnClickListener { abort()  }
-                dialog.setContentView(binding.root)
+                dialog.setView(binding.root)
             }
         }
     }
