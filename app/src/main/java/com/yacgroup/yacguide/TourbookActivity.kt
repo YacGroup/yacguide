@@ -128,7 +128,7 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
 
     @Suppress("UNUSED_PARAMETER")
     fun chooseYear(v: View) {
-        DialogWidgetBuilder(this, R.string.select_year).create().also { dialog ->
+        DialogWidgetBuilder(this).create().also { dialog ->
             NumberpickerBinding.inflate(dialog.layoutInflater).also { binding ->
                 dialog.setView(binding.root)
                 binding.yearPicker.apply {
