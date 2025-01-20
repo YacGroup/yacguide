@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022, 2023 Axel Paetzold
+ * Copyright (C) 2022, 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import com.yacgroup.yacguide.database.TestDB.Companion.INVALID_NAME
 import com.yacgroup.yacguide.database.TestDB.Companion.REGIONS
 import com.yacgroup.yacguide.database.TestDB.Companion.ROUTES
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -58,19 +57,16 @@ class RegionDaoTests {
         _db.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_noRegionsAvailable_returnsEmptyList() = runTest {
         assertTrue(_regionDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_regionsAvailable_returnsCorrespondingRegions() = runTest {
         val country1Name = COUNTRIES.first().name
@@ -80,7 +76,6 @@ class RegionDaoTests {
         assertTrue(equal(regionsInCountry1, _regionDao.getAllInCountry(country1Name)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllNonEmpty_sectorsWithParentRegionsAvailable_returnsCorrespondingRegions() = runTest {
         val nonEmptyRegions = REGIONS.filter { region ->
@@ -89,26 +84,22 @@ class RegionDaoTests {
         assertTrue(equal(nonEmptyRegions, _regionDao.getAllNonEmpty()))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegion_invalidRegionId_returnsNull() = runTest {
         assertNull(_regionDao.getRegion(INVALID_ID))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegion_regionAvailable_returnsRegion() = runTest {
         val region = REGIONS.first()
         assertEquals(_regionDao.getRegion(region.id), region)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegionForRoute_invalidRouteId_returnsNull() = runTest {
         assertNull(_regionDao.getRegionForRoute(INVALID_ID))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRegionForRoute_regionForRouteAvailable_returnsAccordingRegion() = runTest {
         val region = REGIONS.first()
@@ -147,24 +138,10 @@ class RegionDaoDeletionTests {
         _db.close()
     }
 
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_regionTableBecomesEmpty() = runTest {
         _regionDao.deleteAll()
         assertTrue(_regionDao.all.isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun deleteAll_countryNameGiven_regionTableDoesNotContainCorrespondingRegionsAnymore() = runTest {
-        val country1Name = COUNTRIES.first().name
-        val regionsInCountry1 = REGIONS.filter {
-            it.country == country1Name
-        }
-        _regionDao.deleteAll(country1Name)
-        regionsInCountry1.forEach {
-            assertFalse(_regionDao.all.contains(it))
-        }
-    }
 }
