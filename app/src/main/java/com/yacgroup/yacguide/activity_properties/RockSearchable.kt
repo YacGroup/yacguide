@@ -18,15 +18,14 @@
 package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
-import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatDialog
 import androidx.viewbinding.ViewBinding
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.RockActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.databinding.RockSearchDialogBinding
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.FilterSpinner
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.FilterSpinnerListener
@@ -38,16 +37,12 @@ class RockSearchable<ViewBindingType: ViewBinding>(private val _activity: TableA
     override fun getMenuGroupId() = R.id.group_rock_search
 
     override fun onMenuAction(menuItemId: Int) {
-        val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog).apply {
-            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-        }
+        val searchDialog = DialogWidgetBuilder(_activity).create()
         val searchDialogBinding = RockSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
-            searchDialog.setContentView(it.root)
+            searchDialog.setView(it.root)
         }
 
-        FilterSpinner(searchDialog, R.id.rockRelevanceSpinner, RockComment.RELEVANCE_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.rockRelevanceSpinner, RockComment.RELEVANCE_MAP, this).create()
 
         searchDialogBinding.searchButton.setOnClickListener {
             val rockName = searchDialogBinding.dialogEditText.text.toString().trim { it <= ' ' }

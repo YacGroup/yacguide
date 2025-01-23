@@ -18,15 +18,14 @@
 package com.yacgroup.yacguide.activity_properties
 
 import android.content.Intent
-import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatDialog
 import androidx.viewbinding.ViewBinding
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.RouteActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.databinding.RouteSearchDialogBinding
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 import com.yacgroup.yacguide.utils.FilterSpinner
 import com.yacgroup.yacguide.utils.FilterSpinnerListener
 import com.yacgroup.yacguide.utils.IntentConstants
@@ -42,20 +41,16 @@ class RouteSearchable<ViewBindingType: ViewBinding>(private val _activity: Table
     override fun getMenuGroupId() = R.id.group_route_search
 
     override fun onMenuAction(menuItemId: Int) {
-        val searchDialog = AppCompatDialog(_activity, R.style.AppTheme_Dialog).apply {
-            window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setCancelable(false)
-            setCanceledOnTouchOutside(false)
-        }
+        val searchDialog = DialogWidgetBuilder(_activity).create()
         val searchDialogBinding = RouteSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
-            searchDialog.setContentView(it.root)
+            searchDialog.setView(it.root)
         }
 
-        FilterSpinner(searchDialog, R.id.routeGradeFromSpinner, RouteComment.GRADE_MAP, this).create()
-        FilterSpinner(searchDialog, R.id.routeGradeToSpinner, RouteComment.GRADE_MAP, this).create()
-        FilterSpinner(searchDialog, R.id.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
-        FilterSpinner(searchDialog, R.id.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
-        FilterSpinner(searchDialog, R.id.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.routeGradeFromSpinner, RouteComment.GRADE_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.routeGradeToSpinner, RouteComment.GRADE_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
+        FilterSpinner(searchDialog, searchDialogBinding.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
 
         searchDialogBinding.searchButton.setOnClickListener {
             val routeName = searchDialogBinding.dialogEditText.text.toString().trim { it <= ' ' }
