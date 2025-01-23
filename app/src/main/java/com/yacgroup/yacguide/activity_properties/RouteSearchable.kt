@@ -42,56 +42,80 @@ class RouteSearchable<ViewBindingType: ViewBinding>(private val _activity: Table
 
     override fun onMenuAction(menuItemId: Int) {
         val searchDialog = DialogWidgetBuilder(_activity).create()
-        val searchDialogBinding = RouteSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
+        RouteSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
             searchDialog.setView(it.root)
-        }
 
-        FilterSpinner(searchDialog, searchDialogBinding.routeGradeFromSpinner, RouteComment.GRADE_MAP, this).create()
-        FilterSpinner(searchDialog, searchDialogBinding.routeGradeToSpinner, RouteComment.GRADE_MAP, this).create()
-        FilterSpinner(searchDialog, searchDialogBinding.routeQualitySpinner, RouteComment.QUALITY_MAP, this).create()
-        FilterSpinner(searchDialog, searchDialogBinding.routeProtectionSpinner, RouteComment.PROTECTION_MAP, this).create()
-        FilterSpinner(searchDialog, searchDialogBinding.routeDryingSpinner, RouteComment.DRYING_MAP, this).create()
+            FilterSpinner(
+                searchDialog,
+                it.routeGradeFromSpinner,
+                RouteComment.GRADE_MAP,
+                this
+            ).create()
+            FilterSpinner(
+                searchDialog,
+                it.routeGradeToSpinner,
+                RouteComment.GRADE_MAP,
+                this
+            ).create()
+            FilterSpinner(
+                searchDialog,
+                it.routeQualitySpinner,
+                RouteComment.QUALITY_MAP,
+                this
+            ).create()
+            FilterSpinner(
+                searchDialog,
+                it.routeProtectionSpinner,
+                RouteComment.PROTECTION_MAP,
+                this
+            ).create()
+            FilterSpinner(
+                searchDialog,
+                it.routeDryingSpinner,
+                RouteComment.DRYING_MAP,
+                this
+            ).create()
 
-        searchDialogBinding.searchButton.setOnClickListener {
-            val routeName = searchDialogBinding.dialogEditText.text.toString().trim { it <= ' ' }
-            if (routeName.isEmpty()
-                && _minGradeId == RouteComment.NO_INFO_ID
-                && _maxGradeId == RouteComment.NO_INFO_ID
-                && _maxQualityId == RouteComment.NO_INFO_ID
-                && _maxProtectionId == RouteComment.NO_INFO_ID
-                && _maxDryingId == RouteComment.NO_INFO_ID
-            ) {
-                Toast.makeText(
-                    searchDialog.context,
-                    R.string.no_filter_selected,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_LEVEL,
-                        _activity.activityLevel.level.value
-                    )
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_PARENT_ID,
-                        _activity.activityLevel.parentUId.id
-                    )
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_PARENT_NAME,
-                        _activity.activityLevel.parentUId.name
-                    )
-                    putExtra(IntentConstants.FILTER_NAME, routeName)
-                    putExtra(IntentConstants.FILTER_GRADE_FROM, _minGradeId)
-                    putExtra(IntentConstants.FILTER_GRADE_TO, _maxGradeId)
-                    putExtra(IntentConstants.FILTER_RELEVANCE, _maxQualityId)
-                    putExtra(IntentConstants.FILTER_PROTECTION, _maxProtectionId)
-                    putExtra(IntentConstants.FILTER_DRYING, _maxDryingId)
-                })
-                searchDialog.dismiss()
+            it.searchButton.setOnClickListener { _ ->
+                val routeName = it.dialogEditText.text.toString().trim { x -> x <= ' ' }
+                if (routeName.isEmpty()
+                    && _minGradeId == RouteComment.NO_INFO_ID
+                    && _maxGradeId == RouteComment.NO_INFO_ID
+                    && _maxQualityId == RouteComment.NO_INFO_ID
+                    && _maxProtectionId == RouteComment.NO_INFO_ID
+                    && _maxDryingId == RouteComment.NO_INFO_ID
+                ) {
+                    Toast.makeText(
+                        searchDialog.context,
+                        R.string.no_filter_selected,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    _activity.startActivity(Intent(_activity, RouteActivity::class.java).apply {
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_LEVEL,
+                            _activity.activityLevel.level.value
+                        )
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_PARENT_ID,
+                            _activity.activityLevel.parentUId.id
+                        )
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_PARENT_NAME,
+                            _activity.activityLevel.parentUId.name
+                        )
+                        putExtra(IntentConstants.FILTER_NAME, routeName)
+                        putExtra(IntentConstants.FILTER_GRADE_FROM, _minGradeId)
+                        putExtra(IntentConstants.FILTER_GRADE_TO, _maxGradeId)
+                        putExtra(IntentConstants.FILTER_RELEVANCE, _maxQualityId)
+                        putExtra(IntentConstants.FILTER_PROTECTION, _maxProtectionId)
+                        putExtra(IntentConstants.FILTER_DRYING, _maxDryingId)
+                    })
+                    searchDialog.dismiss()
+                }
             }
+            it.cancelButton.setOnClickListener { searchDialog.dismiss() }
         }
-        searchDialogBinding.cancelButton.setOnClickListener { searchDialog.dismiss() }
-
         searchDialog.show()
     }
 

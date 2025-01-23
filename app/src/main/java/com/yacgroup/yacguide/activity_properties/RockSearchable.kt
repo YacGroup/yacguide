@@ -38,42 +38,46 @@ class RockSearchable<ViewBindingType: ViewBinding>(private val _activity: TableA
 
     override fun onMenuAction(menuItemId: Int) {
         val searchDialog = DialogWidgetBuilder(_activity).create()
-        val searchDialogBinding = RockSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
+        RockSearchDialogBinding.inflate(searchDialog.layoutInflater).also {
             searchDialog.setView(it.root)
-        }
 
-        FilterSpinner(searchDialog, searchDialogBinding.rockRelevanceSpinner, RockComment.RELEVANCE_MAP, this).create()
+            FilterSpinner(
+                searchDialog,
+                it.rockRelevanceSpinner,
+                RockComment.RELEVANCE_MAP,
+                this
+            ).create()
 
-        searchDialogBinding.searchButton.setOnClickListener {
-            val rockName = searchDialogBinding.dialogEditText.text.toString().trim { it <= ' ' }
-            if (rockName.isEmpty() && _maxRelevanceId == RockComment.NO_INFO_ID) {
-                Toast.makeText(
-                    searchDialog.context,
-                    R.string.no_filter_selected,
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_LEVEL,
-                        _activity.activityLevel.level.value
-                    )
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_PARENT_ID,
-                        _activity.activityLevel.parentUId.id
-                    )
-                    putExtra(
-                        IntentConstants.CLIMBING_OBJECT_PARENT_NAME,
-                        _activity.activityLevel.parentUId.name
-                    )
-                    putExtra(IntentConstants.FILTER_NAME, rockName)
-                    putExtra(IntentConstants.FILTER_RELEVANCE, _maxRelevanceId)
-                })
-                searchDialog.dismiss()
+            it.searchButton.setOnClickListener { _ ->
+                val rockName = it.dialogEditText.text.toString().trim { x -> x <= ' ' }
+                if (rockName.isEmpty() && _maxRelevanceId == RockComment.NO_INFO_ID) {
+                    Toast.makeText(
+                        searchDialog.context,
+                        R.string.no_filter_selected,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    _activity.startActivity(Intent(_activity, RockActivity::class.java).apply {
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_LEVEL,
+                            _activity.activityLevel.level.value
+                        )
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_PARENT_ID,
+                            _activity.activityLevel.parentUId.id
+                        )
+                        putExtra(
+                            IntentConstants.CLIMBING_OBJECT_PARENT_NAME,
+                            _activity.activityLevel.parentUId.name
+                        )
+                        putExtra(IntentConstants.FILTER_NAME, rockName)
+                        putExtra(IntentConstants.FILTER_RELEVANCE, _maxRelevanceId)
+                    })
+                    searchDialog.dismiss()
+                }
             }
+            it.cancelButton.setOnClickListener { searchDialog.dismiss() }
         }
-        searchDialogBinding.cancelButton.setOnClickListener { searchDialog.dismiss() }
-
         searchDialog.show()
     }
 
