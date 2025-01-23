@@ -33,14 +33,14 @@ import com.google.android.material.navigation.NavigationView
 
 abstract class BaseNavigationActivity<ViewBindingType: ViewBinding> : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    protected lateinit var binding: ViewBindingType
+    protected lateinit var activityViewBinding: ViewBindingType
 
     abstract fun getViewBinding(): ViewBindingType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = getViewBinding()
-        setContentView(binding.root)
+        activityViewBinding = getViewBinding()
+        setContentView(activityViewBinding.root)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

@@ -27,13 +27,13 @@ import io.noties.markwon.Markwon
 
 class PrivacyPolicyActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityPrivacyPolicyBinding
+    private lateinit var _activityViewBinding: ActivityPrivacyPolicyBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.privacy_policy)
-        _binding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
-        setContentView(_binding.root)
+        _activityViewBinding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
         _displayContent()
     }
 
@@ -51,7 +51,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
                 .build()
         val rawResource = resources.openRawResource(R.raw.privacy_policy)
         val privacyStr = rawResource.bufferedReader().use  { it.readText() }
-        val privacyTextView = _binding.privacyPolicyTextView
+        val privacyTextView = _activityViewBinding.privacyPolicyTextView
         markwon.setMarkdown(privacyTextView, privacyStr)
     }
 }

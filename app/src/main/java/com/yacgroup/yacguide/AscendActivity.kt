@@ -46,7 +46,7 @@ import java.util.Calendar
 
 class AscendActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityAscendBinding
+    private lateinit var _activityViewBinding: ActivityAscendBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
@@ -55,8 +55,8 @@ class AscendActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityAscendBinding.inflate(layoutInflater)
-        setContentView(_binding.root)
+        _activityViewBinding = ActivityAscendBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
 
@@ -86,7 +86,7 @@ class AscendActivity : AppCompatActivity() {
             }
         }
 
-        _binding.notesEditText.let {
+        _activityViewBinding.notesEditText.let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -130,14 +130,14 @@ class AscendActivity : AppCompatActivity() {
             _ascend.year = year
             _ascend.month = monthOfYear + 1
             _ascend.day = dayOfMonth
-            _binding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+            _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }, yy, mm, dd)
         datePicker.show()
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun selectPartners(v: View) {
-        val partnerNames = _binding.partnersEditText.text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val partnerNames = _activityViewBinding.partnersEditText.text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val partnerIds = _db.getPartnerIds(partnerNames.toList()).filter { it > 0 } as ArrayList<Int>
         _partnerResultLauncher.launch(Intent(this@AscendActivity, PartnersActivity::class.java).apply {
             putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
@@ -152,7 +152,7 @@ class AscendActivity : AppCompatActivity() {
         val spinnerAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        _binding.styleSpinner.apply {
+        _activityViewBinding.styleSpinner.apply {
             adapter = spinnerAdapter
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -174,12 +174,12 @@ class AscendActivity : AppCompatActivity() {
         }
 
         if (_ascend.day != 0 && _ascend.month != 0 && _ascend.year != 0) {
-            _binding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+            _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }
 
-        _binding.notesEditText.setText(_ascend.notes)
+        _activityViewBinding.notesEditText.setText(_ascend.notes)
 
         val partnerNames = _db.getPartnerNames(_ascend.partnerIds.orEmpty().toList())
-        _binding.partnersEditText.setText(TextUtils.join(", ", partnerNames))
+        _activityViewBinding.partnersEditText.setText(TextUtils.join(", ", partnerNames))
     }
 }

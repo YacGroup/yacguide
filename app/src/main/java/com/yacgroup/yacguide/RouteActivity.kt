@@ -30,7 +30,6 @@ import com.yacgroup.yacguide.database.Rock
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.database.comment.RouteComment
 import com.yacgroup.yacguide.databinding.ActivityRouteBinding
-import com.yacgroup.yacguide.databinding.SearchbarBinding
 import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
 import com.yacgroup.yacguide.list_adapters.ListItem
 import com.yacgroup.yacguide.list_adapters.ListViewAdapter
@@ -126,7 +125,7 @@ class RouteActivity : TableActivityWithOptionsMenu<ActivityRouteBinding>() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            searchBarBinding = binding.layoutSearchBar,
+            searchBarBinding = activityViewBinding.layoutSearchBar,
             searchHintResource = R.string.route_search,
             checkBoxTitle = getString(R.string.only_official_routes),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_only_official_routes),
@@ -139,7 +138,7 @@ class RouteActivity : TableActivityWithOptionsMenu<ActivityRouteBinding>() {
         if (activityLevel.level == ClimbingObjectLevel.eRoute) {
             _rock = db.getRock(activityLevel.parentUId.id)
         } else {
-            binding.layoutAppbarInfoAndMap.mapButton.visibility = View.INVISIBLE
+            activityViewBinding.layoutAppbarInfoAndMap.mapButton.visibility = View.INVISIBLE
         }
 
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
@@ -153,7 +152,7 @@ class RouteActivity : TableActivityWithOptionsMenu<ActivityRouteBinding>() {
             subText = ParserUtils.decodeObjectNames(route.name).second,
             onClick = { _onRouteSelected(route) })
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -180,7 +179,7 @@ class RouteActivity : TableActivityWithOptionsMenu<ActivityRouteBinding>() {
     override fun displayContent() {
         val levelName = ParserUtils.decodeObjectNames(activityLevel.parentUId.name)
         this.title = levelName.first.ifEmpty { levelName.second }
-        _displayRockInfo(binding.layoutTextViewInfo.infoTextView)
+        _displayRockInfo(activityViewBinding.layoutTextViewInfo.infoTextView)
 
         var routes = _getAndFilterRoutes()
         // additional searchbar filters:

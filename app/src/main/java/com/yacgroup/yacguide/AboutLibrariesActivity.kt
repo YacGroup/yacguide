@@ -35,15 +35,15 @@ import com.yacgroup.yacguide.utils.ActivityUtils
 
 class AboutLibrariesActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityAboutLibrariesBinding
+    private lateinit var _activityViewBinding: ActivityAboutLibrariesBinding
     private lateinit var _activityUtils: ActivityUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _activityUtils = ActivityUtils(this)
         setTitle(R.string.software_and_licenses)
-        _binding = ActivityAboutLibrariesBinding.inflate(layoutInflater)
-        setContentView(_binding.root)
+        _activityViewBinding = ActivityAboutLibrariesBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
         _displayContent()
     }
 
@@ -61,7 +61,7 @@ class AboutLibrariesActivity : AppCompatActivity() {
     }
 
     private fun _createEntry(lib: Library) {
-        _binding.aboutLibrariesContent.addView(
+        _activityViewBinding.aboutLibrariesContent.addView(
             AboutLibrariesEntryBinding.inflate(layoutInflater).apply {
                 root.setOnClickListener { _activityUtils.openUrl(lib.website.orEmpty()) }
                 aboutLibrariesName.text = lib.uniqueId

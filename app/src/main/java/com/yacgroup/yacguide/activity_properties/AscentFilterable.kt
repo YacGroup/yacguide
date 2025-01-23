@@ -24,7 +24,7 @@ import com.yacgroup.yacguide.RouteActivity
 import com.yacgroup.yacguide.TableActivityWithOptionsMenu
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class AscentFilterable<bindingType: ViewBinding>(private val _activity: TableActivityWithOptionsMenu<bindingType>) : ActivityProperty {
+class AscentFilterable<BindingType: ViewBinding>(private val _activity: TableActivityWithOptionsMenu<BindingType>) : ActivityProperty {
 
     override fun getMenuGroupId() = R.id.group_filter
 

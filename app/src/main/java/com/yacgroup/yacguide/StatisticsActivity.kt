@@ -36,7 +36,7 @@ class StatisticsActivity : BaseNavigationActivity<ActivityStatisticsBinding>() {
 
         _statsGenerator = StatisticGenerator(this)
         _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     override fun onResume() {

@@ -58,7 +58,7 @@ class AboutActivity : BaseNavigationActivity<ActivityAboutBinding>() {
             title: String,
             description: String = "",
             callback: (() -> Unit)? = null) {
-        binding.aboutContent.addView(
+        activityViewBinding.aboutContent.addView(
             AboutEntryBinding.inflate(layoutInflater).apply {
                 root.setOnClickListener { callback?.invoke() ?: _activityUtils.openUrl(description) }
                 aboutEntryTitle.text = title

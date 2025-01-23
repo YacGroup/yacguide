@@ -80,7 +80,7 @@ class RockActivity : TableActivityWithOptionsMenu<ActivityRockBinding>() {
         )
 
         _searchBarHandler = SearchBarHandler(
-            searchBarBinding = binding.layoutSearchBar,
+            searchBarBinding = activityViewBinding.layoutSearchBar,
             searchHintResource = R.string.rock_search,
             checkBoxTitle = getString(R.string.only_official_summits),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_only_official_summits),
@@ -101,7 +101,7 @@ class RockActivity : TableActivityWithOptionsMenu<ActivityRockBinding>() {
             subText = ParserUtils.decodeObjectNames(rock.name).second,
             onClick = { _onRockSelected(rock) })
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     override fun showComments(v: View) {

@@ -35,7 +35,6 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.databinding.ActivityPartnersBinding
 import com.yacgroup.yacguide.databinding.AddPartnerDialogBinding
-import com.yacgroup.yacguide.databinding.SearchbarBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.statistics.StatisticUtils
 import com.yacgroup.yacguide.utils.*
@@ -44,7 +43,7 @@ import java.util.ArrayList
 
 class PartnersActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityPartnersBinding
+    private lateinit var _activityViewBinding: ActivityPartnersBinding
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
@@ -58,8 +57,8 @@ class PartnersActivity : AppCompatActivity() {
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityPartnersBinding.inflate(layoutInflater)
-        setContentView(_binding.root)
+        _activityViewBinding = ActivityPartnersBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -67,7 +66,7 @@ class PartnersActivity : AppCompatActivity() {
                 .orEmpty().toMutableList()
 
         _searchBarHandler = SearchBarHandler(
-            searchBarBinding = _binding.layoutSearchBar,
+            searchBarBinding = _activityViewBinding.layoutSearchBar,
             searchHintResource = R.string.partner_search,
             checkBoxTitle = getString(R.string.sort_alphabetically),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_sort_alphabetically),
@@ -86,7 +85,7 @@ class PartnersActivity : AppCompatActivity() {
             subText = "(${_ascendCountsPerPartner.get(partner.id)})",
             onClick = { _onPartnerSelected(partner) })
         }
-        val listView = _binding.layoutListViewContent.tableRecyclerView.apply {
+        val listView = _activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
             adapter =_viewAdapter
         }
         val swipeRightConfig = SwipeConfig(

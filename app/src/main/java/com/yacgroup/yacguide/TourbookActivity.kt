@@ -28,7 +28,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.yacgroup.yacguide.database.*
@@ -99,7 +98,7 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
                     onClick = { _onAscendSelected(ascend) })
             }
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -234,7 +233,7 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
     }
 
     private fun _displayContent() {
-        binding.layoutNavTourbook.apply {
+        activityViewBinding.layoutNavTourbook.apply {
             nextButton.visibility = if (_isLastYear()) View.INVISIBLE else View.VISIBLE
             prevButton.visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
             currentYearTextView.text = if (_currentYear == 0) "" else _currentYear.toString()

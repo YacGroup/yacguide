@@ -55,7 +55,7 @@ class SectorActivity : TableActivityWithOptionsMenu<ActivitySectorBinding>() {
             subText = ParserUtils.decodeObjectNames(sector.name).second,
             onClick = { _onSectorSelected(sector) })
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
 
         if (intent.getBooleanExtra(IntentConstants.SHOW_WHATS_NEW, false)) {
             WhatsNewInfo(this).showDialog()

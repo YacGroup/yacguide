@@ -90,7 +90,7 @@ class RegionManagerActivity : BaseNavigationActivity<ActivityRegionManagerBindin
                 onClick = { _selectDefaultRegion(region) })
             }
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
 
         _displayContent()
     }

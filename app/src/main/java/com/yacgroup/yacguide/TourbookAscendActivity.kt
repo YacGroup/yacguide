@@ -44,7 +44,7 @@ class TourbookAscendActivity : BaseNavigationActivity<ActivityTourbookAscendBind
 
         _db = DatabaseWrapper(this)
 
-        _listView = binding.layoutListViewContent.tableRecyclerView
+        _listView = activityViewBinding.layoutListViewContent.tableRecyclerView
         _viewAdapter = ListViewAdapter(ItemDiffCallback()) { item -> item }
 
         _visualUtils = VisualUtils(this)

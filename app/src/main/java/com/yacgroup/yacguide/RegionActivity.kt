@@ -50,7 +50,7 @@ class RegionActivity : TableActivityWithOptionsMenu<ActivityTableBinding>() {
             subText = _getRegionSubText(region),
             onClick = { _onRegionSelected(region) })
         }
-        binding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     override fun displayContent() {

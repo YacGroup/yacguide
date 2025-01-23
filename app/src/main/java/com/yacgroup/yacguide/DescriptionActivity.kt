@@ -40,7 +40,7 @@ class DescriptionActivity : TableActivity<ActivityDescriptionBinding>() {
 
         _route = db.getRoute(activityLevel.parentUId.id)!!
         if (_route.statusId > 1) {
-            binding.layoutTextViewInfo.infoTextView.text =
+            activityViewBinding.layoutTextViewInfo.infoTextView.text =
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
@@ -53,7 +53,7 @@ class DescriptionActivity : TableActivity<ActivityDescriptionBinding>() {
             subText = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty(),
             onClick = { _onAscendSelected(ascend) })
         }
-        binding.layoutRouteDescription.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        activityViewBinding.layoutRouteDescription.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
 
     override fun onResume() {
@@ -88,7 +88,7 @@ class DescriptionActivity : TableActivity<ActivityDescriptionBinding>() {
                 ?.let { DateUtils.formatDate(it) }
                 ?: getString(R.string.date_unknown)
 
-        binding.layoutRouteDescription.apply {
+        activityViewBinding.layoutRouteDescription.apply {
             firstAscentClimbersTextView.text = firstAscentClimbers
             firstAscentDateTextView.text = firstAscentDate
             _route.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {

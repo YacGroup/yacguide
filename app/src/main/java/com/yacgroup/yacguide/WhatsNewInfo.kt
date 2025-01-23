@@ -38,7 +38,6 @@ class WhatsNewInfo(private var _activity: AppCompatActivity) {
     private val _sharedPrefs: SharedPreferences
     private val _releaseNoteFiles: Array<String>?
     private val _markwonBuilder: Markwon
-    private lateinit var _view: View
     private val _activityUtils: ActivityUtils
 
     init {

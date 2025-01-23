@@ -35,7 +35,7 @@ class CountryActivity : TableActivityWithOptionsMenu<ActivityTableBinding>() {
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _pinnedCountries: Set<String>
 
-    override fun getViewBinding(): ActivityTableBinding = ActivityTableBinding.inflate(layoutInflater)
+    override fun getViewBinding() = ActivityTableBinding.inflate(layoutInflater)
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class CountryActivity : TableActivityWithOptionsMenu<ActivityTableBinding>() {
         )
         _pinnedCountries = customSettings.getStringSet(getString(R.string.pref_key_pinned_countries), emptySet()).orEmpty()
 
-        val listView = binding.layoutListViewContent.tableRecyclerView
+        val listView = activityViewBinding.layoutListViewContent.tableRecyclerView
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
             _areItemsTheSame = { country1, country2 -> country1.name == country2.name },
             _areContentsTheSame = { country1, country2 -> country1 == country2 }

@@ -35,7 +35,7 @@ const val TIME_OUT_MS = 1500L
 
 class LaunchActivity : AppCompatActivity() {
 
-    private lateinit var _binding: ActivityLaunchBinding
+    private lateinit var _activityViewBinding: ActivityLaunchBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _updateHandler: UpdateHandler
@@ -50,8 +50,8 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _binding = ActivityLaunchBinding.inflate(layoutInflater)
-        setContentView(_binding.root)
+        _activityViewBinding = ActivityLaunchBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -59,7 +59,7 @@ class LaunchActivity : AppCompatActivity() {
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
         _updateHandler.update(
-            onUpdateFinished = { _binding.iconImageView.setImageResource(R.drawable.ic_start_done) },
+            onUpdateFinished = { _activityViewBinding.iconImageView.setImageResource(R.drawable.ic_start_done) },
             isSilent = true
         )
         Timer().start()
