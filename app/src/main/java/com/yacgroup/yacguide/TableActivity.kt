@@ -67,7 +67,7 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             Comment(
                 text = it.text.orEmpty(),
                 properties = listOf(
-                    CommentProperty(R.id.qualityLayout, R.string.relevance, RegionComment.QUALITY_MAP, it.qualityId)
+                    CommentProperty(R.string.relevance, RegionComment.QUALITY_MAP, it.qualityId)
                 )
             )
         })
@@ -78,7 +78,7 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             Comment(
                 text = it.text.orEmpty(),
                 properties = listOf(
-                    CommentProperty(R.id.qualityLayout, R.string.relevance, SectorComment.QUALITY_MAP, it.qualityId)
+                    CommentProperty(R.string.relevance, SectorComment.QUALITY_MAP, it.qualityId)
                 )
             )
         })
@@ -89,7 +89,7 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             Comment(
                 text = it.text.orEmpty(),
                 properties = listOf(
-                    CommentProperty(R.id.qualityLayout, R.string.nature, RockComment.RELEVANCE_MAP, it.qualityId)
+                    CommentProperty(R.string.nature, RockComment.RELEVANCE_MAP, it.qualityId)
                 )
             )
         })
@@ -100,10 +100,10 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             Comment(
                 text = it.text.orEmpty(),
                 properties = listOf(
-                    CommentProperty(R.id.qualityLayout, R.string.route_quality, RouteComment.QUALITY_MAP, it.qualityId),
-                    CommentProperty(R.id.gradeLayout, R.string.grade, RouteComment.GRADE_MAP, it.gradeId),
-                    CommentProperty(R.id.protectionLayout, R.string.protection, RouteComment.PROTECTION_MAP, it.securityId),
-                    CommentProperty(R.id.dryingLayout, R.string.drying, RouteComment.DRYING_MAP, it.wetnessId)
+                    CommentProperty(R.string.route_quality, RouteComment.QUALITY_MAP, it.qualityId),
+                    CommentProperty(R.string.grade, RouteComment.GRADE_MAP, it.gradeId),
+                    CommentProperty(R.string.protection, RouteComment.PROTECTION_MAP, it.securityId),
+                    CommentProperty(R.string.drying, RouteComment.DRYING_MAP, it.wetnessId)
                 )
             )
         })
@@ -121,24 +121,31 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             val commentDialogBinding = CommentDialogBinding.inflate(dialog.layoutInflater)
             dialog.setView(commentDialogBinding.root)
 
+            // FIXME: Why is this divider code necessary?
             val dividerResource = TypedValue()
             theme.resolveAttribute(android.R.attr.listDivider, dividerResource, true)
             comments.forEach { comment ->
-                CommentBinding.inflate(dialog.layoutInflater, commentDialogBinding.commentLayout, false).let { view ->
+                CommentBinding.inflate(dialog.layoutInflater).let { view ->
                     view.commentDivider.setBackgroundResource(dividerResource.resourceId)
-                    comment.properties.forEach { prop ->
-                        _property2String(prop.qualityMap, prop.qualityId)?.let {
-                            view.root.findViewById<ConstraintLayout>(prop.layoutResource).apply {
-                                CommentPropertyBinding.inflate(dialog.layoutInflater).apply {
-                                    propertyNameTextView.setText(prop.nameResource)
-                                    propertyValueTextView.text = it
-                                }
-                                visibility = View.VISIBLE
+                    comment.properties.forEachIndexed { viewIndex, prop ->
+                        _property2String(prop.qualityMap, prop.qualityId)?.let { propValue ->
+                            val propBinding = CommentPropertyBinding.inflate(dialog.layoutInflater).apply {
+                                propertyNameTextView.setText(prop.nameResource)
+                                propertyValueTextView.text = propValue
                             }
+                            // The layout margins are not considered, if the view is add programmatically.
+                            propBinding.root.layoutParams = ConstraintLayout.LayoutParams(
+                                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                bottomMargin = 10
+                            }
+                            // +1 because the divider is the first element in the linear view
+                            view.root.addView(propBinding.root, viewIndex + 1)
                         }
                     }
                     view.commentTextView.text = comment.text
-                    commentDialogBinding.commentLayout.addView(view.singleCommentLayout)
+                    commentDialogBinding.commentLayout.addView(view.root)
                 }
             }
             dialog.show()
