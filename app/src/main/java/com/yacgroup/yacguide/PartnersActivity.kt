@@ -142,7 +142,7 @@ class PartnersActivity : AppCompatActivity() {
     private fun _displayContent() {
         setTitle(R.string.partner)
 
-        _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id));
+        _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
 
         val filteredPartners =
             if (_partnerNamePart.isNotEmpty())

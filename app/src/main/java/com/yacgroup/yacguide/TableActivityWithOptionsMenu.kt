@@ -33,7 +33,7 @@ abstract class TableActivityWithOptionsMenu<ViewBindingType: ViewBinding> : Tabl
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.options_menu, menu)
         properties.map { menu.setGroupVisible(it.getMenuGroupId(), true) }
-        MenuCompat.setGroupDividerEnabled(menu, true);
+        MenuCompat.setGroupDividerEnabled(menu, true)
         if (menu is MenuBuilder) {
             menu.setOptionalIconsVisible(true)
         }
