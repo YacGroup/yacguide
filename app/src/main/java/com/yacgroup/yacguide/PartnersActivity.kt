@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023, 2025 Axel Paetzold
  * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.list_adapters.*
@@ -109,6 +110,20 @@ class PartnersActivity : AppCompatActivity() {
         _visualUtils = VisualUtils(this)
 
         _displayContent()
+
+        val settingsKeyShowUsageHint = getString(R.string.pref_key_show_partner_manager_usage)
+        if (_customSettings.getBoolean(settingsKeyShowUsageHint, true)) {
+            Snackbar.make(listView,
+                          R.string.partners_activity_usage,
+                          Snackbar.LENGTH_LONG)
+                .setDuration(resources.getInteger(R.integer.popup_duration))
+                .setAction(R.string.do_not_show_anymore) {
+                    _customSettings.edit().apply {
+                        putBoolean(settingsKeyShowUsageHint, false)
+                    }.apply()
+                }
+                .show()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2020 - 2025 Axel Paetzold
  *               2024 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,6 +66,8 @@ class PreferencesActivity : BaseNavigationActivity() {
             putStringSet(
                 getString(R.string.pref_key_pinned_countries),
                 emptySet<String>())
+            putBoolean(getString(R.string.pref_key_show_partner_manager_usage), true)
+            putBoolean(getString(R.string.pref_key_show_partner_manager_usage), true)
         }.apply()
 
         _displayContent()
