@@ -127,7 +127,7 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
             comments.forEach { comment ->
                 CommentBinding.inflate(dialog.layoutInflater).let { view ->
                     view.commentDivider.setBackgroundResource(dividerResource.resourceId)
-                    comment.properties.forEachIndexed { viewIndex, prop ->
+                    comment.properties.forEach { prop ->
                         _property2String(prop.qualityMap, prop.qualityId)?.let { propValue ->
                             val propBinding = CommentPropertyBinding.inflate(dialog.layoutInflater).apply {
                                 propertyNameTextView.setText(prop.nameResource)
@@ -140,8 +140,10 @@ abstract class TableActivity<ViewBindingType: ViewBinding> : BaseNavigationActiv
                             ).apply {
                                 bottomMargin = 10
                             }
-                            // +1 because the divider is the first element in the linear view
-                            view.root.addView(propBinding.root, viewIndex + 1)
+                            view.root.addView(
+                                propBinding.root,
+                                view.commentLayout.indexOfChild(view.commentTextView)
+                            )
                         }
                     }
                     view.commentTextView.text = comment.text
