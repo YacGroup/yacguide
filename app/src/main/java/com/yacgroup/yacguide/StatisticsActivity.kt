@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 package com.yacgroup.yacguide
 
+import android.content.Context
 import android.os.Bundle
 import androidx.core.graphics.toColor
 import com.yacgroup.yacguide.databinding.ActivityStatisticsBinding
@@ -34,7 +35,8 @@ class StatisticsActivity : BaseNavigationActivity<ActivityStatisticsBinding>() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.menu_statistics)
 
-        _statsGenerator = StatisticGenerator(this)
+        _statsGenerator = StatisticGenerator(this,
+            getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE))
         _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
         activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
@@ -47,7 +49,8 @@ class StatisticsActivity : BaseNavigationActivity<ActivityStatisticsBinding>() {
     private fun _displayContent() {
         val statistics = listOf(
             _statsGenerator.generateAscendCountsStatistic(),
-            _statsGenerator.generateMostFrequentPartnersStatistic()
+            _statsGenerator.generateMostFrequentPartnersStatistic(),
+            _statsGenerator.generateNewlyCollectedRockCountsStatistic()
         )
         _viewAdapter.submitList(statistics)
     }

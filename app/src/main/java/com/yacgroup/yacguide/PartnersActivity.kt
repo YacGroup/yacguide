@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, 2022, 2023 Axel Paetzold
+ * Copyright (C) 2019, 2022, 2023, 2025 Axel Paetzold
  * Copyright (C) 2023 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 package com.yacgroup.yacguide
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
@@ -31,6 +32,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.databinding.ActivityPartnersBinding
@@ -110,6 +112,20 @@ class PartnersActivity : AppCompatActivity() {
         _visualUtils = VisualUtils(this)
 
         _displayContent()
+
+        val settingsKeyShowUsageHint = getString(R.string.pref_key_show_partner_manager_usage)
+        if (_customSettings.getBoolean(settingsKeyShowUsageHint, true)) {
+            Snackbar.make(listView,
+                          R.string.partners_activity_usage,
+                          Snackbar.LENGTH_LONG)
+                .setDuration(resources.getInteger(R.integer.popup_duration))
+                .setAction(R.string.do_not_show_anymore) {
+                    _customSettings.edit().apply {
+                        putBoolean(settingsKeyShowUsageHint, false)
+                    }.apply()
+                }
+                .show()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -141,6 +157,7 @@ class PartnersActivity : AppCompatActivity() {
 
     private fun _displayContent() {
         setTitle(R.string.partner)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_save_24)
 
         _ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
 
@@ -169,6 +186,7 @@ class PartnersActivity : AppCompatActivity() {
         }.show()
     }
 
+    @SuppressLint("InflateParams")
     private fun _updatePartner(partner: Partner?, dialogTitleResource: Int) {
         val viewBinding = AddPartnerDialogBinding.inflate(layoutInflater).apply {
             addPartnerEditText.setText(partner?.name)

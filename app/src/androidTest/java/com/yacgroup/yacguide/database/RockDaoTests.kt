@@ -29,7 +29,6 @@ import com.yacgroup.yacguide.database.TestDB.Companion.ROCK_COMMENTS
 import com.yacgroup.yacguide.database.TestDB.Companion.SECTORS
 import com.yacgroup.yacguide.database.comment.RockComment
 import com.yacgroup.yacguide.equal
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -60,20 +59,17 @@ class RockDaoTests {
         _db.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByName_nameNotAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllByName(INVALID_NAME).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByName_nameAvailable_returnsCorrespondingRocks() = runTest {
         val rock = ROCKS.first()
         assertTrue(equal(listOf(rock), _rockDao.getAllByName(rock.name!!)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByRelevance_rocksForEveryRelevanceRequested_returnsCorrespondingRocksRespectively() = runTest {
         RockComment.RELEVANCE_MAP.keys.forEach { relevance ->
@@ -89,19 +85,16 @@ class RockDaoTests {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_invalidCountryName_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInCountry(INVALID_NAME).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInCountry(COUNTRIES.last().name).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInCountry_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val country1Name = COUNTRIES.first().name
@@ -115,19 +108,16 @@ class RockDaoTests {
         assertTrue(equal(rocksInCountry1, _rockDao.getAllInCountry(country1Name)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_invalidRegionId_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInRegion(INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInRegion(REGIONS.last().id).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInRegion_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val region1Id = REGIONS.first().id
@@ -137,19 +127,16 @@ class RockDaoTests {
         assertTrue(equal(rocksInRegion1, _rockDao.getAllInRegion(region1Id)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_invalidSectorId_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInSector(INVALID_ID).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_noRocksAvailable_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllInSector(SECTORS.last().id).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllInSector_rocksAvailable_returnsCorrespondingRocks() = runTest {
         val sector1Id = SECTORS.first().id
@@ -159,19 +146,16 @@ class RockDaoTests {
         assertTrue(equal(rocksInSector1, _rockDao.getAllInSector(sector1Id)))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllByNameInSector_nameAvailableInDifferentSector_returnsEmptyList() = runTest {
         assertTrue(_rockDao.getAllByNameInSector(SECTORS.first().id, ROCKS.last().name!!).isEmpty())
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRock_invalidRockId_returnsNull() = runTest {
         assertNull(_rockDao.getRock(INVALID_ID))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getRock_rockAvailable_returnsRock() = runTest {
         val rock = ROCKS.first()
@@ -202,7 +186,6 @@ class RockDaoDeletionTests {
         _db.close()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun deleteAll_rockTableBecomesEmpty() = runTest {
         _rockDao.deleteAll()

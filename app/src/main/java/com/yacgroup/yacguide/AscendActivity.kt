@@ -147,7 +147,7 @@ class AscendActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun _displayContent() {
         val routeName = ParserUtils.decodeObjectNames(_route?.name)
-        this.title = "${if (routeName.first.isNotEmpty()) routeName.first else routeName.second} ${_route?.grade.orEmpty()}"
+        this.title = "${routeName.first.ifEmpty { routeName.second }} ${_route?.grade.orEmpty()}"
 
         val spinnerAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

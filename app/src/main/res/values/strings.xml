@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2018 - 2023 Axel Paetzold
+  Copyright (C) 2018 - 2025 Axel Paetzold
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -85,11 +85,12 @@
     <string name="route_quality_filter">Qualität: mindestens</string>
     <string name="route_protection_filter">Absicherung: mindestens</string>
     <string name="route_drying_filter">Abtrocknung: mindestens</string>
+    <string name="do_not_show_anymore">Nicht mehr anzeigen</string>
 
-    <!-- Toasts -->
+    <!-- Pop-ups -->
     <string name="refresh_successful">Aktualisierung erfolgreich</string>
     <string name="region_deleted">Gebiet gelöscht</string>
-    <string name="refresh_failed">Aktualisierung fehlgeschlagen</string>
+    <string name="refresh_failed">Aktualisierung fehlgeschlagen\nBitte nochmal versuchen…</string>
     <string name="refresh_aborted">Aktualisierung abgebrochen</string>
     <string name="ascends_refreshed">Begehungen aktualisiert</string>
     <string name="ascend_deleted">Begehung gelöscht</string>
@@ -109,6 +110,8 @@
     <string name="country_already_pinned">Land bereits gepinnt</string>
     <string name="country_unpinned">Land abgepinnt</string>
     <string name="country_not_yet_pinned">Land nicht gepinnt</string>
+    <string name="region_manager_usage">Aktualisieren oder Löschen eines Gebiets durch Rechts- bzw. Links-Wischen</string>
+    <string name="partners_activity_usage">Bearbeiten oder Löschen eines Kletterpartners durch Rechts- bzw. Links-Wischen</string>
 
     <!-- Data -->
     <string name="countries_and_regions">Länder und Gebiete</string>
@@ -137,6 +140,7 @@
     <!-- Statistics -->
     <string name="ascends_per_year">Begehungen pro Jahr</string>
     <string name="ascends_per_partner">Begehungen pro Kletterpartner</string>
+    <string name="newly_collected_rocks_per_year">Neu gesammelte Felsen pro Jahr</string>
 
     <!-- Tourbook -->
     <string name="override_tourbook">Dies überschreibt das gesamte Tourenbuch.</string>

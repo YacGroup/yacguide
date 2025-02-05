@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 - 2023 Axel Paetzold
+ * Copyright (C) 2021 - 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
 import com.yacgroup.yacguide.databinding.ActivityRegionManagerBinding
@@ -90,9 +91,25 @@ class RegionManagerActivity : BaseNavigationActivity<ActivityRegionManagerBindin
                 onClick = { _selectDefaultRegion(region) })
             }
         }
-        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
+        val listView = activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
+            adapter = _viewAdapter
+        }
 
         _displayContent()
+
+        val settingsKeyShowUsageHint = getString(R.string.pref_key_show_region_manager_usage)
+        if (_customSettings.getBoolean(settingsKeyShowUsageHint, true)) {
+            Snackbar.make(listView,
+                          R.string.region_manager_usage,
+                          Snackbar.LENGTH_LONG)
+                .setDuration(resources.getInteger(R.integer.popup_duration))
+                .setAction(R.string.do_not_show_anymore) {
+                    _customSettings.edit().apply {
+                        putBoolean(settingsKeyShowUsageHint, false)
+                    }.apply()
+                }
+                .show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
