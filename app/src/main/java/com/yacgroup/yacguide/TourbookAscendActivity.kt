@@ -24,10 +24,11 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
+import com.yacgroup.yacguide.databinding.ActivityTourbookAscendBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
 
-class TourbookAscendActivity : BaseNavigationActivity() {
+class TourbookAscendActivity : BaseNavigationActivity<ActivityTourbookAscendBinding>() {
 
     private lateinit var _listView: RecyclerView
     private lateinit var _viewAdapter: ListViewAdapter<ListItem>
@@ -35,13 +36,15 @@ class TourbookAscendActivity : BaseNavigationActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascent: Ascend
 
+    override fun getViewBinding() = ActivityTourbookAscendBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.menu_tourbook)
 
         _db = DatabaseWrapper(this)
 
-        _listView = findViewById(R.id.tableRecyclerView)
+        _listView = activityViewBinding.layoutListViewContent.tableRecyclerView
         _viewAdapter = ListViewAdapter(ItemDiffCallback()) { item -> item }
 
         _visualUtils = VisualUtils(this)
@@ -49,8 +52,6 @@ class TourbookAscendActivity : BaseNavigationActivity() {
         val ascentId = intent.getIntExtra(IntentConstants.ASCEND_ID, DatabaseWrapper.INVALID_ID)
         _ascent = _db.getAscend(ascentId)!!
     }
-
-    override fun getLayoutId() = R.layout.activity_tourbook_ascend
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.edit_delete, menu)

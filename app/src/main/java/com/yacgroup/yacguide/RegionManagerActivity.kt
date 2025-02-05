@@ -24,16 +24,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.databinding.ActivityRegionManagerBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.network.SectorParser
 import com.yacgroup.yacguide.utils.VisualUtils
 
-class RegionManagerActivity : BaseNavigationActivity() {
+class RegionManagerActivity : BaseNavigationActivity<ActivityRegionManagerBinding>() {
 
     private lateinit var _visualUtils: VisualUtils
     private lateinit var _viewAdapter: SectionViewAdapter<Region>
@@ -43,6 +43,8 @@ class RegionManagerActivity : BaseNavigationActivity() {
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _customSettings: SharedPreferences
     private var _defaultRegionId: Int = 0
+
+    override fun getViewBinding() = ActivityRegionManagerBinding.inflate(layoutInflater)
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,8 +91,9 @@ class RegionManagerActivity : BaseNavigationActivity() {
                 onClick = { _selectDefaultRegion(region) })
             }
         }
-        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
-        listView.adapter = _viewAdapter
+        val listView = activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
+            adapter = _viewAdapter
+        }
 
         _displayContent()
 
@@ -118,8 +121,6 @@ class RegionManagerActivity : BaseNavigationActivity() {
         _updateAll()
         return true
     }
-
-    override fun getLayoutId() = R.layout.activity_region_manager
 
     private fun _displayContent() {
         this.setTitle(R.string.menu_region_manager)

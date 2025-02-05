@@ -20,27 +20,27 @@ package com.yacgroup.yacguide
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.Route
+import com.yacgroup.yacguide.databinding.ActivityDescriptionBinding
 import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
 import com.yacgroup.yacguide.list_adapters.ListItem
 import com.yacgroup.yacguide.list_adapters.ListViewAdapter
 import com.yacgroup.yacguide.utils.*
 
-class DescriptionActivity : TableActivity() {
+class DescriptionActivity : TableActivity<ActivityDescriptionBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Ascend>
     private lateinit var _route: Route
+
+    override fun getViewBinding() = ActivityDescriptionBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _route = db.getRoute(activityLevel.parentUId.id)!!
         if (_route.statusId > 1) {
-            findViewById<TextView>(R.id.infoTextView).text =
+            activityViewBinding.layoutTextViewInfo.infoTextView.text =
                 "${getString(R.string.route_restricted)} ${Route.STATUS[_route.statusId]}"
         }
 
@@ -53,10 +53,8 @@ class DescriptionActivity : TableActivity() {
             subText = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty(),
             onClick = { _onAscendSelected(ascend) })
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        activityViewBinding.layoutRouteDescription.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_description
 
     override fun onResume() {
         super.onResume()
@@ -90,15 +88,15 @@ class DescriptionActivity : TableActivity() {
                 ?.let { DateUtils.formatDate(it) }
                 ?: getString(R.string.date_unknown)
 
-        findViewById<TextView>(R.id.firstAscentClimbersTextView).text = firstAscentClimbers
-        findViewById<TextView>(R.id.firstAscentDateTextView).text = firstAscentDate
-
-        _route.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
-            findViewById<ConstraintLayout>(R.id.typeOfClimbingLayout).visibility = View.VISIBLE
-            findViewById<TextView>(R.id.typeOfClimbingTextView).text = it
+        activityViewBinding.layoutRouteDescription.apply {
+            firstAscentClimbersTextView.text = firstAscentClimbers
+            firstAscentDateTextView.text = firstAscentDate
+            _route.typeOfClimbing?.takeIf { it.isNotEmpty() }?.let {
+                typeOfClimbingLayout.visibility = View.VISIBLE
+                typeOfClimbingTextView.text = it
+            }
+            routeDescriptionTextView.text = _route.description
         }
-
-        findViewById<TextView>(R.id.routeDescriptionTextView).text = _route.description
 
         _viewAdapter.submitList(db.getRouteAscends(_route.id))
     }

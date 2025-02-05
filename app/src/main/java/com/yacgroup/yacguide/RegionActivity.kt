@@ -19,16 +19,18 @@ package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.database.Region
+import com.yacgroup.yacguide.databinding.ActivityTableBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class RegionActivity : TableActivityWithOptionsMenu() {
+class RegionActivity : TableActivityWithOptionsMenu<ActivityTableBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Region>
     private lateinit var _rockCounter: RockCounter
+
+    override fun getViewBinding() = ActivityTableBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +50,8 @@ class RegionActivity : TableActivityWithOptionsMenu() {
             subText = _getRegionSubText(region),
             onClick = { _onRegionSelected(region) })
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_table
 
     override fun displayContent() {
         this.title = activityLevel.parentUId.name

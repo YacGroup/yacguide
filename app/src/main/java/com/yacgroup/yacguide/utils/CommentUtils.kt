@@ -23,7 +23,6 @@ class Comment(
 )
 
 class CommentProperty(
-    val layoutResource: Int,
     val nameResource: Int,
     val qualityMap: Map<Int, String>,
     val qualityId: Int

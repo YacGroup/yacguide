@@ -32,7 +32,7 @@ class StatisticUtils {
                     ascendCounts.put(id, prevValue + 1)
                 }
             }
-            return ascendCounts;
+            return ascendCounts
         }
 
     }

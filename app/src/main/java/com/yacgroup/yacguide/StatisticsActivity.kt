@@ -20,14 +20,16 @@ package com.yacgroup.yacguide
 import android.content.Context
 import android.os.Bundle
 import androidx.core.graphics.toColor
-import androidx.recyclerview.widget.RecyclerView
+import com.yacgroup.yacguide.databinding.ActivityStatisticsBinding
 import com.yacgroup.yacguide.list_adapters.StatisticsViewAdapter
 import com.yacgroup.yacguide.statistics.StatisticGenerator
 
-class StatisticsActivity : BaseNavigationActivity() {
+class StatisticsActivity : BaseNavigationActivity<ActivityStatisticsBinding>() {
 
     private lateinit var _statsGenerator: StatisticGenerator
     private lateinit var _viewAdapter: StatisticsViewAdapter
+
+    override fun getViewBinding() = ActivityStatisticsBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +38,8 @@ class StatisticsActivity : BaseNavigationActivity() {
         _statsGenerator = StatisticGenerator(this,
             getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE))
         _viewAdapter = StatisticsViewAdapter(getColor(R.color.colorPrimary).toColor())
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_statistics
 
     override fun onResume() {
         super.onResume()

@@ -29,14 +29,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.SparseIntArray
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
+import com.yacgroup.yacguide.databinding.ActivityPartnersBinding
+import com.yacgroup.yacguide.databinding.AddPartnerDialogBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.statistics.StatisticUtils
 import com.yacgroup.yacguide.utils.*
@@ -45,6 +45,7 @@ import java.util.ArrayList
 
 class PartnersActivity : AppCompatActivity() {
 
+    private lateinit var _activityViewBinding: ActivityPartnersBinding
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
@@ -58,7 +59,8 @@ class PartnersActivity : AppCompatActivity() {
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_partners)
+        _activityViewBinding = ActivityPartnersBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -66,7 +68,7 @@ class PartnersActivity : AppCompatActivity() {
                 .orEmpty().toMutableList()
 
         _searchBarHandler = SearchBarHandler(
-            searchBarLayout = findViewById(R.id.searchBarLayout),
+            searchBarBinding = _activityViewBinding.layoutSearchBar,
             searchHintResource = R.string.partner_search,
             checkBoxTitle = getString(R.string.sort_alphabetically),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_sort_alphabetically),
@@ -85,9 +87,9 @@ class PartnersActivity : AppCompatActivity() {
             subText = "(${_ascendCountsPerPartner.get(partner.id)})",
             onClick = { _onPartnerSelected(partner) })
         }
-        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
-        listView.adapter = _viewAdapter
-
+        val listView = _activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
+            adapter =_viewAdapter
+        }
         val swipeRightConfig = SwipeConfig(
             color = ContextCompat.getColor(this, R.color.colorEdit),
             background = ContextCompat.getDrawable(this, R.drawable.ic_baseline_edit_24)!!
@@ -186,14 +188,11 @@ class PartnersActivity : AppCompatActivity() {
 
     @SuppressLint("InflateParams")
     private fun _updatePartner(partner: Partner?, dialogTitleResource: Int) {
-        val view = layoutInflater.inflate(R.layout.add_partner_dialog, null).let { view ->
-            partner?.let {
-                view.findViewById<EditText>(R.id.addPartnerEditText).setText(it.name)
-            }
-            view
+        val viewBinding = AddPartnerDialogBinding.inflate(layoutInflater).apply {
+            addPartnerEditText.setText(partner?.name)
         }
         val dialog = DialogWidgetBuilder(this, dialogTitleResource).apply {
-            setView(view)
+            setView(viewBinding.root)
             setNegativeButton()
             // Set to null. We override the onclick below.
             setPositiveButton(null)
@@ -203,8 +202,7 @@ class PartnersActivity : AppCompatActivity() {
         dialog.setOnShowListener {
             val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             okButton.setOnClickListener{
-                val newName = dialog.findViewById<EditText>(R.id.addPartnerEditText)
-                        ?.text.toString().trim { it <= ' ' }
+                val newName = viewBinding.addPartnerEditText.text.toString().trim { it <= ' ' }
                 when {
                     newName == "" ->
                         Toast.makeText(dialog.context, R.string.hint_no_name,

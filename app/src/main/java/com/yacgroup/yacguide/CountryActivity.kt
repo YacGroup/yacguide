@@ -22,18 +22,20 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.activity_properties.*
 import com.yacgroup.yacguide.database.Country
+import com.yacgroup.yacguide.databinding.ActivityTableBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
 
-class CountryActivity : TableActivityWithOptionsMenu() {
+class CountryActivity : TableActivityWithOptionsMenu<ActivityTableBinding>() {
 
     private lateinit var _viewAdapter: ListViewAdapter<Country>
     private lateinit var _updateHandler: UpdateHandler
     private lateinit var _pinnedCountries: Set<String>
+
+    override fun getViewBinding() = ActivityTableBinding.inflate(layoutInflater)
 
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +49,7 @@ class CountryActivity : TableActivityWithOptionsMenu() {
         )
         _pinnedCountries = customSettings.getStringSet(getString(R.string.pref_key_pinned_countries), emptySet()).orEmpty()
 
-        val listView = findViewById<RecyclerView>(R.id.tableRecyclerView)
+        val listView = activityViewBinding.layoutListViewContent.tableRecyclerView
         _viewAdapter = ListViewAdapter(ItemDiffCallback(
             _areItemsTheSame = { country1, country2 -> country1.name == country2.name },
             _areContentsTheSame = { country1, country2 -> country1 == country2 }
@@ -87,8 +89,6 @@ class CountryActivity : TableActivityWithOptionsMenu() {
             WhatsNewInfo(this).showDialog()
         }
     }
-
-    override fun getLayoutId() = R.layout.activity_table
 
     override fun displayContent() {
         setTitle(R.string.app_name)

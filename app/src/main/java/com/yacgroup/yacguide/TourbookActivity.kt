@@ -28,20 +28,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.NumberPicker
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.recyclerview.widget.RecyclerView
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.*
+import com.yacgroup.yacguide.databinding.ActivityTourbookBinding
+import com.yacgroup.yacguide.databinding.NumberpickerBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
 import org.json.JSONException
 import java.io.IOException
 import java.util.*
 
-class TourbookActivity : BaseNavigationActivity() {
+class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
 
     private val _exportResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
@@ -68,6 +67,8 @@ class TourbookActivity : BaseNavigationActivity() {
         eAscends,
         eBotches
     }
+
+    override fun getViewBinding() = ActivityTourbookBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,10 +98,8 @@ class TourbookActivity : BaseNavigationActivity() {
                     onClick = { _onAscendSelected(ascend) })
             }
         }
-        findViewById<RecyclerView>(R.id.tableRecyclerView).adapter = _viewAdapter
+        activityViewBinding.layoutListViewContent.tableRecyclerView.adapter = _viewAdapter
     }
-
-    override fun getLayoutId() = R.layout.activity_tourbook
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.import_export, menu)
@@ -128,22 +127,24 @@ class TourbookActivity : BaseNavigationActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun chooseYear(v: View) {
-        val dialog = DialogWidgetBuilder(this, R.string.select_year).apply {
-            setView(R.layout.numberpicker)
-        }.create()
-        // we need to call show() before findViewById can be used.
-        dialog.show()
-        dialog.findViewById<NumberPicker>(R.id.yearPicker)?.apply {
-            minValue = 0
-            maxValue = _availableYears.size - 1
-            displayedValues = _availableYears.map { if (it == 0) getString(R.string.undefined) else it.toString() }.toTypedArray()
-            value = _availableYears.indexOf(_currentYear)
-            setOnClickListener {
-                _currentYear = _availableYears[value]
-                _displayContent()
-                dialog.dismiss()
+        DialogWidgetBuilder(this).create().also { dialog ->
+            NumberpickerBinding.inflate(dialog.layoutInflater).also { binding ->
+                dialog.setView(binding.root)
+                binding.yearPicker.apply {
+                    minValue = 0
+                    maxValue = _availableYears.size - 1
+                    displayedValues =
+                        _availableYears.map { if (it == 0) getString(R.string.undefined) else it.toString() }
+                            .toTypedArray()
+                    value = _availableYears.indexOf(_currentYear)
+                    setOnClickListener {
+                        _currentYear = _availableYears[value]
+                        _displayContent()
+                        dialog.dismiss()
+                    }
+                }
             }
-        }
+        }.show()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -232,9 +233,11 @@ class TourbookActivity : BaseNavigationActivity() {
     }
 
     private fun _displayContent() {
-        findViewById<View>(R.id.nextButton).visibility = if (_isLastYear()) View.INVISIBLE else View.VISIBLE
-        findViewById<View>(R.id.prevButton).visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
-        (findViewById<View>(R.id.currentYearTextView) as TextView).text = if (_currentYear == 0) "" else _currentYear.toString()
+        activityViewBinding.layoutNavTourbook.apply {
+            nextButton.visibility = if (_isLastYear()) View.INVISIBLE else View.VISIBLE
+            prevButton.visibility = if (_isFirstYear()) View.INVISIBLE else View.VISIBLE
+            currentYearTextView.text = if (_currentYear == 0) "" else _currentYear.toString()
+        }
 
         val ascends = _getAscends().toMutableList()
         if (!_customSettings.getBoolean(

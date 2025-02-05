@@ -21,28 +21,24 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.yacgroup.yacguide.R
+import com.yacgroup.yacguide.databinding.ExpandableListItemBinding
 import com.yacgroup.yacguide.statistics.Statistic
 import com.yacgroup.yacguide.utils.AxisFormatter
 import com.yacgroup.yacguide.utils.IntValueFormatter
 
 class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statistic, RecyclerView.ViewHolder>(StatisticDiffCallback()) {
 
-    inner class StatisticViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val _statisticNameLayout = view.findViewById<LinearLayout>(R.id.titleLayout)
-        private val _statisticName = view.findViewById<TextView>(R.id.titleTextView)
-        private val _statisticChartLayout = view.findViewById<RelativeLayout>(R.id.expandedContentLayout)
-        private val _chart = view.findViewById<HorizontalBarChart>(R.id.barChart)
+    inner class StatisticViewHolder(binding: ExpandableListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val _statisticNameLayout = binding.titleLayout
+        private val _statisticName = binding.titleTextView
+        private val _statisticChartLayout = binding.expandedContentLayout
+        private val _chart = binding.barChart
 
         fun bind(stat: Statistic) {
             val dataSet = _generateDataSet(stat)
@@ -82,9 +78,10 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(viewGroup.context)
-        val view = inflater.inflate(R.layout.expandable_list_item, viewGroup, false)
-        return StatisticViewHolder(view)
+        val binding = ExpandableListItemBinding.inflate(
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
+        return StatisticViewHolder(binding)
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {

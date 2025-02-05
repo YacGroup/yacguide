@@ -26,25 +26,24 @@ import com.yacgroup.yacguide.R
 
 class FilterSpinner(
     private val _searchDialog: AppCompatDialog,
-    private val _resourceId: Int,
+    private val _spinner: Spinner,
     private val _spinnerValuesMap: LinkedHashMap<Int, String>,
     private val _spinnerListener: FilterSpinnerListener
 ) {
 
     fun create() {
-        val spinner = _searchDialog.findViewById<Spinner>(_resourceId)
         val adapter = ArrayAdapter<CharSequence>(
             _searchDialog.context,
             R.layout.spinner_item,
             _spinnerValuesMap.values.toTypedArray()
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner?.adapter = adapter
-        spinner?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        _spinner.adapter = adapter
+        _spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectionName = parent.getItemAtPosition(position).toString()
                 val selectionKey = _spinnerValuesMap.keys.first { _spinnerValuesMap[it] == selectionName }
-                _spinnerListener.onFilterSelected(_resourceId, selectionKey)
+                _spinnerListener.onFilterSelected(_spinner.id, selectionKey)
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }

@@ -24,14 +24,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.preference.Preference
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.databinding.ActivityPreferencesBinding
 import com.yacgroup.yacguide.utils.DialogWidgetBuilder
 
-class PreferencesActivity : BaseNavigationActivity() {
+class PreferencesActivity : BaseNavigationActivity<ActivityPreferencesBinding>() {
 
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
 
-    override fun getLayoutId() = R.layout.activity_preferences
+    override fun getViewBinding() = ActivityPreferencesBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

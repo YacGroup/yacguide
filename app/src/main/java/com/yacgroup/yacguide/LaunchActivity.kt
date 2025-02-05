@@ -22,9 +22,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import com.yacgroup.yacguide.databinding.ActivityLaunchBinding
 import com.yacgroup.yacguide.extensions.getPackageInfoCompat
 import com.yacgroup.yacguide.extensions.versionCodeCompat
 import com.yacgroup.yacguide.migration.PreferencesMigration
@@ -35,6 +35,7 @@ const val TIME_OUT_MS = 1500L
 
 class LaunchActivity : AppCompatActivity() {
 
+    private lateinit var _activityViewBinding: ActivityLaunchBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _updateHandler: UpdateHandler
@@ -49,7 +50,8 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_launch)
+        _activityViewBinding = ActivityLaunchBinding.inflate(layoutInflater)
+        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
@@ -57,7 +59,7 @@ class LaunchActivity : AppCompatActivity() {
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
         _updateHandler.update(
-            onUpdateFinished = { findViewById<ImageView>(R.id.iconImageView).setImageResource(R.drawable.ic_start_done) },
+            onUpdateFinished = { _activityViewBinding.iconImageView.setImageResource(R.drawable.ic_start_done) },
             isSilent = true
         )
         Timer().start()

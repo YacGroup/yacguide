@@ -18,12 +18,13 @@
 package com.yacgroup.yacguide.list_adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.*
-import com.yacgroup.yacguide.R
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.yacgroup.yacguide.databinding.ListViewSectionContentBinding
 import com.yacgroup.yacguide.utils.VisualUtils
 
 data class SectionViewItem<T>(
@@ -37,11 +38,11 @@ class SectionViewAdapter<T: Any>(
     private val _createInnerAdapter: () -> ListViewAdapter<T>
 ) : ListAdapter<SectionViewItem<T>, RecyclerView.ViewHolder>(SectionDiffCallback()) {
 
-    inner class SectionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val _sectionHeaderLayout = view.findViewById<ConstraintLayout>(R.id.sectionHeaderLayout)
-        private val _headerLeftTextView = view.findViewById<TextView>(R.id.sectionHeaderLeftTextView)
-        private val _headerRightTextView = view.findViewById<TextView>(R.id.sectionHeaderRightTextView)
-        private val _listView = view.findViewById<RecyclerView>(R.id.sectionRecyclerView)
+    inner class SectionViewHolder(binding: ListViewSectionContentBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val _sectionHeaderLayout = binding.sectionHeaderLayout
+        private val _headerLeftTextView = binding.sectionHeaderLeftTextView
+        private val _headerRightTextView = binding.sectionHeaderRightTextView
+        private val _listView = binding.sectionRecyclerView
         private val _listAdapter = _createInnerAdapter() // the inner adapter must be created here
                                                          // and not passed as parameter
         private val _viewPool = RecyclerView.RecycledViewPool() // for optimization
@@ -69,9 +70,10 @@ class SectionViewAdapter<T: Any>(
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(viewGroup.context)
-        val view = inflater.inflate(R.layout.list_view_section_content, viewGroup, false)
-        return SectionViewHolder(view)
+        val binding = ListViewSectionContentBinding.inflate(
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
+        return SectionViewHolder(binding)
     }
 
     @Suppress("UNCHECKED_CAST")
