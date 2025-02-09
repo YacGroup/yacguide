@@ -29,13 +29,13 @@ import com.yacgroup.yacguide.extensions.getPackageInfoCompat
 
 open class ActivityUtils(protected val activity: AppCompatActivity) {
 
-    val appVersion: String = _getAppVersion()
+    val appVersion = _getAppVersion()
 
     private fun _getAppVersion(): String {
         try {
             val pkgManager = activity.packageManager
             val pkgInfo = pkgManager.getPackageInfoCompat(activity.packageName, 0)
-            return pkgInfo.versionName
+            return pkgInfo.versionName ?: "0.0"
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
