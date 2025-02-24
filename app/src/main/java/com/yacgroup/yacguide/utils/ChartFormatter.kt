@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,14 @@
 package com.yacgroup.yacguide.utils
 
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.IValueFormatter
+import com.github.mikephil.charting.utils.ViewPortHandler
 
-class AxisFormatter(private val _labels: List<String>) : ValueFormatter() {
+class AxisFormatter(private val _labels: List<String>) : IAxisValueFormatter {
     // This class provides custom axis labels different from indices
-    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+    override fun getFormattedValue(value: Float, axis: AxisBase?): String {
         return try {
             _labels[value.toInt()]
         } catch (e: IndexOutOfBoundsException) {
@@ -31,9 +34,14 @@ class AxisFormatter(private val _labels: List<String>) : ValueFormatter() {
     }
 }
 
-class IntValueFormatter : ValueFormatter() {
+class IntValueFormatter : IValueFormatter {
 
-    override fun getFormattedValue(value: Float): String {
+    override fun getFormattedValue(
+        value: Float,
+        entry: Entry?,
+        dataSetIndex: Int,
+        viewPortHandler: ViewPortHandler?
+    ): String {
         return if (value > 0) value.toInt().toString() else ""
     }
 }
