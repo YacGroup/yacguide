@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2023, 2025 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ class StatisticsViewAdapter(private val _baseColor: Color) : ListAdapter<Statist
                 with(xAxis) {
                     valueFormatter = AxisFormatter(stat.data.keys.toList())
                     xAxis.setDrawGridLines(false)
+                    xAxis.axisMaxLabels = stat.data.size // Allow more labels than the default limit (25)
                     xAxis.labelCount = stat.data.size // Do not display more than the number of x values as labels
                     xAxis.granularity = 1f // Do not duplicate labels on zooming to match labelCount
                 }
