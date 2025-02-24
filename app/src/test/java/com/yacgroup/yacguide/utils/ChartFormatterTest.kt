@@ -26,7 +26,7 @@ internal class ChartFormatterTest {
     @Test
     fun axisFormatter_getAxisLabel_invalidIndex_returnsEmptyString() {
         val formatter = AxisFormatter(listOf("Label1", "Label2"))
-        assertTrue(formatter.getAxisLabel(100f, null) == "")
+        assertTrue(formatter.getFormattedValue(100f, null) == "")
     }
 
     @Test
@@ -34,19 +34,19 @@ internal class ChartFormatterTest {
         val labelList = listOf("Label1", "Label2", "Label3")
         val formatter = AxisFormatter(labelList)
         labelList.forEachIndexed { idx, label ->
-            assertEquals(label, formatter.getAxisLabel(idx.toFloat(), null))
+            assertEquals(label, formatter.getFormattedValue(idx.toFloat(), null))
         }
     }
 
     @Test
     fun intValueFormatter_getFormattedValue_valueIsZeroOrLower_ReturnsEmptyString() {
-        assertTrue(IntValueFormatter().getFormattedValue(0f) == "")
-        assertTrue(IntValueFormatter().getFormattedValue(-3f) == "")
+        assertTrue(IntValueFormatter().getFormattedValue(0f, null, 0, null) == "")
+        assertTrue(IntValueFormatter().getFormattedValue(-3f, null , 0, null) == "")
     }
 
     @Test
     fun intValueFormatter_getFormattedValue_valueIsGreaterThanZero_ReturnsAccordingIntValueAsString() {
         val value = 3.5f
-        assertTrue(value.toInt().toString() == IntValueFormatter().getFormattedValue(value))
+        assertTrue(value.toInt().toString() == IntValueFormatter().getFormattedValue(value, null, 0, null))
     }
 }
