@@ -8,6 +8,7 @@ Offline tool for [sandsteinklettern.de].
 
  * Offline access to climbing route information
  * Tour book
+ * Climbing statistics
 
 
 [sandsteinklettern.de]: http://www.sandsteinklettern.de
