@@ -121,6 +121,7 @@ android {
 aboutLibraries {
     prettyPrint = true
     configPath = 'config/aboutLibraries'
+    excludeFields = arrayOf("generated")
 }
 
 dependencies {
