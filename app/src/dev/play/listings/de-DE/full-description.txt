@@ -1,9 +1,10 @@
-Offline-Tool basierend auf den Daten von http://www.sandsteinklettern.de.
+App basierend auf den Daten von http://www.sandsteinklettern.de.
 
 <b>Funktionen:</b>
 
 * Offline-Zugriff auf Informationen zu Kletterrouten
 * Persönliches Tourenbuch
+* Kletterstatistiken
 
 
 <b>Die Entwicklerversion enthält regelmäßige Stände des Quellcodes

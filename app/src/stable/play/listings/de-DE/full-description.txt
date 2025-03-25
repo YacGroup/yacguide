@@ -1,6 +1,7 @@
-Offline tool based on the data from http://www.sandsteinklettern.de.
+App basierend auf den Daten von http://www.sandsteinklettern.de.
 
-<b>Features:</b>
+<b>Funktionen:</b>
 
-* Offline access to climbing route information
-* Personal tourbook
+* Offline-Zugriff auf Informationen zu Kletterwegen
+* Persönliches Tourenbuch
+* Kletterstatistiken
