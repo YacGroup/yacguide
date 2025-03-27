@@ -3,13 +3,6 @@
 [![CI](https://github.com/YacGroup/yacguide/actions/workflows/ci.yaml/badge.svg)](https://github.com/YacGroup/yacguide/actions/workflows/ci.yaml)
 [![Releases](https://img.shields.io/github/release/yacgroup/yacguide.svg)](https://github.com/yacgroup/yacguide/releases/latest)
 
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
-      alt="Get it on Google Play"
-      height="60">](https://play.google.com/store/apps/details?id=com.yacgroup.yacguide)
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-      alt="Get it on F-Droid"
-      height="60">](https://f-droid.org/en/packages/com.yacgroup.yacguide/)
-
 Offline tool for
 [sandsteinklettern.de](http://www.sandsteinklettern.de).
 
@@ -27,11 +20,19 @@ See our [contributing doc](CONTRIBUTING.md) for information.
 
 ### Stable
 
-Is released in the [Google Play Store][YacGuide GPlay].
-The user interface may change because the community
-continuously improves the app. The database will always be compatible
-to the previous version, however, if a database change is necessary,
-the user will be informed how he can convert e.g. its tour book.
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+      alt="Get it on Google Play"
+      height="60">](https://play.google.com/store/apps/details?id=com.yacgroup.yacguide)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="60">](https://f-droid.org/en/packages/com.yacgroup.yacguide/)
+
+Is released in the [Google Play Store][YacGuide GPlay] and at
+[F-Droid][YacGuide F-Droid]. The user interface may change because the
+community continuously improves the app. The database will always be
+compatible to the previous version, however, if a database change is
+necessary, the user will be informed how he can convert e.g. its tour
+book.
 
 The version number follows the [semantic version scheme] and consists
 of three digits `X.Y.Z`.
@@ -41,6 +42,13 @@ of three digits `X.Y.Z`.
 * `Z` - Increased for bug fixes.
 
 ### Development (Dev)
+
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+      alt="Get it on Google Play"
+      height="60">](https://play.google.com/store/apps/details?id=com.yacgroup.yacguide.dev)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="60">](https://f-droid.org/en/packages/com.yacgroup.yacguide.dev/)
 
 The development version contains regular snapshots which may lead to
 unexpected changes without notice. It can be installed alongside the
@@ -57,6 +65,7 @@ version number.
 
 [YacGuide]: https://yacgroup.github.io/yacguide/
 [F-Droid]: https://f-droid.org
+[YacGuide F-Droid]: https://f-droid.org/en/packages/com.yacgroup.yacguide/
 [YacGuide Dev F-Droid]: https://f-droid.org/en/packages/com.yacgroup.yacguide.dev/
 [YacGuide GPlay]: https://play.google.com/store/apps/details?id=com.yacgroup.yacguide
 [YacGuide Dev GPlay]: https://play.google.com/store/apps/details?id=com.yacgroup.yacguide.dev
