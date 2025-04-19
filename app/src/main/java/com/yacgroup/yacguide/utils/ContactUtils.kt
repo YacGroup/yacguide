@@ -37,7 +37,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
     private val _sdkVersion: Int = Build.VERSION.SDK_INT
     private val _androidRelease: String = Build.VERSION.RELEASE
 
-    /*
+    /**
      * Send an email, if an tour book import error occurs.
      */
     fun reportImportError(errMsg: String, jsonFile: Uri) {
@@ -50,7 +50,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         }
     }
 
-    /*
+    /**
      * Send a general bug report.
      */
     fun sendBugReport() {
@@ -81,7 +81,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         _openEmailIntent(subject, emailBody, attachments)
     }
 
-    /*
+    /**
      * Create a custom chooser because there will be a lot of "useless" app answers
      * for for action = Intent.ACTION_SEND_MULTIPLE.
      */
@@ -110,7 +110,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
             val finalIntent = if (targetIntents.isNotEmpty()) {
                 // Prepare an intent chooser with the first item in the list and add all other apps
                 // as alternatives.
-                val startIntent = targetIntents.removeFirst()
+                val startIntent = targetIntents.removeAt(0)
                 Intent.createChooser(
                         startIntent,
                         activity.getString(R.string.choose_email_app)).apply {
@@ -126,7 +126,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         }
     }
 
-    /*
+    /**
      * Create our email intent
      */
     private fun _getEmailIntent(subject: String? = null, body: String? = null,
@@ -143,7 +143,7 @@ class ContactUtils(activity: AppCompatActivity) : ActivityUtils(activity) {
         }
     }
 
-    /*
+    /**
      * Save error message to a file with the given prefix and return URI to this file.
      */
     private fun _errMsgToUri(errMsg: String, fileNamePrfx: String): Uri? {
