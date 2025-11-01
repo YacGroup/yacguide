@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlinVersion = '2.1.0'
     ext.aboutlibrariesVersion = '11.2.3'
+    ext.kotlinVersion = '2.2.21'
 
     repositories {
         google()
@@ -20,7 +20,7 @@ buildscript {
 
 plugins {
     id 'com.mikepenz.aboutlibraries.plugin' version "$aboutlibrariesVersion" apply false
-    id 'com.google.devtools.ksp' version '2.1.0-1.0.29' apply false
+    id 'com.google.devtools.ksp' version '2.2.21-2.0.4' apply false
 }
 
 allprojects {
