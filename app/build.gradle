@@ -1,11 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
     id 'com.github.triplet.play' version '3.12.1'
     id 'com.mikepenz.aboutlibraries.plugin'
     id 'com.google.devtools.ksp'
+    id 'de.mannodermaus.android-junit5'
 }
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'de.mannodermaus.android-junit5'
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
@@ -105,9 +107,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        // https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target
-        jvmTarget = '21'
+    kotlin {
+        compilerOptions {
+            // https://kotlinlang.org/docs/faq.html#which-versions-of-jvm-does-kotlin-target
+            jvmTarget = JvmTarget.JVM_21
+        }
     }
     testOptions {
         unitTests.all {
