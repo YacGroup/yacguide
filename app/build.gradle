@@ -61,8 +61,14 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // https://developer.android.com/topic/performance/app-optimization/enable-app-optimization
+            // Enables code-related app optimization.
+            minifyEnabled true
+            // Enables resource shrinking.
+            shrinkResources true
+            // Default file with automatically generated optimization rules.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
             signingConfig signingConfigs.gplay
         }
         debug {
