@@ -54,7 +54,7 @@ jobs:
           - api-level: 26
             arch: x86
             target: default
-          - api-level: 35
+          - api-level: 36
             arch: x86_64
             target: google_apis
     steps:

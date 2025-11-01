@@ -38,9 +38,9 @@ android {
     namespace 'com.yacgroup.yacguide'
     defaultConfig {
         applicationId 'com.yacgroup.yacguide'
-        compileSdk 35
+        compileSdk = 36
         minSdkVersion 26
-        targetSdkVersion 35
+        targetSdkVersion 36
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         vectorDrawables.useSupportLibrary = true
