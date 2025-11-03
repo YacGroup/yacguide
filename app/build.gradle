@@ -111,7 +111,7 @@ android {
     }
     testOptions {
         unitTests.all {
-            // https://github.com/junit-team/junit5-samples/blob/r5.11.3/junit5-jupiter-starter-gradle/build.gradle
+            // https://github.com/junit-team/junit5-samples/blob/r5.14.1/junit5-jupiter-starter-gradle/build.gradle
             useJUnitPlatform()
         }
     }
@@ -156,17 +156,21 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
 
-    // Unit Tests
-    // https://github.com/junit-team/junit5-samples/blob/r5.11.3/junit5-jupiter-starter-gradle/build.gradle
-    testImplementation(platform('org.junit:junit-bom:5.11.3'))
+    /*
+     * Unit Tests
+     */
+    def junitVersion = '5.14.1'
+
+    // https://github.com/junit-team/junit5-samples/blob/r5.14.1/junit5-jupiter-starter-gradle/build.gradle
+    testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation('org.junit.jupiter:junit-jupiter')
     testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 
     // Instrumentation Tests
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2'
     androidTestImplementation 'androidx.test:runner:1.7.0'
-    androidTestImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-    androidTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
+    androidTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    androidTestImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     androidTestImplementation 'de.mannodermaus.junit5:android-test-core:1.9.0'
     androidTestRuntimeOnly 'de.mannodermaus.junit5:android-test-runner:1.9.0'
 
