@@ -68,13 +68,20 @@ class StatisticGenerator(private val _ctx: Context, private val _customSettings:
 
     fun generateMostFrequentPartnersStatistic(): Statistic {
         val statsTitle = _ctx.getString(R.string.ascends_per_partner)
-        val ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(_db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id))
+        val ascendCountsPerPartner = StatisticUtils.getAscendCountsPerPartner(
+            _db.getAscendsBelowStyleId(AscendStyle.eBOTCHED.id)
+        )
+        val allData = _db.getPartners().sortedBy {
+            ascendCountsPerPartner.get(it.id, 0)
+        }.associate { partner ->
+            partner.name.orEmpty() to listOf(ascendCountsPerPartner.get(partner.id))
+        }
+        // FIXME: This limitation of entries is a temporary fix for issue #489.
+        val limitedData = allData.entries.toList().takeLast(99).associate { it.key to it.value }
         return Statistic(
             statsTitle,
             listOf(statsTitle), // not used because only single-stack
-            _db.getPartners().sortedBy { ascendCountsPerPartner.get(it.id, 0) }.associate { partner ->
-                partner.name.orEmpty() to listOf(ascendCountsPerPartner.get(partner.id))
-            }
+            limitedData
         )
     }
 
