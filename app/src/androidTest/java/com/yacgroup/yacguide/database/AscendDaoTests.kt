@@ -27,8 +27,13 @@ import com.yacgroup.yacguide.database.TestDB.Companion.ROUTES
 import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AscendDaoTests {

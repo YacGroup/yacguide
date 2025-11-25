@@ -35,8 +35,13 @@ import com.yacgroup.yacguide.equal
 import com.yacgroup.yacguide.utils.AscendStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RouteDaoTests {
@@ -138,7 +143,7 @@ class RouteDaoTests {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getAllForStyle_returnsOnlyRoutesAscendedWithRequestedStyle() = runTest {
-        AscendStyle.values().forEach { style ->
+        AscendStyle.entries.forEach { style ->
             val routes = ROUTES.filter { route ->
                 ASCENDS.any {
                     it.routeId == route.id && it.styleId == style.id
