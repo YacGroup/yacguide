@@ -2,7 +2,7 @@
 #
 # YacGuide Android Application
 #
-# Copyright (C) 2020, 2023 Christian Sommer
+# Copyright (C) 2020, 2023, 2025 Christian Sommer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ def get_cli_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--debug", "-d", action="store_true",
                         help="Print debug information.")
+    parser.set_defaults(func=default_callback)
     sub_parsers = parser.add_subparsers(help="Sub-command help")
 
     clean_parser = sub_parsers.add_parser(
@@ -64,6 +65,15 @@ what you do."""
                                 default=False,
                                 help=help_release_skip_checks)
     return parser
+
+
+def default_callback(args):
+    """Callback function for `clean` sub-parser.
+
+    Args:
+        args (argparse.Namespace): Parsed arguments
+    """
+    error("No sub-command selected. Run the script with --help.")
 
 
 def clean_callback(args):
