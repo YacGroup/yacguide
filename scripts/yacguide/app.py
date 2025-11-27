@@ -146,7 +146,7 @@ class Release():
         self.update_dev_version(version)
         self.repo.create_tag(
             path=tag_name,
-            message="Daily dev {version}")
+            message=f"Daily dev {version}")
         print("""\n
 Next step:
 ----------
