@@ -160,8 +160,6 @@ dependencies {
     // optional - Guava support for Room, including Optional and ListenableFuture
     implementation "androidx.room:room-guava:$roomVersion"
 
-    implementation 'com.caverock:androidsvg:1.4'
-    implementation "com.github.AppDevNext:AndroidChart:3.1.0.25"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
 
@@ -224,4 +222,11 @@ dependencies {
      */
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "com.github.skydoves:colorpickerpreference:2.0.6"
+
+    /*
+     * Used for statistic charts
+     *
+     * https://github.com/AppDevNext/AndroidChart
+     */
+    implementation "com.github.AppDevNext:AndroidChart:3.1.0.25"
 }
