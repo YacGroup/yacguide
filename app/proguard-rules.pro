@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# The library org.apache.commons.csv uses FindBugs annotations internally,
+# but those annotations are often compile-time only and not included in the runtime jar.
+# R8 is strict and complains when it sees a reference to a missing class,
+# even if that class is just an annotation that isn't needed at runtime.
+-dontwarn edu.umd.cs.findbugs.annotations.SuppressFBWarnings

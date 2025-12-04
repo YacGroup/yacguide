@@ -160,7 +160,6 @@ dependencies {
     // optional - Guava support for Room, including Optional and ListenableFuture
     implementation "androidx.room:room-guava:$roomVersion"
 
-    implementation 'net.sf.kxml:kxml2:2.3.0'
     implementation 'com.caverock:androidsvg:1.4'
     implementation "com.github.AppDevNext:AndroidChart:3.1.0.25"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
