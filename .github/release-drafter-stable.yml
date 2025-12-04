@@ -1,9 +1,7 @@
 # https://github.com/release-drafter/release-drafter
 
-name-template: 'dev-YYYYMMDD'
-tag-template: 'dev-YYYYMMDD'
-prerelease: true
-include-pre-releases: true
+name-template: 'vX.Y.Z'
+tag-template: 'vX.Y.Z'
 # Set explicitly to master to avoid issue
 # https://github.com/release-drafter/release-drafter/issues/1125
 commitish: master
