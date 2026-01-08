@@ -19,7 +19,6 @@ package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -32,6 +31,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.datepicker.MaterialDatePicker
 
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
@@ -43,6 +43,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
 import java.util.Calendar
+import java.util.TimeZone
 
 class AscendActivity : AppCompatActivity() {
 
@@ -122,17 +123,32 @@ class AscendActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     @Suppress("UNUSED_PARAMETER")
     fun enterDate(v: View) {
-        val calendar = Calendar.getInstance()
-        val yy = _ascend.year.takeIf { it != 0 } ?: calendar.get(Calendar.YEAR)
-        val mm = _ascend.month.takeIf { it != 0 }.let { it?.minus(1) } ?: calendar.get(Calendar.MONTH)
-        val dd = _ascend.day.takeIf { it != 0 } ?: calendar.get(Calendar.DAY_OF_MONTH)
-        val datePicker = DatePickerDialog(this@AscendActivity, { _, year, monthOfYear, dayOfMonth ->
-            _ascend.year = year
-            _ascend.month = monthOfYear + 1
-            _ascend.day = dayOfMonth
+        // Create UTC calendar instances to avoid time zone issues
+        val timeZone = TimeZone.getTimeZone("UTC")
+
+        // Determine the initial selection time in milliseconds
+        val initialSelection = if (_ascend.year != 0 && _ascend.month != 0 && _ascend.day != 0) {
+            Calendar.getInstance(timeZone).also {
+                it.set(_ascend.year, _ascend.month - 1, _ascend.day)
+            }.timeInMillis
+        } else {
+            MaterialDatePicker.todayInUtcMilliseconds()
+        }
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
+            .setSelection(initialSelection)
+            .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+            .build()
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            Calendar.getInstance(timeZone).also {
+                it.timeInMillis = selection
+                _ascend.year = it.get(Calendar.YEAR)
+                _ascend.month = it.get(Calendar.MONTH) + 1
+                _ascend.day = it.get(Calendar.DAY_OF_MONTH)
+            }
             _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
-        }, yy, mm, dd)
-        datePicker.show()
+        }
+        datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
     }
 
     @Suppress("UNUSED_PARAMETER")
