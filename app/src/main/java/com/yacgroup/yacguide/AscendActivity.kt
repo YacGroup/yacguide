@@ -21,6 +21,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +54,7 @@ class AscendActivity : AppCompatActivity() {
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
     private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
+    private lateinit var _customSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,6 +102,10 @@ class AscendActivity : AppCompatActivity() {
                 }
             })
         }
+
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), Context.MODE_PRIVATE
+        )
     }
 
     public override fun onResume() {
@@ -126,18 +132,29 @@ class AscendActivity : AppCompatActivity() {
         // Create UTC calendar instances to avoid time zone issues
         val timeZone = TimeZone.getTimeZone("UTC")
 
+        val calendarInputMode = _customSettings.getInt(
+            getString(R.string.pref_key_calendar_input_mode),
+            resources.getInteger(R.integer.pref_default_calendar_input_mode)
+        )
+
         // Determine the initial selection time in milliseconds
         val initialSelection = if (_ascend.year != 0 && _ascend.month != 0 && _ascend.day != 0) {
             Calendar.getInstance(timeZone).also {
                 it.set(_ascend.year, _ascend.month - 1, _ascend.day)
             }.timeInMillis
         } else {
-            MaterialDatePicker.todayInUtcMilliseconds()
+            if (calendarInputMode == 0) {
+                MaterialDatePicker.todayInUtcMilliseconds()
+            } else {
+                // Do not fill the calendar with the current date in text mode
+                // because this mode is intended for fast input of older dates.
+                null
+            }
         }
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
             .setSelection(initialSelection)
-            .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+            .setInputMode(calendarInputMode)
             .build()
         datePicker.addOnPositiveButtonClickListener { selection ->
             Calendar.getInstance(timeZone).also {
@@ -147,6 +164,12 @@ class AscendActivity : AppCompatActivity() {
                 _ascend.day = it.get(Calendar.DAY_OF_MONTH)
             }
             _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+
+            // Save last selected input mode in preferences
+            with(_customSettings.edit()) {
+                putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode)
+                apply()
+            }
         }
         datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
     }
