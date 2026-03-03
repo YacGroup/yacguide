@@ -18,8 +18,6 @@
 package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -38,13 +36,13 @@ import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.databinding.ActivityAscendBinding
+import com.yacgroup.yacguide.utils.AscendDatePickerUtils
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
-import java.util.Calendar
-import java.util.TimeZone
+import androidx.core.content.edit
 
 class AscendActivity : AppCompatActivity() {
 
@@ -83,7 +81,7 @@ class AscendActivity : AppCompatActivity() {
         )
 
         _partnerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 _ascend.partnerIds = result.data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                     ?: ArrayList()
             }
@@ -91,7 +89,7 @@ class AscendActivity : AppCompatActivity() {
 
         _activityViewBinding.notesEditText.let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = view.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
             it.addTextChangedListener(object : TextWatcher {
@@ -104,7 +102,7 @@ class AscendActivity : AppCompatActivity() {
         }
 
         _customSettings = getSharedPreferences(
-            getString(R.string.preferences_filename), Context.MODE_PRIVATE
+            getString(R.string.preferences_filename), MODE_PRIVATE
         )
     }
 
@@ -129,42 +127,22 @@ class AscendActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     @Suppress("UNUSED_PARAMETER")
     fun enterDate(v: View) {
-        // Create UTC calendar instances to avoid time zone issues
-        val timeZone = TimeZone.getTimeZone("UTC")
-
         val calendarInputMode = _customSettings.getInt(
             getString(R.string.pref_key_calendar_input_mode),
             resources.getInteger(R.integer.pref_default_calendar_input_mode)
         )
-
-        // Determine the initial selection time in milliseconds
-        val initialSelection = if (_ascend.year != 0 && _ascend.month != 0 && _ascend.day != 0) {
-            Calendar.getInstance(timeZone).also {
-                it.set(_ascend.year, _ascend.month - 1, _ascend.day)
-            }.timeInMillis
-        } else {
-            // Do not fill the calendar with the current date in text mode
-            // because this mode is intended for fast input of older dates.
-            if (calendarInputMode == 0) MaterialDatePicker.todayInUtcMilliseconds() else null
-        }
+        val ascendDatePickerUtils = AscendDatePickerUtils(_ascend)
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
-            .setSelection(initialSelection)
+            .setSelection(ascendDatePickerUtils.getSelection(calendarInputMode))
             .setInputMode(calendarInputMode)
             .build()
         datePicker.addOnPositiveButtonClickListener { selection ->
-            Calendar.getInstance(timeZone).also {
-                it.timeInMillis = selection
-                _ascend.year = it.get(Calendar.YEAR)
-                _ascend.month = it.get(Calendar.MONTH) + 1
-                _ascend.day = it.get(Calendar.DAY_OF_MONTH)
-            }
+            ascendDatePickerUtils.updateAscend(selection)
             _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
-
             // Save last selected input mode in preferences
-            with(_customSettings.edit()) {
+            _customSettings.edit {
                 putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode)
-                apply()
             }
         }
         datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
