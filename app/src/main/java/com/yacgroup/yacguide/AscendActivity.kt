@@ -52,9 +52,9 @@ class AscendActivity : AppCompatActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var _customSettings: SharedPreferences
     private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
-    private lateinit var _customSettings: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,13 +143,9 @@ class AscendActivity : AppCompatActivity() {
                 it.set(_ascend.year, _ascend.month - 1, _ascend.day)
             }.timeInMillis
         } else {
-            if (calendarInputMode == 0) {
-                MaterialDatePicker.todayInUtcMilliseconds()
-            } else {
-                // Do not fill the calendar with the current date in text mode
-                // because this mode is intended for fast input of older dates.
-                null
-            }
+            // Do not fill the calendar with the current date in text mode
+            // because this mode is intended for fast input of older dates.
+            if (calendarInputMode == 0) MaterialDatePicker.todayInUtcMilliseconds() else null
         }
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
