@@ -118,7 +118,7 @@ class PreferencesMigrationTests {
     }
 
     @Test
-    fun from_v1_v2_full() {
+    fun from_v1_to_v2_full() {
         deleteSharedPreferences()
         val v1Keys = createV1(testFull = true)
         _preferenceMigration.migrateFromVersion1To2()
@@ -126,10 +126,20 @@ class PreferencesMigrationTests {
     }
 
     @Test
-    fun from_v1_v2_partial() {
+    fun from_v1_to_v2_partial() {
         deleteSharedPreferences()
         val v1Keys = createV1(testFull = false)
         _preferenceMigration.migrateFromVersion1To2()
         checkV2(v1Keys)
+    }
+
+    @Test
+    fun from_v2_to_v3() {
+        deleteSharedPreferences()
+        val v1Keys = createV1(testFull = false)
+        _preferenceMigration.migrateFromVersion1To2()
+        checkV2(v1Keys)
+        _preferenceMigration.migrateFromVersion2To3()
+        assertTrue(_sharedPreferences.getInt("preference_version", 1) == 3)
     }
 }
