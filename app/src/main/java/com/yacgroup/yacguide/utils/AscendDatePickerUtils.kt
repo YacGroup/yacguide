@@ -39,11 +39,10 @@ class AscendDatePickerUtils (
     /**
      * Return the initial selection time in milliseconds.
      *
-     * @param calendarInputMode The input mode of the calendar picker. If 0 (text mode),
-     * defaults to today's date if no date is set in the ascend object.
+     * @param inputMode The input mode of the calendar picker.
      * @return The selection in UTC milliseconds, or null if no date is set and mode is not 0.
      */
-    fun getSelection(calendarInputMode: Int): Long? {
+    fun getSelection(inputMode: AscendDatePickerInputMode): Long? {
         return if (_ascend.year != 0 && _ascend.month != 0 && _ascend.day != 0) {
             _calendar.also {
                 it.set(_ascend.year, _ascend.month - 1, _ascend.day)
@@ -51,7 +50,7 @@ class AscendDatePickerUtils (
         } else {
             // Do not fill the calendar with the current date in text mode
             // because this mode is intended for fast input of older dates.
-            if (calendarInputMode == 0) _todayProvider() else null
+            if (inputMode == AscendDatePickerInputMode.eText) _todayProvider() else null
         }
     }
 

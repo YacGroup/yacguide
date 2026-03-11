@@ -43,6 +43,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
 import androidx.core.content.edit
+import com.yacgroup.yacguide.utils.AscendDatePickerInputMode
 
 class AscendActivity : AppCompatActivity() {
 
@@ -134,7 +135,9 @@ class AscendActivity : AppCompatActivity() {
         val ascendDatePickerUtils = AscendDatePickerUtils(_ascend)
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
-            .setSelection(ascendDatePickerUtils.getSelection(calendarInputMode))
+            .setSelection(ascendDatePickerUtils.getSelection(
+                AscendDatePickerInputMode.from(calendarInputMode))
+            )
             .setInputMode(calendarInputMode)
             .build()
         datePicker.addOnPositiveButtonClickListener { selection ->

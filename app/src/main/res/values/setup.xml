@@ -47,6 +47,7 @@
     <integer name="pref_version">3</integer>
 
     <string name="pref_key_calendar_input_mode">calendar_input_mode</string>
+    <!-- 0 - Calendar input mode -->
     <integer name="pref_default_calendar_input_mode">0</integer>
 
     <string name="pref_key_order_tourbook_chronologically">order_tourbook_chronologically</string>

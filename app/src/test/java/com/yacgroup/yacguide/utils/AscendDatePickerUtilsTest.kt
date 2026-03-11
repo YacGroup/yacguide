@@ -37,7 +37,7 @@ internal class AscendDatePickerUtilsTest {
         )
         val utils = AscendDatePickerUtils(ascend)
 
-        val selection = utils.getSelection(1)
+        val selection = utils.getSelection(AscendDatePickerInputMode.eCalendar)
 
         assertNotNull(selection)
         val calendar = Calendar.getInstance(_utcTimeZone).apply {
@@ -57,7 +57,7 @@ internal class AscendDatePickerUtilsTest {
         )
         val utils = AscendDatePickerUtils(ascend)
 
-        val selection = utils.getSelection(1)
+        val selection = utils.getSelection(AscendDatePickerInputMode.eCalendar)
 
         assertNull(selection)
     }
@@ -71,7 +71,7 @@ internal class AscendDatePickerUtilsTest {
         )
         val utils = AscendDatePickerUtils(ascend, _todayProvider = { expectedToday })
 
-        val selection = utils.getSelection(0)
+        val selection = utils.getSelection(AscendDatePickerInputMode.eText)
 
         assertEquals(expectedToday, selection)
     }
@@ -109,7 +109,7 @@ internal class AscendDatePickerUtilsTest {
         }
         utils.updateAscend(newDate.timeInMillis)
 
-        val selection = utils.getSelection(1)
+        val selection = utils.getSelection(AscendDatePickerInputMode.eCalendar)
 
         assertNotNull(selection)
         val resultCalendar = Calendar.getInstance(_utcTimeZone).apply {
