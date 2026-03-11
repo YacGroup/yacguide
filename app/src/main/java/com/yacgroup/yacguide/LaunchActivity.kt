@@ -117,7 +117,13 @@ class LaunchActivity : AppCompatActivity() {
             customSettings = _customSettings
         )
         if (_customSettings.getInt(getString(R.string.pref_key_pref_version), 1) == 1) {
+            // The version key can only be missing, if the user still uses version 1 because
+            // the version key was introduced with version 2.
             preferencesMigration.migrateFromVersion1To2()
+            preferencesMigration.migrateFromVersion2To3()
+        } else if (_customSettings.getInt(getString(R.string.pref_key_pref_version), 1) == 2) {
+            // The fallback, that the version key does not exist, should not be possible if
+            // the migration process was successful.
             preferencesMigration.migrateFromVersion2To3()
         }
     }
