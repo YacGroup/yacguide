@@ -133,22 +133,21 @@ class AscendActivity : AppCompatActivity() {
             resources.getInteger(R.integer.pref_default_calendar_input_mode)
         )
         val ascendDatePickerUtils = AscendDatePickerUtils(_ascend)
-        val datePicker = MaterialDatePicker.Builder.datePicker()
+        MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
             .setSelection(ascendDatePickerUtils.getSelection(
                 AscendDatePickerInputMode.from(calendarInputMode))
             )
             .setInputMode(calendarInputMode)
-            .build()
-        datePicker.addOnPositiveButtonClickListener { selection ->
-            ascendDatePickerUtils.updateAscend(selection)
-            _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
-            // Save last selected input mode in preferences
-            _customSettings.edit {
-                putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode)
-            }
+            .build().let { datePicker ->
+                datePicker.addOnPositiveButtonClickListener { selection ->
+                    ascendDatePickerUtils.updateAscend(selection)
+                    _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+                    // Save last selected input mode in preferences
+                    _customSettings.edit { putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode) }
+                }
+                datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
         }
-        datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
     }
 
     @Suppress("UNUSED_PARAMETER")
