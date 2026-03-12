@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2022 Christian Sommer
+ * Copyright (C) 2020, 2022, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package com.yacgroup.yacguide
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.databinding.WhatsNewBinding
 import com.yacgroup.yacguide.utils.ActivityUtils

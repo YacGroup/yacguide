@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
-import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
@@ -45,9 +45,8 @@ import java.util.ArrayList
 import androidx.core.content.edit
 import com.yacgroup.yacguide.utils.AscendDatePickerInputMode
 
-class AscendActivity : AppCompatActivity() {
+class AscendActivity : BaseActivity<ActivityAscendBinding>() {
 
-    private lateinit var _activityViewBinding: ActivityAscendBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
@@ -55,10 +54,11 @@ class AscendActivity : AppCompatActivity() {
     private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
 
+    override fun getViewBinding() = ActivityAscendBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _activityViewBinding = ActivityAscendBinding.inflate(layoutInflater)
-        setContentView(_activityViewBinding.root)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         _db = DatabaseWrapper(this)
 
@@ -88,7 +88,7 @@ class AscendActivity : AppCompatActivity() {
             }
         }
 
-        _activityViewBinding.notesEditText.let {
+        activityViewBinding.notesEditText.let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
                 val imm = view.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -142,7 +142,7 @@ class AscendActivity : AppCompatActivity() {
             .build().let { datePicker ->
                 datePicker.addOnPositiveButtonClickListener { selection ->
                     ascendDatePickerUtils.updateAscend(selection)
-                    _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+                    activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
                     // Save last selected input mode in preferences
                     _customSettings.edit { putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode) }
                 }
@@ -152,7 +152,7 @@ class AscendActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun selectPartners(v: View) {
-        val partnerNames = _activityViewBinding.partnersEditText.text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val partnerNames = activityViewBinding.partnersEditText.text.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val partnerIds = _db.getPartnerIds(partnerNames.toList()).filter { it > 0 } as ArrayList<Int>
         _partnerResultLauncher.launch(Intent(this@AscendActivity, PartnersActivity::class.java).apply {
             putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS, partnerIds)
@@ -167,7 +167,7 @@ class AscendActivity : AppCompatActivity() {
         val spinnerAdapter = ArrayAdapter<CharSequence>(this, R.layout.spinner_item, AscendStyle.names).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
-        _activityViewBinding.styleSpinner.apply {
+        activityViewBinding.styleSpinner.apply {
             adapter = spinnerAdapter
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -189,12 +189,12 @@ class AscendActivity : AppCompatActivity() {
         }
 
         if (_ascend.day != 0 && _ascend.month != 0 && _ascend.year != 0) {
-            _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+            activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
         }
 
-        _activityViewBinding.notesEditText.setText(_ascend.notes)
+        activityViewBinding.notesEditText.setText(_ascend.notes)
 
         val partnerNames = _db.getPartnerNames(_ascend.partnerIds.orEmpty().toList())
-        _activityViewBinding.partnersEditText.setText(TextUtils.join(", ", partnerNames))
+        activityViewBinding.partnersEditText.setText(TextUtils.join(", ", partnerNames))
     }
 }

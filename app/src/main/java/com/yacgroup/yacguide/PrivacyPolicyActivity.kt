@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Christian Sommer,
- *               2022 Axel Paetzold
+ * Copyright (C) 2020, 2026 Christian Sommer,
+ * Copyright (C) 2022 Axel Paetzold
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,18 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import com.yacgroup.yacguide.databinding.ActivityPrivacyPolicyBinding
 import com.yacgroup.yacguide.markwon.PrivacyPolicyMarkwonPlugin
 import io.noties.markwon.Markwon
 
-class PrivacyPolicyActivity : AppCompatActivity() {
+class PrivacyPolicyActivity : BaseActivity<ActivityPrivacyPolicyBinding>() {
 
-    private lateinit var _activityViewBinding: ActivityPrivacyPolicyBinding
+    override fun getViewBinding() = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTitle(R.string.privacy_policy)
-        _activityViewBinding = ActivityPrivacyPolicyBinding.inflate(layoutInflater)
-        setContentView(_activityViewBinding.root)
         _displayContent()
     }
 
@@ -51,7 +48,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
                 .build()
         val rawResource = resources.openRawResource(R.raw.privacy_policy)
         val privacyStr = rawResource.bufferedReader().use  { it.readText() }
-        val privacyTextView = _activityViewBinding.privacyPolicyTextView
+        val privacyTextView = activityViewBinding.privacyPolicyTextView
         markwon.setMarkdown(privacyTextView, privacyStr)
     }
 }

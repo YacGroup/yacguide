@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022, 2023 Axel Paetzold
+ * Copyright (C) 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.CountDownTimer
-import androidx.appcompat.app.AppCompatActivity
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.databinding.ActivityLaunchBinding
 import com.yacgroup.yacguide.extensions.getPackageInfoCompat
@@ -33,9 +33,8 @@ import androidx.core.content.edit
 
 const val TIME_OUT_MS = 1500L
 
-class LaunchActivity : AppCompatActivity() {
+class LaunchActivity : BaseActivity<ActivityLaunchBinding>() {
 
-    private lateinit var _activityViewBinding: ActivityLaunchBinding
     private lateinit var _db: DatabaseWrapper
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _updateHandler: UpdateHandler
@@ -48,10 +47,10 @@ class LaunchActivity : AppCompatActivity() {
         }
     }
 
+    override fun getViewBinding() = ActivityLaunchBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _activityViewBinding = ActivityLaunchBinding.inflate(layoutInflater)
-        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
         _customSettings = getSharedPreferences(getString(R.string.preferences_filename),
@@ -61,7 +60,7 @@ class LaunchActivity : AppCompatActivity() {
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
         _updateHandler.update(
-            onUpdateFinished = { _activityViewBinding.iconImageView.setImageResource(R.drawable.ic_start_done) },
+            onUpdateFinished = { activityViewBinding.iconImageView.setImageResource(R.drawable.ic_start_done) },
             isSilent = true
         )
         Timer().start()
