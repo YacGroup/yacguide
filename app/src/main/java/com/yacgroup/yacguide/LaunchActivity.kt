@@ -17,7 +17,6 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -30,6 +29,7 @@ import com.yacgroup.yacguide.extensions.versionCodeCompat
 import com.yacgroup.yacguide.migration.PreferencesMigration
 import com.yacgroup.yacguide.network.CountryAndRegionParser
 import com.yacgroup.yacguide.utils.IntentConstants
+import androidx.core.content.edit
 
 const val TIME_OUT_MS = 1500L
 
@@ -54,7 +54,9 @@ class LaunchActivity : AppCompatActivity() {
         setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _customSettings = getSharedPreferences(getString(R.string.preferences_filename),
+            MODE_PRIVATE
+        )
         _checkForPreferencesMigration()
 
         _updateHandler = UpdateHandler(this, CountryAndRegionParser(_db))
@@ -93,13 +95,13 @@ class LaunchActivity : AppCompatActivity() {
         )
         val curVerCode = try {
             packageManager.getPackageInfoCompat(packageName, 0).versionCodeCompat
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             0
         }
         return if (curVerCode > savedVerCode) {
-            _customSettings.edit().apply {
+            _customSettings.edit {
                 putInt(getString(R.string.pref_key_version_code), curVerCode)
-            }.apply()
+            }
             true
         } else {
             false
@@ -115,7 +117,14 @@ class LaunchActivity : AppCompatActivity() {
             customSettings = _customSettings
         )
         if (_customSettings.getInt(getString(R.string.pref_key_pref_version), 1) == 1) {
+            // The version key can only be missing, if the user still uses version 1 because
+            // the version key was introduced with version 2.
             preferencesMigration.migrateFromVersion1To2()
+            preferencesMigration.migrateFromVersion2To3()
+        } else if (_customSettings.getInt(getString(R.string.pref_key_pref_version), 1) == 2) {
+            // The fallback, that the version key does not exist, should not be possible if
+            // the migration process was successful.
+            preferencesMigration.migrateFromVersion2To3()
         }
     }
 }

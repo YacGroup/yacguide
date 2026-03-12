@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.yacgroup.yacguide.R
 import com.yacgroup.yacguide.preferences.PreferencesFormatV2
+import androidx.core.content.edit
 
 /**
  * Class for migrating preferences.
@@ -30,12 +31,13 @@ class PreferencesMigration(
     var customSettings: SharedPreferences) {
 
     /**
-     * Migrate settings, if necessary, to fix issue https://github.com/YacGroup/yacguide/issues/453.
+     * Migrate settings from version 1 to 2, if necessary,
+     * to fix issue https://github.com/YacGroup/yacguide/issues/453.
      */
     fun migrateFromVersion1To2() {
         customSettings.let {
-            it.edit().apply {
-                PreferencesFormatV2.entries.forEach {formatEntry ->
+            it.edit {
+                PreferencesFormatV2.entries.forEach { formatEntry ->
                     val oldKey = context.resources.getString(formatEntry.resIdKeyV1)
                     val newKey = context.resources.getString(formatEntry.resIdKey)
                     if (it.contains(oldKey)) {
@@ -56,11 +58,19 @@ class PreferencesMigration(
                         this.remove(oldKey)
                     }
                 }
-                this.putInt(
-                    context.resources.getString(R.string.pref_key_pref_version),
-                    context.resources.getInteger(R.integer.pref_version)
-                )
-            }.apply()
+                this.putInt(context.resources.getString(R.string.pref_key_pref_version), 2)
+            }
+        }
+    }
+
+    /**
+     * Migrate settings from version 2 to 3.
+     *
+     * This only increases the version number.
+     */
+    fun migrateFromVersion2To3() {
+        customSettings.edit {
+            this.putInt(context.resources.getString(R.string.pref_key_pref_version), 3)
         }
     }
 }

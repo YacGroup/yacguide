@@ -18,10 +18,8 @@
 package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import androidx.appcompat.app.AppCompatActivity
@@ -32,17 +30,20 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.material.datepicker.MaterialDatePicker
 
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Route
 import com.yacgroup.yacguide.databinding.ActivityAscendBinding
+import com.yacgroup.yacguide.utils.AscendDatePickerUtils
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.IntentConstants
 import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
-import java.util.Calendar
+import androidx.core.content.edit
+import com.yacgroup.yacguide.utils.AscendDatePickerInputMode
 
 class AscendActivity : AppCompatActivity() {
 
@@ -50,6 +51,7 @@ class AscendActivity : AppCompatActivity() {
     private lateinit var _db: DatabaseWrapper
     private lateinit var _ascend: Ascend
     private lateinit var _partnerResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var _customSettings: SharedPreferences
     private var _outdatedAscend: Ascend? = null
     private var _route: Route? = null
 
@@ -80,7 +82,7 @@ class AscendActivity : AppCompatActivity() {
         )
 
         _partnerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 _ascend.partnerIds = result.data?.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                     ?: ArrayList()
             }
@@ -88,7 +90,7 @@ class AscendActivity : AppCompatActivity() {
 
         _activityViewBinding.notesEditText.let {
             it.onFocusChangeListener = View.OnFocusChangeListener { view, _ ->
-                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = view.context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
             it.addTextChangedListener(object : TextWatcher {
@@ -99,6 +101,10 @@ class AscendActivity : AppCompatActivity() {
                 }
             })
         }
+
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), MODE_PRIVATE
+        )
     }
 
     public override fun onResume() {
@@ -122,17 +128,26 @@ class AscendActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     @Suppress("UNUSED_PARAMETER")
     fun enterDate(v: View) {
-        val calendar = Calendar.getInstance()
-        val yy = _ascend.year.takeIf { it != 0 } ?: calendar.get(Calendar.YEAR)
-        val mm = _ascend.month.takeIf { it != 0 }.let { it?.minus(1) } ?: calendar.get(Calendar.MONTH)
-        val dd = _ascend.day.takeIf { it != 0 } ?: calendar.get(Calendar.DAY_OF_MONTH)
-        val datePicker = DatePickerDialog(this@AscendActivity, { _, year, monthOfYear, dayOfMonth ->
-            _ascend.year = year
-            _ascend.month = monthOfYear + 1
-            _ascend.day = dayOfMonth
-            _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
-        }, yy, mm, dd)
-        datePicker.show()
+        val calendarInputMode = _customSettings.getInt(
+            getString(R.string.pref_key_calendar_input_mode),
+            resources.getInteger(R.integer.pref_default_calendar_input_mode)
+        )
+        val ascendDatePickerUtils = AscendDatePickerUtils(_ascend)
+        MaterialDatePicker.Builder.datePicker()
+            .setTheme(R.style.ThemeOverlay_App_MaterialCalendar)
+            .setSelection(ascendDatePickerUtils.getSelection(
+                AscendDatePickerInputMode.from(calendarInputMode))
+            )
+            .setInputMode(calendarInputMode)
+            .build().let { datePicker ->
+                datePicker.addOnPositiveButtonClickListener { selection ->
+                    ascendDatePickerUtils.updateAscend(selection)
+                    _activityViewBinding.dateEditText.setText("${_ascend.day}.${_ascend.month}.${_ascend.year}")
+                    // Save last selected input mode in preferences
+                    _customSettings.edit { putInt(getString(R.string.pref_key_calendar_input_mode), datePicker.inputMode) }
+                }
+                datePicker.show(supportFragmentManager, "MATERIAL_DATE_PICKER")
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")

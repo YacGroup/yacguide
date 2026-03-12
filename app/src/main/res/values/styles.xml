@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
@@ -86,4 +86,7 @@
         <item name="android:layout_height">2dp</item>
         <item name="android:background">?android:attr/listDivider</item>
     </style>
+
+    <style name="ThemeOverlay.App.MaterialCalendar" parent="ThemeOverlay.MaterialComponents.MaterialCalendar"/>
+
 </resources>

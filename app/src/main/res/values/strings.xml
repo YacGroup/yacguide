@@ -156,6 +156,7 @@
     <string name="ascend_edit_date">Datum:</string>
     <string name="ascend_edit_style">Stil:</string>
     <string name="ascend_edit_title">Begehung bearbeiten</string>
+    <string name="date_format_hint">DD.MM.YYYY</string>
 
     <!-- Custom settings -->
     <string name="order_tourbook_chronologically">Chronologisch ordnen</string>
