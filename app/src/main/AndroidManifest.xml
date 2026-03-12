@@ -59,12 +59,10 @@
             android:name=".DescriptionActivity"
             android:parentActivityName=".RouteActivity"/>
         <activity
-            android:name=".AscendActivity"
-            android:theme="@style/AppTheme.ActionBar"/>
+            android:name=".AscendActivity"/>
         <activity
             android:name=".PartnersActivity"
-            android:parentActivityName=".AscendActivity"
-            android:theme="@style/AppTheme.ActionBar"/>
+            android:parentActivityName=".AscendActivity"/>
         <activity android:name=".TourbookActivity"/>
         <activity android:name=".StatisticsActivity"/>
         <activity android:name=".TourbookAscendActivity"/>
@@ -73,14 +71,12 @@
         <activity android:name=".AboutActivity"/>
         <activity
             android:name=".PrivacyPolicyActivity"
-            android:parentActivityName=".AboutActivity"
-            android:theme="@style/AppTheme.ActionBar">
+            android:parentActivityName=".AboutActivity">
         </activity>
         <activity
             android:name=".AboutLibrariesActivity"
             android:exported="false"
-            android:parentActivityName=".AboutActivity"
-            android:theme="@style/AppTheme.ActionBar">
+            android:parentActivityName=".AboutActivity">
         </activity>
 
         <provider

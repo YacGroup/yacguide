@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023, 2025 Christian Sommer
+ * Copyright (C) 2023, 2025, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +26,22 @@
 package com.yacgroup.yacguide
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.yacgroup.yacguide.databinding.AboutLibrariesEntryBinding
 import com.yacgroup.yacguide.databinding.ActivityAboutLibrariesBinding
 import com.yacgroup.yacguide.utils.ActivityUtils
 
-class AboutLibrariesActivity : AppCompatActivity() {
+class AboutLibrariesActivity : BaseActivity<ActivityAboutLibrariesBinding>() {
 
-    private lateinit var _activityViewBinding: ActivityAboutLibrariesBinding
     private lateinit var _activityUtils: ActivityUtils
+
+    override fun getViewBinding() = ActivityAboutLibrariesBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _activityUtils = ActivityUtils(this)
         setTitle(R.string.software_and_licenses)
-        _activityViewBinding = ActivityAboutLibrariesBinding.inflate(layoutInflater)
-        setContentView(_activityViewBinding.root)
         _displayContent()
     }
 
@@ -61,7 +59,7 @@ class AboutLibrariesActivity : AppCompatActivity() {
     }
 
     private fun _createEntry(lib: Library) {
-        _activityViewBinding.aboutLibrariesContent.addView(
+        activityViewBinding.aboutLibrariesContent.addView(
             AboutLibrariesEntryBinding.inflate(layoutInflater).apply {
                 root.setOnClickListener { _activityUtils.openUrl(lib.website.orEmpty()) }
                 aboutLibrariesName.text = lib.uniqueId

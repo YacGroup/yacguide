@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright (C) 2018 Axel Paetzold
-                2020 Christian Sommer
+  Copyright (C) 2020, 2026 Christian Sommer
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,113 +17,122 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <include layout="@layout/appbar_empty"/>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:descendantFocusability="beforeDescendants">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:text="@string/ascend_edit_title"
-            android:layout_marginBottom="10dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ascend_edit_style"/>
-
-        <Spinner
-            android:id="@+id/styleSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ascend_edit_date"/>
-
-        <EditText
-            android:id="@+id/dateEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="date"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="true"
-            android:onClick="enterDate"
-            android:hint="@string/date_format_hint"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ascend_edit_partner"/>
-
-        <EditText
-            android:id="@+id/partnersEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="true"
-            android:onClick="selectPartners"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ascend_edit_note"/>
-
-        <EditText
-            android:id="@+id/notesEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:inputType="textMultiLine"
-            android:minLines="1"/>
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
-            style="?android:attr/buttonBarStyle"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants">
 
-            <Button
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/ok"
-                android:onClick="enter"/>
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:text="@string/ascend_edit_title"
+                android:layout_marginBottom="10dp"/>
 
-            <Button
-                style="?android:attr/buttonBarButtonStyle"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ascend_edit_style"/>
+
+            <Spinner
+                android:id="@+id/styleSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ascend_edit_date"/>
+
+            <EditText
+                android:id="@+id/dateEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/cancel"
-                android:onClick="cancel"/>
+                android:inputType="date"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"
+                android:onClick="enterDate"
+                android:hint="@string/date_format_hint"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ascend_edit_partner"/>
+
+            <EditText
+                android:id="@+id/partnersEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"
+                android:onClick="selectPartners"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ascend_edit_note"/>
+
+            <EditText
+                android:id="@+id/notesEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:inputType="textMultiLine"
+                android:minLines="1"/>
+
+            <LinearLayout
+                style="?android:attr/buttonBarStyle"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <Button
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/ok"
+                    android:onClick="enter"/>
+
+                <Button
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/cancel"
+                    android:onClick="cancel"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+</LinearLayout>
