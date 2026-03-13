@@ -19,8 +19,6 @@
 package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -30,15 +28,24 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.databinding.ActivityPartnersBinding
 import com.yacgroup.yacguide.databinding.AddPartnerDialogBinding
-import com.yacgroup.yacguide.list_adapters.*
+import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
+import com.yacgroup.yacguide.list_adapters.ListItem
+import com.yacgroup.yacguide.list_adapters.ListViewAdapter
+import com.yacgroup.yacguide.list_adapters.SwipeConfig
+import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.statistics.StatisticUtils
-import com.yacgroup.yacguide.utils.*
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.SearchBarHandler
+import com.yacgroup.yacguide.utils.VisualUtils
 
 class PartnersActivity : BaseActivity<ActivityPartnersBinding>() {
 
@@ -59,7 +66,9 @@ class PartnersActivity : BaseActivity<ActivityPartnersBinding>() {
         super.onCreate(savedInstanceState)
 
         _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), MODE_PRIVATE
+        )
         _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                 .orEmpty().toMutableList()
 
@@ -116,9 +125,9 @@ class PartnersActivity : BaseActivity<ActivityPartnersBinding>() {
                           Snackbar.LENGTH_LONG)
                 .setDuration(resources.getInteger(R.integer.popup_duration))
                 .setAction(R.string.do_not_show_anymore) {
-                    _customSettings.edit().apply {
+                    _customSettings.edit {
                         putBoolean(settingsKeyShowUsageHint, false)
-                    }.apply()
+                    }
                 }
                 .show()
         }
@@ -146,7 +155,7 @@ class PartnersActivity : BaseActivity<ActivityPartnersBinding>() {
         Intent().let {
             it.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS,
                     _selectedPartnerIds as ArrayList<Int>)
-            setResult(Activity.RESULT_OK, it)
+            setResult(RESULT_OK, it)
         }
         finish()
     }

@@ -53,8 +53,8 @@ class LaunchActivity : BaseActivity<ActivityLaunchBinding>() {
         super.onCreate(savedInstanceState)
 
         _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename),
-            MODE_PRIVATE
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), MODE_PRIVATE
         )
         _checkForPreferencesMigration()
 
