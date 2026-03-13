@@ -222,6 +222,13 @@ dependencies {
      */
     implementation "androidx.preference:preference-ktx:1.2.1"
     implementation "com.github.skydoves:colorpickerpreference:2.0.6"
+    // Force the newer version of colorpickerview which is otherwise
+    // downgraded by colorpickerpreference.
+    constraints {
+        implementation("com.github.skydoves:colorpickerview:2.4.0") {
+            because("colorpickerpreference pulls in an older, incompatible version")
+        }
+    }
 
     /*
      * Used for statistic charts

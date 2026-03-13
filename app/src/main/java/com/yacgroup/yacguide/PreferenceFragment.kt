@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Christian Sommer
+ * Copyright (C) 2024, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,29 @@
 
 package com.yacgroup.yacguide
 
-import android.content.Context
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import com.skydoves.colorpickerpreference.ColorPickerPreference
-import com.yacgroup.yacguide.extensions.getSharedPreferenceManager
-import com.yacgroup.yacguide.extensions.setSharedPreferences
+import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager
 
 class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.sharedPreferencesName = getString(R.string.preferences_filename)
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        /*
+         * Configure color picker preferences
+         */
+        ColorPickerPreferenceManager.getInstance(requireContext()).apply {
+            setSharedPreferenceName(
+                requireContext(),
+                getString(R.string.preferences_filename)
+            )
+        }
         for (stringResource in listOf(R.string.pref_key_color_lead, R.string.pref_key_color_follow)) {
-            findPreference<ColorPickerPreference>(getString(stringResource))?.getColorPickerView()?.let { view ->
-                context?.let { context ->
-                    view.getSharedPreferenceManager().setSharedPreferences(
-                        context.getSharedPreferences(preferenceManager.sharedPreferencesName, Context.MODE_PRIVATE)
-                    )
-                }
+            val colorPrefKey = getString(stringResource)
+            findPreference<ColorPickerPreference>(colorPrefKey)?.let { colorPref ->
+                colorPref.getColorPickerView().preferenceName = colorPrefKey
             }
         }
     }
