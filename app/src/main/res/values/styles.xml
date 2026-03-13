@@ -36,11 +36,6 @@
         <item name="android:textColorSecondary">@color/colorSecondaryText</item>
     </style>
 
-    <style name="AppTheme.ActionBar" parent="AppTheme">
-        <item name="windowActionBar">true</item>
-        <item name="windowNoTitle">false</item>
-    </style>
-
     <style name="AppTheme.AppBar" parent="ThemeOverlay.AppCompat.Dark">
         <item name="colorControlNormal">@color/colorOnPrimary</item>
     </style>
