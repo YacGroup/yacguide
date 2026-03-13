@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.viewbinding.ViewBinding
@@ -40,6 +41,13 @@ abstract class BaseActivity<ViewBindingType: ViewBinding> : AppCompatActivity() 
         super.onCreate(savedInstanceState)
         activityViewBinding = getViewBinding()
         setContentView(activityViewBinding.root)
+
+        // Set status bar icons to white.
+        //
+        // By default, on many devices, the system assumes a light background and shows dark icons.
+        // When you target API 35/36 and "colorize" the status bar area with a dark color
+        // (like your colorPrimary), the black icons become hard to see.
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         toolbar = activityViewBinding.root.findViewById<Toolbar>(R.id.toolbar).also {
             if (it != null) {
