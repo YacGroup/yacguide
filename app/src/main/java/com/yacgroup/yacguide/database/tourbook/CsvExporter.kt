@@ -20,6 +20,8 @@ package com.yacgroup.yacguide.database.tourbook
 import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import java.io.IOException
@@ -31,18 +33,20 @@ class CsvExporter(
      * See https://commons.apache.org/proper/commons-csv/apidocs/index.html
      */
     @Throws(IOException::class)
-    override fun export(uri: Uri) {
+    override suspend fun export(uri: Uri) {
         val writer = StringBuffer()
         val csvFormat = CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
             setHeader(*TourbookEntryVerbose.keys().toTypedArray())
             setTrim(true)
         }.get()
         CSVPrinter(writer, csvFormat).apply {
-            _db.getAscends().forEach {
-                printRecord(TourbookEntryVerbose(it, _db).values())
+            withContext(Dispatchers.IO) {
+                _db.getAscends().forEach {
+                    printRecord(TourbookEntryVerbose(it, _db).values())
+                }
+                flush()
+                close()
             }
-            flush()
-            close()
             writeStrToUri(uri, writer.toString())
         }
     }

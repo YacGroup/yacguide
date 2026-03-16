@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019, 2022, 2023 Axel Paetzold
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ import java.util.*
 class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
 
     private val _exportResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){
+        ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
             it.data?.data?.also { uri -> _export(uri) }
         }
@@ -161,18 +161,23 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
     }
 
     private fun _import(uri: Uri) {
+        val progressDialog = ProgressDialog(getString(R.string.dialog_importing))
         DialogWidgetBuilder(this, R.string.warning).apply {
             setMessage(getString(R.string.override_tourbook))
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
                 try {
-                    JsonImporter(_db, contentResolver).import(uri)
-                    Toast.makeText(
+                    lifecycleScope.launch {
+                        progressDialog.show(supportFragmentManager, "import")
+                        JsonImporter(_db, contentResolver).import(uri)
+                        progressDialog.dismiss()
+                        Toast.makeText(
                             this@TourbookActivity,
                             R.string.tourbook_import_successfull,
                             Toast.LENGTH_SHORT
-                    ).show()
+                        ).show()
+                    }
                 } catch (e: JSONException) {
                     // Show only the first part of the detailed error message because
                     // the whole JSON string is contained.
@@ -207,13 +212,24 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
     }
 
     private fun _export(uri: Uri) {
+        val progressDialog = ProgressDialog(getString(R.string.dialog_exporting))
         try {
-            _tourbookExporter!!.export(uri)
-            Toast.makeText(this, getString(R.string.tourbook_export_successfull),
-                    Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, getString(R.string.tourbook_export_error),
-                    Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                progressDialog.show(supportFragmentManager, "export")
+                _tourbookExporter!!.export(uri)
+                progressDialog.dismiss()
+                Toast.makeText(
+                    this@TourbookActivity,
+                    getString(R.string.tourbook_export_successfull),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } catch (_: Exception) {
+            Toast.makeText(
+                this@TourbookActivity,
+                getString(R.string.tourbook_export_error),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

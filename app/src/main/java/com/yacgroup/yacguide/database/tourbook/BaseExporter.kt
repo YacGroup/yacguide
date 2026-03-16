@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,23 @@ package com.yacgroup.yacguide.database.tourbook
 import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.FileOutputStream
 
 abstract class BaseExporter(
     private val _contentResolver: ContentResolver,
     private val _db: DatabaseWrapper) {
 
-    abstract fun export(uri: Uri)
+    abstract suspend fun export(uri: Uri)
 
-    protected fun writeStrToUri(uri: Uri, str: String) {
-        _contentResolver.openFileDescriptor(uri, "w")?.use {
-            FileOutputStream(it.fileDescriptor).write(
-                str.toByteArray(Charsets.UTF_8)
-            )
+    protected suspend fun writeStrToUri(uri: Uri, str: String) {
+        withContext(Dispatchers.IO) {
+            _contentResolver.openFileDescriptor(uri, "w")?.use {
+                FileOutputStream(it.fileDescriptor).write(
+                    str.toByteArray(Charsets.UTF_8)
+                )
+            }
         }
     }
 }

@@ -73,6 +73,8 @@
     <string name="dialog_question_delete">Dieses Gebiet löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>
+    <string name="dialog_importing">Import läuft...</string>
+    <string name="dialog_exporting">Export läuft...</string>
     <string name="report_error">Fehler melden</string>
 
     <!-- Widgets -->
