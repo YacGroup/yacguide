@@ -37,8 +37,8 @@ abstract class BaseActivity<ViewBindingType: ViewBinding> : AppCompatActivity() 
     abstract fun getViewBinding(): ViewBindingType
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         activityViewBinding = getViewBinding()
         setContentView(activityViewBinding.root)
 
