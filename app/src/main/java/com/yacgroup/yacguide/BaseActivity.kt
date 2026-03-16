@@ -49,12 +49,10 @@ abstract class BaseActivity<ViewBindingType: ViewBinding> : AppCompatActivity() 
         // (like your colorPrimary), the black icons become hard to see.
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-        toolbar = activityViewBinding.root.findViewById<Toolbar>(R.id.toolbar).also {
-            if (it != null) {
-                setSupportActionBar(it)
-                // Enable the Up button by default. Can be disabled, if required.
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            }
+        toolbar = activityViewBinding.root.findViewById<Toolbar>(R.id.toolbar)?.also {
+            setSupportActionBar(it)
+            // Enable the Up button by default. Can be disabled, if required.
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
         // Support edge-to-edge window mode which was introduced in API 15 and enforced for API 16+.
@@ -65,17 +63,15 @@ abstract class BaseActivity<ViewBindingType: ViewBinding> : AppCompatActivity() 
                     bottomMargin = insets.bottom
                     rightMargin = insets.right
                 }
-                rootView.findViewById<android.view.View>(R.id.appbar).let { appBar ->
-                    if (appBar != null) {
-                        // Stretch root view to top edge
-                        rootView.updatePadding(top = 0)
-                        // Move app bar down by insets
-                        appBar.updatePadding(top = insets.top)
-                    } else {
-                        // If no custom appbar is found, apply top margin to root to avoid overlap.
-                        rootView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                            topMargin = insets.top
-                        }
+                rootView.findViewById<android.view.View>(R.id.appbar)?.let { appBar ->
+                    // Stretch root view to top edge
+                    rootView.updatePadding(top = 0)
+                    // Move app bar down by insets
+                    appBar.updatePadding(top = insets.top)
+                } ?: {
+                    // If no custom appbar is found, apply top margin to root to avoid overlap.
+                    rootView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        topMargin = insets.top
                     }
                 }
                 windowInsets
