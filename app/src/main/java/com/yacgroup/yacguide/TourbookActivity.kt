@@ -18,8 +18,6 @@
 
 package com.yacgroup.yacguide
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -30,27 +28,28 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.yacgroup.yacguide.database.*
 import com.yacgroup.yacguide.database.tourbook.*
 import com.yacgroup.yacguide.databinding.ActivityTourbookBinding
 import com.yacgroup.yacguide.databinding.NumberpickerBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import java.io.IOException
 import java.util.*
-
 class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
 
     private val _exportResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             it.data?.data?.also { uri -> _export(uri) }
         }
     }
     private val _importResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK) {
+        if (it.resultCode == RESULT_OK) {
             it.data?.data?.also { uri -> _import(uri) }
         }
     }
@@ -75,7 +74,9 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
         setTitle(R.string.my_ascends)
 
         _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), MODE_PRIVATE
+        )
         _visualUtils = VisualUtils(
             context = this,
             customSettings = _customSettings,

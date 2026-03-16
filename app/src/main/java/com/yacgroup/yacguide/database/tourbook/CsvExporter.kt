@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class CsvExporter(
         val csvFormat = CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
             setHeader(*TourbookEntryVerbose.keys().toTypedArray())
             setTrim(true)
-        }.build()
+        }.get()
         CSVPrinter(writer, csvFormat).apply {
             _db.getAscends().forEach {
                 printRecord(TourbookEntryVerbose(it, _db).values())
