@@ -85,14 +85,14 @@ android {
     productFlavors {
         stable {
             dimension 'default'
-            versionCode 9003
-            versionName '0.9.3'
+            versionCode 9004
+            versionName '0.9.4'
         }
         dev {
             dimension 'default'
             applicationIdSuffix '.dev'
-            versionCode 20251204
-            versionName '20251204'
+            versionCode 20260317
+            versionName '20260317'
         }
     }
     playConfigs {
