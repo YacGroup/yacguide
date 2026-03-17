@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2019 Fabian Kantereit
- *               2023 Axel Paetzold
+ * Copyright (C) 2023 Axel Paetzold
+ * Copyright (C) 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,41 +21,33 @@ package com.yacgroup.yacguide
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.navigation.NavigationView
 
-abstract class BaseNavigationActivity<ViewBindingType: ViewBinding> : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    protected lateinit var activityViewBinding: ViewBindingType
-
-    abstract fun getViewBinding(): ViewBindingType
+abstract class BaseNavigationActivity<ViewBindingType: ViewBinding> :
+    BaseActivity<ViewBindingType>(), NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityViewBinding = getViewBinding()
-        setContentView(activityViewBinding.root)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navMenu: Menu = navView.menu
-        navMenu.findItem(R.id.nav_about).title = getString(R.string.menu_about, getString(R.string.app_name))
-        val toggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        navView.setNavigationItemSelectedListener(this)
+        findViewById<NavigationView>(R.id.nav_view).let {
+            it.menu.findItem(R.id.nav_about).title = getString(
+                R.string.menu_about, getString(R.string.app_name)
+            )
+            it.setNavigationItemSelectedListener(this)
+        }
+        ActionBarDrawerToggle(
+            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        ).let {
+            drawerLayout.addDrawerListener(it)
+            it.syncState()
+        }
 
         onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {

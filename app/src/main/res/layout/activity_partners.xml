@@ -32,6 +32,8 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
+        <include layout="@layout/appbar_empty"/>
+
         <include
             android:id="@+id/layout_search_bar"
             layout="@layout/searchbar"/>

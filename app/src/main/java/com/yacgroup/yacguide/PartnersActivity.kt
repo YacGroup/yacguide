@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2019, 2022, 2023, 2025 Axel Paetzold
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,33 +19,36 @@
 package com.yacgroup.yacguide
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import androidx.appcompat.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.SparseIntArray
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.snackbar.Snackbar
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.databinding.ActivityPartnersBinding
 import com.yacgroup.yacguide.databinding.AddPartnerDialogBinding
-import com.yacgroup.yacguide.list_adapters.*
+import com.yacgroup.yacguide.list_adapters.ItemDiffCallback
+import com.yacgroup.yacguide.list_adapters.ListItem
+import com.yacgroup.yacguide.list_adapters.ListViewAdapter
+import com.yacgroup.yacguide.list_adapters.SwipeConfig
+import com.yacgroup.yacguide.list_adapters.SwipeController
 import com.yacgroup.yacguide.statistics.StatisticUtils
-import com.yacgroup.yacguide.utils.*
+import com.yacgroup.yacguide.utils.AscendStyle
+import com.yacgroup.yacguide.utils.DialogWidgetBuilder
+import com.yacgroup.yacguide.utils.IntentConstants
+import com.yacgroup.yacguide.utils.SearchBarHandler
+import com.yacgroup.yacguide.utils.VisualUtils
 
-import java.util.ArrayList
+class PartnersActivity : BaseActivity<ActivityPartnersBinding>() {
 
-class PartnersActivity : AppCompatActivity() {
-
-    private lateinit var _activityViewBinding: ActivityPartnersBinding
     private lateinit var _customSettings: SharedPreferences
     private lateinit var _searchBarHandler: SearchBarHandler
     private lateinit var _viewAdapter: ListViewAdapter<Partner>
@@ -56,19 +59,21 @@ class PartnersActivity : AppCompatActivity() {
     private var _partnerNamePart: String = ""
     private var _sortAlphabetically: Boolean = false
 
+    override fun getViewBinding() = ActivityPartnersBinding.inflate(layoutInflater)
+
     @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        _activityViewBinding = ActivityPartnersBinding.inflate(layoutInflater)
-        setContentView(_activityViewBinding.root)
 
         _db = DatabaseWrapper(this)
-        _customSettings = getSharedPreferences(getString(R.string.preferences_filename), Context.MODE_PRIVATE)
+        _customSettings = getSharedPreferences(
+            getString(R.string.preferences_filename), MODE_PRIVATE
+        )
         _selectedPartnerIds = intent.getIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS)
                 .orEmpty().toMutableList()
 
         _searchBarHandler = SearchBarHandler(
-            searchBarBinding = _activityViewBinding.layoutSearchBar,
+            searchBarBinding = activityViewBinding.layoutSearchBar,
             searchHintResource = R.string.partner_search,
             checkBoxTitle = getString(R.string.sort_alphabetically),
             checkBoxDefaultValue = resources.getBoolean(R.bool.pref_default_sort_alphabetically),
@@ -87,7 +92,7 @@ class PartnersActivity : AppCompatActivity() {
             subText = "(${_ascendCountsPerPartner.get(partner.id)})",
             onClick = { _onPartnerSelected(partner) })
         }
-        val listView = _activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
+        val listView = activityViewBinding.layoutListViewContent.tableRecyclerView.apply {
             adapter =_viewAdapter
         }
         val swipeRightConfig = SwipeConfig(
@@ -120,9 +125,9 @@ class PartnersActivity : AppCompatActivity() {
                           Snackbar.LENGTH_LONG)
                 .setDuration(resources.getInteger(R.integer.popup_duration))
                 .setAction(R.string.do_not_show_anymore) {
-                    _customSettings.edit().apply {
+                    _customSettings.edit {
                         putBoolean(settingsKeyShowUsageHint, false)
-                    }.apply()
+                    }
                 }
                 .show()
         }
@@ -150,7 +155,7 @@ class PartnersActivity : AppCompatActivity() {
         Intent().let {
             it.putIntegerArrayListExtra(IntentConstants.ASCEND_PARTNER_IDS,
                     _selectedPartnerIds as ArrayList<Int>)
-            setResult(Activity.RESULT_OK, it)
+            setResult(RESULT_OK, it)
         }
         finish()
     }
