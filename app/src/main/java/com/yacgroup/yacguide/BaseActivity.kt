@@ -57,7 +57,8 @@ abstract class BaseActivity<ViewBindingType: ViewBinding> : AppCompatActivity() 
 
         // Support edge-to-edge window mode which was introduced in API 15 and enforced for API 16+.
         ViewCompat.setOnApplyWindowInsetsListener(activityViewBinding.root) { rootView, windowInsets ->
-            windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()).let { insets ->
+            val types = WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()
+            windowInsets.getInsets(types).let { insets ->
                 rootView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     leftMargin = insets.left
                     bottomMargin = insets.bottom
