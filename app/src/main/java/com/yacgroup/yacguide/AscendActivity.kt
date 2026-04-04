@@ -45,6 +45,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
 import androidx.core.content.edit
+import androidx.core.os.BundleCompat
 import com.yacgroup.yacguide.utils.AscendDatePickerInputMode
 
 class AscendActivity : BaseActivity<ActivityAscendBinding>() {
@@ -72,19 +73,18 @@ class AscendActivity : BaseActivity<ActivityAscendBinding>() {
         _route = _db.getRoute(_outdatedAscend?.routeId
                     ?: intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID))
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
-        _ascend = savedInstanceState.let {
-            Ascend(
-                id = it?.getInt("ascend_id") ?: _outdatedAscend?.id ?: 0,
-                routeId = it?.getInt("ascend_route_id") ?: _outdatedAscend?.routeId ?: _route!!.id,
-                styleId = it?.getInt("ascend_style_id") ?: _outdatedAscend?.styleId ?: 0,
-                year = it?.getInt("ascend_year") ?: _outdatedAscend?.year ?: 0,
-                month = it?.getInt("ascend_month") ?: _outdatedAscend?.month ?: 0,
-                day = it?.getInt("ascend_day") ?: _outdatedAscend?.day ?: 0,
-                partnerIds = it?.getIntegerArrayList("ascend_partner_ids")
-                    ?: _outdatedAscend?.partnerIds ?: ArrayList(),
-                notes = it?.getString("ascend_notes") ?: _outdatedAscend?.notes ?: ""
-            )
-        }
+        _ascend = savedInstanceState?.let {
+            BundleCompat.getParcelable(it, IntentConstants.SAVED_ASCEND, Ascend::class.java)
+        } ?: _outdatedAscend?.copy() ?: Ascend(
+            id = 0,
+            routeId = _route!!.id,
+            styleId = 0,
+            year = 0,
+            month = 0,
+            day = 0,
+            partnerIds = ArrayList(),
+            notes = ""
+        )
 
         _partnerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -118,14 +118,7 @@ class AscendActivity : BaseActivity<ActivityAscendBinding>() {
      */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("ascend_id", _ascend.id)
-        outState.putInt("ascend_route_id", _ascend.routeId)
-        outState.putInt("ascend_style_id", _ascend.styleId)
-        outState.putInt("ascend_year", _ascend.year)
-        outState.putInt("ascend_month", _ascend.month)
-        outState.putInt("ascend_day", _ascend.day)
-        outState.putIntegerArrayList("ascend_partner_ids", _ascend.partnerIds)
-        outState.putString("ascend_notes", _ascend.notes)
+        outState.putParcelable(IntentConstants.SAVED_ASCEND, _ascend)
     }
 
     public override fun onResume() {
