@@ -149,7 +149,9 @@
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
     <string name="tourbook_import_error">Fehler beim Import</string>
+    <string name="tourbook_import_timeout">Timeout beim Tourenbuch-Import</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
+    <string name="tourbook_export_timeout">Timeout beim Tourenbuch-Export</string>
     <string name="export_format">Exportformat wählen</string>
 
     <!-- Ascend edit -->

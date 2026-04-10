@@ -92,5 +92,6 @@
 
     <!-- Timing constants in milliseconds -->
     <integer name="popup_duration">5000</integer>
+    <integer name="tourbook_import_export_timeout">30000</integer>
 
 </resources>

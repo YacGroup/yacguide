@@ -35,7 +35,9 @@ import com.yacgroup.yacguide.databinding.ActivityTourbookBinding
 import com.yacgroup.yacguide.databinding.NumberpickerBinding
 import com.yacgroup.yacguide.list_adapters.*
 import com.yacgroup.yacguide.utils.*
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.json.JSONException
 import java.io.IOException
 import java.util.*
@@ -167,25 +169,33 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
             setIcon(android.R.drawable.ic_dialog_alert)
             setNegativeButton()
             setPositiveButton { _, _ ->
-                try {
-                    lifecycleScope.launch {
+                lifecycleScope.launch {
+                    try {
                         progressDialog.show(supportFragmentManager, "import")
-                        JsonImporter(_db, contentResolver).import(uri)
+                        withTimeout(resources.getInteger(R.integer.tourbook_import_export_timeout).toLong()) {
+                            JsonImporter(_db, contentResolver).import(uri)
+                        }
                         progressDialog.dismiss()
                         Toast.makeText(
                             this@TourbookActivity,
                             R.string.tourbook_import_successfull,
                             Toast.LENGTH_SHORT
                         ).show()
+                    } catch (_: TimeoutCancellationException) {
+                        Toast.makeText(
+                            this@TourbookActivity,
+                            R.string.tourbook_import_timeout,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } catch (e: JSONException) {
+                        // Show only the first part of the detailed error message because
+                        // the whole JSON string is contained.
+                        _showImportError(e.message.toString(), uri, 200)
+                    } catch (e: IOException) {
+                        // Show the full message because at the moment it is not clear
+                        // how the message looks like.
+                        _showImportError(e.message.toString(), uri)
                     }
-                } catch (e: JSONException) {
-                    // Show only the first part of the detailed error message because
-                    // the whole JSON string is contained.
-                    _showImportError(e.message.toString(), uri, 200)
-                } catch (e: IOException) {
-                    // Show the full message because at the moment it is not clear
-                    // how the message looks like.
-                    _showImportError(e.message.toString(), uri)
                 }
                 _currentYear = _initYears()
                 _displayContent()
@@ -213,23 +223,34 @@ class TourbookActivity : BaseNavigationActivity<ActivityTourbookBinding>() {
 
     private fun _export(uri: Uri) {
         val progressDialog = ProgressDialog(getString(R.string.dialog_exporting))
-        try {
-            lifecycleScope.launch {
+        lifecycleScope.launch {
+            try {
                 progressDialog.show(supportFragmentManager, "export")
-                _tourbookExporter!!.export(uri)
+                withTimeout(resources.getInteger(R.integer.tourbook_import_export_timeout).toLong()) {
+                    _tourbookExporter!!.export(uri)
+                }
                 progressDialog.dismiss()
                 Toast.makeText(
                     this@TourbookActivity,
-                    getString(R.string.tourbook_export_successfull),
+                    R.string.tourbook_export_successfull,
+                    Toast.LENGTH_SHORT
+                ).show()
+            } catch (_: TimeoutCancellationException) {
+                if (progressDialog.isAdded) progressDialog.dismiss()
+                Toast.makeText(
+                    this@TourbookActivity,
+                    R.string.tourbook_export_timeout,
+                    Toast.LENGTH_SHORT
+                ).show()
+            } catch (_: Exception) {
+                // Handle other errors (I/O, JSON, etc.)
+                if (progressDialog.isAdded) progressDialog.dismiss()
+                Toast.makeText(
+                    this@TourbookActivity,
+                    R.string.tourbook_export_error,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        } catch (_: Exception) {
-            Toast.makeText(
-                this@TourbookActivity,
-                getString(R.string.tourbook_export_error),
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
