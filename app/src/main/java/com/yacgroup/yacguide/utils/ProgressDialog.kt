@@ -25,7 +25,12 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.yacgroup.yacguide.databinding.ProgressDialogBinding
 
-class ProgressDialog(private val _text: String?) : DialogFragment() {
+/**
+ * Progress spinner dialog
+ *
+ * @param _text Text shown below the spinner
+ */
+class ProgressDialog(private val _text: String = "") : DialogFragment() {
 
     private lateinit var _viewBinding: ProgressDialogBinding
 
