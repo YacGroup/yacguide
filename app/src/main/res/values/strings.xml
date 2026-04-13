@@ -73,6 +73,8 @@
     <string name="dialog_question_delete">Dieses Gebiet löschen?</string>
     <string name="dialog_question_delete_ascend">Diese Begehung löschen?</string>
     <string name="dialog_loading">Lädt...</string>
+    <string name="dialog_importing">Import läuft...</string>
+    <string name="dialog_exporting">Export läuft...</string>
     <string name="report_error">Fehler melden</string>
 
     <!-- Widgets -->
@@ -147,7 +149,9 @@
     <string name="tourbook_export_successfull">Tourenbuch erfolgreich exportiert</string>
     <string name="tourbook_import_successfull">Tourenbuch erfolgreich importiert</string>
     <string name="tourbook_import_error">Fehler beim Import</string>
+    <string name="tourbook_import_timeout">Timeout beim Tourenbuch-Import</string>
     <string name="tourbook_export_error">Fehler beim Export des Tourenbuchs</string>
+    <string name="tourbook_export_timeout">Timeout beim Tourenbuch-Export</string>
     <string name="export_format">Exportformat wählen</string>
 
     <!-- Ascend edit -->

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.database.Partner
 import com.yacgroup.yacguide.utils.ParserUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -31,8 +33,10 @@ class JsonImporter(
     private val _db: DatabaseWrapper,
     private val _contentResolver: ContentResolver) {
 
-    fun import(uri: Uri) {
-        _writeJsonStringToDatabase(_readTextFromUri(uri))
+    suspend fun import(uri: Uri) {
+        withContext(Dispatchers.IO) {
+            _writeJsonStringToDatabase(_readTextFromUri(uri))
+        }
     }
 
     private fun _writeJsonStringToDatabase(jsonString: String) {

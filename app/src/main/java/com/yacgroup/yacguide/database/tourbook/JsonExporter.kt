@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Christian Sommer
+ * Copyright (C) 2023, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@ import android.content.ContentResolver
 import android.net.Uri
 import com.yacgroup.yacguide.database.Ascend
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -32,11 +34,13 @@ open class JsonExporter(
         private const val _JSON_INDENT_SPACE = 2
     }
 
-    override fun export(uri: Uri) {
-        val jsonAscends = JSONArray().apply {
-            _db.getAscends().forEach { put(ascend2Json(it)) }
+    override suspend fun export(uri: Uri) {
+        withContext(Dispatchers.IO) {
+            val jsonAscends = JSONArray().apply {
+                _db.getAscends().forEach { put(ascend2Json(it)) }
+            }
+            writeStrToUri(uri, jsonAscends.toString(_JSON_INDENT_SPACE))
         }
-        writeStrToUri(uri, jsonAscends.toString(_JSON_INDENT_SPACE))
     }
 
     protected open fun ascend2Json(ascend: Ascend): JSONObject {
