@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019, 2022 Axel Paetzold
+ * Copyright (C) 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +20,12 @@ package com.yacgroup.yacguide.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
 import java.util.ArrayList
 
+@Parcelize
 @Entity
 data class Ascend (
     @PrimaryKey(autoGenerate = true) val id: Int,
@@ -32,4 +36,4 @@ data class Ascend (
     var day: Int,
     var partnerIds: ArrayList<Int>?,
     var notes: String?
-)
+) : Parcelable

@@ -45,6 +45,7 @@ import com.yacgroup.yacguide.utils.ParserUtils
 
 import java.util.ArrayList
 import androidx.core.content.edit
+import androidx.core.os.BundleCompat
 import com.yacgroup.yacguide.utils.AscendDatePickerInputMode
 
 class AscendActivity : BaseActivity<ActivityAscendBinding>() {
@@ -72,15 +73,17 @@ class AscendActivity : BaseActivity<ActivityAscendBinding>() {
         _route = _db.getRoute(_outdatedAscend?.routeId
                     ?: intent.getIntExtra(IntentConstants.CLIMBING_OBJECT_PARENT_ID, DatabaseWrapper.INVALID_ID))
         // Beware: _route may still be null (if the route of this ascend has been deleted meanwhile)
-        _ascend = Ascend(
-            id = _outdatedAscend?.id ?: 0,
-            routeId = _outdatedAscend?.routeId ?: _route!!.id,
-            styleId = _outdatedAscend?.styleId ?: 0,
-            year = _outdatedAscend?.year ?: 0,
-            month = _outdatedAscend?.month ?: 0,
-            day = _outdatedAscend?.day ?: 0,
-            partnerIds = _outdatedAscend?.partnerIds ?: ArrayList(),
-            notes = _outdatedAscend?.notes ?: ""
+        _ascend = savedInstanceState?.let {
+            BundleCompat.getParcelable(it, IntentConstants.SAVED_ASCEND, Ascend::class.java)
+        } ?: _outdatedAscend?.copy() ?: Ascend(
+            id = 0,
+            routeId = _route!!.id,
+            styleId = 0,
+            year = 0,
+            month = 0,
+            day = 0,
+            partnerIds = ArrayList(),
+            notes = ""
         )
 
         _partnerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -107,6 +110,15 @@ class AscendActivity : BaseActivity<ActivityAscendBinding>() {
         _customSettings = getSharedPreferences(
             getString(R.string.preferences_filename), MODE_PRIVATE
         )
+    }
+
+    /*
+     * If the activity changes its configuration e.g. if the screen is turned to landscape mode,
+     * the activity might get destroyed. To preserve the user entries, save it and restore it later.
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(IntentConstants.SAVED_ASCEND, _ascend)
     }
 
     public override fun onResume() {
@@ -174,7 +186,7 @@ class AscendActivity : BaseActivity<ActivityAscendBinding>() {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
-                    view: View,
+                    view: View?,
                     position: Int,
                     id: Long
                 ) {

@@ -32,4 +32,6 @@ object IntentConstants {
     const val FILTER_PROJECTS = "FilterProjects"
     const val FILTER_BOTCHES = "FilterBotches"
     const val SHOW_WHATS_NEW = "ShowWhatsNew"
+
+    const val SAVED_ASCEND = "SavedAscend"
 }
