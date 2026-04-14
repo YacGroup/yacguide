@@ -147,7 +147,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.test:core-ktx:1.7.0'
 
-    def roomVersion = '2.8.3'
+    def roomVersion = '2.8.4'
 
     implementation "androidx.room:room-runtime:$roomVersion"
     ksp "androidx.room:room-compiler:$roomVersion"
@@ -213,7 +213,7 @@ dependencies {
      *
      * https://developer.chrome.com/docs/android/custom-tabs/
      */
-    implementation 'androidx.browser:browser:1.9.0'
+    implementation 'androidx.browser:browser:1.10.0'
 
     /*
      * Used for building the app settings activity.
