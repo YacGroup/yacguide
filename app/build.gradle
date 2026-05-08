@@ -86,8 +86,8 @@ android {
     productFlavors {
         stable {
             dimension 'default'
-            versionCode 9004
-            versionName '0.9.4'
+            versionCode 9005
+            versionName '0.9.5'
         }
         dev {
             dimension 'default'
