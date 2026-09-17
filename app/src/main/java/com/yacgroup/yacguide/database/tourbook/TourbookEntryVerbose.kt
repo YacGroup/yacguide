@@ -22,30 +22,36 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
-import kotlin.reflect.full.memberProperties
-
 class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
     companion object {
         /*
-         * Return a list of all property names of this class
-         * which are treated as fields to be exported.
+         * Field names to be exported, in the same order as values().
+         *
+         * NOTE: This used to be derived via Kotlin reflection (memberProperties), but R8
+         * has no idea that reflection reads these fields by name: with minification enabled
+         * it strips/renames them regardless, silently turning every exported row empty.
+         * Keep this list in sync with the properties below and with values() by hand instead.
          */
-        fun keys(): List<String> = TourbookEntryVerbose::class.memberProperties.map{ it.name }
+        fun keys(): List<String> = listOf(
+            "country", "regionName", "sectorFirstName", "sectorSecondName",
+            "rockFirstName", "rockSecondName", "routeFirstName", "routeSecondName",
+            "routeGrade", "notes", "date", "style", "partners"
+        )
     }
 
-    var country: String
-    var regionName: String
-    var sectorFirstName: String
-    var sectorSecondName: String
-    var rockFirstName: String
-    var rockSecondName: String
-    var routeFirstName: String
-    var routeSecondName: String
-    var routeGrade: String
-    var notes: String
-    var date: String
-    var style: String
-    var partners: String
+    val country: String
+    val regionName: String
+    val sectorFirstName: String
+    val sectorSecondName: String
+    val rockFirstName: String
+    val rockSecondName: String
+    val routeFirstName: String
+    val routeSecondName: String
+    val routeGrade: String
+    val notes: String
+    val date: String
+    val style: String
+    val partners: String
 
     init {
         val route = db.getRoute(ascend.routeId)
@@ -74,16 +80,11 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
         partners = db.getPartnerNames(ascend.partnerIds.orEmpty()).joinToString(",")
     }
 
-    fun asMap(): Map<String, String> {
-        val self = this
-        return buildMap {
-            TourbookEntryVerbose::class.memberProperties.forEach {
-                if (it.name in keys()) {
-                    put(it.name, it.get(self).toString())
-                }
-            }
-        }
-    }
+    fun asMap(): Map<String, String> = keys().zip(values()).toMap()
 
-    fun values(): List<String> = keys().map { asMap()[it]!! }
+    fun values(): List<String> = listOf(
+        country, regionName, sectorFirstName, sectorSecondName,
+        rockFirstName, rockSecondName, routeFirstName, routeSecondName,
+        routeGrade, notes, date, style, partners
+    )
 }
