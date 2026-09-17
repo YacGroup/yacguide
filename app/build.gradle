@@ -198,9 +198,6 @@ dependencies {
      */
     implementation 'org.apache.commons:commons-csv:1.14.1'
 
-    // For introspection
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:2.2.21'
-
     /*
      * Listing all used libraries
      *
