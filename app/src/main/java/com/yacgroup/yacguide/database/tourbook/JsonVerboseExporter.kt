@@ -18,15 +18,35 @@
 package com.yacgroup.yacguide.database.tourbook
 
 import android.content.ContentResolver
-import com.yacgroup.yacguide.database.Ascend
+import android.net.Uri
 import com.yacgroup.yacguide.database.DatabaseWrapper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
 import org.json.JSONObject
 
 class JsonVerboseExporter(
     contentResolver: ContentResolver,
     private val _db: DatabaseWrapper): JsonExporter(contentResolver, _db) {
 
-    override fun ascend2Json(ascend: Ascend): JSONObject {
-        return JSONObject(TourbookEntryVerbose(ascend, _db).asMap())
+    companion object {
+        private const val _JSON_INDENT_SPACE = 2
+    }
+
+    /*
+     * Overrides the whole export() instead of just ascend2Json(), since the verbose
+     * entries are built from a single query joining the whole ascend hierarchy
+     * (see AscendDao.getAscendsVerbose()) rather than from a plain Ascend.
+     */
+    override suspend fun export(uri: Uri) {
+        withContext(Dispatchers.IO) {
+            val partnerNames = _db.getPartnerNameMap()
+            val jsonAscends = JSONArray().apply {
+                _db.getAscendsVerbose().forEach {
+                    put(JSONObject(TourbookEntryVerbose(it, partnerNames).asMap()))
+                }
+            }
+            writeStrToUri(uri, jsonAscends.toString(_JSON_INDENT_SPACE))
+        }
     }
 }

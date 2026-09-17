@@ -18,11 +18,21 @@
 package com.yacgroup.yacguide.database.tourbook
 
 import com.yacgroup.yacguide.database.Ascend
+import com.yacgroup.yacguide.database.AscendVerbose
 import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
-class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
+/*
+ * Has two constructors:
+ * - (Ascend, DatabaseWrapper) resolves the route/rock/sector/region hierarchy and
+ *   partner names for a single ascend via separate DB lookups. Simple, but causes
+ *   an N+1 query pattern when used for every ascend of a tourbook export.
+ * - (AscendVerbose, partnerNames) builds the same fields from a single query joining
+ *   the whole hierarchy (see AscendDao.getAscendsVerbose()) plus a pre-fetched partner
+ *   id -> name map, so exporting the whole tourbook only needs two DB queries in total.
+ */
+class TourbookEntryVerbose {
     companion object {
         /*
          * Field names to be exported, in the same order as values().
@@ -53,7 +63,7 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
     val style: String
     val partners: String
 
-    init {
+    constructor(ascend: Ascend, db: DatabaseWrapper) {
         val route = db.getRoute(ascend.routeId)
         val rock = route?.parentId?.let { db.getRock(it) }
         val sector = rock?.parentId?.let { db.getSector(it) }
@@ -78,6 +88,30 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
         date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
         style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
         partners = db.getPartnerNames(ascend.partnerIds.orEmpty()).joinToString(",")
+    }
+
+    constructor(ascend: AscendVerbose, partnerNames: Map<Int, String>) {
+        country = ascend.country.orEmpty()
+        regionName = ascend.regionName.orEmpty()
+        ParserUtils.decodeObjectNames(ascend.sectorName).let {
+            sectorFirstName = it.first
+            sectorSecondName = it.second
+        }
+        ParserUtils.decodeObjectNames(ascend.rockName).let {
+            rockFirstName = it.first
+            rockSecondName = it.second
+        }
+        ParserUtils.decodeObjectNames(ascend.routeName).let {
+            routeFirstName = it.first
+            routeSecondName = it.second
+        }
+        routeGrade = ascend.routeGrade.orEmpty()
+        notes = ascend.notes.orEmpty()
+        date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
+        style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
+        partners = ascend.partnerIds.orEmpty().joinToString(",") {
+            partnerNames[it] ?: DatabaseWrapper.UNKNOWN_NAME
+        }
     }
 
     fun asMap(): Map<String, String> = keys().zip(values()).toMap()

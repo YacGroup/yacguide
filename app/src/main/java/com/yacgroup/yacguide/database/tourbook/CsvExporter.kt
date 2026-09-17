@@ -41,8 +41,9 @@ class CsvExporter(
         }.get()
         CSVPrinter(writer, csvFormat).apply {
             withContext(Dispatchers.IO) {
-                _db.getAscends().forEach {
-                    printRecord(TourbookEntryVerbose(it, _db).values())
+                val partnerNames = _db.getPartnerNameMap()
+                _db.getAscendsVerbose().forEach {
+                    printRecord(TourbookEntryVerbose(it, partnerNames).values())
                 }
                 flush()
                 close()

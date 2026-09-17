@@ -176,6 +176,8 @@ class DatabaseWrapper(context: Context) {
 
     fun getAscends() = _db.ascendDao().all
 
+    fun getAscendsVerbose() = _db.ascendDao().getAscendsVerbose()
+
     fun getAscend(ascendId: Int) = _db.ascendDao().getAscend(ascendId)
 
     fun getRouteAscends(routeId: Int) = _db.ascendDao().getAscendsForRoute(routeId)
@@ -205,6 +207,13 @@ class DatabaseWrapper(context: Context) {
     fun getPartnerIds(partnerNames: List<String>) = partnerNames.map { _db.partnerDao().getId(it) }
 
     fun getPartnerNames(partnerIds: List<Int>) = partnerIds.map { _db.partnerDao().getPartner(it)?.name ?: UNKNOWN_NAME }
+
+    /*
+     * All partners as a single id -> name lookup map, fetched with one query.
+     * Used where partner names for many ascends are needed at once (e.g. tourbook
+     * export) to avoid looking up every partner id individually.
+     */
+    fun getPartnerNameMap() = _db.partnerDao().all.associate { it.id to (it.name ?: UNKNOWN_NAME) }
 
     // Insertions
 

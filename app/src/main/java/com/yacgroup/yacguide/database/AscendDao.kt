@@ -32,10 +32,46 @@ data class ObjectCount(
     val count: Int
 )
 
+/*
+ * Result row of a single query joining an ascend with the names of its route,
+ * rock, sector and region, used by the verbose tourbook export.
+ * Route/rock/sector/region fields are null if that part of the hierarchy has
+ * since been deleted from the database.
+ */
+data class AscendVerbose(
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val styleId: Int,
+    val partnerIds: ArrayList<Int>?,
+    val notes: String?,
+    val country: String?,
+    val regionName: String?,
+    val sectorName: String?,
+    val rockName: String?,
+    val routeName: String?,
+    val routeGrade: String?
+)
+
 @Dao
 interface AscendDao {
     @get:Query(SELECT_ASCENDS)
     val all: List<Ascend>
+
+    @Query("""
+        SELECT Ascend.year AS year, Ascend.month AS month, Ascend.day AS day,
+            Ascend.styleId AS styleId, Ascend.partnerIds AS partnerIds, Ascend.notes AS notes,
+            Region.country AS country, Region.name AS regionName,
+            Sector.name AS sectorName, Rock.name AS rockName,
+            Route.name AS routeName, Route.grade AS routeGrade
+        FROM Ascend
+        LEFT JOIN Route ON Route.id = Ascend.routeId
+        LEFT JOIN Rock ON Rock.id = Route.parentId
+        LEFT JOIN Sector ON Sector.id = Rock.parentId
+        LEFT JOIN Region ON Region.id = Sector.parentId
+        $ORDERED_BY_DATE
+    """)
+    fun getAscendsVerbose(): List<AscendVerbose>
 
     @Query("$SELECT_ASCENDS WHERE Ascend.styleId < :styleIdLimit $ORDERED_BY_DATE")
     fun getAscendsBelowStyleId(styleIdLimit: Int): List<Ascend>
