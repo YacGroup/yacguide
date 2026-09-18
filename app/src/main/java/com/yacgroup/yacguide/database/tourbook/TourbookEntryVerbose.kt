@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Christian Sommer
+ * Copyright (C) 2021, 2026 Christian Sommer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,30 +22,36 @@ import com.yacgroup.yacguide.database.DatabaseWrapper
 import com.yacgroup.yacguide.utils.AscendStyle
 import com.yacgroup.yacguide.utils.ParserUtils
 
-import kotlin.reflect.full.memberProperties
-
 class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
     companion object {
         /*
-         * Return a list of all property names of this class
-         * which are treated as fields to be exported.
+         * Field names to be exported, in the same order as values().
+         *
+         * NOTE: This used to be derived via Kotlin reflection (memberProperties), but R8
+         * has no idea that reflection reads these fields by name: with minification enabled
+         * it strips/renames them regardless, silently turning every exported row empty.
+         * Keep this list in sync with the properties below and with values() by hand instead.
          */
-        fun keys(): List<String> = TourbookEntryVerbose::class.memberProperties.map{ it.name }
+        fun keys(): List<String> = listOf(
+            "country", "regionName", "sectorFirstName", "sectorSecondName",
+            "rockFirstName", "rockSecondName", "routeFirstName", "routeSecondName",
+            "routeGrade", "notes", "date", "style", "partners"
+        )
     }
 
-    var country: String
-    var regionName: String
-    var sectorFirstName: String
-    var sectorSecondName: String
-    var rockFirstName: String
-    var rockSecondName: String
-    var routeFirstName: String
-    var routeSecondName: String
-    var routeGrade: String
-    var notes: String
-    var date: String
-    var style: String
-    var partners: String
+    private val _country: String
+    private val _regionName: String
+    private val _sectorFirstName: String
+    private val _sectorSecondName: String
+    private val _rockFirstName: String
+    private val _rockSecondName: String
+    private val _routeFirstName: String
+    private val _routeSecondName: String
+    private val _routeGrade: String
+    private val _notes: String
+    private val _date: String
+    private val _style: String
+    private val _partners: String
 
     init {
         val route = db.getRoute(ascend.routeId)
@@ -53,37 +59,32 @@ class TourbookEntryVerbose(ascend: Ascend, db: DatabaseWrapper) {
         val sector = rock?.parentId?.let { db.getSector(it) }
         val region = sector?.parentId?.let { db.getRegion(it) }
 
-        country = region?.country.orEmpty()
-        regionName = region?.name.orEmpty()
+        _country = region?.country.orEmpty()
+        _regionName = region?.name.orEmpty()
         ParserUtils.decodeObjectNames(sector?.name).let {
-            sectorFirstName = it.first
-            sectorSecondName = it.second
+            _sectorFirstName = it.first
+            _sectorSecondName = it.second
         }
         ParserUtils.decodeObjectNames(rock?.name).let {
-            rockFirstName = it.first
-            rockSecondName = it.second
+            _rockFirstName = it.first
+            _rockSecondName = it.second
         }
         ParserUtils.decodeObjectNames(route?.name).let {
-            routeFirstName = it.first
-            routeSecondName = it.second
+            _routeFirstName = it.first
+            _routeSecondName = it.second
         }
-        routeGrade = route?.grade.orEmpty()
-        notes = ascend.notes.orEmpty()
-        date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
-        style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
-        partners = db.getPartnerNames(ascend.partnerIds.orEmpty()).joinToString(",")
+        _routeGrade = route?.grade.orEmpty()
+        _notes = ascend.notes.orEmpty()
+        _date = "%02d.%02d.%4d".format(ascend.day, ascend.month, ascend.year)
+        _style = AscendStyle.fromId(ascend.styleId)?.styleName.orEmpty()
+        _partners = db.getPartnerNames(ascend.partnerIds.orEmpty()).joinToString(",")
     }
 
-    fun asMap(): Map<String, String> {
-        val self = this
-        return buildMap {
-            TourbookEntryVerbose::class.memberProperties.forEach {
-                if (it.name in keys()) {
-                    put(it.name, it.get(self).toString())
-                }
-            }
-        }
-    }
+    fun asMap(): Map<String, String> = keys().zip(values()).toMap()
 
-    fun values(): List<String> = keys().map { asMap()[it]!! }
+    fun values(): List<String> = listOf(
+        _country, _regionName, _sectorFirstName, _sectorSecondName,
+        _rockFirstName, _rockSecondName, _routeFirstName, _routeSecondName,
+        _routeGrade, _notes, _date, _style, _partners
+    )
 }
