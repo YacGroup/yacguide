@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK environment
         uses: actions/setup-java@v4
         with:
@@ -89,7 +89,7 @@ jobs:
             target: google_apis
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       # See https://github.com/marketplace/actions/android-emulator-runner#running-hardware-accelerated-emulators-on-linux-runners
       - name: Enable KVM group perms
         run: |
@@ -104,7 +104,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: AVD cache
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         id: avd-cache
         with:
           path: |
@@ -170,7 +170,7 @@ jobs:
       JACOCO_VERSION: 0.8.13
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK environment
         uses: actions/setup-java@v4
         with:
@@ -221,7 +221,7 @@ jobs:
     needs: [unit-tests, instrumentation-tests]
     steps:
       - name: Check-out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK environment
         uses: actions/setup-java@v4
         with:
