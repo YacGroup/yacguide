@@ -6,6 +6,8 @@
 #   * https://github.com/marketplace/actions/setup-java-jdk
 #   * https://github.com/marketplace/actions/gradle-build-action
 #   * https://github.com/marketplace/actions/android-emulator-runner
+#   * https://github.com/marketplace/actions/upload-a-build-artifact
+#   * https://github.com/marketplace/actions/jacoco-report
 
 name: CI
 on:
@@ -45,7 +47,20 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Run tests
         if: ${{ !inputs.skip_tests }}
-        run: ./gradlew test --stacktrace
+        run: ./gradlew test createDevDebugUnitTestCoverageReport --stacktrace
+      - name: Upload coverage report
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-unit-tests
+          path: app/build/reports/coverage/test/
+      - name: Upload coverage data
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data-unit-tests
+          path: app/build/outputs/unit_test_code_coverage/devDebugUnitTest/
+          if-no-files-found: error
   instrumentation-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -102,7 +117,89 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck
+          script: ./gradlew connectedCheck createDevDebugAndroidTestCoverageReport
+      - name: Upload coverage report
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-api-${{ matrix.api-level }}
+          path: app/build/reports/coverage/androidTest/
+      - name: Upload coverage data
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data-api-${{ matrix.api-level }}
+          path: app/build/outputs/code_coverage/devDebugAndroidTest/connected/
+          if-no-files-found: error
+      # JaCoCo matches execution data to classes via a checksum of their bytecode.
+      # Hence, the merged report must use the classes of one of the tested builds.
+      # The unit tests job compiles the same bytecode because the build is reproducible.
+      - name: Upload compiled classes for coverage report
+        if: ${{ !inputs.skip_tests && matrix.api-level == 36 }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-classes
+          path: |
+            app/build/tmp/kotlin-classes/devDebug/
+            app/build/intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes/
+          if-no-files-found: error
+  coverage-report:
+    if: ${{ !inputs.skip_tests }}
+    runs-on: ubuntu-latest
+    needs: [unit-tests, instrumentation-tests]
+    permissions:
+      contents: read
+      # Required for posting the coverage report as PR comment
+      pull-requests: write
+    env:
+      JACOCO_VERSION: 0.8.13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Download coverage data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-data-*
+          path: coverage-data
+      - name: Download compiled classes
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-classes
+          path: coverage-classes
+      - name: Merge coverage data and create report
+        run: |
+          curl -fsSL -o jacococli.jar \
+            "https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/${JACOCO_VERSION}/org.jacoco.cli-${JACOCO_VERSION}-nodeps.jar"
+          find coverage-data \( -name '*.ec' -o -name '*.exec' \) -print0 | xargs -0 java -jar jacococli.jar merge --destfile merged.ec
+          java -jar jacococli.jar report merged.ec \
+            --classfiles coverage-classes/tmp/kotlin-classes/devDebug \
+            --classfiles coverage-classes/intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes \
+            --sourcefiles app/src/main/java \
+            --name "YacGuide (unit and instrumentation tests on all API levels)" \
+            --html coverage-report/html \
+            --xml coverage-report/report.xml
+      - name: Upload merged coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-merged
+          path: coverage-report/
+      - name: Post coverage report as PR comment
+        # Not for PRs from forks or Dependabot because their GITHUB_TOKEN has no write permission.
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.actor != 'dependabot[bot]'
+        uses: madrapps/jacoco-report@v1.7.1
+        with:
+          paths: ${{ github.workspace }}/coverage-report/report.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Test Coverage
+          update-comment: true
   build-deploy:
     if: ${{ github.ref_type == 'tag' || inputs.test_deploy }}
     runs-on: ubuntu-latest
