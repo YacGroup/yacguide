@@ -191,6 +191,8 @@ jobs:
           curl -fsSL -o jacococli.jar \
             "https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/${JACOCO_VERSION}/org.jacoco.cli-${JACOCO_VERSION}-nodeps.jar"
           find coverage-data \( -name '*.ec' -o -name '*.exec' \) -print0 | xargs -0 java -jar jacococli.jar merge --destfile merged.ec
+          # JaCoCo does not create the parent directory of the XML report.
+          mkdir -p coverage-report
           java -jar jacococli.jar report merged.ec \
             --classfiles coverage-classes/tmp/kotlin-classes/devDebug \
             --classfiles coverage-classes/intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes \
