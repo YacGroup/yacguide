@@ -32,7 +32,21 @@ on:
         description: 'Skip actual test runs'
         type: boolean
         default: false
+env:
+  # Android API levels the instrumentation tests run on
+  API_LEVEL_MIN: 26
+  API_LEVEL_MAX: 36
 jobs:
+  # The env context is not available in strategy.matrix, so the constants
+  # are passed to the matrix as job outputs.
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      api-level-min: ${{ env.API_LEVEL_MIN }}
+      api-level-max: ${{ env.API_LEVEL_MAX }}
+    steps:
+      - name: Print config
+        run: echo "API levels $API_LEVEL_MIN and $API_LEVEL_MAX"
   unit-tests:
     runs-on: ubuntu-latest
     steps:
@@ -63,13 +77,14 @@ jobs:
           if-no-files-found: error
   instrumentation-tests:
     runs-on: ubuntu-latest
+    needs: config
     strategy:
       matrix:
         include:
-          - api-level: 26
+          - api-level: ${{ fromJSON(needs.config.outputs.api-level-min) }}
             arch: x86
             target: default
-          - api-level: 36
+          - api-level: ${{ fromJSON(needs.config.outputs.api-level-max) }}
             arch: x86_64
             target: google_apis
     steps:
@@ -135,7 +150,7 @@ jobs:
       # Hence, the merged report must use the classes of one of the tested builds.
       # The unit tests job compiles the same bytecode because the build is reproducible.
       - name: Upload compiled classes for coverage report
-        if: ${{ !inputs.skip_tests && matrix.api-level == 36 }}
+        if: ${{ !inputs.skip_tests && matrix.api-level == env.API_LEVEL_MAX }}
         uses: actions/upload-artifact@v4
         with:
           name: coverage-classes
