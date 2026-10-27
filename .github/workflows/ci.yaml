@@ -168,6 +168,11 @@ jobs:
       pull-requests: write
     env:
       JACOCO_VERSION: 0.8.13
+      # Not for PRs from forks or Dependabot because their GITHUB_TOKEN has no write permission.
+      POST_PR_COMMENT: >-
+        ${{ github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -200,22 +205,46 @@ jobs:
             --name "YacGuide (unit and instrumentation tests on all API levels)" \
             --html coverage-report/html \
             --xml coverage-report/report.xml
+      - name: Set up Python environment
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+          cache: pip
+      - name: Create full coverage summary
+        run: |
+          pip install -r requirements.txt
+          ./scripts/make coverage-summary coverage-report/report.xml -o coverage-report/summary.md
+          cat coverage-report/summary.md >> "$GITHUB_STEP_SUMMARY"
       - name: Upload merged coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-merged
           path: coverage-report/
-      - name: Post coverage report as PR comment
-        # Not for PRs from forks or Dependabot because their GITHUB_TOKEN has no write permission.
-        if: >-
-          github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          github.actor != 'dependabot[bot]'
+      - name: Post full coverage as PR comment
+        if: ${{ env.POST_PR_COMMENT == 'true' }}
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            // Must match COMMENT_MARKER in scripts/yacguide/coverage.py
+            const marker = '<!-- full-coverage-report -->';
+            const body = fs.readFileSync('coverage-report/summary.md', 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+      - name: Post coverage of changed files as PR comment
+        if: ${{ env.POST_PR_COMMENT == 'true' }}
         uses: madrapps/jacoco-report@v1.7.1
         with:
           paths: ${{ github.workspace }}/coverage-report/report.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: Test Coverage
+          title: Test Coverage of Changed Files
           update-comment: true
   build-deploy:
     if: ${{ github.ref_type == 'tag' || inputs.test_deploy }}
