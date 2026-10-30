@@ -126,7 +126,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
       - name: Run tests
         if: ${{ !inputs.skip_tests }}
-        # Shorter than the job timeout so that the watcher log below is shown if this step hangs
+        # Fail early if the emulator hangs again despite the watcher below
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -143,11 +143,8 @@ jobs:
           # It matches process names only because crashpad_handler's arguments may contain the emulator command line.
           # Linux truncates process names to 15 characters, so crashpad_handler is matched as crashpad_handle.
           script: |
-            nohup sh -c 'pgrep -l "^(emulator|qemu-system)"; while pgrep "^(emulator|qemu-system)" > /dev/null; do sleep 2; done; echo "$(date -u +%T) Emulator exited"; pgrep -a crashpad; sleep 5; pkill -TERM -x crashpad_handle; sleep 5; pkill -KILL -x crashpad_handle; echo "$(date -u +%T) Done"; pgrep -a crashpad' > "$RUNNER_TEMP/crashpad-watcher.log" 2>&1 &
+            nohup sh -c 'while pgrep "^(emulator|qemu-system)" > /dev/null; do sleep 2; done; sleep 5; pkill -TERM -x crashpad_handle; sleep 5; pkill -KILL -x crashpad_handle' > /dev/null 2>&1 &
             ./gradlew connectedCheck createDevDebugAndroidTestCoverageReport
-      - name: Show crashpad watcher log
-        if: ${{ always() && !inputs.skip_tests }}
-        run: cat "$RUNNER_TEMP/crashpad-watcher.log" || true
       - name: Upload coverage report
         if: ${{ !inputs.skip_tests }}
         uses: actions/upload-artifact@v4
