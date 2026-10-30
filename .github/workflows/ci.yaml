@@ -138,8 +138,9 @@ jobs:
           # see https://github.com/ReactiveCircus/android-emulator-runner/issues/385.
           # Hence, a background watcher terminates it once the emulator has exited.
           # The action runs each script line separately, so the watcher must be a single line.
+          # It matches process names only because crashpad_handler's arguments may contain the emulator command line.
           script: |
-            nohup sh -c 'while pgrep -f "[-]avd test" > /dev/null; do sleep 2; done; sleep 5; pkill -TERM crashpad_handler; sleep 5; pkill -KILL crashpad_handler' > /dev/null 2>&1 &
+            nohup sh -c 'while pgrep "^(emulator|qemu-system)" > /dev/null; do sleep 2; done; sleep 5; pkill -TERM crashpad_handler; sleep 5; pkill -KILL crashpad_handler' > /dev/null 2>&1 &
             ./gradlew connectedCheck createDevDebugAndroidTestCoverageReport
       - name: Upload coverage report
         if: ${{ !inputs.skip_tests }}
