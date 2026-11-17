@@ -80,6 +80,10 @@ android {
             applicationIdSuffix '.debug'
             debuggable true
             signingConfig signingConfigs.debug
+            // Collect JaCoCo coverage data during unit and instrumentation tests.
+            // https://developer.android.com/studio/test/advanced-test-setup#code-coverage
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
     }
     flavorDimensions += 'default'

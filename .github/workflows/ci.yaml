@@ -6,6 +6,8 @@
 #   * https://github.com/marketplace/actions/setup-java-jdk
 #   * https://github.com/marketplace/actions/gradle-build-action
 #   * https://github.com/marketplace/actions/android-emulator-runner
+#   * https://github.com/marketplace/actions/upload-a-build-artifact
+#   * https://github.com/marketplace/actions/jacoco-report
 
 name: CI
 on:
@@ -30,12 +32,26 @@ on:
         description: 'Skip actual test runs'
         type: boolean
         default: false
+env:
+  # Android API levels the instrumentation tests run on
+  API_LEVEL_MIN: 26
+  API_LEVEL_MAX: 36
 jobs:
+  # The env context is not available in strategy.matrix, so the constants
+  # are passed to the matrix as job outputs.
+  config:
+    runs-on: ubuntu-latest
+    outputs:
+      api-level-min: ${{ env.API_LEVEL_MIN }}
+      api-level-max: ${{ env.API_LEVEL_MAX }}
+    steps:
+      - name: Print config
+        run: echo "API levels $API_LEVEL_MIN and $API_LEVEL_MAX"
   unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK environment
         uses: actions/setup-java@v4
         with:
@@ -45,21 +61,37 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Run tests
         if: ${{ !inputs.skip_tests }}
-        run: ./gradlew test --stacktrace
+        run: ./gradlew test createDevDebugUnitTestCoverageReport --stacktrace
+      - name: Upload coverage report
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-unit-tests
+          path: app/build/reports/coverage/test/
+      - name: Upload coverage data
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data-unit-tests
+          path: app/build/outputs/unit_test_code_coverage/devDebugUnitTest/
+          if-no-files-found: error
   instrumentation-tests:
     runs-on: ubuntu-latest
+    # Fail early instead of the default 6 hours if the emulator hangs
+    timeout-minutes: 30
+    needs: config
     strategy:
       matrix:
         include:
-          - api-level: 26
+          - api-level: ${{ fromJSON(needs.config.outputs.api-level-min) }}
             arch: x86
             target: default
-          - api-level: 36
+          - api-level: ${{ fromJSON(needs.config.outputs.api-level-max) }}
             arch: x86_64
             target: google_apis
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       # See https://github.com/marketplace/actions/android-emulator-runner#running-hardware-accelerated-emulators-on-linux-runners
       - name: Enable KVM group perms
         run: |
@@ -74,7 +106,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: AVD cache
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         id: avd-cache
         with:
           path: |
@@ -94,6 +126,8 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
       - name: Run tests
         if: ${{ !inputs.skip_tests }}
+        # Fail early if the emulator hangs again despite the watcher below
+        timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -102,14 +136,135 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck
+          # The emulator's crash reporter may outlive the emulator and block this step forever,
+          # see https://github.com/ReactiveCircus/android-emulator-runner/issues/385.
+          # Hence, a background watcher terminates it once the emulator has exited.
+          # The action runs each script line separately, so the watcher must be a single line.
+          # It matches process names only because crashpad_handler's arguments may contain the emulator command line.
+          # Linux truncates process names to 15 characters, so crashpad_handler is matched as crashpad_handle.
+          script: |
+            nohup sh -c 'while pgrep "^(emulator|qemu-system)" > /dev/null; do sleep 2; done; sleep 5; pkill -TERM -x crashpad_handle; sleep 5; pkill -KILL -x crashpad_handle' > /dev/null 2>&1 &
+            ./gradlew connectedCheck createDevDebugAndroidTestCoverageReport
+      - name: Upload coverage report
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-api-${{ matrix.api-level }}
+          path: app/build/reports/coverage/androidTest/
+      - name: Upload coverage data
+        if: ${{ !inputs.skip_tests }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-data-api-${{ matrix.api-level }}
+          path: app/build/outputs/code_coverage/devDebugAndroidTest/connected/
+          if-no-files-found: error
+      # JaCoCo matches execution data to classes via a checksum of their bytecode.
+      # Hence, the merged report must use the classes of one of the tested builds.
+      # The unit tests job compiles the same bytecode because the build is reproducible.
+      - name: Upload compiled classes for coverage report
+        if: ${{ !inputs.skip_tests && matrix.api-level == env.API_LEVEL_MAX }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-classes
+          path: |
+            app/build/tmp/kotlin-classes/devDebug/
+            app/build/intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes/
+          if-no-files-found: error
+  coverage-report:
+    if: ${{ !inputs.skip_tests }}
+    runs-on: ubuntu-latest
+    needs: [unit-tests, instrumentation-tests]
+    permissions:
+      contents: read
+      # Required for posting the coverage report as PR comment
+      pull-requests: write
+    env:
+      JACOCO_VERSION: 0.8.13
+      # Not for PRs from forks or Dependabot because their GITHUB_TOKEN has no write permission.
+      POST_PR_COMMENT: >-
+        ${{ github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up JDK environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Download coverage data
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-data-*
+          path: coverage-data
+      - name: Download compiled classes
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-classes
+          path: coverage-classes
+      - name: Merge coverage data and create report
+        run: |
+          curl -fsSL -o jacococli.jar \
+            "https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/${JACOCO_VERSION}/org.jacoco.cli-${JACOCO_VERSION}-nodeps.jar"
+          find coverage-data \( -name '*.ec' -o -name '*.exec' \) -print0 | xargs -0 java -jar jacococli.jar merge --destfile merged.ec
+          # JaCoCo does not create the parent directory of the XML report.
+          mkdir -p coverage-report
+          java -jar jacococli.jar report merged.ec \
+            --classfiles coverage-classes/tmp/kotlin-classes/devDebug \
+            --classfiles coverage-classes/intermediates/javac/devDebug/compileDevDebugJavaWithJavac/classes \
+            --sourcefiles app/src/main/java \
+            --name "YacGuide (unit and instrumentation tests on all API levels)" \
+            --html coverage-report/html \
+            --xml coverage-report/report.xml
+      - name: Set up Python environment
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+          cache: pip
+      - name: Create full coverage summary
+        run: |
+          pip install -r requirements.txt
+          ./scripts/make coverage-summary coverage-report/report.xml -o coverage-report/summary.md
+          cat coverage-report/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload merged coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-merged
+          path: coverage-report/
+      - name: Post full coverage as PR comment
+        if: ${{ env.POST_PR_COMMENT == 'true' }}
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            // Must match COMMENT_MARKER in scripts/yacguide/coverage.py
+            const marker = '<!-- full-coverage-report -->';
+            const body = fs.readFileSync('coverage-report/summary.md', 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+      - name: Post coverage of changed files as PR comment
+        if: ${{ env.POST_PR_COMMENT == 'true' }}
+        uses: madrapps/jacoco-report@v1.7.1
+        with:
+          paths: ${{ github.workspace }}/coverage-report/report.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Test Coverage of Changed Files
+          update-comment: true
   build-deploy:
     if: ${{ github.ref_type == 'tag' || inputs.test_deploy }}
     runs-on: ubuntu-latest
     needs: [unit-tests, instrumentation-tests]
     steps:
       - name: Check-out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Set up JDK environment
         uses: actions/setup-java@v4
         with:

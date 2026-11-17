@@ -2,7 +2,7 @@
 #
 # YacGuide Android Application
 #
-# Copyright (C) 2020, 2023, 2025 Christian Sommer
+# Copyright (C) 2020, 2023, 2025, 2026 Christian Sommer
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import yacguide
 import yacguide.utils
 from yacguide.utils import error
 import yacguide.app
+import yacguide.coverage
 
 
 def get_cli_parser():
@@ -64,6 +65,21 @@ what you do."""
     release_parser.add_argument("--skip-checks", action="store_true",
                                 default=False,
                                 help=help_release_skip_checks)
+
+    coverage_summary_parser = sub_parsers.add_parser(
+        "coverage-summary",
+        help="Create Markdown summary of the full test coverage")
+    coverage_summary_parser.set_defaults(func=coverage_summary_callback)
+    help_coverage_summary_report = "JaCoCo XML report file"
+    coverage_summary_parser.add_argument("report",
+                                         help=help_coverage_summary_report)
+    help_coverage_summary_output = "Markdown output file"
+    coverage_summary_parser.add_argument("--output", "-o", required=True,
+                                         help=help_coverage_summary_output)
+    help_coverage_summary_title = "title of the summary"
+    coverage_summary_parser.add_argument("--title",
+                                         default="Full Test Coverage",
+                                         help=help_coverage_summary_title)
     return parser
 
 
@@ -100,6 +116,15 @@ def release_callback(args):
             error("Option --version must be set for"
                   " release type 'stable'.")
         release.create_stable_release(args.version)
+
+
+def coverage_summary_callback(args):
+    """Callback function for `coverage-summary` sub-parser.
+
+    Args:
+        args (argparse.Namespace): Parsed arguments
+    """
+    yacguide.coverage.write_summary(args.report, args.output, args.title)
 
 
 if __name__ == "__main__":
